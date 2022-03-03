@@ -1,4 +1,4 @@
-package com.xstudios.salvage;
+package com.xstudios.salvage.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.graphics.Texture;
