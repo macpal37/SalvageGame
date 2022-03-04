@@ -14,9 +14,8 @@ package com.xstudios.salvage.game;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 
-import com.xstudios.salvage.assets.*;
+import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.*;
-import com.xstudios.salvage.audio.*;
 
 import com.badlogic.gdx.audio.*;
 import com.badlogic.gdx.graphics.*;
@@ -47,10 +46,6 @@ public class GameMode implements ModeController {
 	private Texture shipTexture;
 	/** Texture for the target reticule */
 	private Texture targetTexture;
-	/** The weapon fire sound for the blue player */
-	private Sound blueSound;
-	/** The weapon fire sound for the red player */
-	private Sound redSound;
 	
     // Instance variables
 	/** Read input for blue player from keyboard or game pad (CONTROLLER CLASS) */
@@ -95,10 +90,6 @@ public class GameMode implements ModeController {
 		photons.setTexture(photonTexture);
 		bounds = new Rectangle(0,0,width,height);
 
-		// Load the sounds.  We need to use the subclass SoundBuffer because of our changes to audio.
-		blueSound = assets.getEntry( "laser",  SoundBuffer.class);
-		redSound  = assets.getEntry( "fusion", SoundBuffer.class);
-
 		// Create the two ships and place them across from each other.
 
         // RED PLAYER
@@ -138,13 +129,6 @@ public class GameMode implements ModeController {
 		
 		// Move the photons forward, and add new ones if necessary.
 		//photons.move (width,height);
-		if (redController.didPressFire() && firePhoton(shipRed,photons)) {
-            redSound.play(); 
-		}
-		if (blueController.didPressFire() && firePhoton(shipBlue,photons)) {
-			blueSound.stop();
-			blueSound.play();
-		}
 
 		// Move the ships forward (ignoring collisions)
 		shipRed.move(redController.getForward(),   redController.getTurn());
