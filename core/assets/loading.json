@@ -1,0 +1,27 @@
+{
+	"textures": {
+        "background": {
+          "file":     "images/loading.png",
+          "minFilter": "linear",
+          "magFilter": "linear"
+        },
+		"play": {
+			"file":     "images/play.png",
+            "minFilter": "linear",
+            "magFilter": "linear"
+        },
+        "progress": {
+            "file":      "images/progressbar.png",
+            "minFilter": "linear",
+            "magFilter": "linear",
+            "atlas":     {
+                "background" : [16,   0, 216, 30],
+                "backleft"   : [0,    0,  15, 30],
+                "backright"  : [384,  0, 400, 30],
+                "foreground" : [16,  40, 216, 70],
+                "foreleft"   : [0,   40,  16, 70],
+                "foreright"  : [384, 40, 400, 70]
+            }
+        }
+	}
+}

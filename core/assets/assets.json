@@ -1,0 +1,29 @@
+{
+	"textures": {
+        "background": {
+            "file":      "images/ice.png",
+            "minFilter": "linear",
+            "magFilter": "linear"
+        },
+        "photon": {
+            "file":      "images/photon.png",
+            "minFilter": "linear",
+            "magFilter": "linear"
+        },
+        "ship": {
+          "file":      "images/ships.png",
+          "minFilter": "linear",
+          "magFilter": "linear"
+        },
+        "target": {
+            "file":      "images/target.png",
+            "minFilter": "linear",
+            "magFilter": "linear"
+        }
+    },
+    "sounds": {
+        "fusion":  "sounds/fusion.mp3",
+        "laser":   "sounds/laser.mp3",
+        "torpedo": "sounds/torpedo.mp3"
+    }
+}
