@@ -38,35 +38,81 @@ public class InputController {
     /** X-Box controller associated with this player (if any) */
 	protected XBoxController xbox;
 
-	/** How much forward are we going? */
-	private float forward;				
+	/** How much up or down are we moving? */
+	private float vertical;
 	
-	/** How much are we turning? */
-	private float turning;
-	
+	/** How much are we moving side to side? */
+	private float horizontal;
+
+	/** How wide is the field of vision? */
+	private float lightRange;
+
+	/** How fast are we going? */
+	private float speed;
+
+	/** How fast are we depleting oxygen? */
+	private float oxygenRate;
+
+	/** Are we resetting? */
+	private boolean resetOxygen;
+
 	/** Did we press the fire button? */
 	private boolean pressedFire;
 	
 	/** 
-	 * Returns the amount of forward movement.
+	 * Returns the amount of horizontal forward movement.
 	 * 
 	 * -1 = backward, 1 = forward, 0 = still
 	 *  
 	 * @return amount of forward movement.
 	 */
 	public float getForward() {
-		return forward;
+		return horizontal;
 	}
 
 	/**
-	 * Returns the amount to turn the ship.
+	 * Returns the amount to change range of vision.
 	 * 
-	 * -1 = clockwise, 1 = counter-clockwise, 0 = still
+	 * -1 = decrease, 1 = inrease, 0 = still
 	 * 
-	 * @return amount to turn the ship.
+	 * @return amount to change range of vision.
 	 */
-	public float getTurn() {
-		return turning;
+	public float getLightRange() {
+		return lightRange;
+	}
+
+	/**
+	 * Returns the amount to change rate of oxygen depletion.
+	 *
+	 * -1 = decrease, 1 = inrease, 0 = still
+	 *
+	 * @return amount to change change rate of oxygen depletion.
+	 */
+	public float getOxygenRate() {
+		return oxygenRate;
+	}
+
+	/**
+	 * Returns the amount to change speed of movement.
+	 *
+	 * -1 = decrease, 1 = inrease, 0 = still
+	 *
+	 * @return amount to change speed of movement.
+	 */
+	public float getSpeed() {
+		return speed;
+	}
+
+
+	/**
+	 * Returns the amount to move up or down
+	 *
+	 * -1 = down, 1 = up, 0 = still
+	 *
+	 * @return amount to move up or down
+	 */
+	public float getUp() {
+		return vertical;
 	}
 
 	/**
@@ -76,6 +122,14 @@ public class InputController {
 	 */
 	public boolean didPressFire() {
 		return pressedFire;
+	}
+	/**
+	 * Returns whether the reset oxygen button was pressed.
+	 *
+	 * @return whether the reset oxygen button was pressed.
+	 */
+	public boolean didResetOxygen() {
+		return resetOxygen;
 	}
 
 	/**
@@ -110,17 +164,20 @@ public class InputController {
 	public void readInput() {
 		// If there is a game-pad, then use it.
 		if (xbox != null) {
-			forward = -xbox.getLeftY();
-			forward = (forward < 0.1 && forward > -0.1 ? 0.0f : forward);
+			horizontal = -xbox.getLeftY();
+			horizontal = (horizontal < 0.1 && horizontal > -0.1 ? 0.0f : horizontal);
 
-			turning = -xbox.getRightX();
-			turning = (turning < 0.1 && turning > -0.1 ? 0.0f : turning);
+			vertical = -xbox.getRightX();
+			vertical = (vertical < 0.1 && vertical > -0.1 ? 0.0f : vertical);
 
 			pressedFire = xbox.getRightTrigger() > 0.6f;
 		} else {
             // Figure out, based on which player we are, which keys
 			// control our actions (depends on player).
-            int up, left, right, down, shoot;
+            int up, left, right, down, shoot, light_increase,
+					light_decrease, speed_increase, speed_decrease,
+					oxygen_increase, oxygen_decrease, reset;
+
 			if (player == 0) {
                 up    = Input.Keys.UP; 
                 down  = Input.Keys.DOWN;
@@ -134,44 +191,75 @@ public class InputController {
                 right = Input.Keys.D;
                 shoot = Input.Keys.X;
             }
+			light_increase = Input.Keys.I;
+			light_decrease = Input.Keys.K;
+			speed_increase = Input.Keys.U;
+			speed_decrease = Input.Keys.J;
+			oxygen_increase = Input.Keys.Y;
+			oxygen_decrease = Input.Keys.H;
+			reset = Input.Keys.P;
 			
             // Convert keyboard state into game commands
-            forward = turning = 0;
+            vertical = horizontal = 0;
             pressedFire = false;
 
             // Movement forward/backward
 			if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down)) {
-                forward = 1;
+                vertical = 1;
 			} else if (Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(up)) {
-                forward = -1;
+                vertical = -1;
 			}
 			
             // Movement left/right
 			if (Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(right)) {
-                turning = 1;
+                horizontal = -1;
 			} else if (Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(left)) {
-                turning = -1;
+                horizontal = 1;
 			}
 
+			// change lighting range
+			if (Gdx.input.isKeyPressed(light_increase) && !Gdx.input.isKeyPressed(light_decrease)) {
+				lightRange = 1;
+			} else if (Gdx.input.isKeyPressed(light_decrease) && !Gdx.input.isKeyPressed(light_increase)) {
+				lightRange = -1;
+			}
+
+			// change speed of movement
+			if (Gdx.input.isKeyPressed(speed_increase) && !Gdx.input.isKeyPressed(speed_decrease)) {
+				speed = 1;
+			} else if (Gdx.input.isKeyPressed(speed_decrease) && !Gdx.input.isKeyPressed(speed_increase)) {
+				speed = -1;
+			}
+
+			// change rate of oxygen depletion
+			if (Gdx.input.isKeyPressed(oxygen_increase) && !Gdx.input.isKeyPressed(oxygen_decrease)) {
+				oxygenRate = 1;
+			} else if (Gdx.input.isKeyPressed(oxygen_decrease) && !Gdx.input.isKeyPressed(oxygen_increase)) {
+				oxygenRate = -1;
+			}
+			// whether to reset oxygen or not
+			if (Gdx.input.isKeyPressed(reset)) {
+				resetOxygen = true;
+			}
             // Shooting
-			if (Gdx.input.isKeyPressed(shoot)) {
-                pressedFire = true;
-			}
+//			if (Gdx.input.isKeyPressed(shoot)) {
+//                pressedFire = true;
+//			}
 
-			if (player == 0) {
-				int m_shoot = Input.Buttons.LEFT;
+//			if (player == 0) {
+//				int m_shoot = Input.Buttons.LEFT;
 
 				// move up/down and left/right
-				if (Gdx.input.getInputProcessor().mouseMoved(0, 0)) {
-					forward -= Gdx.input.getDeltaY() * 0.3f;
-					turning -= Gdx.input.getDeltaX() * 0.1f;
-				}
+//				if (Gdx.input.getInputProcessor().mouseMoved(0, 0)) {
+//					forward -= Gdx.input.getDeltaY() * 0.3f;
+//					turning -= Gdx.input.getDeltaX() * 0.1f;
+//				}
 
 				// Mouse Support
-				if (Gdx.input.isButtonPressed(m_shoot)) {
-					pressedFire = true;
-				}
-			}
+//				if (Gdx.input.isButtonPressed(m_shoot)) {
+//					pressedFire = true;
+//				}
+//			}
 			
 		}
     }

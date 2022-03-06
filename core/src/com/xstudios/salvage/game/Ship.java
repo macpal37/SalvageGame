@@ -322,17 +322,22 @@ public class Ship {
 	 * Collisions are resolved afterwards.
 	 *
 	 * @param forward	Amount to move forward
-	 * @param turn		Amount to turn the ship
+	 * @param up		Amount to move upward/downward
 	 */
-	public void move(float forward, float turn){
+	public void move(float forward, float up){
 		// Process the ship turning.
-		processTurn(turn);
+//		processTurn(turn);
 
 		// Process the ship thrust.
+		if (up != 0.0f) {
+			// Thrust key pressed; increase the ship velocity.
+			vel.add(0, up);//up * (float)Math.cos(Math.toRadians (ang)) * THRUST_FACTOR,
+//					up * (float)-Math.sin (Math.toRadians (ang)) * THRUST_FACTOR);
+		}
 		if (forward != 0.0f) {
 			// Thrust key pressed; increase the ship velocity.
-			vel.add(forward * (float)Math.cos(Math.toRadians (ang)) * THRUST_FACTOR,
-					forward * (float)-Math.sin (Math.toRadians (ang)) * THRUST_FACTOR);
+			vel.add(forward, 0);//forward * (float)-Math.sin(Math.toRadians (ang)) * THRUST_FACTOR,
+//					forward * (float)Math.cos (Math.toRadians (ang)) * THRUST_FACTOR);
 		}
 //		else {
 //			// Gradually slow the ship down

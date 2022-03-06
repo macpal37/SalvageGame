@@ -147,8 +147,8 @@ public class GameMode implements ModeController {
 		}
 
 		// Move the ships forward (ignoring collisions)
-		shipRed.move(redController.getForward(),   redController.getTurn());
-		shipBlue.move(blueController.getForward(), blueController.getTurn());
+		shipRed.move(redController.getForward(),   redController.getUp());
+		shipBlue.move(blueController.getForward(), blueController.getUp());
 		photons.move(bounds);
 		
 		// Change the target position.
