@@ -802,7 +802,7 @@ public class GameCanvas {
 		float a_2_b_2 = (float)Math.sqrt(Math.pow(w, 2) + Math.pow(h, 2));
 		float sx = a_2_b_2 / w;
 		float sy = a_2_b_2 / h;
-		spriteBatch.draw(image, 0, 0, w / 2, h /2, w, h, sx, sy, angle, 0, 0, (int) w, (int) h, false, false);
+		spriteBatch.draw(image, 0, 0, w / 2, h /2, w, h, sx, sy, angle/15f, 0, 0, (int) w, (int) h, false, false);
 	}
 
 	/**
