@@ -131,6 +131,7 @@ public class CollisionController {
 			ship.getPosition().y = bounds.y;
 		}
 	}
+
 	public void checkForCollision(Ship ship, PhotonQueue photon_q){
 		// iterate over each photon
 		for (int ii = 0; ii < photon_q.size; ii++) {
