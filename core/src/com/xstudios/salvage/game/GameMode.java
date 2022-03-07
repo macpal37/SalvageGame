@@ -11,10 +11,14 @@
  */
 package com.xstudios.salvage.game;
 
+import box2dLight.Light;
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 
+import com.badlogic.gdx.physics.box2d.World;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.audio.SoundBuffer;
 import com.xstudios.salvage.util.*;
@@ -60,7 +64,7 @@ public class GameMode implements ModeController {
 	private Sound blueSound;
 	/** The weapon fire sound for the red player */
 	private Sound redSound;
-	
+
     // Instance variables
 	/** Read input for blue player from keyboard or game pad (CONTROLLER CLASS) */
 	protected InputController blueController;
@@ -70,7 +74,7 @@ public class GameMode implements ModeController {
     protected CollisionController physicsController;
 
 	/** Location and animation information for blue ship (MODEL CLASS) */
-	protected Ship shipBlue;
+//	protected Ship shipBlue;
 	/** Location and animation information for red ship (MODEL CLASS) */
 	protected Ship shipRed;
 	/** Shared memory pool for photons. (MODEL CLASS) */
@@ -96,7 +100,7 @@ public class GameMode implements ModeController {
 	 * @param assets	The asset directory containing all the loaded assets
 	 */
 	public GameMode(float width, float height, AssetDirectory assets) {
-
+System.out.println(width);
 		// Extract the assets from the asset directory.  All images are textures.
 		background = assets.getEntry("background", Texture.class );
 		shipTexture = assets.getEntry( "diver", Texture.class );
@@ -161,10 +165,10 @@ public class GameMode implements ModeController {
 		shipRed.setColor(new Color(1.0f, 0.25f, 0.25f, 1.0f));  // Red, but makes texture easier to see
 		
         // BLUE PLAYER
-		shipBlue = new Ship(width*(2.0f / 3.0f), height*(1.0f / 2.0f), 180, 80, 0, 100);
-		shipBlue.setFilmStrip(new FilmStrip(shipTexture,SHIP_ROWS,SHIP_COLS,SHIP_SIZE));
-//		shipBlue.setTargetTexture(targetTexture);
-		shipBlue.setColor(new Color(0.5f, 0.5f, 1.0f, 1.0f));   // Blue, but makes texture easier to see
+//		shipBlue = new Ship(width*(2.0f / 3.0f), height*(1.0f / 2.0f), 180, 80, 0, 100);
+//		shipBlue.setFilmStrip(new FilmStrip(shipTexture,SHIP_ROWS,SHIP_COLS,SHIP_SIZE));
+////		shipBlue.setTargetTexture(targetTexture);
+//		shipBlue.setColor(new Color(0.5f, 0.5f, 1.0f, 1.0f));   // Blue, but makes texture easier to see
 
 		// Create the input controllers.
 		redController  = new InputController(1);
@@ -188,33 +192,24 @@ public class GameMode implements ModeController {
 		// Read the keyboard for each controller.
 		redController.readInput ();
 		blueController.readInput ();
-		
-		// Move the photons forward, and add new ones if necessary.
-		//photons.move (width,height);
-		if (redController.didPressFire() && firePhoton(shipRed,photons)) {
-//            redSound.play();
-		}
-		if (blueController.didPressFire() && firePhoton(shipBlue,photons)) {
-			blueSound.stop();
-			blueSound.play();
-		}
+
 
 		// Move the ships forward (ignoring collisions)
 		shipRed.move(redController.getForward(),   redController.getUp());
-		shipBlue.move(blueController.getForward(), blueController.getUp());
+//		shipBlue.move(blueController.getForward(), blueController.getUp());
 		photons.move(bounds);
 		
 		// This call handles BOTH ships.
-		physicsController.checkForCollision(shipBlue, shipRed);
-		physicsController.checkInBounds(shipBlue, bounds);
+//		physicsController.checkForCollision(shipBlue, shipRed);
+//		physicsController.checkInBounds(shipBlue, bounds);
 		physicsController.checkInBounds(shipRed, bounds);
 
 		// handles collisions of each ship with photons
-		physicsController.checkForCollision(shipBlue, photons);
+//		physicsController.checkForCollision(shipBlue, photons);
 		physicsController.checkForCollision(shipRed, photons);
 
 		// updates oxygen level
-		shipBlue.changeOxygenLevel((int)blueController.getOxygenRate());
+		shipRed.changeOxygenLevel((int)blueController.getOxygenRate());
 	}
 
 	Vector2 mapPosition = new Vector2(0f,0f);
@@ -245,7 +240,7 @@ public class GameMode implements ModeController {
 
 		//draw text
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
-		String msg = "Oxygen level: " + shipBlue.getOxygenLevel();
+		String msg = "Oxygen level: " + shipRed.getOxygenLevel();
 		System.out.println(msg);
 		canvas.drawText(msg, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET);
 	}

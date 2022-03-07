@@ -29,7 +29,12 @@
             "file": "images/wall.png",
             "minFilter": "linear",
             "magFilter": "linear"
-        }
+        },
+      "darkness": {
+        "file": "images/darkness.png",
+        "minFilter": "linear",
+        "magFilter": "linear"
+      }
     },
     "fonts": {
         "times": {
