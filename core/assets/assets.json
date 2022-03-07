@@ -19,6 +19,11 @@
             "file":      "images/target.png",
             "minFilter": "linear",
             "magFilter": "linear"
+        },
+        "wall": {
+          "file": "images/wall.png",
+          "minFilter": "linear",
+          "magFilter": "linear"
         }
     },
     "sounds": {
