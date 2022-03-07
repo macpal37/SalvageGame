@@ -40,7 +40,14 @@ public class GameMode implements ModeController {
 	private static final int SHIP_COLS = 5;
 	/** Number of elements in this ship image filmstrip */
 	private static final int SHIP_SIZE = 18;
-	
+	/** Thickness of wall*/
+	private static final int WALL_THICKNESS=15;
+
+	/** container for walls*/
+	private ObstacleContainer obstacleContainer;
+
+	/** Texture of wall*/
+	private Texture wallTexture;
 	/** The background image for the battle */
 	private Texture background;
 	/** The image for a single proton */
@@ -89,11 +96,52 @@ public class GameMode implements ModeController {
 	 * @param assets	The asset directory containing all the loaded assets
 	 */
 	public GameMode(float width, float height, AssetDirectory assets) {
+
 		// Extract the assets from the asset directory.  All images are textures.
 		background = assets.getEntry("background", Texture.class );
 		shipTexture = assets.getEntry( "diver", Texture.class );
 		targetTexture = assets.getEntry( "target", Texture.class );
 		photonTexture = assets.getEntry( "photon", Texture.class );
+		wallTexture=assets.getEntry("wall", Texture.class);
+
+		//Initialize obstacle container
+		obstacleContainer=new ObstacleContainer(wallTexture);
+
+		//Initialize top wall
+		obstacleContainer.addRectangle(0, height-WALL_THICKNESS, width, WALL_THICKNESS);
+
+		//Initialize bottom wall
+		obstacleContainer.addRectangle(0,0,width, WALL_THICKNESS);
+
+		//Initialize left wall
+		obstacleContainer.addRectangle(0,WALL_THICKNESS, WALL_THICKNESS, height*2);
+
+		//Initialize right wall
+		obstacleContainer.addRectangle(width-WALL_THICKNESS, WALL_THICKNESS, WALL_THICKNESS, height*2);
+
+		//Initialize lowest vertical wall
+		obstacleContainer.addRectangle(width/4, height*0.1f, WALL_THICKNESS, height*0.2f);
+
+		//Initialize second-lowest vertical wall
+		obstacleContainer.addRectangle(width*0.75f, height*0.3f, WALL_THICKNESS, height*0.2f);
+
+		//Initialize third lowest vertical wall
+		obstacleContainer.addRectangle(width/4, height*0.6f, WALL_THICKNESS, height*0.3f);
+
+		//Initialize fourth lowest vertical wall
+		obstacleContainer.addRectangle(width*0.6f, height*0.9f, WALL_THICKNESS, height*0.6f);
+
+		//Initialize leftmost horizontal wall
+		obstacleContainer.addRectangle(width*0.1f, height*0.6f, width*0.25f, WALL_THICKNESS);
+
+		//Initialize second-to-left horizontal wall
+		obstacleContainer.addRectangle(width*0.305f, height*0.45f,width*0.15f, WALL_THICKNESS);
+
+		//Initialize third-to-left horizontal wall
+		obstacleContainer.addRectangle(width*0.845f, height*0.4f, width*0.25f, WALL_THICKNESS);
+
+
+
 
 		// Initialize the photons.
 		photons = new PhotonQueue();
@@ -192,6 +240,8 @@ public class GameMode implements ModeController {
 		// Second drawing pass (photons)
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
+
+		obstacleContainer.drawWalls(obstacleContainer.getAllObstacles(), canvas);
 
 		//draw text
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);

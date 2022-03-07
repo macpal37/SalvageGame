@@ -15,8 +15,6 @@ public class ObstacleContainer {
     /** array containing all obstacles*/
     private Array<Rectangle> allObstacles;
 
-    /** rectangle for wall initialization*/
-    private Rectangle tempRectangle;
 
 
     /**
@@ -25,7 +23,6 @@ public class ObstacleContainer {
      */
     public ObstacleContainer(Texture wallTexture){
         this.allObstacles=new Array<Rectangle>();
-        this.tempRectangle=new Rectangle();
         this.wallTexture=wallTexture;
     }
 
@@ -51,6 +48,7 @@ public class ObstacleContainer {
      * @return the newly created rectangle
      */
     public Rectangle addRectangle(float x, float y, float width, float height){
+        Rectangle tempRectangle=new Rectangle();
         tempRectangle.setX(x);
         tempRectangle.setY(y);
         tempRectangle.setWidth(width);
@@ -95,7 +93,7 @@ public class ObstacleContainer {
             float sx = wall.getWidth() / wallTexture.getWidth();
             float sy = wall.getHeight() / wallTexture.getHeight();
 
-            canvas.draw(wallTexture, Color.WHITE, ox, oy, x, y, 0f, sx, sy);
+            canvas.draw(wallTexture, Color.GREEN, ox, oy, x, y, 0f, sx, sy);
         }
     }
 
