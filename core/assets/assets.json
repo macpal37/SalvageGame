@@ -30,11 +30,12 @@
             "minFilter": "linear",
             "magFilter": "linear"
         },
-      "darkness": {
-        "file": "images/darkness.png",
+      "light": {
+        "file": "images/light.png",
         "minFilter": "linear",
         "magFilter": "linear"
-      }
+      },
+
     },
     "fonts": {
         "times": {

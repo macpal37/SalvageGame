@@ -851,5 +851,24 @@ public class GameCanvas {
 
 
 	}
+	public void drawLight(Texture image,float x, float y) {
+		if (!active) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+			return;
+		}
+		float w, h;
+
+			w = image.getWidth();
+			h = image.getHeight();
+
+		spriteBatch.setColor(Color.WHITE);
+		TextureRegion tr = new TextureRegion(image);
+		computeTransform(w/2,h/2,x,y,0,1f,1f);
+
+		spriteBatch.draw(tr,w,h,local);
+
+
+
+	}
 
 }

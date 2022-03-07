@@ -60,10 +60,8 @@ public class GameMode implements ModeController {
 	private Texture shipTexture;
 	/** Texture for the target reticule */
 	private Texture targetTexture;
-	/** The weapon fire sound for the blue player */
-	private Sound blueSound;
-	/** The weapon fire sound for the red player */
-	private Sound redSound;
+	/** Texture of light*/
+	private Texture light;
 
     // Instance variables
 	/** Read input for blue player from keyboard or game pad (CONTROLLER CLASS) */
@@ -107,7 +105,7 @@ System.out.println(width);
 		targetTexture = assets.getEntry( "target", Texture.class );
 		photonTexture = assets.getEntry( "photon", Texture.class );
 		wallTexture=assets.getEntry("wall", Texture.class);
-
+		light = assets.getEntry("light", Texture.class);
 		//Initialize obstacle container
 		obstacleContainer=new ObstacleContainer(wallTexture);
 
@@ -158,23 +156,13 @@ System.out.println(width);
 		photons.setTexture(photonTexture);
 		bounds = new Rectangle(0,0,width,height);
 
-		// Load the sounds.  We need to use the subclass SoundBuffer because of our changes to audio.
-		blueSound = assets.getEntry( "laser",  SoundBuffer.class);
-		redSound  = assets.getEntry( "fusion", SoundBuffer.class);
-
 		// Create the two ships and place them across from each other.
 
-        // RED PLAYER
+        // Diver
 		shipRed  = new Ship(width*(1.0f / 3.0f), height*(1.0f / 2.0f), 0, 40, 1, 100);
 		shipRed.setFilmStrip(new FilmStrip(shipTexture,SHIP_ROWS,SHIP_COLS,SHIP_SIZE));
 //		shipRed.setTargetTexture(targetTexture);
 		shipRed.setColor(new Color(1.0f, 0.25f, 0.25f, 1.0f));  // Red, but makes texture easier to see
-		
-        // BLUE PLAYER
-//		shipBlue = new Ship(width*(2.0f / 3.0f), height*(1.0f / 2.0f), 180, 80, 0, 100);
-//		shipBlue.setFilmStrip(new FilmStrip(shipTexture,SHIP_ROWS,SHIP_COLS,SHIP_SIZE));
-////		shipBlue.setTargetTexture(targetTexture);
-//		shipBlue.setColor(new Color(0.5f, 0.5f, 1.0f, 1.0f));   // Blue, but makes texture easier to see
 
 		// Create the input controllers.
 		redController  = new InputController(1);
@@ -202,16 +190,13 @@ System.out.println(width);
 
 		// Move the ships forward (ignoring collisions)
 		shipRed.move(redController.getForward(),   redController.getUp());
-//		shipBlue.move(blueController.getForward(), blueController.getUp());
 		photons.move(bounds);
 		
 		// This call handles BOTH ships.
-//		physicsController.checkForCollision(shipBlue, shipRed);
-//		physicsController.checkInBounds(shipBlue, bounds);
 		physicsController.checkInBounds(shipRed, bounds);
 
 		// handles collisions of each ship with photons
-//		physicsController.checkForCollision(shipBlue, photons);
+
 		physicsController.checkForCollision(shipRed, photons);
 
 		// updates oxygen level
@@ -234,21 +219,32 @@ System.out.println(width);
 		canvas.setBlendState(GameCanvas.BlendState.ALPHA_BLEND);
 
 		//canvas.drawMap(background, true,shipRed.getPosition().x, shipRed.getPosition().y);
-		canvas.drawMap(background, true,background.getWidth()/2, background.getHeight()/2);
+		canvas.drawMap(background, true,background.getWidth()/2,background.getHeight()/2-shipRed.getDiameter()/2);
+
+
 		// First drawing pass (ships + shadows)
 		shipRed.drawShip(canvas);
 
 		// Second drawing pass (photons)
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
-		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
 
 		obstacleContainer.drawWalls(obstacleContainer.getAllObstacles(), canvas);
+
+		canvas.setBlendState(GameCanvas.BlendState.ALPHA_BLEND);
+		// Drawing Light and Darkness
+		float bgw = canvas.getWidth();
+		float bgh = canvas.getHeight();
+		float diverX = shipRed.getPosition().x+shipRed.getDiameter()/2;
+		float diverY = shipRed.getPosition().y+shipRed.getDiameter()/2;
+		canvas.drawLight(light, diverX,diverY);
+
 
 		//draw text
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
 		String msg = "Oxygen level: " + shipRed.getOxygenLevel();
 		System.out.println(msg);
 		canvas.drawText(msg, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET);
+
 	}
 
 	/**
