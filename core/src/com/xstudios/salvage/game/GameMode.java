@@ -108,16 +108,16 @@ public class GameMode implements ModeController {
 		obstacleContainer=new ObstacleContainer(wallTexture);
 
 		//Initialize top wall
-		obstacleContainer.addRectangle(0, height-WALL_THICKNESS, width, WALL_THICKNESS);
+		obstacleContainer.addRectangle(0, height, width*2,2* WALL_THICKNESS);
 
 		//Initialize bottom wall
-		obstacleContainer.addRectangle(0,0,width, WALL_THICKNESS);
+		obstacleContainer.addRectangle(0,0,width*2, 2*WALL_THICKNESS);
 
 		//Initialize left wall
-		obstacleContainer.addRectangle(0,WALL_THICKNESS, WALL_THICKNESS, height*2);
+		obstacleContainer.addRectangle(0,WALL_THICKNESS, WALL_THICKNESS*2, height*2);
 
 		//Initialize right wall
-		obstacleContainer.addRectangle(width-WALL_THICKNESS, WALL_THICKNESS, WALL_THICKNESS, height*2);
+		obstacleContainer.addRectangle(width-WALL_THICKNESS, WALL_THICKNESS, 2*WALL_THICKNESS, height*2);
 
 		//Initialize lowest vertical wall
 		obstacleContainer.addRectangle(width/4, height*0.1f, WALL_THICKNESS, height*0.2f);
