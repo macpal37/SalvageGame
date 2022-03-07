@@ -9,22 +9,38 @@ import com.badlogic.gdx.utils.Array;
  * diver can't swim through
  */
 public class ObstacleContainer {
-    /** color of obstacles*/
-    private static final Color WALL_COLOR=Color.RED;
+    /** texture of the wall*/
+    private Texture wallTexture;
 
+    /** array containing all obstacles*/
     private Array<Rectangle> allObstacles;
 
+    /** rectangle for wall initialization*/
     private Rectangle tempRectangle;
 
 
     /**
      * Creates a container for all obstacles
-     *
+     * @param wallTexture the texture image of the wall
      */
-    public ObstacleContainer(){
+    public ObstacleContainer(Texture wallTexture){
         this.allObstacles=new Array<Rectangle>();
-        tempRectangle=new Rectangle();
+        this.tempRectangle=new Rectangle();
+        this.wallTexture=wallTexture;
     }
+
+    /** return wallTexture*/
+    public Texture getWallTexture(){return wallTexture;}
+
+    /** return allObstacles*/
+    public Array<Rectangle> getAllObstacles(){return allObstacles;}
+
+    /** return an obstacle at a given id
+     * @param id the id of the wall
+     */
+    public Rectangle getWall(int id){return allObstacles.get(id);}
+
+
 
     /**
      * Adds a new rectangle to the obstacle container
@@ -61,7 +77,28 @@ public class ObstacleContainer {
         }
         return intersectingObstacle;
     }
-    
+
+    /** draw all walls on the game canvas
+     *
+     * @param allObstacles array containing all walls to be drawn
+     * @param canvas gameCanvas
+     */
+    public void drawWalls(Array<Rectangle>allObstacles, GameCanvas canvas) {
+        if (wallTexture == null) {
+            return;
+        }
+        for (Rectangle wall : allObstacles) {
+            float ox = wallTexture.getWidth() / 2;
+            float oy = wallTexture.getHeight() / 2;
+            float x = wall.getX();
+            float y = wall.getY();
+            float sx = wall.getWidth() / wallTexture.getWidth();
+            float sy = wall.getHeight() / wallTexture.getHeight();
+
+            canvas.draw(wallTexture, Color.WHITE, ox, oy, x, y, 0f, sx, sy);
+        }
+    }
+
 
 
 
