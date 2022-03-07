@@ -40,7 +40,14 @@ public class GameMode implements ModeController {
 	private static final int SHIP_COLS = 5;
 	/** Number of elements in this ship image filmstrip */
 	private static final int SHIP_SIZE = 18;
-	
+	/** Thickness of wall*/
+	private static final int WALL_THICKNESS=15;
+
+	/** container for walls*/
+	private ObstacleContainer obstacleContainer;
+
+	/** Texture of wall*/
+	private Texture wallTexture;
 	/** The background image for the battle */
 	private Texture background;
 	/** The image for a single proton */
@@ -91,11 +98,30 @@ public class GameMode implements ModeController {
 	 * @param assets	The asset directory containing all the loaded assets
 	 */
 	public GameMode(float width, float height, AssetDirectory assets) {
+
 		// Extract the assets from the asset directory.  All images are textures.
 		background = assets.getEntry("background", Texture.class );
 		shipTexture = assets.getEntry( "diver", Texture.class );
 		targetTexture = assets.getEntry( "target", Texture.class );
 		photonTexture = assets.getEntry( "photon", Texture.class );
+		wallTexture=assets.getEntry("wall", Texture.class);
+
+		//Initialize obstacle container
+		obstacleContainer=new ObstacleContainer(wallTexture);
+
+		//Initialize bottom wall
+		obstacleContainer.addRectangle(0, height, width, WALL_THICKNESS);
+
+		//Initialize top wall
+		obstacleContainer.addRectangle(0,WALL_THICKNESS,width, WALL_THICKNESS);
+
+		//Initialize left wall
+		obstacleContainer.addRectangle(0,WALL_THICKNESS, WALL_THICKNESS, height*2);
+
+		//Initialize right wall
+		obstacleContainer.addRectangle(width-WALL_THICKNESS, WALL_THICKNESS, WALL_THICKNESS, height*2);
+
+
 
 		// Initialize the photons.
 		photons = new PhotonQueue();
@@ -204,6 +230,8 @@ public class GameMode implements ModeController {
 //		shipRed.drawTarget(canvas);   // Draw target
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
 		photons.draw(canvas);         // Draw Photons
+
+		obstacleContainer.drawWalls(obstacleContainer.getAllObstacles(), canvas);
 
 		//draw text
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
