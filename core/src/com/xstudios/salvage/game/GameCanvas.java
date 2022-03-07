@@ -67,9 +67,10 @@ public class GameCanvas {
 	 * object used to start the application.
 	 */
 	public GameCanvas() {
-		this.width  = Gdx.graphics.getWidth();
-		this.height = Gdx.graphics.getHeight();
-
+//		this.width  = Gdx.graphics.getWidth();
+//		this.height = Gdx.graphics.getHeight();
+		this.width  = 1200;
+		this.height = 720;
 		active = false;
 		spriteBatch = new PolygonSpriteBatch();
 		
@@ -561,25 +562,9 @@ public class GameCanvas {
 		spriteBatch.setColor(tint);
 		spriteBatch.draw(region,region.getRegionWidth(),region.getRegionHeight(),local);
 
-		// 4 bounds - left, right, top, bottom
-		// if bound exceeded, computeTransform at location on other side
-		// x - ox < 0 (move to this.width + x), x + ox > this.width (move to - (width - x))
-		// y - oy < 0 (move to this.height + y), y + oy > this.height (move to - (height - y))
-//		float[] bounds = {x, x, y, y};
-//		float[] borders = {0, this.width, 0, this.height};
-//		float[] offsets = {-ox, +ox, -oy, +oy};
-//		float[] xpos = {this.width + x, -this.width + x, x, x};
-//		float[] ypos = {y, y, this.height + y, -this.height + y};
-//		for (int i = 0; i < 4; i++) {
-//			if (bounds[i] + offsets[i] > borders[i]) {
-//				computeTransform(ox, oy, xpos[i], ypos[i], angle, sx, sy);
-//				spriteBatch.setColor(tint);
-//				spriteBatch.draw(region,region.getRegionWidth(),region.getRegionHeight(),local);
-//			}
-//		}
 
 		// could use just one operator (<), and change the value to a negative
-		int bound_conds_met = 0;
+		/*int bound_conds_met = 0;
 		float xpos = 0;
 		float ypos = 0;
 		if (x - ox < 0){
@@ -610,7 +595,8 @@ public class GameCanvas {
 		if (bound_conds_met == 2) {
 			computeTransform(ox, oy, xpos, ypos, angle, sx, sy);
 			spriteBatch.draw(region,region.getRegionWidth(),region.getRegionHeight(),local);
-		}
+		}*/
+		spriteBatch.draw(region,region.getRegionWidth(),region.getRegionHeight(),local);
 	}
 
 	/**
@@ -802,6 +788,7 @@ public class GameCanvas {
 		float a_2_b_2 = (float)Math.sqrt(Math.pow(w, 2) + Math.pow(h, 2));
 		float sx = a_2_b_2 / w;
 		float sy = a_2_b_2 / h;
+
 		spriteBatch.draw(image, 0, 0, w / 2, h /2, w*1.5f, h*1.5f, sx, sy, angle/15f, 0, 0, (int) w, (int) h, false, false);
 	}
 
@@ -841,4 +828,28 @@ public class GameCanvas {
 		font.setColor(Color.WHITE);
 		font.draw(spriteBatch, layout, x, y);
 	}
+
+
+	public void drawMap(Texture image, boolean fill,float x, float y) {
+		if (!active) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+			return;
+		}
+		float w, h;
+		if (fill) {
+			w = getWidth();
+			h = getHeight();
+		} else {
+			w = image.getWidth();
+			h = image.getHeight();
+		}
+			spriteBatch.setColor(Color.WHITE);
+			TextureRegion tr = new TextureRegion(image);
+			computeTransform(width/2,height/2,x,y,0,1.2f,1.2f);
+
+			spriteBatch.draw(tr,w,h,local);
+
+
+	}
+
 }

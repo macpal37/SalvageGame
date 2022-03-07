@@ -115,20 +115,19 @@ public class CollisionController {
 	 */
 	public void checkInBounds(Ship ship, Rectangle bounds) {
 		//Ensure the ship doesn't go out of view. Bounce off walls.
-		if (ship.getPosition().x <= bounds.x) {
-//			ship.getVelocity().x = -ship.getVelocity().x;
-			ship.getPosition().x = bounds.width - 1.0f;
-		} else if (ship.getPosition().x >= bounds.width) {
-//			ship.getVelocity().x = -ship.getVelocity().x;
-			ship.getPosition().x = bounds.x;
+		float rad = ship.getDiameter()/2;
+		System.out.println(rad);
+		if (ship.getPosition().x <= bounds.x+rad) {
+			ship.getPosition().set(bounds.x+rad,ship.getPosition().y);
+		} else if (ship.getPosition().x >= bounds.width-rad) {
+			ship.getPosition().set(bounds.x-rad,ship.getPosition().y);
+
 		}
 
-		if (ship.getPosition().y <= bounds.y) {
-//			ship.getVelocity().y = -ship.getVelocity().y;
-			ship.getPosition().y = bounds.height - 1.0f;
-		} else if (ship.getPosition().y >= bounds.height) {
-//			ship.getVelocity().y = -ship.getVelocity().y;
-			ship.getPosition().y = bounds.y;
+		if (ship.getPosition().y <= bounds.y+rad) {
+			ship.getPosition().set(ship.getPosition().x,bounds.y+rad);
+		} else if (ship.getPosition().y >= bounds.height-rad) {
+			ship.getPosition().set(ship.getPosition().x,bounds.height-rad);
 		}
 	}
 
