@@ -36,39 +36,19 @@ import com.xstudios.salvage.util.*;
  * memory to load the same image file for each ship.
  */
 public class Ship {
-	// Ship Frame Sprite numbers
-	/** The frame number for the tightest bank for a left turn */
-    public static final int SHIP_IMG_LEFT = 0;
+
 	/** The frame number for a ship that is not turning */
     public static final int SHIP_IMG_FLAT = 9;
-	/** The frame number for the tightest bank for a right turn */
-    public static final int SHIP_IMG_RIGHT = 17;
+
 
     // Private constants to avoid use of "magic numbers"
-    /** The size of the ship in pixels (image is square) */
-    private static final int SHIP_SIZE  = 81;
+
     /** The amount to offset the shadow image by */
 	private static final float SHADOW_OFFSET = 10.0f;
-//    /** The size of the target reticule in pixels (image is square) */
-//    private static final int TARGET_SIZE = 19;
-//    /** Distance from ship to target reticule */
-//    private static final int TARGET_DIST = 100;
-    /** Amount to adjust forward movement from input */
-    private static final float THRUST_FACTOR   = 0.4f;
-    /** Amount to adjust angular movement from input */
-    private static final float BANK_FACTOR     = 0.5f;
-    /** Maximum turning/banking speed */
-    private static final float MAXIMUM_BANK    = 10.0f;
-    /** Amount to decay forward thrust over time */
-    private static final float FORWARD_DAMPING = 0.9f;
-    /** Amount to angular movement over time */
-    private static final float ANGULAR_DAMPING = 0.875f;
-    /** The number of frames until we can fire again */
-	private static final int   RELOAD_RATE = 3;
-	
+
+	/** Amount to decay forward thrust over time */
+	private static final float FORWARD_DAMPING = 0.9f;
     // Modify this as part of the lab
-    /** Amount to scale the ship size */
-    private static final float DEFAULT_SCALE = 1.0f;
     
 	/** Position of the ship */
 	private Vector2 pos;
@@ -249,19 +229,6 @@ public class Ship {
 	}
 	
 	/**
-	 * Returns true if the ship can fire its weapon
-	 *
-	 * Weapon fire is subjected to a cooldown.  You can modify this
-	 * to see what happens if RELOAD_RATE is faster or slower.
-	 *
-	 * @return true if the ship can fire
-	 */
-	// TODO: Change this to the pinger
-	public boolean canFireWeapon() {
-		return (refire > RELOAD_RATE);
-	}
-	
-	/**
 	 * Resets the reload counter so the ship cannot fire again immediately.
 	 *
 	 * The ship must wait RELOAD_RATE steps before it can fire.
@@ -383,52 +350,7 @@ public class Ship {
 		// Move the ship position by the ship velocity
 		pos.add(vel);
 
-		//Increment the refire readiness counter
-		if (refire <= RELOAD_RATE) {
-			refire++;
-		}
-    }
-    
-    /**
-     * Update the animation of the ship to process a turn
-     *
-     * Turning changes the frame of the filmstrip, as we change from a level ship to
-     * a hard bank.  This method also updates the field dang cumulatively.
-     *
-	 * @param turn Amount to turn the ship
-	 */
-    private void processTurn(float turn) {
-		int frame = (shipSprite == null ? 0 : shipSprite.getFrame());
-		if (turn != 0.0f) {
-			// The turning factor is cumulative.  
-			// The longer it is held down, the harder we bank.        
-			dang -= turn/BANK_FACTOR;
-			if (dang < -MAXIMUM_BANK) {
-				dang = -MAXIMUM_BANK;
-			} else if (dang > MAXIMUM_BANK) {
-				dang = MAXIMUM_BANK;
-			}
 
-			// SHIP_IMG_RIGHT represents the hardest bank possible.
-			if (turn > 0 && frame < SHIP_IMG_RIGHT) {
-				frame++;
-			} else if (turn < 0 && frame > SHIP_IMG_LEFT) {
-				frame--;
-			}
-		} else {
-			// If neither key is pressed, slowly flatten out ship.
-			if (dang != 0) {
-				dang *= ANGULAR_DAMPING;   // Damping factor.
-			}
-			if (frame < SHIP_IMG_FLAT) {
-				frame++;
-			} else if (frame > SHIP_IMG_FLAT) {
-				frame--;
-			}
-		}
-		if (shipSprite != null) {
-			shipSprite.setFrame(frame);
-		}
     }
 
 	/**

@@ -34,8 +34,11 @@
         "file": "images/light.png",
         "minFilter": "linear",
         "magFilter": "linear"
-      },
-
+      },"body": {
+        "file": "images/ProfWhite.png",
+        "minFilter": "linear",
+        "magFilter": "linear"
+      }
     },
     "fonts": {
         "times": {

@@ -62,6 +62,11 @@ public class GameMode implements ModeController {
 	private Texture targetTexture;
 	/** Texture of light*/
 	private Texture light;
+	/** Radius of Light*/
+	private float lightRadius = 1f;
+
+	private Texture bodyTexture;
+
 
     // Instance variables
 	/** Read input for blue player from keyboard or game pad (CONTROLLER CLASS) */
@@ -77,6 +82,8 @@ public class GameMode implements ModeController {
 	protected Ship shipRed;
 	/** Shared memory pool for photons. (MODEL CLASS) */
 	protected PhotonQueue photons;
+
+	protected  DeadBody deadBody;
 
 	/** Store the bounds to enforce the playing region */	
 	private Rectangle bounds;
@@ -106,6 +113,8 @@ System.out.println(width);
 		photonTexture = assets.getEntry( "photon", Texture.class );
 		wallTexture=assets.getEntry("wall", Texture.class);
 		light = assets.getEntry("light", Texture.class);
+		bodyTexture = assets.getEntry("body", Texture.class);
+
 		//Initialize obstacle container
 		obstacleContainer=new ObstacleContainer(wallTexture);
 
@@ -164,6 +173,9 @@ System.out.println(width);
 //		shipRed.setTargetTexture(targetTexture);
 		shipRed.setColor(new Color(1.0f, 0.25f, 0.25f, 1.0f));  // Red, but makes texture easier to see
 
+		// Body
+		deadBody = new DeadBody(100,100,1);
+		deadBody.setTexture(bodyTexture);
 		// Create the input controllers.
 		redController  = new InputController(1);
 		blueController = new InputController(0);
@@ -218,9 +230,10 @@ System.out.println(width);
 		// could also use canvas.setColor()
 		canvas.setBlendState(GameCanvas.BlendState.ALPHA_BLEND);
 
-		//canvas.drawMap(background, true,shipRed.getPosition().x, shipRed.getPosition().y);
-		canvas.drawMap(background, true,background.getWidth()/2,background.getHeight()/2-shipRed.getDiameter()/2);
 
+		canvas.drawMap(background, true,background.getWidth()/2,background.getHeight()/2-shipRed.getDiameter()/2);
+		// Draw Body
+		deadBody.draw(canvas);
 
 		// First drawing pass (ships + shadows)
 		shipRed.drawShip(canvas);
@@ -232,11 +245,10 @@ System.out.println(width);
 
 		canvas.setBlendState(GameCanvas.BlendState.ALPHA_BLEND);
 		// Drawing Light and Darkness
-		float bgw = canvas.getWidth();
-		float bgh = canvas.getHeight();
 		float diverX = shipRed.getPosition().x+shipRed.getDiameter()/2;
 		float diverY = shipRed.getPosition().y+shipRed.getDiameter()/2;
-		canvas.drawLight(light, diverX,diverY);
+
+		canvas.drawLight(light, diverX,diverY,lightRadius*3);
 
 
 		//draw text
@@ -268,28 +280,5 @@ System.out.println(width);
 		bounds.set(0,0,width,height);
 	}
 	
-	/**
- 	 * Fires a photon from the ship, adding it to the PhotonQueue.
- 	 * 
- 	 * This is not inside either PhotonQueue or Ship because it is a relationship
- 	 * between to objects.  As we will see in class, we do not want to code binary
- 	 * relationships that way (because it increases dependencies).
- 	 *
- 	 * @param ship  	Ship firing the photon
- 	 * @param photons 	PhotonQueue for allocation
- 	 */
-	private boolean firePhoton(Ship ship, PhotonQueue photons) {
-		int type = 0;
-		if (ship.getColor() == shipRed.getColor()) {
-			type = 1;
-		}
-		// Only process if enough time has passed since last.
-		if (ship.canFireWeapon()) {
 
-			photons.addPhoton(ship.getPosition(),ship.getVelocity(),ship.getAngle(), type);
-			ship.reloadWeapon();
-			return true;
-		}
-		return false;
-	}
 }
