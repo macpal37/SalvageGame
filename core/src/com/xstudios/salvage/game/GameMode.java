@@ -79,8 +79,6 @@ public class GameMode implements ModeController {
 	/** Store the bounds to enforce the playing region */	
 	private Rectangle bounds;
 
-	/** Stores the angle of the background as it rotates */
-	private float angle;
 
 	/** used to display messages to the screen */
 	private BitmapFont displayFont;
@@ -179,8 +177,6 @@ public class GameMode implements ModeController {
 		blueController = new InputController(0);
         physicsController = new CollisionController();
 
-        angle = 0;
-
         displayFont = assets.getEntry("times", BitmapFont.class);
 	}
 
@@ -214,16 +210,10 @@ public class GameMode implements ModeController {
 		shipBlue.move(blueController.getForward(), blueController.getUp());
 		photons.move(bounds);
 		
-		// Change the target position.
-//		shipRed.acquireTarget(shipBlue);
-//		shipBlue.acquireTarget(shipRed);
-		
 		// This call handles BOTH ships.
 		physicsController.checkForCollision(shipBlue, shipRed);
 		physicsController.checkInBounds(shipBlue, bounds);
 		physicsController.checkInBounds(shipRed, bounds);
-
-		angle += 1;
 
 		// handles collisions of each ship with photons
 		physicsController.checkForCollision(shipBlue, photons);
@@ -232,6 +222,8 @@ public class GameMode implements ModeController {
 		// updates oxygen level
 		shipBlue.changeOxygenLevel((int)blueController.getOxygenRate());
 	}
+
+	Vector2 mapPosition = new Vector2(0f,0f);
 
 	/**
 	 * Draw the game on the provided GameCanvas
@@ -245,19 +237,15 @@ public class GameMode implements ModeController {
 	public void draw(GameCanvas canvas) {
 		// could also use canvas.setColor()
 		canvas.setBlendState(GameCanvas.BlendState.ALPHA_BLEND);
-		Color tint = new Color(0.5f, 0.5f, 0.75f, 0.75f);
-		canvas.drawOverlay(background, tint, true, 0, 0, 0, 0, angle);
-		
+
+		//canvas.drawMap(background, true,shipRed.getPosition().x, shipRed.getPosition().y);
+		canvas.drawMap(background, true,background.getWidth()/2, background.getHeight()/2);
 		// First drawing pass (ships + shadows)
-		shipBlue.drawShip(canvas);		// Draw Red and Blue ships
 		shipRed.drawShip(canvas);
 
 		// Second drawing pass (photons)
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
-//		shipBlue.drawTarget(canvas);  // Draw target
-//		shipRed.drawTarget(canvas);   // Draw target
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
-		photons.draw(canvas);         // Draw Photons
 
 		obstacleContainer.drawWalls(obstacleContainer.getAllObstacles(), canvas);
 
