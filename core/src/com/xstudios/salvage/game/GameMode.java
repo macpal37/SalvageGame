@@ -133,6 +133,9 @@ public class GameMode implements ModeController {
 		//Initialize fourth lowest vertical wall
 		obstacleContainer.addRectangle(width*0.6f, height*0.9f, WALL_THICKNESS, height*0.6f);
 
+		//Initialize last-minute vertical wall
+		obstacleContainer.addRectangle(width*0.5f, height*0.1f, WALL_THICKNESS, height*0.3f);
+
 		//Initialize leftmost horizontal wall
 		obstacleContainer.addRectangle(width*0.1f, height*0.6f, width*0.25f, WALL_THICKNESS);
 
@@ -141,6 +144,9 @@ public class GameMode implements ModeController {
 
 		//Initialize third-to-left horizontal wall
 		obstacleContainer.addRectangle(width*0.845f, height*0.4f, width*0.25f, WALL_THICKNESS);
+
+		//Initialize last minute horizontal wall
+		obstacleContainer.addRectangle(width*0.9f, height*0.75f, width*0.15f, WALL_THICKNESS);
 
 
 
