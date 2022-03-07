@@ -39,7 +39,7 @@ import com.badlogic.gdx.math.*;
  */
 public class GameCanvas {
 	/** Drawing context to handle textures as sprites */
-	private SpriteBatch spriteBatch;
+	private PolygonSpriteBatch spriteBatch;
 	
 	/** Value to cache window width (if we are currently full screen) */
 	private int width;
@@ -71,7 +71,7 @@ public class GameCanvas {
 		this.height = Gdx.graphics.getHeight();
 
 		active = false;
-		spriteBatch = new SpriteBatch();
+		spriteBatch = new PolygonSpriteBatch();
 		
 		// Set the projection matrix (for proper scaling)
 		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, getWidth(), getHeight());
@@ -117,7 +117,7 @@ public class GameCanvas {
 		
 		// Continue as normal
 		active = false;
-		spriteBatch = new SpriteBatch();
+		spriteBatch = new PolygonSpriteBatch();
 
 		// Set the projection matrix (for proper scaling)
 		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, getWidth(), getHeight());
@@ -821,5 +821,24 @@ public class GameCanvas {
 		ADDITIVE,
 		/** Color values are draw on top of one another with no transparency support */
 		OPAQUE
-	}	
+	}
+
+	/**
+	 * Draws text on the screen.
+	 *
+	 * @param text The string to draw
+	 * @param font The font to use
+	 * @param x The x-coordinate of the lower-left corner
+	 * @param y The y-coordinate of the lower-left corner
+	 */
+	public void drawText(String text, BitmapFont font, float x, float y) {
+		if (!active) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+			return;
+		}
+
+		GlyphLayout layout = new GlyphLayout(font,text);
+		font.setColor(Color.WHITE);
+		font.draw(spriteBatch, layout, x, y);
+	}
 }

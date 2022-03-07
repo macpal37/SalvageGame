@@ -49,10 +49,10 @@ public class Ship {
     private static final int SHIP_SIZE  = 81;
     /** The amount to offset the shadow image by */
 	private static final float SHADOW_OFFSET = 10.0f;
-    /** The size of the target reticule in pixels (image is square) */
-    private static final int TARGET_SIZE = 19;
-    /** Distance from ship to target reticule */
-    private static final int TARGET_DIST = 100;
+//    /** The size of the target reticule in pixels (image is square) */
+//    private static final int TARGET_SIZE = 19;
+//    /** Distance from ship to target reticule */
+//    private static final int TARGET_DIST = 100;
     /** Amount to adjust forward movement from input */
     private static final float THRUST_FACTOR   = 0.4f;
     /** Amount to adjust angular movement from input */
@@ -83,8 +83,8 @@ public class Ship {
 	private float mass;
 	
 	// The following are protected, because they have no accessors
-	/** Offset of the ships target */
-    protected Vector2 tofs;
+//	/** Offset of the ships target */
+//    protected Vector2 tofs;
 	/** Current angle of the ship */
     protected float ang;
 	/** Accumulator variable to turn faster as key is held down */
@@ -99,8 +99,12 @@ public class Ship {
 	// Asset references.  These should be set by GameMode
 	/** Reference to ship's sprite for drawing */
     private FilmStrip shipSprite;
-	/** Texture for the target reticule */
-	private Texture targetTexture;
+//	/** Texture for the target reticule */
+//	private Texture targetTexture;
+
+	/** The maximum oxygen of the diver **/
+	private int MAX_OXYGEN;
+	private int oxygen_level;
 
     // ACCESSORS
     /**
@@ -136,9 +140,9 @@ public class Ship {
      *
      * @return the image texture for the target reticule
      */
-    public Texture getTargetTexture() {
-    	return targetTexture;
-    }
+//    public Texture getTargetTexture() {
+//    	return targetTexture;
+//    }
     
     /**
      * Sets the image texture for the target reticule
@@ -148,9 +152,9 @@ public class Ship {
      *
      * param value the image texture for the target reticule
      */
-    public void setTargetTexture(Texture value) {
-    	targetTexture = value;
-    }
+//    public void setTargetTexture(Texture value) {
+//    	targetTexture = value;
+//    }
 
 	/**
 	 * Returns the position of this ship.
@@ -214,6 +218,8 @@ public class Ship {
 	 *
 	 * @param value the angle of the ship
 	 */
+
+	//TODO: change to 8 possible directions
 	public void setAngle(float value) {
 		ang = value;
 	}
@@ -250,6 +256,7 @@ public class Ship {
 	 *
 	 * @return true if the ship can fire
 	 */
+	// TODO: Change this to the pinger
 	public boolean canFireWeapon() {
 		return (refire > RELOAD_RATE);
 	}
@@ -260,7 +267,7 @@ public class Ship {
 	 * The ship must wait RELOAD_RATE steps before it can fire.
 	 */
 	public void reloadWeapon() {
-		refire = 0; 
+		refire = 0;
 	}
 
 	/**
@@ -284,6 +291,22 @@ public class Ship {
 	public float getDiameter() {
 		return this.size;
 	}
+
+	/**
+	 * Returns the current oxygen level of the diver.
+	 *
+	 * Updated every cycle.
+	 *
+	 * @return the current oxygen level
+	 */
+	public int getOxygenLevel() { return this.oxygen_level; }
+
+	/**
+	 * Modifies the current oxygen level of the diver by delta.
+	 */
+	public void changeOxygenLevel(int delta) {
+		this.oxygen_level += delta;
+	}
 	
 	/**
 	 * Creates a new ship at the given location with the given facing.
@@ -292,7 +315,7 @@ public class Ship {
 	 * @param y The initial y-coordinate of the center
 	 * @param ang The initial angle of rotation
 	 */
-    public Ship(float x, float y, float ang, int size, int type) {
+    public Ship(float x, float y, float ang, int size, int type, int max_oxygen) {
         // Set the position of this ship.
         this.pos = new Vector2(x,y);
         this.ang = ang;
@@ -304,7 +327,7 @@ public class Ship {
         mass = 1.0f;
 
         // Currently no target sited.
-        tofs = new Vector2();
+//        tofs = new Vector2();
         refire = 0;
 
         //Set current ship image
@@ -312,6 +335,9 @@ public class Ship {
         stint = new Color(0.0f,0.0f,0.0f,0.5f);
 
         this.type = type;
+
+        this.MAX_OXYGEN = max_oxygen;
+        this.oxygen_level = max_oxygen;
     }
 
 	/**
@@ -415,14 +441,14 @@ public class Ship {
 	 *
 	 * @param other The opponent
 	 */
-    public void acquireTarget(Ship other) {
-        // Calculate vector to 2nd ship
-        tofs.set(other.pos).sub(this.pos);  // tofs = other.pos - this.pos (and not a reference to other.pos)
-
-        // Scale it so we can draw it.
-        tofs.nor();
-        tofs.scl(TARGET_DIST); 
-    }
+//    public void acquireTarget(Ship other) {
+//        // Calculate vector to 2nd ship
+//        tofs.set(other.pos).sub(this.pos);  // tofs = other.pos - this.pos (and not a reference to other.pos)
+//
+//        // Scale it so we can draw it.
+//        tofs.nor();
+//        tofs.scl(TARGET_DIST);
+//    }
 
 	/**
 	 * Draws the ship (and its related images) to the given GameCanvas. 
@@ -468,20 +494,20 @@ public class Ship {
 	 *
 	 * @param canvas The drawing canvas.
 	 */
-	public void drawTarget(GameCanvas canvas) {
-		if (targetTexture == null) {
-			return;
-		}
-		
-		// Target position
-		float tx = pos.x + tofs.x;
-		float ty = pos.y + tofs.y;
-
-		// For placement purposes, put origin in center.
-        float ox = 0.5f * TARGET_SIZE;
-        float oy = 0.5f * TARGET_SIZE;
-        
-		canvas.draw(targetTexture, Color.WHITE, ox, oy, tx, ty, 0, DEFAULT_SCALE, DEFAULT_SCALE);
-    }
+//	public void drawTarget(GameCanvas canvas) {
+//		if (targetTexture == null) {
+//			return;
+//		}
+//
+//		// Target position
+//		float tx = pos.x + tofs.x;
+//		float ty = pos.y + tofs.y;
+//
+//		// For placement purposes, put origin in center.
+//        float ox = 0.5f * TARGET_SIZE;
+//        float oy = 0.5f * TARGET_SIZE;
+//
+//		canvas.draw(targetTexture, Color.WHITE, ox, oy, tx, ty, 0, DEFAULT_SCALE, DEFAULT_SCALE);
+//    }
 
 }

@@ -11,6 +11,7 @@
  */
 package com.xstudios.salvage.game;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 
@@ -74,6 +75,11 @@ public class GameMode implements ModeController {
 	/** Stores the angle of the background as it rotates */
 	private float angle;
 
+	/** used to display messages to the screen */
+	private BitmapFont displayFont;
+	/** Offset for the oxygen message on the screen */
+	private static final float TEXT_OFFSET   = 40.0f;
+
 	/**
 	 * Creates a new game with a playing field of the given size.
 	 *
@@ -87,7 +93,7 @@ public class GameMode implements ModeController {
 	public GameMode(float width, float height, AssetDirectory assets) {
 		// Extract the assets from the asset directory.  All images are textures.
 		background = assets.getEntry("background", Texture.class );
-		shipTexture = assets.getEntry( "ship", Texture.class );
+		shipTexture = assets.getEntry( "diver", Texture.class );
 		targetTexture = assets.getEntry( "target", Texture.class );
 		photonTexture = assets.getEntry( "photon", Texture.class );
 
@@ -103,15 +109,15 @@ public class GameMode implements ModeController {
 		// Create the two ships and place them across from each other.
 
         // RED PLAYER
-		shipRed  = new Ship(width*(1.0f / 3.0f), height*(1.0f / 2.0f), 0, 40, 1);
+		shipRed  = new Ship(width*(1.0f / 3.0f), height*(1.0f / 2.0f), 0, 40, 1, 100);
 		shipRed.setFilmStrip(new FilmStrip(shipTexture,SHIP_ROWS,SHIP_COLS,SHIP_SIZE));
-		shipRed.setTargetTexture(targetTexture);
+//		shipRed.setTargetTexture(targetTexture);
 		shipRed.setColor(new Color(1.0f, 0.25f, 0.25f, 1.0f));  // Red, but makes texture easier to see
 		
         // BLUE PLAYER
-		shipBlue = new Ship(width*(2.0f / 3.0f), height*(1.0f / 2.0f), 180, 80, 0);
+		shipBlue = new Ship(width*(2.0f / 3.0f), height*(1.0f / 2.0f), 180, 80, 0, 100);
 		shipBlue.setFilmStrip(new FilmStrip(shipTexture,SHIP_ROWS,SHIP_COLS,SHIP_SIZE));
-		shipBlue.setTargetTexture(targetTexture);
+//		shipBlue.setTargetTexture(targetTexture);
 		shipBlue.setColor(new Color(0.5f, 0.5f, 1.0f, 1.0f));   // Blue, but makes texture easier to see
 
 		// Create the input controllers.
@@ -120,6 +126,8 @@ public class GameMode implements ModeController {
         physicsController = new CollisionController();
 
         angle = 0;
+
+        displayFont = assets.getEntry("times", BitmapFont.class);
 	}
 
 	/** 
@@ -153,8 +161,8 @@ public class GameMode implements ModeController {
 		photons.move(bounds);
 		
 		// Change the target position.
-		shipRed.acquireTarget(shipBlue);
-		shipBlue.acquireTarget(shipRed);
+//		shipRed.acquireTarget(shipBlue);
+//		shipBlue.acquireTarget(shipRed);
 		
 		// This call handles BOTH ships.
 		physicsController.checkForCollision(shipBlue, shipRed);
@@ -166,6 +174,9 @@ public class GameMode implements ModeController {
 		// handles collisions of each ship with photons
 		physicsController.checkForCollision(shipBlue, photons);
 		physicsController.checkForCollision(shipRed, photons);
+
+		// updates oxygen level
+		shipBlue.changeOxygenLevel((int)blueController.getOxygenRate());
 	}
 
 	/**
@@ -179,6 +190,7 @@ public class GameMode implements ModeController {
 	@Override
 	public void draw(GameCanvas canvas) {
 		// could also use canvas.setColor()
+		canvas.setBlendState(GameCanvas.BlendState.ALPHA_BLEND);
 		Color tint = new Color(0.5f, 0.5f, 0.75f, 0.75f);
 		canvas.drawOverlay(background, tint, true, 0, 0, 0, 0, angle);
 		
@@ -188,11 +200,16 @@ public class GameMode implements ModeController {
 
 		// Second drawing pass (photons)
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
-		shipBlue.drawTarget(canvas);  // Draw target
-		shipRed.drawTarget(canvas);   // Draw target
+//		shipBlue.drawTarget(canvas);  // Draw target
+//		shipRed.drawTarget(canvas);   // Draw target
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
 		photons.draw(canvas);         // Draw Photons
-		canvas.setBlendState(GameCanvas.BlendState.ALPHA_BLEND);
+
+		//draw text
+		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
+		String msg = "Oxygen level: " + shipBlue.getOxygenLevel();
+		System.out.println(msg);
+		canvas.drawText(msg, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET);
 	}
 
 	/**

@@ -19,6 +19,21 @@
             "file":      "images/target.png",
             "minFilter": "linear",
             "magFilter": "linear"
+        },
+        "diver": {
+            "file": "images/diver.png",
+            "minFilter": "linear",
+            "magFilter": "linear"
+        },
+    },
+    "fonts": {
+        "times": {
+            "file": "fonts/LucidaGrande.ttf",
+            "size": 16
+        },
+        "times": {
+            "file": "fonts/TimesRoman.ttf",
+            "size": 32
         }
     },
     "sounds": {
