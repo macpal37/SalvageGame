@@ -112,16 +112,16 @@ System.out.println(width);
 		obstacleContainer=new ObstacleContainer(wallTexture);
 
 		//Initialize top wall
-		obstacleContainer.addRectangle(0, height-WALL_THICKNESS, width, WALL_THICKNESS);
+		obstacleContainer.addRectangle(0, height, width*2,2* WALL_THICKNESS);
 
 		//Initialize bottom wall
-		obstacleContainer.addRectangle(0,0,width, WALL_THICKNESS);
+		obstacleContainer.addRectangle(0,0,width*2, 2*WALL_THICKNESS);
 
 		//Initialize left wall
-		obstacleContainer.addRectangle(0,WALL_THICKNESS, WALL_THICKNESS, height*2);
+		obstacleContainer.addRectangle(0,WALL_THICKNESS, WALL_THICKNESS*2, height*2);
 
 		//Initialize right wall
-		obstacleContainer.addRectangle(width-WALL_THICKNESS, WALL_THICKNESS, WALL_THICKNESS, height*2);
+		obstacleContainer.addRectangle(width-WALL_THICKNESS, WALL_THICKNESS, 2*WALL_THICKNESS, height*2);
 
 		//Initialize lowest vertical wall
 		obstacleContainer.addRectangle(width/4, height*0.1f, WALL_THICKNESS, height*0.2f);
@@ -135,6 +135,9 @@ System.out.println(width);
 		//Initialize fourth lowest vertical wall
 		obstacleContainer.addRectangle(width*0.6f, height*0.9f, WALL_THICKNESS, height*0.6f);
 
+		//Initialize last-minute vertical wall
+		obstacleContainer.addRectangle(width*0.5f, height*0.1f, WALL_THICKNESS, height*0.3f);
+
 		//Initialize leftmost horizontal wall
 		obstacleContainer.addRectangle(width*0.1f, height*0.6f, width*0.25f, WALL_THICKNESS);
 
@@ -143,6 +146,9 @@ System.out.println(width);
 
 		//Initialize third-to-left horizontal wall
 		obstacleContainer.addRectangle(width*0.845f, height*0.4f, width*0.25f, WALL_THICKNESS);
+
+		//Initialize last minute horizontal wall
+		obstacleContainer.addRectangle(width*0.9f, height*0.75f, width*0.15f, WALL_THICKNESS);
 
 
 
