@@ -262,6 +262,7 @@ public class GameMode implements ModeController {
 				shipRed.setCarriedObject(true, deadBody);
 		} else if (redController.getOrDropObject() && ticks % 10 == 0&&
 				shipRed.isCarryingObject() ) {
+
 			shipRed.setCarriedObject(false, null);
 		}
 		ticks++;
