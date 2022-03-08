@@ -92,6 +92,20 @@ public class GameMode implements ModeController {
 	/** Offset for the oxygen message on the screen */
 	private static final float TEXT_OFFSET   = 40.0f;
 
+	/** Variable to track the game state (SIMPLE FIELDS) */
+	private GameState gameState;
+	/**
+	 * Track the current state of the game for the update loop.
+	 */
+	public enum GameState {
+		/** Before the game has started */
+		INTRO,
+		/** While we are playing the game */
+		PLAY,
+		/** When the ships is dead (but shells still work) */
+		OVER
+	}
+
 	/**
 	 * Creates a new game with a playing field of the given size.
 	 *
@@ -166,7 +180,7 @@ System.out.println(width);
 		// Create the two ships and place them across from each other.
 
         // Diver
-		shipRed  = new Ship(width*(1.0f / 3.0f), height*(1.0f / 2.0f), 0, 40, 1, 100);
+		shipRed  = new Ship(width*(1.0f / 3.0f), height*(1.0f / 2.0f), 0, 40, 1, 60);
 		shipRed.setFilmStrip(new FilmStrip(shipTexture,SHIP_ROWS,SHIP_COLS,SHIP_SIZE));
 //		shipRed.setTargetTexture(targetTexture);
 		shipRed.setColor(new Color(1.0f, 0.25f, 0.25f, 1.0f));  // Red, but makes texture easier to see
@@ -178,6 +192,7 @@ System.out.println(width);
 		redController  = new InputController(1);
         physicsController = new CollisionController();
 
+		gameState = GameState.INTRO;
         displayFont = assets.getEntry("times", BitmapFont.class);
 	}
 
@@ -212,6 +227,27 @@ System.out.println(width);
 
 		// updates oxygen level
 		shipRed.changeOxygenLevel(redController.getOxygenRate());
+		// Test whether to reset the game.
+		switch (gameState) {
+			case INTRO:
+				gameState = GameState.PLAY;
+				break;
+			case OVER:
+				if (redController.didReset()) {
+					gameState = GameState.PLAY;
+					shipRed.setOxygenLevel(shipRed.MAX_OXYGEN);
+					shipRed.setPosition(shipRed.getStartPosition());
+				}
+				break;
+			case PLAY:
+				if(shipRed.getOxygenLevel() <= 0 || deadBody.isDestroyed()) {
+					gameState = GameState.OVER;
+				}
+				break;
+			default:
+				break;
+		}
+
 	}
 
 	Vector2 mapPosition = new Vector2(0f,0f);
@@ -259,11 +295,13 @@ System.out.println(width);
 		canvas.drawText("Light Level: "+redController.getLightRange()*lightRadius, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
 		canvas.drawText("Speed: "+redController.getSpeed()*defSpeed, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*3);
 
-		if(deadBody.isDestroyed()){
-
-			canvas.drawTextCentered("You Won!",displayFont, 0);
-			canvas.drawTextCentered("Press R to Restart", displayFont,-50 );
+		if(deadBody.isDestroyed()) {
+			canvas.drawTextCentered("You Won!", displayFont, 0);
 		}
+		if(gameState == GameState.OVER) {
+			canvas.drawTextCentered("Press R to Restart", displayFont, -50);
+		}
+
 	}
 
 	/**
