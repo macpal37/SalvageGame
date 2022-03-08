@@ -40,7 +40,7 @@
         "magFilter": "linear"
       },
       "exit": {
-        "file": "images/exit.png",
+        "file": "images/start.png",
         "minFilter": "linear",
         "magFilter": "linear"
       }
