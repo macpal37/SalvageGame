@@ -63,14 +63,12 @@ public class GameMode implements ModeController {
 	/** Texture of light*/
 	private Texture light;
 	/** Radius of Light*/
-	private float lightRadius = 1f;
-
+	private float lightRadius = .95f;
+	private  float defSpeed = .7f;
 	private Texture bodyTexture;
 
 
     // Instance variables
-	/** Read input for blue player from keyboard or game pad (CONTROLLER CLASS) */
-	protected InputController blueController;
 	/** Read input for red player from keyboard or game pad (CONTROLLER CLASS) */
 	protected InputController redController;
     /** Handle collision and physics (CONTROLLER CLASS) */
@@ -174,11 +172,10 @@ System.out.println(width);
 		shipRed.setColor(new Color(1.0f, 0.25f, 0.25f, 1.0f));  // Red, but makes texture easier to see
 
 		// Body
-		deadBody = new DeadBody(100,100,1);
+		deadBody = new DeadBody(1200,575,0.5f);
 		deadBody.setTexture(bodyTexture);
 		// Create the input controllers.
 		redController  = new InputController(1);
-		blueController = new InputController(0);
         physicsController = new CollisionController();
 
         displayFont = assets.getEntry("times", BitmapFont.class);
@@ -197,8 +194,7 @@ System.out.println(width);
 	public void update() {
 		// Read the keyboard for each controller.
 		redController.readInput ();
-		blueController.readInput ();
-
+		shipRed.setSpeed(redController.getSpeed()*defSpeed);
 
 		// Move the ships forward (ignoring collisions)
 		shipRed.move(redController.getForward(),   redController.getUp());
@@ -211,8 +207,11 @@ System.out.println(width);
 
 		physicsController.checkForCollision(shipRed, photons);
 
+		physicsController.checkForObjectCollision(shipRed,deadBody);
+
+
 		// updates oxygen level
-		shipRed.changeOxygenLevel((int)blueController.getOxygenRate());
+		shipRed.changeOxygenLevel((int)redController.getOxygenRate());
 	}
 
 	Vector2 mapPosition = new Vector2(0f,0f);
@@ -232,7 +231,9 @@ System.out.println(width);
 
 
 		canvas.drawMap(background, true,background.getWidth()/2,background.getHeight()/2-shipRed.getDiameter()/2);
-		// Draw Body
+
+		// Draw Dead Body
+		if(!deadBody.isDestroyed())
 		deadBody.draw(canvas);
 
 		// First drawing pass (ships + shadows)
@@ -248,15 +249,21 @@ System.out.println(width);
 		float diverX = shipRed.getPosition().x+shipRed.getDiameter()/2;
 		float diverY = shipRed.getPosition().y+shipRed.getDiameter()/2;
 
-		canvas.drawLight(light, diverX,diverY,lightRadius*3);
-
+		canvas.drawLight(light, diverX,diverY,redController.getLightRange()*lightRadius);
 
 		//draw text
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
 		String msg = "Oxygen level: " + shipRed.getOxygenLevel();
 		System.out.println(msg);
 		canvas.drawText(msg, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET);
+		canvas.drawText("Light Level: "+redController.getLightRange()*lightRadius, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
+		canvas.drawText("Speed: "+redController.getSpeed()*defSpeed, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*3);
 
+		if(deadBody.isDestroyed()){
+
+			canvas.drawTextCentered("You Won!",displayFont, 0);
+			canvas.drawTextCentered("Press R to Restart", displayFont,-50 );
+		}
 	}
 
 	/**
@@ -265,7 +272,9 @@ System.out.println(width);
 	public void dispose() {
 		// Garbage collection here is sufficient.  Nothing to do
 	}
-	
+
+
+
 	/**
 	 * Resize the window for this player mode to the given dimensions.
 	 *

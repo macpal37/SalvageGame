@@ -45,10 +45,10 @@ public class InputController {
 	private float horizontal;
 
 	/** How wide is the field of vision? */
-	private float lightRange;
+	private float lightRange =1 ;
 
 	/** How fast are we going? */
-	private float speed;
+	private float speed =1;
 
 	/** How fast are we depleting oxygen? */
 	private float oxygenRate;
@@ -219,16 +219,16 @@ public class InputController {
 
 			// change lighting range
 			if (Gdx.input.isKeyPressed(light_increase) && !Gdx.input.isKeyPressed(light_decrease)) {
-				lightRange = 1;
+				lightRange +=.01f;
 			} else if (Gdx.input.isKeyPressed(light_decrease) && !Gdx.input.isKeyPressed(light_increase)) {
-				lightRange = -1;
+				lightRange -=0.01f;
 			}
 
 			// change speed of movement
 			if (Gdx.input.isKeyPressed(speed_increase) && !Gdx.input.isKeyPressed(speed_decrease)) {
-				speed = 1;
+				speed += .001f;
 			} else if (Gdx.input.isKeyPressed(speed_decrease) && !Gdx.input.isKeyPressed(speed_increase)) {
-				speed = -1;
+				speed -= .001f;
 			}
 
 			// change rate of oxygen depletion
@@ -241,25 +241,7 @@ public class InputController {
 			if (Gdx.input.isKeyPressed(reset)) {
 				resetOxygen = true;
 			}
-            // Shooting
-//			if (Gdx.input.isKeyPressed(shoot)) {
-//                pressedFire = true;
-//			}
 
-//			if (player == 0) {
-//				int m_shoot = Input.Buttons.LEFT;
-
-				// move up/down and left/right
-//				if (Gdx.input.getInputProcessor().mouseMoved(0, 0)) {
-//					forward -= Gdx.input.getDeltaY() * 0.3f;
-//					turning -= Gdx.input.getDeltaX() * 0.1f;
-//				}
-
-				// Mouse Support
-//				if (Gdx.input.isButtonPressed(m_shoot)) {
-//					pressedFire = true;
-//				}
-//			}
 			
 		}
     }

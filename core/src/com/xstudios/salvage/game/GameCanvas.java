@@ -878,5 +878,23 @@ public class GameCanvas {
 
 
 	}
+	/**
+	 * Draws text centered on the screen.
+	 *
+	 * @param text The string to draw
+	 * @param font The font to use
+	 * @param offset The y-value offset from the center of the screen.
+	 */
+	public void drawTextCentered(String text, BitmapFont font, float offset) {
+		if (!active) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+			return;
+		}
 
+		GlyphLayout layout = new GlyphLayout(font,text);
+		float x = (getWidth()  - layout.width) / 2.0f;
+		float y = (getHeight() + layout.height) / 2.0f;
+		font.setColor(Color.WHITE);
+		font.draw(spriteBatch, layout, x, y+offset);
+	}
 }

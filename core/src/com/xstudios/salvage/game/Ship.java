@@ -76,6 +76,8 @@ public class Ship {
 
     protected int type;
 
+	protected  float speed =1f;
+
 	// Asset references.  These should be set by GameMode
 	/** Reference to ship's sprite for drawing */
     private FilmStrip shipSprite;
@@ -124,17 +126,11 @@ public class Ship {
 //    	return targetTexture;
 //    }
     
-    /**
-     * Sets the image texture for the target reticule
-     * 
-     * This value should be loaded by the GameMode and set there. However, we
-     * have to be prepared for this to be null at all times
-     *
-     * param value the image texture for the target reticule
-     */
-//    public void setTargetTexture(Texture value) {
-//    	targetTexture = value;
-//    }
+
+
+	public void setSpeed(float speed){
+		this.speed = speed;
+	}
 
 	/**
 	 * Returns the position of this ship.
@@ -338,7 +334,7 @@ public class Ship {
 //		}
 		// Gradually slow the ship down
 		vel.scl(FORWARD_DAMPING);
-
+		vel.scl(speed);
 		// Move the ship, updating it.
 		// Adjust the angle by the change in angle
 		ang += dang;  // INVARIANT: -360 < ang < 720                                                   
