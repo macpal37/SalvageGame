@@ -74,6 +74,7 @@ public class GameMode implements ModeController {
 	private float MAX_DIST = 30f;
 
 	private int ticks = 0;
+	private boolean wonGame = false;
 
 
     // Instance variables
@@ -282,6 +283,9 @@ public class GameMode implements ModeController {
 				if(shipRed.getOxygenLevel() <= 0 ||
 						(shipRed.isCarryingObject() && temp.len() <= MAX_DIST)) {
 					gameState = GameState.OVER;
+					if(shipRed.isCarryingObject() && temp.len() <= MAX_DIST){
+						wonGame = true;
+					}
 //					deadBody.setDestroyed(false);
 				} else if (redController.didReset()) {
 					resetGame();
@@ -302,6 +306,7 @@ public class GameMode implements ModeController {
 		shipRed.setPosition(shipRed.getStartPosition());
 		deadBody.setPosition(deadBody.getStartPosition().cpy());
 		shipRed.setCarriedObject(false,null);
+		wonGame = false;
 	}
 	Vector2 mapPosition = new Vector2(0f,0f);
 
@@ -350,7 +355,7 @@ public class GameMode implements ModeController {
 		canvas.drawText("Speed: "+redController.getSpeed()*defSpeed, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*4);
 		canvas.drawText("Oxygen Depletion Rate: "+redController.getOxygenRate(), displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
 		canvas.drawText("Carrying Body: "+shipRed.isCarryingObject(), displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*5);
-		if(deadBody.isDestroyed()) {
+		if(wonGame) {
 			canvas.drawTextCentered("You Won!", displayFont, 0);
 		}
 		if(gameState == GameState.OVER) {
