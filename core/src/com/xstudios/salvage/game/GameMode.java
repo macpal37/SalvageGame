@@ -63,7 +63,7 @@ public class GameMode implements ModeController {
 	/** Texture of light*/
 	private Texture light;
 	/** Radius of Light*/
-	private float lightRadius = .95f;
+	private float lightRadius = 0.95f;
 	private  float defSpeed = .7f;
 	private Texture bodyTexture;
 
@@ -103,7 +103,6 @@ public class GameMode implements ModeController {
 	 * @param assets	The asset directory containing all the loaded assets
 	 */
 	public GameMode(float width, float height, AssetDirectory assets) {
-System.out.println(width);
 		// Extract the assets from the asset directory.  All images are textures.
 		background = assets.getEntry("background", Texture.class );
 		shipTexture = assets.getEntry( "diver", Texture.class );
@@ -118,41 +117,47 @@ System.out.println(width);
 
 		//Initialize top wall
 		obstacleContainer.addRectangle(0, height, width*2,2* WALL_THICKNESS);
-
-		//Initialize bottom wall
+////
+////		//Initialize bottom wall
 		obstacleContainer.addRectangle(0,0,width*2, 2*WALL_THICKNESS);
-
-		//Initialize left wall
+////
+////		//Initialize left wall
 		obstacleContainer.addRectangle(0,WALL_THICKNESS, WALL_THICKNESS*2, height*2);
-
-		//Initialize right wall
+////
+////		//Initialize right wall
 		obstacleContainer.addRectangle(width-WALL_THICKNESS, WALL_THICKNESS, 2*WALL_THICKNESS, height*2);
 
+//		float wallHeight = height/3;
+//
+		obstacleContainer.addRectangle(width/4, height*0.4f, WALL_THICKNESS, height*0.2f);
+
+//		obstacleContainer.addRectangle(100, 100, 240, 440);
+
 		//Initialize lowest vertical wall
-		obstacleContainer.addRectangle(width/4, height*0.1f, WALL_THICKNESS, height*0.2f);
-
-		//Initialize second-lowest vertical wall
+		obstacleContainer.addRectangle(150, 150, WALL_THICKNESS, height*0.2f);
+//
+//		//Initialize second-lowest vertical wall
 		obstacleContainer.addRectangle(width*0.75f, height*0.3f, WALL_THICKNESS, height*0.2f);
-
-		//Initialize third lowest vertical wall
+//
+//		//Initialize third lowest vertical wall
 		obstacleContainer.addRectangle(width/4, height*0.6f, WALL_THICKNESS, height*0.3f);
-
-		//Initialize fourth lowest vertical wall
+//
+//		//Initialize fourth lowest vertical wall
 		obstacleContainer.addRectangle(width*0.6f, height*0.9f, WALL_THICKNESS, height*0.6f);
-
-		//Initialize last-minute vertical wall
+//
+//		//Initialize last-minute vertical wall
 		obstacleContainer.addRectangle(width*0.5f, height*0.1f, WALL_THICKNESS, height*0.3f);
-
-		//Initialize leftmost horizontal wall
+//
+//		//Initialize leftmost horizontal wall
 		obstacleContainer.addRectangle(width*0.1f, height*0.6f, width*0.25f, WALL_THICKNESS);
-
-		//Initialize second-to-left horizontal wall
+//
+//		//Initialize second-to-left horizontal wall
 		obstacleContainer.addRectangle(width*0.305f, height*0.45f,width*0.15f, WALL_THICKNESS);
-
-		//Initialize third-to-left horizontal wall
+//
+//		//Initialize third-to-left horizontal wall
 		obstacleContainer.addRectangle(width*0.845f, height*0.4f, width*0.25f, WALL_THICKNESS);
-
-		//Initialize last minute horizontal wall
+//
+//		//Initialize last minute horizontal wall
 		obstacleContainer.addRectangle(width*0.9f, height*0.75f, width*0.15f, WALL_THICKNESS);
 
 
@@ -166,7 +171,7 @@ System.out.println(width);
 		// Create the two ships and place them across from each other.
 
         // Diver
-		shipRed  = new Ship(width*(1.0f / 3.0f), height*(1.0f / 2.0f), 0, 40, 1, 100);
+		shipRed  = new Ship(100 ,100, 0, 40, 1, 100);
 		shipRed.setFilmStrip(new FilmStrip(shipTexture,SHIP_ROWS,SHIP_COLS,SHIP_SIZE));
 //		shipRed.setTargetTexture(targetTexture);
 		shipRed.setColor(new Color(1.0f, 0.25f, 0.25f, 1.0f));  // Red, but makes texture easier to see
@@ -175,7 +180,7 @@ System.out.println(width);
 		deadBody = new DeadBody(1200,575,0.5f);
 		deadBody.setTexture(bodyTexture);
 		// Create the input controllers.
-		redController  = new InputController(1);
+		redController  = new InputController(0);
         physicsController = new CollisionController();
 
         displayFont = assets.getEntry("times", BitmapFont.class);
@@ -209,6 +214,11 @@ System.out.println(width);
 
 		physicsController.checkForObjectCollision(shipRed,deadBody);
 
+		java.awt.Rectangle hit = obstacleContainer.getIntersectingObstacle(shipRed.getHitbox());
+		if(hit!=null){
+//			System.out.println("Aalskfashdfbasbdfjhasbdfa");
+			physicsController.checkForCollision(shipRed,hit);
+		}
 
 		// updates oxygen level
 		shipRed.changeOxygenLevel((int)redController.getOxygenRate());
@@ -228,7 +238,6 @@ System.out.println(width);
 	public void draw(GameCanvas canvas) {
 		// could also use canvas.setColor()
 		canvas.setBlendState(GameCanvas.BlendState.ALPHA_BLEND);
-
 
 		canvas.drawMap(background, true,background.getWidth()/2,background.getHeight()/2-shipRed.getDiameter()/2);
 
@@ -254,10 +263,11 @@ System.out.println(width);
 		//draw text
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
 		String msg = "Oxygen level: " + shipRed.getOxygenLevel();
-		System.out.println(msg);
+//		System.out.println(msg);
 		canvas.drawText(msg, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET);
 		canvas.drawText("Light Level: "+redController.getLightRange()*lightRadius, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
 		canvas.drawText("Speed: "+redController.getSpeed()*defSpeed, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*3);
+
 
 		if(deadBody.isDestroyed()){
 

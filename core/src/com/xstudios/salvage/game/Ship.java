@@ -24,9 +24,13 @@
  */
 package com.xstudios.salvage.game;
 
-import com.badlogic.gdx.math.*;
+
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.xstudios.salvage.util.*;
+
+import java.awt.*;
 
 /**
  * Model class representing an alien ship.
@@ -61,7 +65,9 @@ public class Ship {
 	
 	/** Mass/weight of the ship. Used in collisions. */
 	private float mass;
-	
+
+	private Rectangle hitbox;
+
 	// The following are protected, because they have no accessors
 //	/** Offset of the ships target */
 //    protected Vector2 tofs;
@@ -270,7 +276,11 @@ public class Ship {
 	public void changeOxygenLevel(int delta) {
 		this.oxygen_level += delta;
 	}
-	
+
+	public Rectangle getHitbox (){
+		return  hitbox;
+	}
+
 	/**
 	 * Creates a new ship at the given location with the given facing.
 	 *
@@ -283,7 +293,7 @@ public class Ship {
         this.pos = new Vector2(x,y);
         this.ang = ang;
         this.size = size;
-
+		hitbox = new Rectangle((int)x,(int)y,size,size);
         // We start at rest.
         vel = new Vector2();
         dang = 0.0f;
@@ -345,8 +355,6 @@ public class Ship {
 
 		// Move the ship position by the ship velocity
 		pos.add(vel);
-
-
     }
 
 	/**
@@ -385,7 +393,8 @@ public class Ship {
 		// For placement purposes, put origin in center.
         float ox = 0.5f * shipSprite.getRegionWidth();
         float oy = 0.5f * shipSprite.getRegionHeight();
-
+		hitbox.x=(int)pos.x-(int)getDiameter()/2;
+		hitbox.y=(int)pos.y-(int)getDiameter()/2;
         // How much to rotate the image
         float rotate = -(90+ang);
 

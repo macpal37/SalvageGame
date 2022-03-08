@@ -67,40 +67,28 @@ public class CollisionController {
 	 *  collidee. Therefore, you should only call this method for one of the 
 	 *  ships, not both. Otherwise, you are processing the same collisions twice.
 	 * 
-	 *  @param ship1 First ship in candidate collision
-	 *  @param ship2 Second ship in candidate collision
+	 *  @param ship First ship in candidate collision
+	 *  @param wall Second ship in candidate collision
 	 */
-	public void checkForCollision(Ship ship1, Ship ship2) {
-		// Calculate the normal of the (possible) point of collision
-		normal.set(ship1.getPosition()).sub(ship2.getPosition());
-		float distance = normal.len();
-		float impactDistance = (ship1.getDiameter() + ship2.getDiameter()) / 2f;
-		normal.nor();
+	public void checkForCollision(Ship ship, java.awt.Rectangle wall) {
+		float rad = ship.getDiameter()/2;
+		float xrad = wall.width/2;
+		float yrad = wall.height/2;
 
-		// If this normal is too small, there was a collision
-		if (distance < impactDistance) {
-			// "Roll back" time so that the ships are barely touching (e.g. point of impact).
-			// We need to use temp, as the method scl would change the contents of normal!
-			temp.set(normal).scl((impactDistance - distance) / 2);  // normal * (d1 - dist)/2
-			ship1.getPosition().add(temp);
 
-			temp.set(normal).scl((impactDistance - distance) / 2);  // normal * (d2 - dist)/2
-			ship2.getPosition().sub(temp);
 
-			// Now it is time for Newton's Law of Impact.
-			// Convert the two velocities into a single reference frame
-			velocity.set(ship1.getVelocity()).sub(ship2.getVelocity()); // v1-v2
+		if (ship.getPosition().x-wall.x<0){
+			ship.move(-1,0);
+		}else
+		if (ship.getPosition().x-wall.x>0){
+			ship.move(1,0);
+		}
 
-			// Compute the impulse (see Essential Math for Game Programmers)
-			float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) /
-							(normal.dot(normal) * (1 / ship1.getMass() + 1 / ship2.getMass()));
-
-			// Change velocity of the two ships using this impulse
-			temp.set(normal).scl(impulse / ship1.getMass());
-			ship1.getVelocity().add(temp);
-
-			temp.set(normal).scl(impulse / ship2.getMass());
-			ship2.getVelocity().sub(temp);
+		if (ship.getPosition().y-wall.y<0){
+			ship.move(0,-1);
+		}else
+		if (ship.getPosition().y-wall.y>0){
+			ship.move(0,1);
 		}
 	}
 
@@ -120,9 +108,7 @@ public class CollisionController {
 			ship.getPosition().set(bounds.x+rad,ship.getPosition().y);
 		} else if (ship.getPosition().x >= bounds.width-rad) {
 			ship.getPosition().set(bounds.width-rad,ship.getPosition().y);
-
 		}
-
 		if (ship.getPosition().y <= bounds.y+rad) {
 			ship.getPosition().set(ship.getPosition().x,bounds.y+rad);
 		} else if (ship.getPosition().y >= bounds.height-rad) {
