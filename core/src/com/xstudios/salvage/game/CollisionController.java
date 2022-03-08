@@ -1,21 +1,21 @@
-/* 
+/*
  * CollisionController.java
- * 
- * Unless you are making a point-and-click adventure game, every single 
- * game is going to need some sort of collision detection.  In a later 
+ *
+ * Unless you are making a point-and-click adventure game, every single
+ * game is going to need some sort of collision detection.  In a later
  * lab, we will see how to do this with a physics engine. For now, we use
- * custom physics. 
- * 
+ * custom physics.
+ *
  * This class is an example of subcontroller.  A lot of this functionality
  * could go into GameMode (which is the primary controller).  However, we
  * have factored it out into a separate class because it makes sense as a
  * self-contained subsystem.  Note that this class needs to be aware of
  * of all the models, but it does not store anything as fields.  Everything
  * it needs is passed to it by the parent controller.
- * 
+ *
  * This class is also an excellent example of the perils of heap allocation.
  * Because there is a lot of vector mathematics, we want to make heavy use
- * of the Vector2 class.  However, every time you create a new Vector2 
+ * of the Vector2 class.  However, every time you create a new Vector2
  * object, you must allocate to the heap.  Therefore, we determine the
  * minimum number of objects that we need and pre-allocate them in the
  * constructor.
@@ -31,8 +31,8 @@ import com.badlogic.gdx.utils.Array;
 
 /**
  * Controller implementing simple game physics.
- *  
- * This is the simplest of physics engines.  In later labs, we 
+ *
+ * This is the simplest of physics engines.  In later labs, we
  * will see how to work with more interesting engines.
  */
 public class CollisionController {
@@ -86,16 +86,22 @@ public class CollisionController {
 		float yrad = wall.height / 2;
 
 
-		if (ship.getPosition().x - wall.x < 0 && y == 0) {
+		int a = 0;
+		if (ship.getPosition().x - wall.x < 0 && x==1) {
 			ship.move(-1, 0);
-		} else if (ship.getPosition().x - wall.x > 0 && y == 0) {
+			ship.move(-a, 0);
+		}else
+		if (ship.getPosition().x - wall.x > 0 && x==-1) {
 			ship.move(1, 0);
+			ship.move(a, 0);
 		}
 
-		if (ship.getPosition().y - wall.y < 0 && x == 0) {
+		if (ship.getPosition().y - wall.y < 0 && y == 1) {
 			ship.move(0, -1);
-		} else if (ship.getPosition().y - wall.y > 0 && x == 0) {
+			ship.move(0, -a);
+		} else if (ship.getPosition().y - wall.y > 0 && y == -1) {
 			ship.move(0, 1);
+			ship.move(0, a);
 		}
 	}
 
@@ -136,4 +142,3 @@ public class CollisionController {
 
 	}
 }
-

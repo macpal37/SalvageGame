@@ -96,7 +96,7 @@ public class ObstacleContainer {
             float sx = (float)wall.width / wallTexture.getWidth();
             float sy = (float)wall.height / wallTexture.getHeight();
 
-            canvas.draw(wallTexture, tint, ox, oy, x, y, 0f, sx, sy);
+            canvas.draw(wallTexture, Color.WHITE, ox, oy, x, y, 0f, sx, sy);
 //            float ox = wall.width/2;
 //            float oy = 0.8f;
 //            float x = wall.x;
