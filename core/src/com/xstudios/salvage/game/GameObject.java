@@ -32,6 +32,8 @@ public abstract class GameObject {
     // Attributes for all game objects
     /** Object position (centered on the texture middle) */
     protected Vector2 position;
+    /** Object start position (centered on the texture middle) */
+    protected Vector2 start_position;
     /** Object velocity vector */
     protected Vector2 velocity;
     /** Reference to texture origin */
@@ -66,6 +68,40 @@ public abstract class GameObject {
         return position;
     }
 
+    /**
+     * sets the position of this object (e.g. location of the center pixel)
+     *
+     * The value returned is a reference to the position vector, which may be
+     * modified freely.
+     *
+     */
+    public void setPosition(Vector2 v) {
+         position = v;
+    }
+
+
+    /**
+     * Returns the position of this object (e.g. location of the center pixel)
+     *
+     * The value returned is a reference to the position vector, which may be
+     * modified freely.
+     *
+     * @return the position of this object
+     */
+    public Vector2 getStartPosition() {
+        return start_position;
+    }
+
+    /**
+     * sets the position of this object (e.g. location of the center pixel)
+     *
+     * The value returned is a reference to the position vector, which may be
+     * modified freely.
+     *
+     */
+    public void setStartPosition(Vector2 v) {
+        start_position = v;
+    }
     /**
      * Returns the x-coordinate of the object position (center).
      *
@@ -203,6 +239,7 @@ public abstract class GameObject {
      */
     public GameObject() {
         position = new Vector2(0.0f, 0.0f);
+        start_position = new Vector2(0.0f, 0.0f);
         velocity = new Vector2(0.0f, 0.0f);
         radius = 0.0f;
         destroyed = false;

@@ -130,15 +130,16 @@ public class CollisionController {
 		}
 	}
 
-	public void checkForObjectCollision(Ship ship, GameObject obj){
+	public boolean checkForObjectCollision(Ship ship, GameObject obj){
 
 		float diverX = ship.getPosition().x;
 		float diverY = ship.getPosition().y;
 		if(diverX >= obj.getX()-obj.getRadius() && diverX <= obj.getX()+obj.getRadius()&&
 				diverY >= obj.getY()-obj.getRadius() && diverY <= obj.getY()+obj.getRadius()){
-			obj.setDestroyed(true);
+			//obj.setDestroyed(true);
+			return true;
 		}
-
+	return false;
 
 	}
 

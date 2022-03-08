@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.audio.SoundBuffer;
 import com.xstudios.salvage.util.*;
@@ -66,6 +67,12 @@ public class GameMode implements ModeController {
 	private float lightRadius = .95f;
 	private  float defSpeed = .7f;
 	private Texture bodyTexture;
+
+	private Vector2 temp;
+
+	private float MAX_DIST = 30f;
+
+	private int ticks = 0;
 
 
     // Instance variables
@@ -189,11 +196,12 @@ System.out.println(width);
 		deadBody = new DeadBody(1200,575,0.5f);
 		deadBody.setTexture(bodyTexture);
 		// Create the input controllers.
-		redController  = new InputController(1);
+		redController  = new InputController(0);
         physicsController = new CollisionController();
 
 		gameState = GameState.INTRO;
         displayFont = assets.getEntry("times", BitmapFont.class);
+		temp = new Vector2();
 	}
 
 	/** 
@@ -222,11 +230,22 @@ System.out.println(width);
 
 		physicsController.checkForCollision(shipRed, photons);
 
-		physicsController.checkForObjectCollision(shipRed,deadBody);
+//		physicsController.checkForObjectCollision(shipRed,deadBody);
 
 
 		// updates oxygen level
 		shipRed.changeOxygenLevel(redController.getOxygenRate());
+
+		if(redController.getOrDropObject() &&ticks % 10 == 0&&
+				!shipRed.isCarryingObject() &&
+				physicsController.checkForObjectCollision(shipRed, deadBody)){
+
+				shipRed.setCarriedObject(true, deadBody);
+		} else if (redController.getOrDropObject() && ticks % 10 == 0&&
+				shipRed.isCarryingObject() ) {
+			shipRed.setCarriedObject(false, null);
+		}
+		ticks++;
 		// Test whether to reset the game.
 		switch (gameState) {
 			case INTRO:
@@ -235,14 +254,21 @@ System.out.println(width);
 			case OVER:
 				if (redController.didReset()) {
 					gameState = GameState.PLAY;
-					shipRed.setOxygenLevel(shipRed.MAX_OXYGEN);
-					shipRed.setPosition(shipRed.getStartPosition());
+//					shipRed.setOxygenLevel(shipRed.MAX_OXYGEN);
+//					shipRed.setPosition(shipRed.getStartPosition());
+					resetGame();
 				}
 				break;
 			case PLAY:
-				if(shipRed.getOxygenLevel() <= 0 || deadBody.isDestroyed()) {
+				temp.set(shipRed.getPosition()).sub(shipRed.getStartPosition());
+				if(shipRed.getOxygenLevel() <= 0 ||
+						(shipRed.isCarryingObject() && temp.len() <= MAX_DIST)) {
 					gameState = GameState.OVER;
-					deadBody.setDestroyed(false);
+//					deadBody.setDestroyed(false);
+				} else if (redController.didReset()) {
+					resetGame();
+//					shipRed.setOxygenLevel(shipRed.MAX_OXYGEN);
+//					shipRed.setPosition(shipRed.getStartPosition());
 				}
 				break;
 			default:
@@ -251,6 +277,12 @@ System.out.println(width);
 
 	}
 
+	private void resetGame(){
+		shipRed.setOxygenLevel(shipRed.MAX_OXYGEN);
+		shipRed.setPosition(shipRed.getStartPosition());
+		deadBody.setPosition(deadBody.getStartPosition().cpy());
+		shipRed.setCarriedObject(false,null);
+	}
 	Vector2 mapPosition = new Vector2(0f,0f);
 
 	/**
@@ -269,12 +301,13 @@ System.out.println(width);
 
 		canvas.drawMap(background, true,background.getWidth()/2,background.getHeight()/2-shipRed.getDiameter()/2);
 
-		// Draw Dead Body
-		if(!deadBody.isDestroyed())
-		deadBody.draw(canvas);
 
 		// First drawing pass (ships + shadows)
 		shipRed.drawShip(canvas);
+
+		// Draw Dead Body
+		if(!deadBody.isDestroyed())
+			deadBody.draw(canvas);
 
 		// Second drawing pass (photons)
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
@@ -293,8 +326,10 @@ System.out.println(width);
 		String msg = "Oxygen level: " + (int)shipRed.getOxygenLevel();
 		System.out.println(msg);
 		canvas.drawText(msg, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET);
-		canvas.drawText("Light Level: "+redController.getLightRange()*lightRadius, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
-		canvas.drawText("Speed: "+redController.getSpeed()*defSpeed, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*3);
+		canvas.drawText("Light Level: "+redController.getLightRange()*lightRadius, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*3);
+		canvas.drawText("Speed: "+redController.getSpeed()*defSpeed, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*4);
+		canvas.drawText("Oxygen Depletion Rate: "+redController.getOxygenRate(), displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
+		canvas.drawText("Carrying Body: "+shipRed.isCarryingObject(), displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*5);
 		if(deadBody.isDestroyed()) {
 			canvas.drawTextCentered("You Won!", displayFont, 0);
 		}

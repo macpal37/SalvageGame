@@ -9,6 +9,7 @@ public class DeadBody extends GameObject{
     public DeadBody(float x, float y,float scale){
         position.set(x,y);
         this.scale = scale;
+        start_position.set(x,y);
     }
 
     @Override
