@@ -70,46 +70,49 @@ public class CollisionController {
 	 * 
 	 *
 	 */
-	public void checkForCollision(Ship ship, ObstacleContainer o) {
-		// Calculate the normal of the (possible) point of collision
-		float diverX = ship.getPosition().x;
-		float diverY = ship.getPosition().y;
 
-		Array<Rectangle> obstacle = o.getAllObstacles();
 
-		for (int ii = 0; ii < obstacle.size; ii++) {
-			Rectangle wall = obstacle.get(ii);
-
-			normal.set(ship.getPosition()).sub(wall.getX(), wall.getY());
-
-			float distance = normal.len();
-
-			float impactDistanceW = (ship.getDiameter() + wall.getWidth()) / 2f;
-			float impactDistanceH = (ship.getDiameter() + wall.getHeight()) / 2f;
-
-			normal.nor();
-			float impactDistance;
-
-			if (impactDistanceW < impactDistanceH) impactDistance = impactDistanceW;
-			else impactDistance = impactDistanceH;
-
-			if (distance < impactDistance) {
-				temp.set(normal).scl((impactDistance - distance) / 2);
-				ship.getPosition().add(temp);
-
-				temp.set(normal).scl((impactDistance - distance) / 2);  // normal * (d2 - dist)/2
-				wall.getPosition(new Vector2(wall.getX(), wall.getY())).sub(temp);
-
-				velocity.set(ship.getVelocity()).sub(new Vector2(0, 0));
-
-				float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) /
-						(normal.dot(normal) * (1 / ship.getMass() + 1 / 3.0f));
-
-				temp.set(normal).scl(impulse / ship.getMass());
-				ship.getVelocity().add(temp);
-			}
-		}
-	}
+//
+//	public void checkForCollision(Ship ship, ObstacleContainer o) {
+//		// Calculate the normal of the (possible) point of collision
+//		float diverX = ship.getPosition().x;
+//		float diverY = ship.getPosition().y;
+//
+//		Array<Rectangle> obstacle = o.getAllObstacles();
+//
+//		for (int ii = 0; ii < obstacle.size; ii++) {
+//			Rectangle wall = obstacle.get(ii);
+//
+//			normal.set(ship.getPosition()).sub(wall.getX(), wall.getY());
+//
+//			float distance = normal.len();
+//
+//			float impactDistanceW = (ship.getDiameter() + wall.getWidth()) / 2f;
+//			float impactDistanceH = (ship.getDiameter() + wall.getHeight()) / 2f;
+//
+//			normal.nor();
+//			float impactDistance;
+//
+//			if (impactDistanceW < impactDistanceH) impactDistance = impactDistanceW;
+//			else impactDistance = impactDistanceH;
+//
+//			if (distance < impactDistance) {
+//				temp.set(normal).scl((impactDistance - distance) / 2);
+//				ship.getPosition().add(temp);
+//
+//				temp.set(normal).scl((impactDistance - distance) / 2);  // normal * (d2 - dist)/2
+//				wall.getPosition(new Vector2(wall.getX(), wall.getY())).sub(temp);
+//
+//				velocity.set(ship.getVelocity()).sub(new Vector2(0, 0));
+//
+//				float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) /
+//						(normal.dot(normal) * (1 / ship.getMass() + 1 / 3.0f));
+//
+//				temp.set(normal).scl(impulse / ship.getMass());
+//				ship.getVelocity().add(temp);
+//			}
+//		}
+//	}
 
 	/**
 	 * Nudge the ship to ensure it does not do out of view.
