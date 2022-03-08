@@ -232,9 +232,8 @@ public class InputController {
 			} else if (Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(up)) {
                 vertical = -1;
 			}
-			
             // Movement left/right
-			if (Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(right)) {
+			else if (Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(right)) {
                 horizontal = -1;
 			} else if (Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(left)) {
                 horizontal = 1;
