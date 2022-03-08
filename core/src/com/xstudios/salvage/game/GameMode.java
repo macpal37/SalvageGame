@@ -242,6 +242,7 @@ System.out.println(width);
 			case PLAY:
 				if(shipRed.getOxygenLevel() <= 0 || deadBody.isDestroyed()) {
 					gameState = GameState.OVER;
+					deadBody.setDestroyed(false);
 				}
 				break;
 			default:
@@ -294,7 +295,6 @@ System.out.println(width);
 		canvas.drawText(msg, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET);
 		canvas.drawText("Light Level: "+redController.getLightRange()*lightRadius, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
 		canvas.drawText("Speed: "+redController.getSpeed()*defSpeed, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*3);
-
 		if(deadBody.isDestroyed()) {
 			canvas.drawTextCentered("You Won!", displayFont, 0);
 		}
