@@ -366,7 +366,7 @@ public class GameMode implements ModeController {
 		canvas.drawText(msg, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET);
 		canvas.drawText("Light Level: "+redController.getLightRange()*lightRadius, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*3);
 		canvas.drawText("Speed: "+redController.getSpeed()*defSpeed, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*4);
-		canvas.drawText("Oxygen Depletion Rate: "+redController.getOxygenRate(), displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
+		canvas.drawText("Oxygen Depletion Rate: "+shipRed.getOxygenRate(), displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
 		canvas.drawText("Carrying Body: "+shipRed.isCarryingObject(), displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*5);
 		if(wonGame) {
 			canvas.drawTextCentered("You Won!", displayFont, 0);

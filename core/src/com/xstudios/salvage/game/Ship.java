@@ -85,6 +85,7 @@ public class Ship {
     protected int type;
 
 	protected  float speed =1f;
+	private float oxygen_rate;
 
 	// Asset references.  These should be set by GameMode
 	/** Reference to ship's sprite for drawing */
@@ -267,6 +268,17 @@ public class Ship {
 		return mass;
 	}
 
+
+	/**
+	 * Returns the rate of oxygen depletion of the ship.
+	 *
+	 *
+	 * @return the rate of oxygen depletion
+	 */
+	public float getOxygenRate() {
+		return oxygen_rate;
+	}
+
 	/**
 	 * Returns the diameter of the ship ship.
 	 *
@@ -292,6 +304,10 @@ public class Ship {
 	 */
 	public void changeOxygenLevel(float delta) {
 		this.oxygen_level += delta;
+		System.out.println("old rate: " + this.oxygen_rate);
+		System.out.println("change oxygen: " + delta);
+		this.oxygen_rate = delta;
+		System.out.println("new rate: " + this.oxygen_rate);
 		if(this.oxygen_level < 0) {
 			this.oxygen_level = 0;
 		}
@@ -345,7 +361,7 @@ public class Ship {
         vel = new Vector2();
         dang = 0.0f;
         mass = 1.0f;
-
+		oxygen_rate = -0.1f;
         // Currently no target sited.
 //        tofs = new Vector2();
         refire = 0;
@@ -383,13 +399,13 @@ public class Ship {
 			// Thrust key pressed; increase the ship velocity
 			if(up != restrict.y)
 			vel.add(0, up);
-			changeOxygenLevel(-.01f);
+			changeOxygenLevel(oxygen_rate * 1.4f);
 		}
 		if (forward != 0.0f) {
 			// Thrust key pressed; increase the ship velocity.
 			if(forward != restrict.x)
 			vel.add(forward, 0);
-			changeOxygenLevel(-.01f);
+			changeOxygenLevel(oxygen_rate * 1.4f);
 		}
 //		else {
 //			// Gradually slow the ship down
@@ -411,6 +427,7 @@ public class Ship {
 		if(carryingObject) {
 			carriedObject.setX(pos.x + CARRY_OFFSET_X);
 			carriedObject.setY(pos.y + CARRY_OFFSET_Y);
+			changeOxygenLevel(oxygen_rate * 1.7f);
 		}
     }
 
