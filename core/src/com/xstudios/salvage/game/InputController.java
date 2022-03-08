@@ -55,6 +55,8 @@ public class InputController {
 	private float MAX_SPEED =5;
 	private float MIN_SPEED =0.5f;
 
+	private int ticks = 0;
+
 	/** How fast are we depleting oxygen? */
 	private float oxygenRate = -.01f;
 
@@ -63,6 +65,12 @@ public class InputController {
 
 	/** Did we press the fire button? */
 	private boolean pressedFire;
+
+	private int debounce_time = 0;
+
+
+	/** Are we carrying an object? */
+	private boolean carryingObject;
 	
 	/** 
 	 * Returns the amount of horizontal forward movement.
@@ -127,6 +135,15 @@ public class InputController {
 	 */
 	public boolean didPressFire() {
 		return pressedFire;
+	}
+
+	/**
+	 * Returns whether we are carrying an object
+	 *
+	 * @return whether we are carrying an object.
+	 */
+	public boolean getOrDropObject() {
+		return carryingObject;
 	}
 	/**
 	 * Returns whether the reset button was pressed.
@@ -205,6 +222,7 @@ public class InputController {
 			oxygen_increase = Input.Keys.Y;
 			oxygen_decrease = Input.Keys.H;
 			reset = Input.Keys.R;
+			pick_up = Input.Keys.X;
 			
             // Convert keyboard state into game commands
             vertical = horizontal = 0;
@@ -260,6 +278,11 @@ public class InputController {
 				resetGame = false;
 			}
 
+			if (Gdx.input.isKeyPressed(pick_up)) {
+				carryingObject = true;
+			} else {
+				carryingObject = false;
+			}
 			
 		}
     }
