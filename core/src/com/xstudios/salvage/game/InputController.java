@@ -237,51 +237,53 @@ public class InputController {
             vertical = horizontal = 0;
             pressedFire = false;
 
-            // Movement forward/backward
+			// Movement forward/backward
+			if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down)) {
+				vertical = 1;
+			} else if (Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(up)) {
+				vertical = -1;
+			}
+
+			// Movement left/right
+			if (Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(right)) {
+				horizontal = -1;
+			} else if (Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(left)) {
+				horizontal = 1;
+			}
+
+			// change lighting range
+			if (Gdx.input.isKeyPressed(light_increase) && !Gdx.input.isKeyPressed(light_decrease)) {
+				if (lightRange < MAX_LIGHT_RANGE) {
+					lightRange += .01f;
+				}
+			} else if (Gdx.input.isKeyPressed(light_decrease) && !Gdx.input.isKeyPressed(light_increase)) {
+				if (lightRange > MIN_LIGHT_RANGE) {
+					lightRange -= 0.01f;
+				}
+			}
+
+			// change speed of movement
+			if (Gdx.input.isKeyPressed(speed_increase) && !Gdx.input.isKeyPressed(speed_decrease)) {
+				if (speed < MAX_SPEED) {
+					speed += .005f;
+				}
+			} else if (Gdx.input.isKeyPressed(speed_decrease) && !Gdx.input.isKeyPressed(speed_increase)) {
+				if (speed > MIN_SPEED) {
+					speed -= .005f;
+				}
+			}
+
+			// change rate of oxygen depletion
+			if (Gdx.input.isKeyPressed(oxygen_decrease) && !Gdx.input.isKeyPressed(oxygen_increase)) {
+				if (oxygenRate < -0.006) {
+					oxygenRate += 0.005;
+				}
+			} else if (Gdx.input.isKeyPressed(oxygen_increase) && !Gdx.input.isKeyPressed(oxygen_decrease)) {
+				oxygenRate -= 0.005;
+			}
+
+			// ticks to make toggling smoother
 			if (ticks % 5 == 0) {
-				if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down)) {
-					vertical = 1;
-				} else if (Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(up)) {
-					vertical = -1;
-				}
-
-				// Movement left/right
-				if (Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(right)) {
-					horizontal = -1;
-				} else if (Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(left)) {
-					horizontal = 1;
-				}
-
-				// change lighting range
-				if (Gdx.input.isKeyPressed(light_increase) && !Gdx.input.isKeyPressed(light_decrease)) {
-					if (lightRange < MAX_LIGHT_RANGE) {
-						lightRange += .01f;
-					}
-				} else if (Gdx.input.isKeyPressed(light_decrease) && !Gdx.input.isKeyPressed(light_increase)) {
-					if (lightRange > MIN_LIGHT_RANGE) {
-						lightRange -= 0.01f;
-					}
-				}
-
-				// change speed of movement
-				if (Gdx.input.isKeyPressed(speed_increase) && !Gdx.input.isKeyPressed(speed_decrease)) {
-					if (speed < MAX_SPEED) {
-						speed += .005f;
-					}
-				} else if (Gdx.input.isKeyPressed(speed_decrease) && !Gdx.input.isKeyPressed(speed_increase)) {
-					if (speed > MIN_SPEED) {
-						speed -= .005f;
-					}
-				}
-
-				// change rate of oxygen depletion
-				if (Gdx.input.isKeyPressed(oxygen_decrease) && !Gdx.input.isKeyPressed(oxygen_increase)) {
-					if (oxygenRate < -0.006) {
-						oxygenRate += 0.005;
-					}
-				} else if (Gdx.input.isKeyPressed(oxygen_increase) && !Gdx.input.isKeyPressed(oxygen_decrease)) {
-					oxygenRate -= 0.005;
-				}
 				// whether to reset oxygen or not
 				if (Gdx.input.isKeyPressed(reset)) {
 					resetGame = true;
