@@ -21,7 +21,7 @@
             "magFilter": "linear"
         },
         "diver": {
-            "file": "images/diver.png",
+            "file": "images/player.png",
             "minFilter": "linear",
             "magFilter": "linear"
         },

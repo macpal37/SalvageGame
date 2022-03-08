@@ -453,19 +453,22 @@ public class Ship {
 		hitbox.x=(int)pos.x-(int)getDiameter()/2;
 		hitbox.y=(int)pos.y-(int)getDiameter()/2;
         // How much to rotate the image
-        float rotate = -(90+ang);
+        float rotate = 0;
 
 		// Draw the shadow.  Make a translucent color.
 		// Position it offset by 10 so it can be seen.
-        float sx = pos.x+SHADOW_OFFSET;
-        float sy = pos.y+SHADOW_OFFSET;
+        float sx = pos.x-SHADOW_OFFSET;
+        float sy = pos.y-SHADOW_OFFSET;
 
         // Need to negate y scale because of coordinate access flip.
         // Draw the shadow first
 		float ship_scale = this.getDiameter() / 80;
-		canvas.draw(shipSprite, stint, ox, oy, sx, sy, rotate, ship_scale, ship_scale);
+		ship_scale = 1f;
+
+//		canvas.draw(shipSprite, stint, ox, oy, sx, sy, rotate, ship_scale, ship_scale);
 		// Then draw the ship
-		canvas.draw(shipSprite, tint, ox, oy, pos.x, pos.y, rotate, ship_scale, ship_scale);
+		canvas.drawExit(shipSprite.getTexture(),pos.x,pos.y,0.1f);
+//		canvas.draw(shipSprite, tint, ox, oy, pos.x, pos.y, rotate, ship_scale, ship_scale);
 	}
 
 	/**

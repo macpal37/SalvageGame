@@ -563,40 +563,6 @@ public class GameCanvas {
 		spriteBatch.setColor(tint);
 		spriteBatch.draw(region,region.getRegionWidth(),region.getRegionHeight(),local);
 
-
-		// could use just one operator (<), and change the value to a negative
-		/*int bound_conds_met = 0;
-		float xpos = 0;
-		float ypos = 0;
-		if (x - ox < 0){
-			bound_conds_met += 1;
-			xpos = this.width + x;
-			computeTransform(ox, oy, xpos, y, angle, sx, sy);
-			spriteBatch.draw(region,region.getRegionWidth(),region.getRegionHeight(),local);
-		}
-		if (x + ox > this.width){
-			bound_conds_met += 1;
-			xpos = -this.width + x;
-			computeTransform(ox, oy, xpos, y, angle, sx, sy);
-			spriteBatch.draw(region,region.getRegionWidth(),region.getRegionHeight(),local);
-		}
-		if (y - oy < 0){
-			bound_conds_met += 1;
-			ypos = this.height + y;
-			computeTransform(ox, oy, x, ypos, angle, sx, sy);
-			spriteBatch.draw(region,region.getRegionWidth(),region.getRegionHeight(),local);
-		}
-		if (y + oy > this.height){
-			bound_conds_met += 1;
-			ypos = -this.height + y;
-			computeTransform(ox, oy, x, ypos, angle, sx, sy);
-			spriteBatch.draw(region,region.getRegionWidth(),region.getRegionHeight(),local);
-		}
-		// Double edge case
-		if (bound_conds_met == 2) {
-			computeTransform(ox, oy, xpos, ypos, angle, sx, sy);
-			spriteBatch.draw(region,region.getRegionWidth(),region.getRegionHeight(),local);
-		}*/
 		spriteBatch.draw(region,region.getRegionWidth(),region.getRegionHeight(),local);
 	}
 
@@ -884,6 +850,7 @@ public class GameCanvas {
 
 		spriteBatch.setColor(Color.WHITE);
 		TextureRegion tr = new TextureRegion(image);
+		spriteBatch.setColor(Color.WHITE);
 			computeTransform(w/2,h/2,x,y,0,scale,scale);
 
 		spriteBatch.draw(tr,w,h,local);
