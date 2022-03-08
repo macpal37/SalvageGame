@@ -63,7 +63,12 @@ public class InputController {
 
 	/** Did we press the fire button? */
 	private boolean pressedFire;
-	
+
+	/** Are the controls options shown? */
+	private boolean controlOptions = false;
+
+	private long ticks;
+
 	/** 
 	 * Returns the amount of horizontal forward movement.
 	 * 
@@ -137,6 +142,14 @@ public class InputController {
 		return resetGame;
 	}
 
+	public boolean getControlOptionsVisible() {
+		return controlOptions;
+	}
+
+	public void incrementTicks() {
+		ticks++;
+	}
+
 	/**
 	 * Creates a new input controller for the specified player.
 	 * 
@@ -181,7 +194,7 @@ public class InputController {
 			// control our actions (depends on player).
             int up, left, right, down, shoot, light_increase,
 					light_decrease, speed_increase, speed_decrease,
-					oxygen_increase, oxygen_decrease, reset;
+					oxygen_increase, oxygen_decrease, reset, controls;
 
 			if (player == 0) {
                 up    = Input.Keys.UP; 
@@ -203,63 +216,69 @@ public class InputController {
 			oxygen_increase = Input.Keys.Y;
 			oxygen_decrease = Input.Keys.H;
 			reset = Input.Keys.R;
+			controls = Input.Keys.C;
 			
             // Convert keyboard state into game commands
             vertical = horizontal = 0;
             pressedFire = false;
 
             // Movement forward/backward
-			if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down)) {
-                vertical = 1;
-			} else if (Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(up)) {
-                vertical = -1;
-			}
-			
-            // Movement left/right
-			if (Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(right)) {
-                horizontal = -1;
-			} else if (Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(left)) {
-                horizontal = 1;
-			}
+			if (ticks % 5 == 0) {
+				if (Gdx.input.isKeyPressed(up) && !Gdx.input.isKeyPressed(down)) {
+					vertical = 1;
+				} else if (Gdx.input.isKeyPressed(down) && !Gdx.input.isKeyPressed(up)) {
+					vertical = -1;
+				}
 
-			// change lighting range
-			if (Gdx.input.isKeyPressed(light_increase) && !Gdx.input.isKeyPressed(light_decrease)) {
-				if(lightRange < MAX_LIGHT_RANGE) {
-					lightRange += .01f;
+				// Movement left/right
+				if (Gdx.input.isKeyPressed(left) && !Gdx.input.isKeyPressed(right)) {
+					horizontal = -1;
+				} else if (Gdx.input.isKeyPressed(right) && !Gdx.input.isKeyPressed(left)) {
+					horizontal = 1;
 				}
-			} else if (Gdx.input.isKeyPressed(light_decrease) && !Gdx.input.isKeyPressed(light_increase)) {
-				if(lightRange > MIN_LIGHT_RANGE) {
-					lightRange -= 0.01f;
-				}
-			}
 
-			// change speed of movement
-			if (Gdx.input.isKeyPressed(speed_increase) && !Gdx.input.isKeyPressed(speed_decrease)) {
-				if(speed< MAX_SPEED) {
-					speed += .005f;
+				// change lighting range
+				if (Gdx.input.isKeyPressed(light_increase) && !Gdx.input.isKeyPressed(light_decrease)) {
+					if (lightRange < MAX_LIGHT_RANGE) {
+						lightRange += .01f;
+					}
+				} else if (Gdx.input.isKeyPressed(light_decrease) && !Gdx.input.isKeyPressed(light_increase)) {
+					if (lightRange > MIN_LIGHT_RANGE) {
+						lightRange -= 0.01f;
+					}
 				}
-			} else if (Gdx.input.isKeyPressed(speed_decrease) && !Gdx.input.isKeyPressed(speed_increase)) {
-				if(speed > MIN_SPEED) {
-					speed -= .005f;
-				}
-			}
 
-			// change rate of oxygen depletion
-			if (Gdx.input.isKeyPressed(oxygen_decrease) && !Gdx.input.isKeyPressed(oxygen_increase)) {
-				if(oxygenRate < -0.006){
-					oxygenRate += 0.005;
+				// change speed of movement
+				if (Gdx.input.isKeyPressed(speed_increase) && !Gdx.input.isKeyPressed(speed_decrease)) {
+					if (speed < MAX_SPEED) {
+						speed += .005f;
+					}
+				} else if (Gdx.input.isKeyPressed(speed_decrease) && !Gdx.input.isKeyPressed(speed_increase)) {
+					if (speed > MIN_SPEED) {
+						speed -= .005f;
+					}
 				}
-			} else if (Gdx.input.isKeyPressed(oxygen_increase) && !Gdx.input.isKeyPressed(oxygen_decrease)) {
-				oxygenRate -= 0.005;
-			}
-			// whether to reset oxygen or not
-			if (Gdx.input.isKeyPressed(reset)) {
-				resetGame = true;
-			} else {
-				resetGame = false;
-			}
 
-			
+				// change rate of oxygen depletion
+				if (Gdx.input.isKeyPressed(oxygen_decrease) && !Gdx.input.isKeyPressed(oxygen_increase)) {
+					if (oxygenRate < -0.006) {
+						oxygenRate += 0.005;
+					}
+				} else if (Gdx.input.isKeyPressed(oxygen_increase) && !Gdx.input.isKeyPressed(oxygen_decrease)) {
+					oxygenRate -= 0.005;
+				}
+				// whether to reset oxygen or not
+				if (Gdx.input.isKeyPressed(reset)) {
+					resetGame = true;
+				} else {
+					resetGame = false;
+				}
+
+				// If controls key is pressed
+				if (Gdx.input.isKeyPressed(controls)) {
+					controlOptions = !controlOptions;
+				}
+			}
 		}
     }
 }

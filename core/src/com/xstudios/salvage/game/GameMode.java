@@ -14,6 +14,7 @@ package com.xstudios.salvage.game;
 import box2dLight.Light;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
@@ -89,6 +90,7 @@ public class GameMode implements ModeController {
 
 	/** used to display messages to the screen */
 	private BitmapFont displayFont;
+	private BitmapFont controlsFont;
 	/** Offset for the oxygen message on the screen */
 	private static final float TEXT_OFFSET   = 40.0f;
 
@@ -105,6 +107,8 @@ public class GameMode implements ModeController {
 		/** When the ships is dead (but shells still work) */
 		OVER
 	}
+
+	private boolean controlOptions;
 
 	/**
 	 * Creates a new game with a playing field of the given size.
@@ -189,11 +193,12 @@ System.out.println(width);
 		deadBody = new DeadBody(1200,575,0.5f);
 		deadBody.setTexture(bodyTexture);
 		// Create the input controllers.
-		redController  = new InputController(1);
+		redController  = new InputController(0);
         physicsController = new CollisionController();
 
 		gameState = GameState.INTRO;
         displayFont = assets.getEntry("times", BitmapFont.class);
+        controlsFont = assets.getEntry("small-times", BitmapFont.class);
 	}
 
 	/** 
@@ -207,6 +212,7 @@ System.out.println(width);
 	 */
 	@Override
 	public void update() {
+		redController.incrementTicks();
 		// Read the keyboard for each controller.
 		redController.readInput ();
 		shipRed.setSpeed(redController.getSpeed()*defSpeed);
@@ -247,6 +253,8 @@ System.out.println(width);
 			default:
 				break;
 		}
+
+		controlOptions = redController.getControlOptionsVisible();
 
 	}
 
@@ -290,7 +298,7 @@ System.out.println(width);
 		//draw text
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
 		String msg = "Oxygen level: " + (int)shipRed.getOxygenLevel();
-		System.out.println(msg);
+
 		canvas.drawText(msg, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET);
 		canvas.drawText("Light Level: "+redController.getLightRange()*lightRadius, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
 		canvas.drawText("Speed: "+redController.getSpeed()*defSpeed, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*3);
@@ -301,6 +309,27 @@ System.out.println(width);
 		if(gameState == GameState.OVER) {
 			canvas.drawTextCentered("Press R to Restart", displayFont, -50);
 		}
+
+		if (controlOptions){
+			// hard coded right now, but ideally would not be
+//			light_increase = Input.Keys.I;
+//			light_decrease = Input.Keys.K;
+//			speed_increase = Input.Keys.U;
+//			speed_decrease = Input.Keys.J;
+//			oxygen_increase = Input.Keys.Y;
+//			oxygen_decrease = Input.Keys.H;
+//			reset = Input.Keys.R;
+//			controls = Input.Keys.C;
+			canvas.drawText("I: increase vision radius", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET);
+			canvas.drawText("K: decrease vision radius", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET*2);
+			canvas.drawText("U: increase speed", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET*3);
+			canvas.drawText("J: decrease speed", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET*4);
+			canvas.drawText("Y: increase oxygen drain", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET*5);
+			canvas.drawText("H: decrease oxygen drain", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET*6);
+		} else {
+			canvas.drawText("Press C to view controls", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET);
+		}
+
 
 	}
 
