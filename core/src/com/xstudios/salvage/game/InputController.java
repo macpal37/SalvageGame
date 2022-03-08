@@ -69,6 +69,9 @@ public class InputController {
 
 	private long ticks;
 
+	/** Are we carrying an object? */
+	private boolean carryingObject;
+
 	/** 
 	 * Returns the amount of horizontal forward movement.
 	 * 
@@ -133,6 +136,15 @@ public class InputController {
 	public boolean didPressFire() {
 		return pressedFire;
 	}
+
+	/**
+	 * Returns whether we are carrying an object
+	 *
+	 * @return whether we are carrying an object.
+	 */
+	public boolean getOrDropObject() {
+		return carryingObject;
+	}
 	/**
 	 * Returns whether the reset button was pressed.
 	 *
@@ -194,7 +206,7 @@ public class InputController {
 			// control our actions (depends on player).
             int up, left, right, down, shoot, light_increase,
 					light_decrease, speed_increase, speed_decrease,
-					oxygen_increase, oxygen_decrease, reset, controls;
+					oxygen_increase, oxygen_decrease, reset, controls, pick_up;
 
 			if (player == 0) {
                 up    = Input.Keys.UP; 
@@ -217,6 +229,7 @@ public class InputController {
 			oxygen_decrease = Input.Keys.H;
 			reset = Input.Keys.R;
 			controls = Input.Keys.C;
+			pick_up = Input.Keys.X;
 			
             // Convert keyboard state into game commands
             vertical = horizontal = 0;
@@ -277,6 +290,12 @@ public class InputController {
 				// If controls key is pressed
 				if (Gdx.input.isKeyPressed(controls)) {
 					controlOptions = !controlOptions;
+				}
+
+				if (Gdx.input.isKeyPressed(pick_up)) {
+					carryingObject = true;
+				} else {
+					carryingObject = false;
 				}
 			}
 		}
