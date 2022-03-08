@@ -222,7 +222,6 @@ public class InputController {
                 shoot = Input.Keys.X;
             }
 
-			pick_up = Input.Keys.E;
 			light_increase = Input.Keys.I;
 			light_decrease = Input.Keys.K;
 			speed_increase = Input.Keys.U;
