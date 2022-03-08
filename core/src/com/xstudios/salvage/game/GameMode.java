@@ -14,11 +14,13 @@ package com.xstudios.salvage.game;
 import box2dLight.Light;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.audio.SoundBuffer;
 import com.xstudios.salvage.util.*;
@@ -67,6 +69,13 @@ public class GameMode implements ModeController {
 	private  float defSpeed = .7f;
 	private Texture bodyTexture;
 
+	private Vector2 temp;
+
+	private float MAX_DIST = 30f;
+
+	private int ticks = 0;
+	private boolean wonGame = false;
+
 
     // Instance variables
 	/** Read input for red player from keyboard or game pad (CONTROLLER CLASS) */
@@ -89,6 +98,7 @@ public class GameMode implements ModeController {
 
 	/** used to display messages to the screen */
 	private BitmapFont displayFont;
+	private BitmapFont controlsFont;
 	/** Offset for the oxygen message on the screen */
 	private static final float TEXT_OFFSET   = 40.0f;
 
@@ -105,6 +115,8 @@ public class GameMode implements ModeController {
 		/** When the ships is dead (but shells still work) */
 		OVER
 	}
+
+	private boolean controlOptions;
 
 	/**
 	 * Creates a new game with a playing field of the given size.
@@ -204,6 +216,8 @@ public class GameMode implements ModeController {
 
 		gameState = GameState.INTRO;
         displayFont = assets.getEntry("times", BitmapFont.class);
+        controlsFont = assets.getEntry("small-times", BitmapFont.class);
+		temp = new Vector2();
 	}
 
 	/**
@@ -217,6 +231,7 @@ public class GameMode implements ModeController {
 	 */
 	@Override
 	public void update() {
+		redController.incrementTicks();
 		// Read the keyboard for each controller.
 		redController.readInput ();
 		shipRed.setSpeed(redController.getSpeed()*defSpeed);
@@ -230,9 +245,9 @@ public class GameMode implements ModeController {
 
 		// handles collisions of each ship with photons
 
-		physicsController.checkForCollision(shipRed, photons);
+		//physicsController.checkForCollision(shipRed, obstacleContainer);
 
-		physicsController.checkForObjectCollision(shipRed,deadBody);
+//		physicsController.checkForObjectCollision(shipRed,deadBody);
 
 		java.awt.Rectangle hit = obstacleContainer.getIntersectingObstacle(shipRed.getHitbox());
 		if(hit!=null){
@@ -244,6 +259,17 @@ public class GameMode implements ModeController {
 
 		// updates oxygen level
 		shipRed.changeOxygenLevel(redController.getOxygenRate());
+
+		if(redController.getOrDropObject() &&ticks % 10 == 0&&
+				!shipRed.isCarryingObject() &&
+				physicsController.checkForObjectCollision(shipRed, deadBody)){
+
+				shipRed.setCarriedObject(true, deadBody);
+		} else if (redController.getOrDropObject() && ticks % 10 == 0&&
+				shipRed.isCarryingObject() ) {
+			shipRed.setCarriedObject(false, null);
+		}
+		ticks++;
 		// Test whether to reset the game.
 		switch (gameState) {
 			case INTRO:
@@ -252,22 +278,41 @@ public class GameMode implements ModeController {
 			case OVER:
 				if (redController.didReset()) {
 					gameState = GameState.PLAY;
-					shipRed.setOxygenLevel(shipRed.MAX_OXYGEN);
-					shipRed.setPosition(shipRed.getStartPosition());
+//					shipRed.setOxygenLevel(shipRed.MAX_OXYGEN);
+//					shipRed.setPosition(shipRed.getStartPosition());
+					resetGame();
 				}
 				break;
 			case PLAY:
-				if(shipRed.getOxygenLevel() <= 0 || deadBody.isDestroyed()) {
+				temp.set(shipRed.getPosition()).sub(shipRed.getStartPosition());
+				if(shipRed.getOxygenLevel() <= 0 ||
+						(shipRed.isCarryingObject() && temp.len() <= MAX_DIST)) {
 					gameState = GameState.OVER;
-					deadBody.setDestroyed(false);
+					if(shipRed.isCarryingObject() && temp.len() <= MAX_DIST){
+						wonGame = true;
+					}
+//					deadBody.setDestroyed(false);
+				} else if (redController.didReset()) {
+					resetGame();
+//					shipRed.setOxygenLevel(shipRed.MAX_OXYGEN);
+//					shipRed.setPosition(shipRed.getStartPosition());
 				}
 				break;
 			default:
 				break;
 		}
 
+		controlOptions = redController.getControlOptionsVisible();
+
 	}
 
+	private void resetGame(){
+		shipRed.setOxygenLevel(shipRed.MAX_OXYGEN);
+		shipRed.setPosition(shipRed.getStartPosition());
+		deadBody.setPosition(deadBody.getStartPosition().cpy());
+		shipRed.setCarriedObject(false,null);
+		wonGame = false;
+	}
 	Vector2 mapPosition = new Vector2(0f,0f);
 
 	/**
@@ -285,12 +330,13 @@ public class GameMode implements ModeController {
 
 		canvas.drawMap(background, true,background.getWidth()/2,background.getHeight()/2-shipRed.getDiameter()/2);
 
-		// Draw Dead Body
-		if(!deadBody.isDestroyed())
-		deadBody.draw(canvas);
 
 		// First drawing pass (ships + shadows)
 		shipRed.drawShip(canvas);
+
+		// Draw Dead Body
+		if(!deadBody.isDestroyed())
+			deadBody.draw(canvas);
 
 		// Second drawing pass (photons)
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
@@ -308,16 +354,39 @@ public class GameMode implements ModeController {
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
 
 		String msg = "Oxygen level: " + (int)shipRed.getOxygenLevel();
-		System.out.println(msg);
+
 		canvas.drawText(msg, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET);
-		canvas.drawText("Light Level: "+redController.getLightRange()*lightRadius, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
-		canvas.drawText("Speed: "+redController.getSpeed()*defSpeed, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*3);
-		if(deadBody.isDestroyed()) {
+		canvas.drawText("Light Level: "+redController.getLightRange()*lightRadius, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*3);
+		canvas.drawText("Speed: "+redController.getSpeed()*defSpeed, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*4);
+		canvas.drawText("Oxygen Depletion Rate: "+redController.getOxygenRate(), displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
+		canvas.drawText("Carrying Body: "+shipRed.isCarryingObject(), displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*5);
+		if(wonGame) {
 			canvas.drawTextCentered("You Won!", displayFont, 0);
 		}
 		if(gameState == GameState.OVER) {
 			canvas.drawTextCentered("Press R to Restart", displayFont, -50);
 		}
+
+		if (controlOptions){
+			// hard coded right now, but ideally would not be
+//			light_increase = Input.Keys.I;
+//			light_decrease = Input.Keys.K;
+//			speed_increase = Input.Keys.U;
+//			speed_decrease = Input.Keys.J;
+//			oxygen_increase = Input.Keys.Y;
+//			oxygen_decrease = Input.Keys.H;
+//			reset = Input.Keys.R;
+//			controls = Input.Keys.C;
+			canvas.drawText("I: increase vision radius", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET);
+			canvas.drawText("K: decrease vision radius", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET*2);
+			canvas.drawText("U: increase speed", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET*3);
+			canvas.drawText("J: decrease speed", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET*4);
+			canvas.drawText("Y: increase oxygen drain", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET*5);
+			canvas.drawText("H: decrease oxygen drain", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET*6);
+		} else {
+			canvas.drawText("Press C to view controls", controlsFont, canvas.getWidth() - TEXT_OFFSET*10, canvas.getHeight() - TEXT_OFFSET);
+		}
+
 
 	}
 

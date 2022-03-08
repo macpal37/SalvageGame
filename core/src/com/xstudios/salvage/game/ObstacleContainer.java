@@ -29,6 +29,8 @@ public class ObstacleContainer {
         this.wallTexture=wallTexture;
     }
 
+    public int getSize(){return allObstacles.size;}
+
     /** return wallTexture*/
     public Texture getWallTexture(){return wallTexture;}
 

@@ -48,6 +48,10 @@
         "times": {
             "file": "fonts/TimesRoman.ttf",
             "size": 32
+        },
+        "small-times": {
+            "file": "fonts/TimesRoman.ttf",
+            "size": 14
         }
     },
     "sounds": {

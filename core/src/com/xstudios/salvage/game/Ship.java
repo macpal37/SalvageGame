@@ -96,6 +96,12 @@ public class Ship {
 	protected int MAX_OXYGEN;
 	private float oxygen_level;
 
+	private GameObject carriedObject;
+	private boolean carryingObject;
+
+	private float CARRY_OFFSET_X = 1f;
+	private float CARRY_OFFSET_Y = 1f;
+
     // ACCESSORS
     /**
      * Returns the image filmstrip for this ship
@@ -298,6 +304,25 @@ public class Ship {
 		this.oxygen_level = value;
 	}
 
+	/**
+	 *sets if carrying object or not
+	 */
+	public void setCarriedObject(boolean value, GameObject o) {
+		this.carryingObject = value;
+		if(this.carryingObject) {
+			carriedObject = o;
+		} else {
+			carriedObject = null;
+		}
+	}
+
+	/**
+	 *get if carrying object or not
+	 */
+	public boolean isCarryingObject() {
+		return this.carryingObject;
+	}
+
 	public Rectangle getHitbox (){
 		return  hitbox;
 	}
@@ -333,6 +358,8 @@ public class Ship {
 
         this.MAX_OXYGEN = max_oxygen;
         this.oxygen_level = max_oxygen;
+		carriedObject = null;
+		carryingObject = false;
     }
 
 	public Vector2 restrict = new Vector2(0,0);
@@ -381,6 +408,10 @@ public class Ship {
 
 		// Move the ship position by the ship velocity
 		pos.add(vel);
+		if(carryingObject) {
+			carriedObject.setX(pos.x + CARRY_OFFSET_X);
+			carriedObject.setY(pos.y + CARRY_OFFSET_Y);
+		}
     }
 
 	/**
