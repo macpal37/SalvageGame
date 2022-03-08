@@ -49,7 +49,9 @@ public class Ship {
 	/** Amount to decay forward thrust over time */
 	private static final float FORWARD_DAMPING = 0.9f;
     // Modify this as part of the lab
-    
+
+	/** start position of the ship */
+	private Vector2 start_pos;
 	/** Position of the ship */
 	private Vector2 pos;
 	/** Velocity of the ship */
@@ -85,7 +87,7 @@ public class Ship {
 //	private Texture targetTexture;
 
 	/** The maximum oxygen of the diver **/
-	private int MAX_OXYGEN;
+	protected int MAX_OXYGEN;
 	private float oxygen_level;
 
     // ACCESSORS
@@ -130,6 +132,15 @@ public class Ship {
 
 	public void setSpeed(float speed){
 		this.speed = speed;
+	}
+
+	/**
+	 * Returns the start position of this ship.
+	 *
+	 * @return the start position of this ship
+	 */
+	public Vector2 getStartPosition() {
+		return start_pos;
 	}
 
 	/**
@@ -269,6 +280,16 @@ public class Ship {
 	 */
 	public void changeOxygenLevel(float delta) {
 		this.oxygen_level += delta;
+		if(this.oxygen_level < 0) {
+			this.oxygen_level = 0;
+		}
+	}
+
+	/**
+	 *sets oxygen level to value
+	 */
+	public void setOxygenLevel(float value) {
+		this.oxygen_level = value;
 	}
 	
 	/**
@@ -280,6 +301,7 @@ public class Ship {
 	 */
     public Ship(float x, float y, float ang, int size, int type, int max_oxygen) {
         // Set the position of this ship.
+		this.start_pos = new Vector2(x,y);
         this.pos = new Vector2(x,y);
         this.ang = ang;
         this.size = size;
