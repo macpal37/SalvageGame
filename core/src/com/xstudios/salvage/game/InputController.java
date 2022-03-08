@@ -181,7 +181,7 @@ public class InputController {
 			// control our actions (depends on player).
             int up, left, right, down, shoot, light_increase,
 					light_decrease, speed_increase, speed_decrease,
-					oxygen_increase, oxygen_decrease, reset;
+					oxygen_increase, oxygen_decrease, reset, pick_up;
 
 			if (player == 0) {
                 up    = Input.Keys.UP; 
@@ -196,6 +196,8 @@ public class InputController {
                 right = Input.Keys.D;
                 shoot = Input.Keys.X;
             }
+
+			pick_up = Input.Keys.E;
 			light_increase = Input.Keys.I;
 			light_decrease = Input.Keys.K;
 			speed_increase = Input.Keys.U;
