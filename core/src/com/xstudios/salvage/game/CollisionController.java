@@ -80,6 +80,11 @@ public class CollisionController {
 	 */
 
 
+	public void checkForCollision(Ship ship, java.awt.Rectangle wall, float x, float y) {
+		float rad = ship.getDiameter() / 2;
+		float xrad = wall.width / 2;
+		float yrad = wall.height / 2;
+
 
 		int a = 6;
 		if (ship.getPosition().x - wall.x < 0 && x==1) {
@@ -97,7 +102,6 @@ public class CollisionController {
 		} else if (ship.getPosition().y - wall.y > 0 && y == -1) {
 			ship.move(0, 1);
 			ship.move(0, a);
-
 		}
 	}
 
