@@ -68,6 +68,7 @@ public class CollisionController {
 	 *   Therefore, you should only call this method for one of the
 	 *  ships, not both. Otherwise, you are processing the same collisions twice.
 	 * 
+<<<<<<< HEAD
 	 *
 	 */
 
@@ -114,6 +115,28 @@ public class CollisionController {
 //		}
 //	}
 
+	public void checkForCollision(Ship ship, java.awt.Rectangle wall) {
+		float rad = ship.getDiameter()/2;
+		float xrad = wall.width/2;
+		float yrad = wall.height/2;
+
+
+
+		if (ship.getPosition().x-wall.x<0){
+			ship.move(-1,0);
+		}else
+		if (ship.getPosition().x-wall.x>0){
+			ship.move(1,0);
+		}
+
+		if (ship.getPosition().y-wall.y<0){
+			ship.move(0,-1);
+		}else
+		if (ship.getPosition().y-wall.y>0){
+			ship.move(0,1);
+		}
+	}
+
 	/**
 	 * Nudge the ship to ensure it does not do out of view.
 	 *
@@ -130,9 +153,7 @@ public class CollisionController {
 			ship.getPosition().set(bounds.x+rad,ship.getPosition().y);
 		} else if (ship.getPosition().x >= bounds.width-rad) {
 			ship.getPosition().set(bounds.width-rad,ship.getPosition().y);
-
 		}
-
 		if (ship.getPosition().y <= bounds.y+rad) {
 			ship.getPosition().set(ship.getPosition().x,bounds.y+rad);
 		} else if (ship.getPosition().y >= bounds.height-rad) {

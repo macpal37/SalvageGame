@@ -1,18 +1,18 @@
 /*
  * Ship.java
  *
- * This class tracks all of the state (position, velocity, rotation) of a 
- * single ship. In order to obey the separation of the model-view-controller 
- * pattern, controller specific code (such as reading the keyboard) is not 
+ * This class tracks all of the state (position, velocity, rotation) of a
+ * single ship. In order to obey the separation of the model-view-controller
+ * pattern, controller specific code (such as reading the keyboard) is not
  * present in this class.
- * 
+ *
  * Looking through this code you will notice certain optimizations. We want
  * to eliminate as many "new" statements as possible in the draw loop. In
- * game programming, it is considered bad form to have "new" statements in 
- * an update or a graphics loop if you can easily avoid it.  Each "new" is 
- * a potentially  expensive memory allocation. 
+ * game programming, it is considered bad form to have "new" statements in
+ * an update or a graphics loop if you can easily avoid it.  Each "new" is
+ * a potentially  expensive memory allocation.
  *
- * To get around this, we have predeclared some Vector2 objects.  These are 
+ * To get around this, we have predeclared some Vector2 objects.  These are
  * used by the draw method to position the objects on the screen. As we know
  * we will need that memory animation frame, it is better to have them
  * declared ahead of time (even though we are not taking state across frame
@@ -24,13 +24,17 @@
  */
 package com.xstudios.salvage.game;
 
-import com.badlogic.gdx.math.*;
+
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.xstudios.salvage.util.*;
+
+import java.awt.*;
 
 /**
  * Model class representing an alien ship.
- * 
+ *
  * Note that the graphics resources in this class are static.  That
  * is because all ships share the same image file, and it would waste
  * memory to load the same image file for each ship.
@@ -60,10 +64,12 @@ public class Ship {
 	private Color  tint;
 	/** Color of the ships shadow (cached) */
 	private Color stint;
-	
+
 	/** Mass/weight of the ship. Used in collisions. */
 	private float mass;
-	
+
+	private Rectangle hitbox;
+
 	// The following are protected, because they have no accessors
 //	/** Offset of the ships target */
 //    protected Vector2 tofs;
@@ -93,7 +99,7 @@ public class Ship {
     // ACCESSORS
     /**
      * Returns the image filmstrip for this ship
-     * 
+     *
      * This value should be loaded by the GameMode and set there. However, we
      * have to be prepared for this to be null at all times
      *
@@ -102,10 +108,10 @@ public class Ship {
     public FilmStrip getFilmStrip() {
     	return shipSprite;
     }
-    
+
     /**
      * Sets the image texture for this ship
-     * 
+     *
      * This value should be loaded by the GameMode and set there. However, we
      * have to be prepared for this to be null at all times
      *
@@ -115,10 +121,10 @@ public class Ship {
     	shipSprite = value;
     	shipSprite.setFrame(SHIP_IMG_FLAT);
     }
-    
+
     /**
      * Returns the image texture for the target reticule
-     * 
+     *
      * This value should be loaded by the GameMode and set there. However, we
      * have to be prepared for this to be null at all times
      *
@@ -127,7 +133,7 @@ public class Ship {
 //    public Texture getTargetTexture() {
 //    	return targetTexture;
 //    }
-    
+
 
 
 	public void setSpeed(float speed){
@@ -150,10 +156,10 @@ public class Ship {
 	 *
 	 * @return the position of this ship
 	 */
-	public Vector2 getPosition() { 
-		return pos;  
+	public Vector2 getPosition() {
+		return pos;
 	}
-	
+
 	/**
 	 * Sets the position of this ship.
 	 *
@@ -161,7 +167,7 @@ public class Ship {
 	 *
 	 * @param value the position of this ship
 	 */
-	public void setPosition(Vector2 value) { 
+	public void setPosition(Vector2 value) {
 		pos.set(value);
 	}
 
@@ -173,7 +179,7 @@ public class Ship {
 	 * @return the velocity of this ship
 	 */
 	public Vector2 getVelocity() {
-		return vel;  
+		return vel;
 	}
 
 	/**
@@ -183,11 +189,11 @@ public class Ship {
 	 *
 	 * @param value the velocity of this ship
 	 */
-	public void setVelocity(Vector2 value) { 
+	public void setVelocity(Vector2 value) {
 		vel.set(value);
 	}
-	
-	/** 
+
+	/**
 	 * Returns the angle that this ship is facing.
 	 *
 	 * The angle is specified in degrees, not radians.
@@ -197,8 +203,8 @@ public class Ship {
 	public float getAngle() {
 		return ang;
 	}
-	
-	/** 
+
+	/**
 	 * Sets the angle that this ship is facing.
 	 *
 	 * The angle is specified in degrees, not radians.
@@ -214,27 +220,27 @@ public class Ship {
 	/**
 	 * Returns the tint color for this ship.
 	 *
-	 * We can change how an image looks without loading a new image by 
+	 * We can change how an image looks without loading a new image by
 	 * tinting it differently.
 	 *
 	 * @return the tint color
 	 */
 	public Color getColor() {
-		return tint;  
+		return tint;
 	}
-	
+
 	/**
 	 * Sets the tint color for this ship.
 	 *
-	 * We can change how an image looks without loading a new image by 
+	 * We can change how an image looks without loading a new image by
 	 * tinting it differently.
 	 *
 	 * @param value the tint color
 	 */
-	public void setColor(Color value) { 
+	public void setColor(Color value) {
 		tint.set(value);
 	}
-	
+
 	/**
 	 * Resets the reload counter so the ship cannot fire again immediately.
 	 *
@@ -291,7 +297,11 @@ public class Ship {
 	public void setOxygenLevel(float value) {
 		this.oxygen_level = value;
 	}
-	
+
+	public Rectangle getHitbox (){
+		return  hitbox;
+	}
+
 	/**
 	 * Creates a new ship at the given location with the given facing.
 	 *
@@ -305,7 +315,7 @@ public class Ship {
         this.pos = new Vector2(x,y);
         this.ang = ang;
         this.size = size;
-
+		hitbox = new Rectangle((int)x,(int)y,size,size);
         // We start at rest.
         vel = new Vector2();
         dang = 0.0f;
@@ -326,10 +336,10 @@ public class Ship {
     }
 
 	/**
-	 * Moves the ship by the specified amount.  
-	 * 
-	 * Forward is the amount to move forward, while turn is the angle to turn the ship 
-	 * (used for the "banking" animation. This method performs no collision detection.  
+	 * Moves the ship by the specified amount.
+	 *
+	 * Forward is the amount to move forward, while turn is the angle to turn the ship
+	 * (used for the "banking" animation. This method performs no collision detection.
 	 * Collisions are resolved afterwards.
 	 *
 	 * @param forward	Amount to move forward
@@ -359,7 +369,7 @@ public class Ship {
 		vel.scl(speed);
 		// Move the ship, updating it.
 		// Adjust the angle by the change in angle
-		ang += dang;  // INVARIANT: -360 < ang < 720                                                   
+		ang += dang;  // INVARIANT: -360 < ang < 720
 		if (ang > 360)
 			ang -= 360;
 		if (ang < 0)
@@ -367,7 +377,6 @@ public class Ship {
 
 		// Move the ship position by the ship velocity
 		pos.add(vel);
-
     }
 
 	/**
@@ -390,7 +399,7 @@ public class Ship {
 //    }
 
 	/**
-	 * Draws the ship (and its related images) to the given GameCanvas. 
+	 * Draws the ship (and its related images) to the given GameCanvas.
 	 *
 	 * You will want to modify this method for Exercise 4.
 	 *
@@ -406,7 +415,8 @@ public class Ship {
 		// For placement purposes, put origin in center.
         float ox = 0.5f * shipSprite.getRegionWidth();
         float oy = 0.5f * shipSprite.getRegionHeight();
-
+		hitbox.x=(int)pos.x-(int)getDiameter()/2;
+		hitbox.y=(int)pos.y-(int)getDiameter()/2;
         // How much to rotate the image
         float rotate = -(90+ang);
 
@@ -414,7 +424,7 @@ public class Ship {
 		// Position it offset by 10 so it can be seen.
         float sx = pos.x+SHADOW_OFFSET;
         float sy = pos.y+SHADOW_OFFSET;
-        
+
         // Need to negate y scale because of coordinate access flip.
         // Draw the shadow first
 		float ship_scale = this.getDiameter() / 80;
