@@ -86,7 +86,7 @@ public class CollisionController {
 		float yrad = wall.height / 2;
 
 
-		int a = 6;
+		int a = 0;
 		if (ship.getPosition().x - wall.x < 0 && x==1) {
 			ship.move(-1, 0);
 			ship.move(-a, 0);

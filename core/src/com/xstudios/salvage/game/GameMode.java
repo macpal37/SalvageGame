@@ -142,7 +142,7 @@ public class GameMode implements ModeController {
 		obstacleContainer=new ObstacleContainer(wallTexture);
 
 		//Initialize top wall
-		obstacleContainer.addRectangle(0, height, width*2,2* WALL_THICKNESS);
+		obstacleContainer.addRectangle(0, height-WALL_THICKNESS, width*2,2* WALL_THICKNESS);
 ////
 ////		//Initialize bottom wall
 		obstacleContainer.addRectangle(0,0,width*2, 2*WALL_THICKNESS);
@@ -158,36 +158,39 @@ public class GameMode implements ModeController {
 		float wallWidth = width/8;
 //
 		obstacleContainer.addRectangle(width/4, WALL_THICKNESS, WALL_THICKNESS, wallHeight);
-
+		obstacleContainer.addRectangle(width/4, WALL_THICKNESS+wallHeight*2, WALL_THICKNESS, wallHeight);
 		obstacleContainer.addRectangle(WALL_THICKNESS, wallHeight+WALL_THICKNESS,wallWidth ,WALL_THICKNESS);
 
-
+		obstacleContainer.addRectangle(wallWidth*6, wallHeight+WALL_THICKNESS,wallWidth*2 ,WALL_THICKNESS);
+		obstacleContainer.addRectangle(wallWidth*2, wallHeight+WALL_THICKNESS,wallWidth*2 ,WALL_THICKNESS);
+		obstacleContainer.addRectangle(wallWidth*2, 2*wallHeight+WALL_THICKNESS,wallWidth*2 ,WALL_THICKNESS);
+		obstacleContainer.addRectangle(wallWidth*6, wallHeight,WALL_THICKNESS ,wallHeight);
 		//Initialize lowest vertical wall
 //		obstacleContainer.addRectangle(150, 150, WALL_THICKNESS, height*0.2f);
 ////
 ////		//Initialize second-lowest vertical wall
-//		obstacleContainer.addRectangle(width*0.75f, height*0.3f, WALL_THICKNESS, height*0.2f);
+		obstacleContainer.addRectangle(width*0.75f, height*0.3f, WALL_THICKNESS, height*0.2f);
 ////
 ////		//Initialize third lowest vertical wall
-//		obstacleContainer.addRectangle(width/4, height*0.6f, WALL_THICKNESS, height*0.3f);
+		obstacleContainer.addRectangle(width/4, height*0.6f, WALL_THICKNESS, height*0.3f);
 ////
 ////		//Initialize fourth lowest vertical wall
-//		obstacleContainer.addRectangle(width*0.6f, height*0.9f, WALL_THICKNESS, height*0.6f);
+		obstacleContainer.addRectangle(width*0.6f, height*0.9f, WALL_THICKNESS, height*0.6f);
 ////
 ////		//Initialize last-minute vertical wall
-//		obstacleContainer.addRectangle(width*0.5f, height*0.1f, WALL_THICKNESS, height*0.3f);
+		obstacleContainer.addRectangle(width*0.5f, height*0.1f, WALL_THICKNESS, height*0.3f);
 ////
 ////		//Initialize leftmost horizontal wall
-//		obstacleContainer.addRectangle(width*0.1f, height*0.6f, width*0.25f, WALL_THICKNESS);
+		obstacleContainer.addRectangle(width*0.1f, height*0.6f, width*0.25f, WALL_THICKNESS);
 ////
 ////		//Initialize second-to-left horizontal wall
-//		obstacleContainer.addRectangle(width*0.305f, height*0.45f,width*0.15f, WALL_THICKNESS);
+		obstacleContainer.addRectangle(width*0.305f, height*0.45f,width*0.15f, WALL_THICKNESS);
 ////
 ////		//Initialize third-to-left horizontal wall
-//		obstacleContainer.addRectangle(width*0.845f, height*0.4f, width*0.25f, WALL_THICKNESS);
+		obstacleContainer.addRectangle(width*0.845f, height*0.4f, width*0.25f, WALL_THICKNESS);
 ////
 ////		//Initialize last minute horizontal wall
-//		obstacleContainer.addRectangle(width*0.9f, height*0.75f, width*0.15f, WALL_THICKNESS);
+		obstacleContainer.addRectangle(width*0.9f, height*0.75f, width*0.15f, WALL_THICKNESS);
 
 
 
