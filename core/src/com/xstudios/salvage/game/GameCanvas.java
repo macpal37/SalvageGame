@@ -858,7 +858,6 @@ public class GameCanvas {
 			return;
 		}
 		float w, h;
-
 			w = image.getWidth();
 			h = image.getHeight();
 
@@ -871,13 +870,23 @@ public class GameCanvas {
 			spriteBatch.draw(tr,w,h,local);
 			computeTransform(w/2,h/2,x,y,0,scale,scale);
 		}
+		spriteBatch.draw(tr,w,h,local);
+	}
 
+	public void drawExit(Texture image,float x, float y,float scale) {
+		if (!active) {
+			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
+			return;
+		}
+		float w, h;
+		w = image.getWidth();
+		h = image.getHeight();
 
+		spriteBatch.setColor(Color.WHITE);
+		TextureRegion tr = new TextureRegion(image);
+			computeTransform(w/2,h/2,x,y,0,scale,scale);
 
 		spriteBatch.draw(tr,w,h,local);
-
-
-
 	}
 	/**
 	 * Draws text centered on the screen.

@@ -1,10 +1,10 @@
 {
 	"textures": {
-        "background": {
-            "file":      "images/ice.png",
-            "minFilter": "linear",
-            "magFilter": "linear"
-        },
+      "background": {
+        "file":      "images/ocean.png",
+        "minFilter": "linear",
+        "magFilter": "linear"
+      },
         "photon": {
             "file":      "images/photon.png",
             "minFilter": "linear",
@@ -26,7 +26,7 @@
             "magFilter": "linear"
         },
         "wall": {
-            "file": "images/wall.png",
+            "file": "images/metal.png",
             "minFilter": "linear",
             "magFilter": "linear"
         },
@@ -36,6 +36,11 @@
         "magFilter": "linear"
       },"body": {
         "file": "images/dead.png",
+        "minFilter": "linear",
+        "magFilter": "linear"
+      },
+      "exit": {
+        "file": "images/exit.png",
         "minFilter": "linear",
         "magFilter": "linear"
       }

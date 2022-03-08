@@ -64,6 +64,9 @@ public class GameMode implements ModeController {
 	private Texture targetTexture;
 	/** Texture of light*/
 	private Texture light;
+
+	/** Texture of light*/
+	private Texture exit;
 	/** Radius of Light*/
 	private float lightRadius = 0.95f;
 	private  float defSpeed = .7f;
@@ -137,7 +140,7 @@ public class GameMode implements ModeController {
 		wallTexture=assets.getEntry("wall", Texture.class);
 		light = assets.getEntry("light", Texture.class);
 		bodyTexture = assets.getEntry("body", Texture.class);
-
+		exit = assets.getEntry("exit", Texture.class);
 		//Initialize obstacle container
 		obstacleContainer=new ObstacleContainer(wallTexture);
 
@@ -333,6 +336,7 @@ public class GameMode implements ModeController {
 
 		canvas.drawMap(background, true,background.getWidth()/2,background.getHeight()/2-shipRed.getDiameter()/2);
 
+		canvas.drawExit(exit,shipRed.getStartPosition().x,shipRed.getStartPosition().y,0.1f);
 
 		// First drawing pass (ships + shadows)
 		shipRed.drawShip(canvas);
@@ -342,7 +346,7 @@ public class GameMode implements ModeController {
 			deadBody.draw(canvas);
 
 		// Second drawing pass (photons)
-		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
+
 
 		obstacleContainer.drawWalls(obstacleContainer.getAllObstacles(), canvas);
 
