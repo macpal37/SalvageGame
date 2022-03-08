@@ -211,7 +211,7 @@ System.out.println(width);
 
 
 		// updates oxygen level
-		shipRed.changeOxygenLevel((int)redController.getOxygenRate());
+		shipRed.changeOxygenLevel(redController.getOxygenRate());
 	}
 
 	Vector2 mapPosition = new Vector2(0f,0f);
@@ -253,7 +253,7 @@ System.out.println(width);
 
 		//draw text
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
-		String msg = "Oxygen level: " + shipRed.getOxygenLevel();
+		String msg = "Oxygen level: " + (int)shipRed.getOxygenLevel();
 		System.out.println(msg);
 		canvas.drawText(msg, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET);
 		canvas.drawText("Light Level: "+redController.getLightRange()*lightRadius, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);

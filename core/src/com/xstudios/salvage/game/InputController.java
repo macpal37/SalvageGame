@@ -51,7 +51,7 @@ public class InputController {
 	private float speed =1;
 
 	/** How fast are we depleting oxygen? */
-	private float oxygenRate;
+	private float oxygenRate = -.01f;
 
 	/** Are we resetting? */
 	private boolean resetOxygen;
@@ -233,9 +233,11 @@ public class InputController {
 
 			// change rate of oxygen depletion
 			if (Gdx.input.isKeyPressed(oxygen_increase) && !Gdx.input.isKeyPressed(oxygen_decrease)) {
-				oxygenRate = 1;
+				if(oxygenRate < -0.006){
+					oxygenRate += 0.005;
+				}
 			} else if (Gdx.input.isKeyPressed(oxygen_decrease) && !Gdx.input.isKeyPressed(oxygen_increase)) {
-				oxygenRate = -1;
+				oxygenRate -= 0.005;
 			}
 			// whether to reset oxygen or not
 			if (Gdx.input.isKeyPressed(reset)) {

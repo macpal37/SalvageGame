@@ -86,7 +86,7 @@ public class Ship {
 
 	/** The maximum oxygen of the diver **/
 	private int MAX_OXYGEN;
-	private int oxygen_level;
+	private float oxygen_level;
 
     // ACCESSORS
     /**
@@ -262,12 +262,12 @@ public class Ship {
 	 *
 	 * @return the current oxygen level
 	 */
-	public int getOxygenLevel() { return this.oxygen_level; }
+	public float getOxygenLevel() { return this.oxygen_level; }
 
 	/**
 	 * Modifies the current oxygen level of the diver by delta.
 	 */
-	public void changeOxygenLevel(int delta) {
+	public void changeOxygenLevel(float delta) {
 		this.oxygen_level += delta;
 	}
 	
@@ -320,13 +320,13 @@ public class Ship {
 		// Process the ship thrust.
 		if (up != 0.0f) {
 			// Thrust key pressed; increase the ship velocity.
-			vel.add(0, up);//up * (float)Math.cos(Math.toRadians (ang)) * THRUST_FACTOR,
-//					up * (float)-Math.sin (Math.toRadians (ang)) * THRUST_FACTOR);
+			vel.add(0, up);
+			changeOxygenLevel(-.01f);
 		}
 		if (forward != 0.0f) {
 			// Thrust key pressed; increase the ship velocity.
-			vel.add(forward, 0);//forward * (float)-Math.sin(Math.toRadians (ang)) * THRUST_FACTOR,
-//					forward * (float)Math.cos (Math.toRadians (ang)) * THRUST_FACTOR);
+			vel.add(forward, 0);
+			changeOxygenLevel(-.01f);
 		}
 //		else {
 //			// Gradually slow the ship down
@@ -345,7 +345,6 @@ public class Ship {
 
 		// Move the ship position by the ship velocity
 		pos.add(vel);
-
 
     }
 
