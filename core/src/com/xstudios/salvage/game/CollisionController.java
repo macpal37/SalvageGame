@@ -76,19 +76,22 @@ public class CollisionController {
 		float yrad = wall.height/2;
 
 
-
-		if (ship.getPosition().x-wall.x<0&&y ==0){
-			ship.move(-1,0);
+		int a = 6;
+		if (ship.getPosition().x - wall.x < 0 && x==1) {
+			ship.move(-1, 0);
+			ship.move(-a, 0);
 		}else
-		if (ship.getPosition().x-wall.x>0&&y ==0){
-			ship.move(1,0);
+		if (ship.getPosition().x - wall.x > 0 && x==-1) {
+			ship.move(1, 0);
+			ship.move(a, 0);
 		}
 
-		if (ship.getPosition().y-wall.y<0&&x ==0){
-			ship.move(0,-1);
-		}else
-		if (ship.getPosition().y-wall.y>0&&x ==0){
-			ship.move(0,1);
+		if (ship.getPosition().y - wall.y < 0 && y == 1) {
+			ship.move(0, -1);
+			ship.move(0, -a);
+		} else if (ship.getPosition().y - wall.y > 0 && y == -1) {
+			ship.move(0, 1);
+			ship.move(0, a);
 		}
 	}
 

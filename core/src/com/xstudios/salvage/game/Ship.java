@@ -335,6 +335,8 @@ public class Ship {
         this.oxygen_level = max_oxygen;
     }
 
+	public Vector2 restrict = new Vector2(0,0);
+
 	/**
 	 * Moves the ship by the specified amount.
 	 *
@@ -351,12 +353,14 @@ public class Ship {
 
 		// Process the ship thrust.
 		if (up != 0.0f) {
-			// Thrust key pressed; increase the ship velocity.
+			// Thrust key pressed; increase the ship velocity
+			if(up != restrict.y)
 			vel.add(0, up);
 			changeOxygenLevel(-.01f);
 		}
 		if (forward != 0.0f) {
 			// Thrust key pressed; increase the ship velocity.
+			if(forward != restrict.x)
 			vel.add(forward, 0);
 			changeOxygenLevel(-.01f);
 		}
