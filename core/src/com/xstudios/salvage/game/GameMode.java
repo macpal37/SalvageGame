@@ -234,7 +234,7 @@ public class GameMode implements ModeController {
 		java.awt.Rectangle hit = obstacleContainer.getIntersectingObstacle(shipRed.getHitbox());
 		if(hit!=null){
 //			System.out.println("Aalskfashdfbasbdfjhasbdfa");
-			physicsController.checkForCollision(shipRed,hit);
+			physicsController.checkForCollision(shipRed,hit,redController.getForward(),redController.getUp());
 		}
 
 		// updates oxygen level

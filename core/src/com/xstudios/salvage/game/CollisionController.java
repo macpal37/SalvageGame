@@ -70,24 +70,24 @@ public class CollisionController {
 	 *  @param ship First ship in candidate collision
 	 *  @param wall Second ship in candidate collision
 	 */
-	public void checkForCollision(Ship ship, java.awt.Rectangle wall) {
+	public void checkForCollision(Ship ship, java.awt.Rectangle wall, float x, float y) {
 		float rad = ship.getDiameter()/2;
 		float xrad = wall.width/2;
 		float yrad = wall.height/2;
 
 
 
-		if (ship.getPosition().x-wall.x<0){
+		if (ship.getPosition().x-wall.x<0&&y ==0){
 			ship.move(-1,0);
 		}else
-		if (ship.getPosition().x-wall.x>0){
+		if (ship.getPosition().x-wall.x>0&&y ==0){
 			ship.move(1,0);
 		}
 
-		if (ship.getPosition().y-wall.y<0){
+		if (ship.getPosition().y-wall.y<0&&x ==0){
 			ship.move(0,-1);
 		}else
-		if (ship.getPosition().y-wall.y>0){
+		if (ship.getPosition().y-wall.y>0&&x ==0){
 			ship.move(0,1);
 		}
 	}
