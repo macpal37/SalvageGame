@@ -1,18 +1,18 @@
 /*
  * Ship.java
  *
- * This class tracks all of the state (position, velocity, rotation) of a 
- * single ship. In order to obey the separation of the model-view-controller 
- * pattern, controller specific code (such as reading the keyboard) is not 
+ * This class tracks all of the state (position, velocity, rotation) of a
+ * single ship. In order to obey the separation of the model-view-controller
+ * pattern, controller specific code (such as reading the keyboard) is not
  * present in this class.
- * 
+ *
  * Looking through this code you will notice certain optimizations. We want
  * to eliminate as many "new" statements as possible in the draw loop. In
- * game programming, it is considered bad form to have "new" statements in 
- * an update or a graphics loop if you can easily avoid it.  Each "new" is 
- * a potentially  expensive memory allocation. 
+ * game programming, it is considered bad form to have "new" statements in
+ * an update or a graphics loop if you can easily avoid it.  Each "new" is
+ * a potentially  expensive memory allocation.
  *
- * To get around this, we have predeclared some Vector2 objects.  These are 
+ * To get around this, we have predeclared some Vector2 objects.  These are
  * used by the draw method to position the objects on the screen. As we know
  * we will need that memory animation frame, it is better to have them
  * declared ahead of time (even though we are not taking state across frame
@@ -34,7 +34,7 @@ import java.awt.*;
 
 /**
  * Model class representing an alien ship.
- * 
+ *
  * Note that the graphics resources in this class are static.  That
  * is because all ships share the same image file, and it would waste
  * memory to load the same image file for each ship.
@@ -53,7 +53,9 @@ public class Ship {
 	/** Amount to decay forward thrust over time */
 	private static final float FORWARD_DAMPING = 0.9f;
     // Modify this as part of the lab
-    
+
+	/** start position of the ship */
+	private Vector2 start_pos;
 	/** Position of the ship */
 	private Vector2 pos;
 	/** Velocity of the ship */
@@ -62,7 +64,7 @@ public class Ship {
 	private Color  tint;
 	/** Color of the ships shadow (cached) */
 	private Color stint;
-	
+
 	/** Mass/weight of the ship. Used in collisions. */
 	private float mass;
 
@@ -91,13 +93,13 @@ public class Ship {
 //	private Texture targetTexture;
 
 	/** The maximum oxygen of the diver **/
-	private int MAX_OXYGEN;
-	private int oxygen_level;
+	protected int MAX_OXYGEN;
+	private float oxygen_level;
 
     // ACCESSORS
     /**
      * Returns the image filmstrip for this ship
-     * 
+     *
      * This value should be loaded by the GameMode and set there. However, we
      * have to be prepared for this to be null at all times
      *
@@ -106,10 +108,10 @@ public class Ship {
     public FilmStrip getFilmStrip() {
     	return shipSprite;
     }
-    
+
     /**
      * Sets the image texture for this ship
-     * 
+     *
      * This value should be loaded by the GameMode and set there. However, we
      * have to be prepared for this to be null at all times
      *
@@ -119,10 +121,10 @@ public class Ship {
     	shipSprite = value;
     	shipSprite.setFrame(SHIP_IMG_FLAT);
     }
-    
+
     /**
      * Returns the image texture for the target reticule
-     * 
+     *
      * This value should be loaded by the GameMode and set there. However, we
      * have to be prepared for this to be null at all times
      *
@@ -131,11 +133,20 @@ public class Ship {
 //    public Texture getTargetTexture() {
 //    	return targetTexture;
 //    }
-    
+
 
 
 	public void setSpeed(float speed){
 		this.speed = speed;
+	}
+
+	/**
+	 * Returns the start position of this ship.
+	 *
+	 * @return the start position of this ship
+	 */
+	public Vector2 getStartPosition() {
+		return start_pos;
 	}
 
 	/**
@@ -145,10 +156,10 @@ public class Ship {
 	 *
 	 * @return the position of this ship
 	 */
-	public Vector2 getPosition() { 
-		return pos;  
+	public Vector2 getPosition() {
+		return pos;
 	}
-	
+
 	/**
 	 * Sets the position of this ship.
 	 *
@@ -156,7 +167,7 @@ public class Ship {
 	 *
 	 * @param value the position of this ship
 	 */
-	public void setPosition(Vector2 value) { 
+	public void setPosition(Vector2 value) {
 		pos.set(value);
 	}
 
@@ -168,7 +179,7 @@ public class Ship {
 	 * @return the velocity of this ship
 	 */
 	public Vector2 getVelocity() {
-		return vel;  
+		return vel;
 	}
 
 	/**
@@ -178,11 +189,11 @@ public class Ship {
 	 *
 	 * @param value the velocity of this ship
 	 */
-	public void setVelocity(Vector2 value) { 
+	public void setVelocity(Vector2 value) {
 		vel.set(value);
 	}
-	
-	/** 
+
+	/**
 	 * Returns the angle that this ship is facing.
 	 *
 	 * The angle is specified in degrees, not radians.
@@ -192,8 +203,8 @@ public class Ship {
 	public float getAngle() {
 		return ang;
 	}
-	
-	/** 
+
+	/**
 	 * Sets the angle that this ship is facing.
 	 *
 	 * The angle is specified in degrees, not radians.
@@ -209,27 +220,27 @@ public class Ship {
 	/**
 	 * Returns the tint color for this ship.
 	 *
-	 * We can change how an image looks without loading a new image by 
+	 * We can change how an image looks without loading a new image by
 	 * tinting it differently.
 	 *
 	 * @return the tint color
 	 */
 	public Color getColor() {
-		return tint;  
+		return tint;
 	}
-	
+
 	/**
 	 * Sets the tint color for this ship.
 	 *
-	 * We can change how an image looks without loading a new image by 
+	 * We can change how an image looks without loading a new image by
 	 * tinting it differently.
 	 *
 	 * @param value the tint color
 	 */
-	public void setColor(Color value) { 
+	public void setColor(Color value) {
 		tint.set(value);
 	}
-	
+
 	/**
 	 * Resets the reload counter so the ship cannot fire again immediately.
 	 *
@@ -268,13 +279,23 @@ public class Ship {
 	 *
 	 * @return the current oxygen level
 	 */
-	public int getOxygenLevel() { return this.oxygen_level; }
+	public float getOxygenLevel() { return this.oxygen_level; }
 
 	/**
 	 * Modifies the current oxygen level of the diver by delta.
 	 */
-	public void changeOxygenLevel(int delta) {
+	public void changeOxygenLevel(float delta) {
 		this.oxygen_level += delta;
+		if(this.oxygen_level < 0) {
+			this.oxygen_level = 0;
+		}
+	}
+
+	/**
+	 *sets oxygen level to value
+	 */
+	public void setOxygenLevel(float value) {
+		this.oxygen_level = value;
 	}
 
 	public Rectangle getHitbox (){
@@ -290,6 +311,7 @@ public class Ship {
 	 */
     public Ship(float x, float y, float ang, int size, int type, int max_oxygen) {
         // Set the position of this ship.
+		this.start_pos = new Vector2(x,y);
         this.pos = new Vector2(x,y);
         this.ang = ang;
         this.size = size;
@@ -314,10 +336,10 @@ public class Ship {
     }
 
 	/**
-	 * Moves the ship by the specified amount.  
-	 * 
-	 * Forward is the amount to move forward, while turn is the angle to turn the ship 
-	 * (used for the "banking" animation. This method performs no collision detection.  
+	 * Moves the ship by the specified amount.
+	 *
+	 * Forward is the amount to move forward, while turn is the angle to turn the ship
+	 * (used for the "banking" animation. This method performs no collision detection.
 	 * Collisions are resolved afterwards.
 	 *
 	 * @param forward	Amount to move forward
@@ -330,13 +352,13 @@ public class Ship {
 		// Process the ship thrust.
 		if (up != 0.0f) {
 			// Thrust key pressed; increase the ship velocity.
-			vel.add(0, up);//up * (float)Math.cos(Math.toRadians (ang)) * THRUST_FACTOR,
-//					up * (float)-Math.sin (Math.toRadians (ang)) * THRUST_FACTOR);
+			vel.add(0, up);
+			changeOxygenLevel(-.01f);
 		}
 		if (forward != 0.0f) {
 			// Thrust key pressed; increase the ship velocity.
-			vel.add(forward, 0);//forward * (float)-Math.sin(Math.toRadians (ang)) * THRUST_FACTOR,
-//					forward * (float)Math.cos (Math.toRadians (ang)) * THRUST_FACTOR);
+			vel.add(forward, 0);
+			changeOxygenLevel(-.01f);
 		}
 //		else {
 //			// Gradually slow the ship down
@@ -347,7 +369,7 @@ public class Ship {
 		vel.scl(speed);
 		// Move the ship, updating it.
 		// Adjust the angle by the change in angle
-		ang += dang;  // INVARIANT: -360 < ang < 720                                                   
+		ang += dang;  // INVARIANT: -360 < ang < 720
 		if (ang > 360)
 			ang -= 360;
 		if (ang < 0)
@@ -377,7 +399,7 @@ public class Ship {
 //    }
 
 	/**
-	 * Draws the ship (and its related images) to the given GameCanvas. 
+	 * Draws the ship (and its related images) to the given GameCanvas.
 	 *
 	 * You will want to modify this method for Exercise 4.
 	 *
@@ -402,7 +424,7 @@ public class Ship {
 		// Position it offset by 10 so it can be seen.
         float sx = pos.x+SHADOW_OFFSET;
         float sy = pos.y+SHADOW_OFFSET;
-        
+
         // Need to negate y scale because of coordinate access flip.
         // Draw the shadow first
 		float ship_scale = this.getDiameter() / 80;

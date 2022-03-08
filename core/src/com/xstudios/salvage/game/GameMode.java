@@ -2,7 +2,7 @@
  * GameMode.java
  *
  * This is the primary class file for running the game.  You should study this file for
- * ideas on how to structure your own root class. This class follows a 
+ * ideas on how to structure your own root class. This class follows a
  * model-view-controller pattern fairly strictly.
  *
  * Author: Walker M. White
@@ -33,7 +33,7 @@ import com.badlogic.gdx.assets.AssetManager;
  * The primary controller class for the game.
  *
  * While GDXRoot is the root class, it delegates all of the work to the player mode
- * classes. This is the player mode class for running the game. In initializes all 
+ * classes. This is the player mode class for running the game. In initializes all
  * of the other classes in the game and hooks them together.  It also provides the
  * basic game loop (update-draw).
  */
@@ -83,7 +83,7 @@ public class GameMode implements ModeController {
 
 	protected  DeadBody deadBody;
 
-	/** Store the bounds to enforce the playing region */	
+	/** Store the bounds to enforce the playing region */
 	private Rectangle bounds;
 
 
@@ -91,6 +91,20 @@ public class GameMode implements ModeController {
 	private BitmapFont displayFont;
 	/** Offset for the oxygen message on the screen */
 	private static final float TEXT_OFFSET   = 40.0f;
+
+	/** Variable to track the game state (SIMPLE FIELDS) */
+	private GameState gameState;
+	/**
+	 * Track the current state of the game for the update loop.
+	 */
+	public enum GameState {
+		/** Before the game has started */
+		INTRO,
+		/** While we are playing the game */
+		PLAY,
+		/** When the ships is dead (but shells still work) */
+		OVER
+	}
 
 	/**
 	 * Creates a new game with a playing field of the given size.
@@ -171,7 +185,9 @@ public class GameMode implements ModeController {
 		// Create the two ships and place them across from each other.
 
         // Diver
+
 		shipRed  = new Ship(100 ,100, 0, 40, 1, 100);
+
 		shipRed.setFilmStrip(new FilmStrip(shipTexture,SHIP_ROWS,SHIP_COLS,SHIP_SIZE));
 //		shipRed.setTargetTexture(targetTexture);
 		shipRed.setColor(new Color(1.0f, 0.25f, 0.25f, 1.0f));  // Red, but makes texture easier to see
@@ -183,13 +199,14 @@ public class GameMode implements ModeController {
 		redController  = new InputController(0);
         physicsController = new CollisionController();
 
+		gameState = GameState.INTRO;
         displayFont = assets.getEntry("times", BitmapFont.class);
 	}
 
-	/** 
+	/**
 	 * Read user input, calculate physics, and update the models.
 	 *
-	 * This method is HALF of the basic game loop.  Every graphics frame 
+	 * This method is HALF of the basic game loop.  Every graphics frame
 	 * calls the method update() and the method draw().  The method update()
 	 * contains all of the calculations for updating the world, such as
 	 * checking for collisions, gathering input, and playing audio.  It
@@ -204,7 +221,7 @@ public class GameMode implements ModeController {
 		// Move the ships forward (ignoring collisions)
 		shipRed.move(redController.getForward(),   redController.getUp());
 		photons.move(bounds);
-		
+
 		// This call handles BOTH ships.
 		physicsController.checkInBounds(shipRed, bounds);
 
@@ -221,7 +238,29 @@ public class GameMode implements ModeController {
 		}
 
 		// updates oxygen level
-		shipRed.changeOxygenLevel((int)redController.getOxygenRate());
+		shipRed.changeOxygenLevel(redController.getOxygenRate());
+		// Test whether to reset the game.
+		switch (gameState) {
+			case INTRO:
+				gameState = GameState.PLAY;
+				break;
+			case OVER:
+				if (redController.didReset()) {
+					gameState = GameState.PLAY;
+					shipRed.setOxygenLevel(shipRed.MAX_OXYGEN);
+					shipRed.setPosition(shipRed.getStartPosition());
+				}
+				break;
+			case PLAY:
+				if(shipRed.getOxygenLevel() <= 0 || deadBody.isDestroyed()) {
+					gameState = GameState.OVER;
+					deadBody.setDestroyed(false);
+				}
+				break;
+			default:
+				break;
+		}
+
 	}
 
 	Vector2 mapPosition = new Vector2(0f,0f);
@@ -229,7 +268,7 @@ public class GameMode implements ModeController {
 	/**
 	 * Draw the game on the provided GameCanvas
 	 *
-	 * There should be no code in this method that alters the game state.  All 
+	 * There should be no code in this method that alters the game state.  All
 	 * assignments should be to local variables or cache fields only.
 	 *
 	 * @param canvas The drawing context
@@ -262,18 +301,19 @@ public class GameMode implements ModeController {
 
 		//draw text
 		canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
-		String msg = "Oxygen level: " + shipRed.getOxygenLevel();
-//		System.out.println(msg);
+
+		String msg = "Oxygen level: " + (int)shipRed.getOxygenLevel();
+		System.out.println(msg);
 		canvas.drawText(msg, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET);
 		canvas.drawText("Light Level: "+redController.getLightRange()*lightRadius, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*2);
 		canvas.drawText("Speed: "+redController.getSpeed()*defSpeed, displayFont, TEXT_OFFSET, canvas.getHeight()-TEXT_OFFSET*3);
-
-
-		if(deadBody.isDestroyed()){
-
-			canvas.drawTextCentered("You Won!",displayFont, 0);
-			canvas.drawTextCentered("Press R to Restart", displayFont,-50 );
+		if(deadBody.isDestroyed()) {
+			canvas.drawTextCentered("You Won!", displayFont, 0);
 		}
+		if(gameState == GameState.OVER) {
+			canvas.drawTextCentered("Press R to Restart", displayFont, -50);
+		}
+
 	}
 
 	/**
@@ -298,6 +338,6 @@ public class GameMode implements ModeController {
 	public void resize(int width, int height) {
 		bounds.set(0,0,width,height);
 	}
-	
+
 
 }
