@@ -27,6 +27,7 @@
 package com.xstudios.salvage.game;
 
 import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * Controller implementing simple game physics.
@@ -64,43 +65,49 @@ public class CollisionController {
 	 *  Handles collisions between ships, causing them to bounce off one another.
 	 * 
 	 *  This method updates the velocities of both ships: the collider and the 
-	 *  collidee. Therefore, you should only call this method for one of the 
+	 *   Therefore, you should only call this method for one of the
 	 *  ships, not both. Otherwise, you are processing the same collisions twice.
 	 * 
-	 *  @param ship1 First ship in candidate collision
-	 *  @param ship2 Second ship in candidate collision
+	 *
 	 */
-	public void checkForCollision(Ship ship1, Ship ship2) {
+	public void checkForCollision(Ship ship, ObstacleContainer o) {
 		// Calculate the normal of the (possible) point of collision
-		normal.set(ship1.getPosition()).sub(ship2.getPosition());
-		float distance = normal.len();
-		float impactDistance = (ship1.getDiameter() + ship2.getDiameter()) / 2f;
-		normal.nor();
+		float diverX = ship.getPosition().x;
+		float diverY = ship.getPosition().y;
 
-		// If this normal is too small, there was a collision
-		if (distance < impactDistance) {
-			// "Roll back" time so that the ships are barely touching (e.g. point of impact).
-			// We need to use temp, as the method scl would change the contents of normal!
-			temp.set(normal).scl((impactDistance - distance) / 2);  // normal * (d1 - dist)/2
-			ship1.getPosition().add(temp);
+		Array<Rectangle> obstacle = o.getAllObstacles();
 
-			temp.set(normal).scl((impactDistance - distance) / 2);  // normal * (d2 - dist)/2
-			ship2.getPosition().sub(temp);
+		for (int ii = 0; ii < obstacle.size; ii++) {
+			Rectangle wall = obstacle.get(ii);
 
-			// Now it is time for Newton's Law of Impact.
-			// Convert the two velocities into a single reference frame
-			velocity.set(ship1.getVelocity()).sub(ship2.getVelocity()); // v1-v2
+			normal.set(ship.getPosition()).sub(wall.getX(), wall.getY());
 
-			// Compute the impulse (see Essential Math for Game Programmers)
-			float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) /
-							(normal.dot(normal) * (1 / ship1.getMass() + 1 / ship2.getMass()));
+			float distance = normal.len();
 
-			// Change velocity of the two ships using this impulse
-			temp.set(normal).scl(impulse / ship1.getMass());
-			ship1.getVelocity().add(temp);
+			float impactDistanceW = (ship.getDiameter() + wall.getWidth()) / 2f;
+			float impactDistanceH = (ship.getDiameter() + wall.getHeight()) / 2f;
 
-			temp.set(normal).scl(impulse / ship2.getMass());
-			ship2.getVelocity().sub(temp);
+			normal.nor();
+			float impactDistance;
+
+			if (impactDistanceW < impactDistanceH) impactDistance = impactDistanceW;
+			else impactDistance = impactDistanceH;
+
+			if (distance < impactDistance) {
+				temp.set(normal).scl((impactDistance - distance) / 2);
+				ship.getPosition().add(temp);
+
+				temp.set(normal).scl((impactDistance - distance) / 2);  // normal * (d2 - dist)/2
+				wall.getPosition(new Vector2(wall.getX(), wall.getY())).sub(temp);
+
+				velocity.set(ship.getVelocity()).sub(new Vector2(0, 0));
+
+				float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) /
+						(normal.dot(normal) * (1 / ship.getMass() + 1 / 3.0f));
+
+				temp.set(normal).scl(impulse / ship.getMass());
+				ship.getVelocity().add(temp);
+			}
 		}
 	}
 
@@ -131,7 +138,6 @@ public class CollisionController {
 	}
 
 	public void checkForObjectCollision(Ship ship, GameObject obj){
-
 		float diverX = ship.getPosition().x;
 		float diverY = ship.getPosition().y;
 		if(diverX >= obj.getX()-obj.getRadius() && diverX <= obj.getX()+obj.getRadius()&&
@@ -141,54 +147,53 @@ public class CollisionController {
 
 
 	}
-
-	public void checkForCollision(Ship ship, PhotonQueue photon_q){
-		// iterate over each photon
-		for (int ii = 0; ii < photon_q.size; ii++) {
-			// Find the position of this photon.
-			int idx = ((photon_q.head + ii) % photon_q.MAX_PHOTONS);
-			// Find the photon
-			PhotonQueue.Photon photon = photon_q.queue[idx];
-
-			// if the ship has photons of its own type, ignore them
-			if (ship.type != photon.type) {
-
-				// Calculate the normal of the (possible) point of collision
-				Vector2 photon_position = new Vector2(photon.x, photon.y);
-				Vector2 photon_velocity = new Vector2(photon.vx, photon.vy);
-				normal.set(ship.getPosition()).sub(photon_position);
-				float distance = normal.len();
-				float impactDistance = (ship.getDiameter() + photon_q.getTexture().getHeight()) / 2f;
-				normal.nor();
-
-				// If this normal is too small, there was a collision
-				if (distance < impactDistance) {
-					// "Roll back" time so that the ships are barely touching (e.g. point of impact).
-					// We need to use temp, as the method scl would change the contents of normal!
-					temp.set(normal).scl((impactDistance - distance) / 2);  // normal * (d1 - dist)/2
-					ship.getPosition().add(temp);
-
-					temp.set(normal).scl((impactDistance - distance) / 2);  // normal * (d2 - dist)/2
-					photon_position.sub(temp);
-
-					// Now it is time for Newton's Law of Impact.
-					// Convert the two velocities into a single reference frame
-					velocity.set(ship.getVelocity()).sub(photon_velocity); // v1-v2
-
-					// Compute the impulse (see Essential Math for Game Programmers)
-					float photon_mass = 1.0f;
-					float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) /
-							(normal.dot(normal) * (1 / ship.getMass() + 1 / photon_mass));
-
-					// Change velocity of the two ships using this impulse
-					temp.set(normal).scl(impulse / ship.getMass());
-					ship.getVelocity().add(temp);
-
-					temp.set(normal).scl(impulse / photon_mass);
-					photon.vx -= temp.x;
-					photon.vy -= temp.y;
-				}
-			}
-		}
+//
+//	public void checkForCollision(Ship ship, PhotonQueue photon_q){
+//		// iterate over each photon
+//		for (int ii = 0; ii < photon_q.size; ii++) {
+//			// Find the position of this photon.
+//			int idx = ((photon_q.head + ii) % photon_q.MAX_PHOTONS);
+//			// Find the photon
+//			PhotonQueue.Photon photon = photon_q.queue[idx];
+//
+//			// if the ship has photons of its own type, ignore them
+//			if (ship.type != photon.type) {
+//
+//				// Calculate the normal of the (possible) point of collision
+//				Vector2 photon_position = new Vector2(photon.x, photon.y);
+//				Vector2 photon_velocity = new Vector2(photon.vx, photon.vy);
+//				normal.set(ship.getPosition()).sub(photon_position);
+//				float distance = normal.len();
+//				float impactDistance = (ship.getDiameter() + photon_q.getTexture().getHeight()) / 2f;
+//				normal.nor();
+//
+//				// If this normal is too small, there was a collision
+//				if (distance < impactDistance) {
+//					// "Roll back" time so that the ships are barely touching (e.g. point of impact).
+//					// We need to use temp, as the method scl would change the contents of normal!
+//					temp.set(normal).scl((impactDistance - distance) / 2);  // normal * (d1 - dist)/2
+//					ship.getPosition().add(temp);
+//
+//					temp.set(normal).scl((impactDistance - distance) / 2);  // normal * (d2 - dist)/2
+//					photon_position.sub(temp);
+//
+//					// Now it is time for Newton's Law of Impact.
+//					// Convert the two velocities into a single reference frame
+//					velocity.set(ship.getVelocity()).sub(photon_velocity); // v1-v2
+//
+//					// Compute the impulse (see Essential Math for Game Programmers)
+//					float photon_mass = 1.0f;
+//					float impulse = (-(1 + COLLISION_COEFF) * normal.dot(velocity)) /
+//							(normal.dot(normal) * (1 / ship.getMass() + 1 / photon_mass));
+//
+//					// Change velocity of the two ships using this impulse
+//					temp.set(normal).scl(impulse / ship.getMass());
+//					ship.getVelocity().add(temp);
+//
+//					temp.set(normal).scl(impulse / photon_mass);
+//					photon.vx -= temp.x;
+//					photon.vy -= temp.y;
+//				}
+//			}
+//		}
 	}
-}

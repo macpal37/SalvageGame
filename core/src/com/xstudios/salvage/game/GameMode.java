@@ -205,7 +205,7 @@ System.out.println(width);
 
 		// handles collisions of each ship with photons
 
-		physicsController.checkForCollision(shipRed, photons);
+		physicsController.checkForCollision(shipRed, obstacleContainer);
 
 		physicsController.checkForObjectCollision(shipRed,deadBody);
 
