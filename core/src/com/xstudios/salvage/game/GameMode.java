@@ -164,10 +164,10 @@ public class GameMode implements ModeController {
 		obstacleContainer.addRectangle(width/4, WALL_THICKNESS+wallHeight*2, WALL_THICKNESS, wallHeight);
 		obstacleContainer.addRectangle(WALL_THICKNESS, wallHeight+WALL_THICKNESS,wallWidth ,WALL_THICKNESS);
 
-		obstacleContainer.addRectangle(wallWidth*6, wallHeight+WALL_THICKNESS,wallWidth*2 ,WALL_THICKNESS);
+		obstacleContainer.addRectangle(wallWidth*6, wallHeight+WALL_THICKNESS,wallWidth*1f ,WALL_THICKNESS);
 		obstacleContainer.addRectangle(wallWidth*2, wallHeight+WALL_THICKNESS,wallWidth*2 ,WALL_THICKNESS);
 		obstacleContainer.addRectangle(wallWidth*2, 2*wallHeight+WALL_THICKNESS,wallWidth*2 ,WALL_THICKNESS);
-		obstacleContainer.addRectangle(wallWidth*6, wallHeight,WALL_THICKNESS ,wallHeight);
+		obstacleContainer.addRectangle(wallWidth*6, wallHeight*1.5f,WALL_THICKNESS ,wallHeight*0.75f);
 		//Initialize lowest vertical wall
 //		obstacleContainer.addRectangle(150, 150, WALL_THICKNESS, height*0.2f);
 ////
@@ -178,10 +178,10 @@ public class GameMode implements ModeController {
 		obstacleContainer.addRectangle(width/4, height*0.6f, WALL_THICKNESS, height*0.3f);
 ////
 ////		//Initialize fourth lowest vertical wall
-		obstacleContainer.addRectangle(width*0.6f, height*0.9f, WALL_THICKNESS, height*0.6f);
+		obstacleContainer.addRectangle(width*0.6f, height*0.3f, WALL_THICKNESS, height*1f);
 ////
 ////		//Initialize last-minute vertical wall
-		obstacleContainer.addRectangle(width*0.5f, height*0.1f, WALL_THICKNESS, height*0.3f);
+		obstacleContainer.addRectangle(width*0.5f, height*0.9f, WALL_THICKNESS, height*0.9f);
 ////
 ////		//Initialize leftmost horizontal wall
 		obstacleContainer.addRectangle(width*0.1f, height*0.6f, width*0.25f, WALL_THICKNESS);
@@ -190,7 +190,7 @@ public class GameMode implements ModeController {
 		obstacleContainer.addRectangle(width*0.305f, height*0.45f,width*0.15f, WALL_THICKNESS);
 ////
 ////		//Initialize third-to-left horizontal wall
-		obstacleContainer.addRectangle(width*0.845f, height*0.4f, width*0.25f, WALL_THICKNESS);
+		obstacleContainer.addRectangle(width*0.645f, height*0.4f, width*0.125f, WALL_THICKNESS);
 ////
 ////		//Initialize last minute horizontal wall
 		obstacleContainer.addRectangle(width*0.9f, height*0.75f, width*0.15f, WALL_THICKNESS);
@@ -257,7 +257,6 @@ public class GameMode implements ModeController {
 
 		java.awt.Rectangle hit = obstacleContainer.getIntersectingObstacle(shipRed.getHitbox());
 		if(hit!=null){
-//			System.out.println("Aalskfashdfbasbdfjhasbdfa");
 			physicsController.checkForCollision(shipRed,hit,redController.getForward(),redController.getUp());
 		}else {
 			shipRed.restrict.set(-2,-2);
@@ -322,6 +321,7 @@ public class GameMode implements ModeController {
 	}
 	Vector2 mapPosition = new Vector2(0f,0f);
 
+	float face=1f;
 	/**
 	 * Draw the game on the provided GameCanvas
 	 *
@@ -337,10 +337,11 @@ public class GameMode implements ModeController {
 
 		canvas.drawMap(background, true,background.getWidth()/2,background.getHeight()/2-shipRed.getDiameter()/2);
 
-		canvas.drawExit(exit,shipRed.getStartPosition().x,shipRed.getStartPosition().y,0.1f);
+		canvas.drawExit(exit,shipRed.getStartPosition().x,shipRed.getStartPosition().y,0.1f,1f);
 
+		face = (float)((redController.getForward()==0)?face:redController.getForward());
 		// First drawing pass (ships + shadows)
-		shipRed.drawShip(canvas);
+		shipRed.drawShip(canvas,face);
 
 		// Draw Dead Body
 		if(!deadBody.isDestroyed())

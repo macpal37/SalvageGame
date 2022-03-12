@@ -304,10 +304,10 @@ public class Ship {
 	 */
 	public void changeOxygenLevel(float delta) {
 		this.oxygen_level += delta;
-		System.out.println("old rate: " + this.oxygen_rate);
-		System.out.println("change oxygen: " + delta);
+//		System.out.println("old rate: " + this.oxygen_rate);
+//		System.out.println("change oxygen: " + delta);
 		this.oxygen_rate = delta;
-		System.out.println("new rate: " + this.oxygen_rate);
+//		System.out.println("new rate: " + this.oxygen_rate);
 		if(this.oxygen_level < 0) {
 			this.oxygen_level = 0;
 		}
@@ -320,12 +320,20 @@ public class Ship {
 		this.oxygen_level = value;
 	}
 
+	public boolean first_time = true;
 	/**
 	 *sets if carrying object or not
 	 */
 	public void setCarriedObject(boolean value, GameObject o) {
 		this.carryingObject = value;
 		if(this.carryingObject) {
+			if(first_time == true){
+				oxygen_level+=25;
+				first_time = false;
+				System.out.println("YEAH");
+			}
+
+
 			carriedObject = o;
 		} else {
 			carriedObject = null;
@@ -424,6 +432,8 @@ public class Ship {
 
 		// Move the ship position by the ship velocity
 		pos.add(vel);
+		hitbox.x =(int) pos.x;
+		hitbox.y =(int)  pos.y;
 		if(carryingObject) {
 			carriedObject.setX(pos.x + CARRY_OFFSET_X);
 			carriedObject.setY(pos.y + CARRY_OFFSET_Y);
@@ -431,24 +441,7 @@ public class Ship {
 		}
     }
 
-	/**
-	 * Aim the target reticule at the opponent
-	 *
-	 * The target reticule always shows the location of our opponent.  In order
-	 * to place it we need to know where our opponent is.  This method is
-	 * called by the game engine to let us know the location of our
-	 * opponent.
-	 *
-	 * @param other The opponent
-	 */
-//    public void acquireTarget(Ship other) {
-//        // Calculate vector to 2nd ship
-//        tofs.set(other.pos).sub(this.pos);  // tofs = other.pos - this.pos (and not a reference to other.pos)
-//
-//        // Scale it so we can draw it.
-//        tofs.nor();
-//        tofs.scl(TARGET_DIST);
-//    }
+
 
 	/**
 	 * Draws the ship (and its related images) to the given GameCanvas.
@@ -460,7 +453,7 @@ public class Ship {
 	 *
 	 * @param canvas The drawing canvas.
 	 */
-    public void drawShip(GameCanvas canvas) {
+    public void drawShip(GameCanvas canvas,float face) {
     	if (shipSprite == null) {
     		return;
     	}
@@ -482,10 +475,9 @@ public class Ship {
 		float ship_scale = this.getDiameter() / 80;
 		ship_scale = 1f;
 
-//		canvas.draw(shipSprite, stint, ox, oy, sx, sy, rotate, ship_scale, ship_scale);
 		// Then draw the ship
-		canvas.drawExit(shipSprite.getTexture(),pos.x,pos.y,0.1f);
-//		canvas.draw(shipSprite, tint, ox, oy, pos.x, pos.y, rotate, ship_scale, ship_scale);
+		canvas.drawExit(shipSprite.getTexture(),pos.x+hitbox.width/2,pos.y+hitbox.height/2,0.1f,face);
+
 	}
 
 	/**

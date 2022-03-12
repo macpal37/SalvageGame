@@ -839,7 +839,7 @@ public class GameCanvas {
 		spriteBatch.draw(tr,w,h,local);
 	}
 
-	public void drawExit(Texture image,float x, float y,float scale) {
+	public void drawExit(Texture image,float x, float y,float scale, float face) {
 		if (!active) {
 			Gdx.app.error("GameCanvas", "Cannot draw without active begin()", new IllegalStateException());
 			return;
@@ -851,7 +851,7 @@ public class GameCanvas {
 		spriteBatch.setColor(Color.WHITE);
 		TextureRegion tr = new TextureRegion(image);
 		spriteBatch.setColor(Color.WHITE);
-			computeTransform(w/2,h/2,x,y,0,scale,scale);
+			computeTransform(w/2,h/2,x,y,0,face*scale,scale);
 
 		spriteBatch.draw(tr,w,h,local);
 	}
