@@ -4,7 +4,7 @@ The goal of the game is to navigate the maze and find the body (represented by P
 
 # Controls
 
-Using arrow keys: 
+Using arrow keys:
 - < move left
 - \> move right
 - \\/ move down
