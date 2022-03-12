@@ -4,13 +4,19 @@ The goal of the game is to navigate the maze and find the body (represented by P
 
 # Controls
 
-arrow keys: move the diver up, down, left, right
-x: pick up or put down the body
-i: increase the light range
-k: decrease the light range
-u: increase player speed
-j: decrease player speed
-y: increase rate of oxygen depletion
-h: decrease rate of oxygen depletion
-r: reset the game
-c: view the list of controls
+Using arrow keys: 
+- < move left
+- \> move right
+- \\/ move down
+- /\ move up
+
+- x: pick up or put down the body
+### Debug Controls
+- i: increase the light range
+- k: decrease the light range
+- u: increase player speed
+- j: decrease player speed
+- y: increase rate of oxygen depletion
+- h: decrease rate of oxygen depletion
+- r: reset the game
+- c: view the list of controls

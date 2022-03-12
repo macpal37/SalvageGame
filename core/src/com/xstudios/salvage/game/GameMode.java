@@ -207,7 +207,7 @@ public class GameMode implements ModeController {
 
         // Diver
 
-		shipRed  = new Ship(100 ,100, 0, 40, 1, 100);
+		shipRed  = new Ship(100 ,100, 0, 40, 1, 125);
 
 		shipRed.setFilmStrip(new FilmStrip(shipTexture,SHIP_ROWS,SHIP_COLS,SHIP_SIZE));
 //		shipRed.setTargetTexture(targetTexture);
