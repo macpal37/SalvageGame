@@ -9,23 +9,24 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.xstudios.salvage.assets.AssetDirectory;
+import com.xstudios.salvage.game.models.DiverModel;
+import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 import java.util.Iterator;
 
-public class LevelController implements Screen {
+public abstract class LevelController implements Screen {
     /** The texture for walls and platforms */
-    protected TextureRegion earthTile;
-    /** The texture for the exit condition */
-    protected TextureRegion goalTile;
-    /** The font for giving messages to the player */
-    protected BitmapFont displayFont;
+    protected TextureRegion diverTexture;
 
-    /** Exit code for quitting the game */
-    public static final int EXIT_QUIT = 0;
-    /** Exit code for advancing to next level */
-    public static final int EXIT_NEXT = 1;
-    /** Exit code for jumping back to previous level */
-    public static final int EXIT_PREV = 2;
+    protected DiverModel diver;
+
+    /** The texture for the exit condition */
+//    protected TextureRegion goalTile;
+    /** The font for giving messages to the player */
+//    protected BitmapFont displayFont;
+
+
     /** How many frames after winning/losing do we continue? */
     public static final int EXIT_COUNT = 120;
 
@@ -46,9 +47,9 @@ public class LevelController implements Screen {
     /** Reference to the game canvas */
     protected GameCanvas canvas;
     /** All the objects in the world. */
-    protected PooledList<Obstacle> objects  = new PooledList<Obstacle>();
+    protected PooledList<GameObject> objects  = new PooledList<GameObject>();
     /** Queue for adding objects */
-    protected PooledList<Obstacle> addQueue = new PooledList<Obstacle>();
+    protected PooledList<GameObject> addQueue = new PooledList<GameObject>();
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
 
@@ -183,7 +184,7 @@ public class LevelController implements Screen {
      * with the Box2d coordinates.  The bounds are in terms of the Box2d
      * world, not the screen.
      */
-    protected WorldController() {
+    protected LevelController() {
         this(new Rectangle(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),
             new Vector2(0,DEFAULT_GRAVITY));
     }
@@ -199,7 +200,7 @@ public class LevelController implements Screen {
      * @param height	The height in Box2d coordinates
      * @param gravity	The downward gravity
      */
-    protected WorldController(float width, float height, float gravity) {
+    protected LevelController(float width, float height, float gravity) {
         this(new Rectangle(0,0,width,height), new Vector2(0,gravity));
     }
 
@@ -213,7 +214,7 @@ public class LevelController implements Screen {
      * @param bounds	The game bounds in Box2d coordinates
      * @param gravity	The gravitational force on this Box2d world
      */
-    protected WorldController(Rectangle bounds, Vector2 gravity) {
+    protected LevelController(Rectangle bounds, Vector2 gravity) {
         world = new World(gravity,false);
         this.bounds = new Rectangle(bounds);
         this.scale = new Vector2(1,1);
@@ -228,7 +229,7 @@ public class LevelController implements Screen {
      * Dispose of all (non-static) resources allocated to this mode.
      */
     public void dispose() {
-        for(Obstacle obj : objects) {
+        for(GameObject obj : objects) {
             obj.deactivatePhysics(world);
         }
         objects.clear();
@@ -252,9 +253,12 @@ public class LevelController implements Screen {
      */
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the tiles
-        earthTile = new TextureRegion(directory.getEntry( "shared:earth", Texture.class ));
-        goalTile  = new TextureRegion(directory.getEntry( "shared:goal", Texture.class ));
-        displayFont = directory.getEntry( "shared:retro" ,BitmapFont.class);
+        diverTexture = new TextureRegion(directory.getEntry( "models:diver", Texture.class ));
+
+
+//        earthTile = new TextureRegion(directory.getEntry( "shared:earth", Texture.class ));
+//        goalTile  = new TextureRegion(directory.getEntry( "shared:goal", Texture.class ));
+//        displayFont = directory.getEntry( "shared:retro" ,BitmapFont.class);
     }
 
     /**
@@ -266,7 +270,7 @@ public class LevelController implements Screen {
      *
      * param obj The object to add
      */
-    public void addQueuedObject(Obstacle obj) {
+    public void addQueuedObject(GameObject obj) {
         assert inBounds(obj) : "Object is not in bounds";
         addQueue.add(obj);
     }
@@ -276,7 +280,7 @@ public class LevelController implements Screen {
      *
      * param obj The object to add
      */
-    protected void addObject(Obstacle obj) {
+    protected void addObject(GameObject obj) {
         assert inBounds(obj) : "Object is not in bounds";
         objects.add(obj);
         obj.activatePhysics(world);
@@ -291,7 +295,7 @@ public class LevelController implements Screen {
      *
      * @return true if the object is in bounds.
      */
-    public boolean inBounds(Obstacle obj) {
+    public boolean inBounds(GameObject obj) {
         boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x+bounds.width);
         boolean vert  = (bounds.y <= obj.getY() && obj.getY() <= bounds.y+bounds.height);
         return horiz && vert;
@@ -331,31 +335,6 @@ public class LevelController implements Screen {
         if (input.didReset()) {
             reset();
         }
-
-        // Now it is time to maybe switch screens.
-        if (input.didExit()) {
-            pause();
-            listener.exitScreen(this, EXIT_QUIT);
-            return false;
-        } else if (input.didAdvance()) {
-            pause();
-            listener.exitScreen(this, EXIT_NEXT);
-            return false;
-        } else if (input.didRetreat()) {
-            pause();
-            listener.exitScreen(this, EXIT_PREV);
-            return false;
-        } else if (countdown > 0) {
-            countdown--;
-        } else if (countdown == 0) {
-            if (failed) {
-                reset();
-            } else if (complete) {
-                pause();
-                listener.exitScreen(this, EXIT_NEXT);
-                return false;
-            }
-        }
         return true;
     }
 
@@ -363,7 +342,7 @@ public class LevelController implements Screen {
      * The core gameplay loop of this world.
      *
      * This method contains the specific update code for this mini-game. It does
-     * not handle collisions, as those are managed by the parent class WorldController.
+     * not handle collisions, as those are managed by the parent class LevelController.
      * This method is called after input is read, but before collisions are resolved.
      * The very last thing that it should do is apply forces to the appropriate objects.
      *
@@ -392,10 +371,10 @@ public class LevelController implements Screen {
         // Garbage collect the deleted objects.
         // Note how we use the linked list nodes to delete O(1) in place.
         // This is O(n) without copying.
-        Iterator<PooledList<Obstacle>.Entry> iterator = objects.entryIterator();
+        Iterator<PooledList<GameObject>.Entry> iterator = objects.entryIterator();
         while (iterator.hasNext()) {
-            PooledList<Obstacle>.Entry entry = iterator.next();
-            Obstacle obj = entry.getValue();
+            PooledList<GameObject>.Entry entry = iterator.next();
+            GameObject obj = entry.getValue();
             if (obj.isRemoved()) {
                 obj.deactivatePhysics(world);
                 entry.remove();
@@ -420,31 +399,31 @@ public class LevelController implements Screen {
         canvas.clear();
 
         canvas.begin();
-        for(Obstacle obj : objects) {
+        for(GameObject obj : objects) {
             obj.draw(canvas);
         }
         canvas.end();
 
-        if (debug) {
-            canvas.beginDebug();
-            for(Obstacle obj : objects) {
-                obj.drawDebug(canvas);
-            }
-            canvas.endDebug();
-        }
+//        if (debug) {
+//            canvas.beginDebug();
+//            for(GameObject obj : objects) {
+//                obj.drawDebug(canvas);
+//            }
+//            canvas.endDebug();
+//        }
 
         // Final message
-        if (complete && !failed) {
-            displayFont.setColor(Color.YELLOW);
-            canvas.begin(); // DO NOT SCALE
-            canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);
-            canvas.end();
-        } else if (failed) {
-            displayFont.setColor(Color.RED);
-            canvas.begin(); // DO NOT SCALE
-            canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
-            canvas.end();
-        }
+//        if (complete && !failed) {
+//            displayFont.setColor(Color.YELLOW);
+//            canvas.begin(); // DO NOT SCALE
+//            canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);
+//            canvas.end();
+//        } else if (failed) {
+//            displayFont.setColor(Color.RED);
+//            canvas.begin(); // DO NOT SCALE
+//            canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
+//            canvas.end();
+//        }
     }
 
     /**

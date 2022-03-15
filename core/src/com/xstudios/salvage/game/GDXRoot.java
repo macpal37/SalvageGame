@@ -29,19 +29,15 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	@Override
 	public void create () {
-		canvas  = new GameCanvas();
-		loading = new LoadingMode("assets.json",canvas,1);
+		canvas = new GameCanvas();
+		loading = new LoadingMode("assets.json", canvas, 1);
 
 		// Initialize the three game worlds
-		controllers = new LevelController[3];
-//		controllers[0] = new TestLevelController();
+		controllers = new LevelController[1];
+		controllers[0] = new TestLevelController();
 		current = 0;
 		loading.setScreenListener(this);
 		setScreen(loading);
-	}
-
-	@Override
-	public void render () {
 	}
 
 	/**
@@ -51,7 +47,6 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	@Override
 	public void dispose () {
-		// Call dispose on our children
 		setScreen(null);
 		for(int ii = 0; ii < controllers.length; ii++) {
 			controllers[ii].dispose();
@@ -61,12 +56,14 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas = null;
 
 		// Unload all of the resources
+		// Unload all of the resources
 		if (directory != null) {
 			directory.unloadAssets();
 			directory.dispose();
 			directory = null;
 		}
 		super.dispose();
+
 	}
 
 	/**
@@ -85,6 +82,17 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	@Override
 	public void exitScreen(Screen screen, int exitCode) {
+		if (screen == loading) {
 
+			directory = loading.getAssets();
+			controllers[0].gatherAssets(directory);
+			controllers[0].setCanvas(canvas);
+			controllers[current].reset();
+
+			setScreen(controllers[current]);
+
+			loading.dispose();
+			loading = null;
+		}
 	}
 }

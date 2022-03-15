@@ -167,7 +167,6 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     public LoadingMode(String file, GameCanvas canvas, int millis) {
         this.canvas = canvas;
         budget = millis;
-
         // Compute the dimensions from the canvas
         resize(canvas.getWidth(), canvas.getHeight());
 
@@ -223,11 +222,13 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * @param delta Number of seconds since last animation frame
      */
     private void update(float delta) {
+//        System.out.println("??");
         if (playButton == null) {
             assets.update(budget);
             this.progress = assets.getProgress();
             if (progress >= 1.0f) {
                 this.progress = 1.0f;
+
                 playButton = internal.getEntry("play", Texture.class);
             }
         }
