@@ -43,7 +43,6 @@ public class DiverModel extends GameObject {
         super(x,y);
         shape = new PolygonShape();
         origin = new Vector2();
-
         body = null;
     }
     /**
@@ -106,7 +105,7 @@ public class DiverModel extends GameObject {
     @Override
     public void draw(GameCanvas canvas) {
         if (texture != null) {
-            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x-texture.getRegionWidth()/2f,getY()*drawScale.y-texture.getRegionHeight()/2f,getAngle(),0.5f,0.5f);
         }
     }
 
