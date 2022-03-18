@@ -2,6 +2,7 @@ package com.xstudios.salvage.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -21,6 +22,8 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** List of all WorldControllers */
 	private LevelController[] controllers;
 
+	private CameraController cameraController;
+
 	/**
 	 * Called when the Application is first created.
 	 *
@@ -29,12 +32,13 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	@Override
 	public void create () {
-		canvas = new GameCanvas();
+		cameraController = new CameraController(32,18);
+		canvas = new GameCanvas(cameraController);
 		loading = new LoadingMode("assets.json", canvas, 1);
-
 		// Initialize the three game worlds
 		controllers = new LevelController[1];
 		controllers[0] = new TestLevelController();
+		controllers[0].setCameraController(cameraController);
 		current = 0;
 		loading.setScreenListener(this);
 		setScreen(loading);
@@ -78,6 +82,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void resize(int width, int height) {
 		canvas.resize();
 		super.resize(width,height);
+		cameraController.resize(width,height);
 	}
 
 	@Override

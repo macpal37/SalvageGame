@@ -1,7 +1,9 @@
 {
 	"textures": {
 
-        "models:diver": "models/diver.png"
+        "models:diver": "models/diver.png",
+        "background:ocean":"background/ocean.png"
+
         }
 
  }

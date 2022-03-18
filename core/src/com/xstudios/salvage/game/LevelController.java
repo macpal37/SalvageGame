@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
@@ -16,20 +17,19 @@ import com.xstudios.salvage.util.ScreenListener;
 import java.util.Iterator;
 
 public abstract class LevelController implements Screen {
-    /** The texture for walls and platforms */
+    /** The texture for diver */
     protected TextureRegion diverTexture;
+
+    /** Ocean Background Texture */
+    protected TextureRegion background;
+
 
     protected DiverModel diver;
 
-    /** The texture for the exit condition */
-//    protected TextureRegion goalTile;
-    /** The font for giving messages to the player */
-//    protected BitmapFont displayFont;
-
+    protected CameraController cameraController;
 
     /** How many frames after winning/losing do we continue? */
     public static final int EXIT_COUNT = 120;
-
     /** The amount of time for a physics engine step. */
     public static final float WORLD_STEP = 1/60.0f;
     /** Number of velocity iterations for the constrain solvers */
@@ -41,8 +41,11 @@ public abstract class LevelController implements Screen {
     protected static final float DEFAULT_WIDTH  = 32.0f;
     /** Height of the game world in Box2d units */
     protected static final float DEFAULT_HEIGHT = 18.0f;
+    /** Aspect ratio of the world*/
+    protected static final float ASPECT_RATIO = DEFAULT_WIDTH/DEFAULT_HEIGHT;
     /** The default value of gravity (going down) */
     protected static final float DEFAULT_GRAVITY = -4.9f;
+
 
     /** Reference to the game canvas */
     protected GameCanvas canvas;
@@ -163,6 +166,11 @@ public abstract class LevelController implements Screen {
         return canvas;
     }
 
+    public void setCameraController(  CameraController cameraController){
+        this.cameraController = cameraController;
+        cameraController.setBounds(0,0,5400*2/5,3035*2/5);
+    }
+
     /**
      * Sets the canvas associated with this controller
      *
@@ -187,6 +195,7 @@ public abstract class LevelController implements Screen {
     protected LevelController() {
         this(new Rectangle(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),
             new Vector2(0,DEFAULT_GRAVITY));
+
     }
 
     /**
@@ -223,6 +232,8 @@ public abstract class LevelController implements Screen {
         debug  = false;
         active = false;
         countdown = -1;
+
+        System.out.println("BG: "+background);
     }
 
     /**
@@ -254,11 +265,8 @@ public abstract class LevelController implements Screen {
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the tiles
         diverTexture = new TextureRegion(directory.getEntry( "models:diver", Texture.class ));
+        background = new TextureRegion(directory.getEntry( "background:ocean", Texture.class ));
 
-
-//        earthTile = new TextureRegion(directory.getEntry( "shared:earth", Texture.class ));
-//        goalTile  = new TextureRegion(directory.getEntry( "shared:goal", Texture.class ));
-//        displayFont = directory.getEntry( "shared:retro" ,BitmapFont.class);
     }
 
     /**
@@ -399,9 +407,12 @@ public abstract class LevelController implements Screen {
         canvas.clear();
 
         canvas.begin();
+
+        canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE,background.getRegionWidth()/2f,background.getRegionHeight()/2f,0,0,0,4,4);
         for(GameObject obj : objects) {
             obj.draw(canvas);
         }
+
         canvas.end();
 
 //        if (debug) {
@@ -412,18 +423,6 @@ public abstract class LevelController implements Screen {
 //            canvas.endDebug();
 //        }
 
-        // Final message
-//        if (complete && !failed) {
-//            displayFont.setColor(Color.YELLOW);
-//            canvas.begin(); // DO NOT SCALE
-//            canvas.drawTextCentered("VICTORY!", displayFont, 0.0f);
-//            canvas.end();
-//        } else if (failed) {
-//            displayFont.setColor(Color.RED);
-//            canvas.begin(); // DO NOT SCALE
-//            canvas.drawTextCentered("FAILURE!", displayFont, 0.0f);
-//            canvas.end();
-//        }
     }
 
     /**

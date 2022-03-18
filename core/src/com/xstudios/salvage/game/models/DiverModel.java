@@ -3,10 +3,7 @@ package com.xstudios.salvage.game.models;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 
@@ -31,6 +28,7 @@ public class DiverModel extends GameObject {
     private Fixture geometry;
     /** Cache of the polygon vertices (for resizing) */
     private float[] vertices;
+
 
 
     /**
@@ -63,7 +61,8 @@ public class DiverModel extends GameObject {
         bodyinfo.active = true;
         body = world.createBody(bodyinfo);
         body.setUserData(this);
-
+        body.setFixedRotation(false);
+        body.setType(BodyDef.BodyType.DynamicBody);
         // Only initialize if a body was created.
         if (body != null) {
             createFixtures();
@@ -104,6 +103,7 @@ public class DiverModel extends GameObject {
 
     @Override
     public void draw(GameCanvas canvas) {
+        body.applyAngularImpulse(1f,false);
         if (texture != null) {
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x-texture.getRegionWidth()/2f,getY()*drawScale.y-texture.getRegionHeight()/2f,getAngle(),0.5f,0.5f);
         }

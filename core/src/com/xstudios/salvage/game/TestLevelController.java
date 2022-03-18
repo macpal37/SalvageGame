@@ -7,8 +7,7 @@ import com.xstudios.salvage.game.models.DiverModel;
 public class TestLevelController extends LevelController  {
 
 
-public TestLevelController(){
-
+public TestLevelController( ){
 
 }
 
@@ -37,5 +36,7 @@ public TestLevelController(){
     public void update(float dt) {
         InputController input = InputController.getInstance();
 
+
+        cameraController.render();
     }
 }

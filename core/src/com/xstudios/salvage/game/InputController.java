@@ -28,11 +28,6 @@ import com.xstudios.salvage.util.*;
  * a controller via the new XBox360Controller class.
  */
 public class InputController {
-    // Sensitivity for moving crosshair with gameplay
-    private static final float GP_ACCELERATE = 1.0f;
-    private static final float GP_MAX_SPEED  = 10.0f;
-    private static final float GP_THRESHOLD  = 0.01f;
-
     /** The singleton instance of the input controller */
     private static InputController theController = null;
 
@@ -52,37 +47,14 @@ public class InputController {
     /** Whether the reset button was pressed. */
     private boolean resetPressed;
     private boolean resetPrevious;
-//    /** Whether the button to advanced worlds was pressed. */
-//    private boolean nextPressed;
-//    private boolean nextPrevious;
-//    /** Whether the button to step back worlds was pressed. */
-//    private boolean prevPressed;
-//    private boolean prevPrevious;
-//    /** Whether the primary action button was pressed. */
-//    private boolean primePressed;
-//    private boolean primePrevious;
-//    /** Whether the secondary action button was pressed. */
-//    private boolean secondPressed;
-//    private boolean secondPrevious;
-//    /** Whether the teritiary action button was pressed. */
-//    private boolean tertiaryPressed;
     /** Whether the debug toggle was pressed. */
     private boolean debugPressed;
     private boolean debugPrevious;
-//    /** Whether the exit button was pressed. */
-//    private boolean exitPressed;
-//    private boolean exitPrevious;
 
     /** How much did we move horizontally? */
     private float horizontal;
     /** How much did we move vertically? */
     private float vertical;
-    /** The crosshair position (for raddoll) */
-    private Vector2 crosshair;
-    /** The crosshair cache (for using as a return value) */
-    private Vector2 crosscache;
-    /** For the gamepad crosshair control */
-    private float momentum;
 
     /** An X-Box controller (if it is connected) */
     XBoxController xbox;
@@ -107,21 +79,6 @@ public class InputController {
      */
     public float getVertical() {
         return vertical;
-    }
-
-    /**
-     * Returns the current position of the crosshairs on the screen.
-     *
-     * This value does not return the actual reference to the crosshairs position.
-     * That way this method can be called multiple times without any fair that
-     * the position has been corrupted.  However, it does return the same object
-     * each time.  So if you modify the object, the object will be reset in a
-     * subsequent call to this getter.
-     *
-     * @return the current position of the crosshairs on the screen.
-     */
-    public Vector2 getCrossHair() {
-        return crosscache.set(crosshair);
     }
 
 
@@ -158,8 +115,6 @@ public class InputController {
         } else {
             xbox = null;
         }
-        crosshair = new Vector2();
-        crosscache = new Vector2();
     }
 
     /**
@@ -204,19 +159,6 @@ public class InputController {
         // Increase animation frame, but only if trying to move
         horizontal = xbox.getLeftX();
         vertical   = xbox.getLeftY();
-
-        // Move the crosshairs with the right stick.
-        crosscache.set(xbox.getLeftX(), xbox.getLeftY());
-        if (crosscache.len2() > GP_THRESHOLD) {
-            momentum += GP_ACCELERATE;
-            momentum = Math.min(momentum, GP_MAX_SPEED);
-            crosscache.scl(momentum);
-            crosscache.scl(1/scale.x,1/scale.y);
-            crosshair.add(crosscache);
-        } else {
-            momentum = 0;
-        }
-        clampPosition(bounds);
     }
 
     /**
@@ -241,6 +183,12 @@ public class InputController {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             horizontal -= 1.0f;
         }
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            horizontal += 1.0f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            horizontal -= 1.0f;
+        }
 
         vertical = (secondary ? vertical : 0.0f);
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
@@ -249,22 +197,13 @@ public class InputController {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             vertical -= 1.0f;
         }
-
-        // Mouse results
-        crosshair.set(Gdx.input.getX(), Gdx.input.getY());
-        crosshair.scl(1/scale.x,-1/scale.y);
-        crosshair.y += bounds.height;
-        clampPosition(bounds);
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            vertical += 1.0f;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            vertical -= 1.0f;
+        }
     }
 
-    /**
-     * Clamp the cursor position so that it does not go outside the window
-     *
-     * While this is not usually a problem with mouse control, this is critical
-     * for the gamepad controls.
-     */
-    private void clampPosition(Rectangle bounds) {
-        crosshair.x = Math.max(bounds.x, Math.min(bounds.x+bounds.width, crosshair.x));
-        crosshair.y = Math.max(bounds.y, Math.min(bounds.y+bounds.height, crosshair.y));
-    }
+
 }
