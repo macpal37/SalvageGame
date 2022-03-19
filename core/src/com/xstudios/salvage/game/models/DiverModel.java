@@ -46,11 +46,12 @@ public class DiverModel extends GameObject {
     /** Cache for internal force calculations */
     private final Vector2 forceCache = new Vector2();
 
-
+    
 
     public DiverModel(JsonValue data, float width, float height){
         super(data.get("pos").getFloat(0),
                 data.get("pos").getFloat(1));
+
         shape = new PolygonShape();
         origin = new Vector2();
         body = null;
