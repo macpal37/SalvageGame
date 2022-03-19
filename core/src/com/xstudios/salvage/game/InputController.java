@@ -186,7 +186,7 @@ public class InputController {
 //            System.out.println("go left"+ horizontal);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            horizontal -= 1.0f;
+            horizontal += 1.0f;
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             horizontal -= 1.0f;

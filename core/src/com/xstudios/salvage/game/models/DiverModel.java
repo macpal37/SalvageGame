@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 
@@ -46,24 +47,30 @@ public class DiverModel extends GameObject {
     private final Vector2 forceCache = new Vector2();
 
 
-    /**
-     * Creates a new simple physics object
-     *
-     * @param x  Initial x position in world coordinates
-     * @param y  Initial y position in world coordinates
-     */
-    public DiverModel(float x, float y, float width, float height){
-        super(x,y);
+
+    public DiverModel(JsonValue data, float width, float height){
+        super(data.get("pos").getFloat(0),
+                data.get("pos").getFloat(1));
         shape = new PolygonShape();
         origin = new Vector2();
         body = null;
         vertices = new float[8];
-        maxspeed = 5.0f*100;
-        damping = 10.0f*100;
-        force = 20.0f*100;
+
+        setDensity(data.getFloat("density", 0));
+        setFriction(data.getFloat("friction", 0));  /// HE WILL STICK TO WALLS IF YOU FORGET
+        setMass(1);
+        setFixedRotation(true);
+        maxspeed = data.getFloat("maxspeed", 0);
+        damping = data.getFloat("damping", 0);
+        force = data.getFloat("force", 0);
+
         // Initialize
         faceRight = true;;
-        resize(width, height);
+        resize(width/4, height/4);
+        resize(1, 1);
+        setMass(1);
+        resetMass();
+        setName("diver");
     }
     public Body getBody() {
         return body;
@@ -82,7 +89,6 @@ public class DiverModel extends GameObject {
         vertices[5] =  height/2.0f;
         vertices[6] =  width/2.0f;
         vertices[7] = -height/2.0f;
-        System.out.println(shape.toString());
         shape.setAsBox(width,height);
     }
 
@@ -118,7 +124,7 @@ public boolean activatePhysics(World world) {
         }
 
         // Make a body, if possible
-        setMass(10);
+
 
         bodyinfo.active = true;
         body = world.createBody(bodyinfo);
@@ -170,7 +176,6 @@ public boolean activatePhysics(World world) {
         effect =1;
         if (texture != null) {
 
-            System.out.println("Draw x: "+(getX()*drawScale.x)+" y:"+getY()*drawScale.y);
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,body.getPosition().x,body.getPosition().y,getAngle(),effect*0.5f,0.5f);
 
 //            System.out.println(getX() + " " + getY());
@@ -234,8 +239,8 @@ public boolean activatePhysics(World world) {
         if (!isActive()) {
             return;
         }
-//        System.out.println("Movement:"+getMovement());
-//        body.applyForce(new Vector2(getMovement()*10,0),getPosition(),true);
+
+        body.applyForce(new Vector2(getMovement()*10000,0),getPosition(),true);
 
     }
 

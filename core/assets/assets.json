@@ -5,5 +5,8 @@
         "background:ocean":"background/ocean.png"
 
         }
+,"jsons"  : {
+         "models:constants":  "models/constants.json",
 
+     },
  }

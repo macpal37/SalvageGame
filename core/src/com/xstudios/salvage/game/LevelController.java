@@ -50,7 +50,7 @@ public abstract class LevelController implements Screen {
     /** Aspect ratio of the world*/
     protected static final float ASPECT_RATIO = DEFAULT_WIDTH/DEFAULT_HEIGHT;
     /** The default value of gravity (going down) */
-    protected static final float DEFAULT_GRAVITY = -4.9f;
+    protected static final float DEFAULT_GRAVITY = -4.9f*4;
 
 
     /** Reference to the game canvas */
@@ -154,7 +154,7 @@ public abstract class LevelController implements Screen {
      * @param gravity	The gravitational force on this Box2d world
      */
     protected LevelController(Rectangle bounds, Vector2 gravity) {
-        world = new World(gravity.scl(-1),false);
+        world = new World(gravity.scl(1),false);
         this.bounds = new Rectangle(bounds);
         this.scale = new Vector2(1,1);
         debug  = false;

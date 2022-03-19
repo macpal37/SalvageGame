@@ -4,64 +4,21 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.JsonValue;
+import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.models.DiverModel;
 
 public class TestLevelController extends LevelController implements ContactListener {
+
+
+    /** Physics constants for initialization */
+    private JsonValue constants;
 
 public TestLevelController( ){
 super();
 
 }
-/*
-class Diver {
-    public Body getBody() {
-        return body;
-    }
 
-    public void setBody(Body body) {
-        this.body = body;
-    }
-
-    Body body;
-    BodyDef bodyinfo;
-    PolygonShape shape;
-
-    public void setTexture(TextureRegion texture) {
-        this.texture = texture;
-    }
-
-    public TextureRegion getTexture() {
-        return texture;
-    }
-
-    TextureRegion texture;
-
-    public Diver(int x, int y, int width, int height){
-        shape = new PolygonShape();
-        bodyinfo = new BodyDef();
-        bodyinfo.position.set (x,y);
-        bodyinfo.fixedRotation = true;
-        shape = new PolygonShape();
-        shape.setAsBox(width/2f,height/2f);
-
-
-
-    }
-
-    public void draw(GameCanvas canvas){
-
-        if (texture != null) {
-            canvas.draw(texture, Color.WHITE,body.getPosition().x,body.getPosition().y,0,0,0.5f,0.5f);
-        }
-    }
-
-    public  boolean activatePhysics(World world){
-        body = world.createBody(bodyinfo);
-        body.createFixture(shape, 1.0f);
-        return true;
-    }
-
-}*/
 
     @Override
     public void reset() {
@@ -75,16 +32,31 @@ class Diver {
     }
 
     private void resetLevel() {
-        diver = new DiverModel(20, 10,diverTexture.getRegionWidth(),
+
+        diver = new DiverModel(constants.get("diver"),diverTexture.getRegionWidth(),
             diverTexture.getRegionHeight());
 
         diver.setTexture(diverTexture);
         diver.setDrawScale(scale);
         diver.setName("diver");
-//        diver.setBodyType(BodyDef.BodyType.KinematicBody);
 
         addObject(diver);
 
+    }
+
+
+    /**
+     * Gather the assets for this controller.
+     *
+     * This method extracts the asset variables from the given asset directory. It
+     * should only be called after the asset directory is completed.
+     *
+     * @param directory	Reference to global asset manager.
+     */
+    public void gatherAssets(AssetDirectory directory) {
+        constants =  directory.getEntry( "models:constants", JsonValue.class );
+        System.out.println("CONS: "+constants);
+        super.gatherAssets(directory);
     }
 
     /**
@@ -96,7 +68,7 @@ class Diver {
 
         // add the diver
 
-        diver = new DiverModel(0, 0, diverWidth, diverHeight);
+        diver = new DiverModel(constants.get("diver"), diverWidth, diverHeight);
         diver.setTexture(diverTexture);
         addObject(diver);
 
@@ -118,12 +90,9 @@ class Diver {
         diver.setMovement(input.getHorizontal() *diver.getForce());
 
         diver.applyForce();
-//        diver.applyUpwardForce(input.getVertical());
 
-//        System.out.println("Pos: "+diver.getPosition().toString());
-        System.out.println("Y: "+diver.getY());
+        System.out.println("Move: "+diver.getMovement());
         if (diver.getBody()!=null){
-            System.out.println("Pos: "+diver.getBody().getPosition().toString());
             cameraController.setCameraPosition(diver.getBody().getPosition());
         }
 
