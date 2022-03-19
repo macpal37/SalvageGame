@@ -107,9 +107,9 @@ public class DiverModel extends GameObject {
     public boolean activatePhysics(World world) {
         // Make a body, if possible
         bodyinfo.active = true;
+        setMass(10);
 
         body = world.createBody(bodyinfo);
-        setMass(1);
         System.out.println("BODYMASS: "+body.getMass());
 //        body.setUserData(this);
         body.setFixedRotation(false);
@@ -154,10 +154,14 @@ public class DiverModel extends GameObject {
 
     @Override
     public void draw(GameCanvas canvas) {
-        body.applyAngularImpulse(1f,false);
+//        body.applyAngularImpulse(1f,false);
+        System.out.println("Mass: " + body.getMass());
         float effect = faceRight ? 1.0f : -1.0f;
         if (texture != null) {
-            canvas.draw(texture, Color.WHITE,body.getPosition().x,body.getPosition().y,getX()*drawScale.x-texture.getRegionWidth()/2f,getY()*drawScale.y-texture.getRegionHeight()/2f,getAngle(),effect*0.5f,0.5f);
+            System.out.println(getX() + " " + getY());
+            canvas.draw(texture, Color.WHITE,origin.x, origin.y,
+                getX()*drawScale.x,origin.y /*getY()*drawScale.y*/,getAngle(),
+                effect*0.5f,0.5f);
         }
     }
 
@@ -231,5 +235,23 @@ public class DiverModel extends GameObject {
     @Override
     public void drawDebug(GameCanvas canvas) {
 //        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
+    }
+
+    /**
+     * Returns the x-coordinate for this physics body
+     *
+     * @return the x-coordinate for this physics body
+     */
+    public float getX() {
+        return (body != null ? body.getPosition().x : super.getX());
+    }
+
+    /**
+     * Returns the y-coordinate for this physics body
+     *
+     * @return the y-coordinate for this physics body
+     */
+    public float getY() {
+        return (body != null ? body.getPosition().y : super.getY());
     }
 }

@@ -77,7 +77,8 @@ class Diver {
     }
 
     private void resetLevel() {
-        diver = new DiverModel(20, 10,100,50);
+        diver = new DiverModel(20, 10,diverTexture.getRegionWidth(),
+            diverTexture.getRegionHeight());
 
         diver.setTexture(diverTexture);
         diver.setDrawScale(scale);
@@ -92,11 +93,11 @@ class Diver {
      * Lays out the game geography.
      */
     private void populateLevel() {
-//        float diverWidth = diverTexture.getRegionWidth();
-//        float diverHeight = diverTexture.getRegionHeight();
+        float diverWidth = diverTexture.getRegionWidth();
+        float diverHeight = diverTexture.getRegionHeight();
 
         // add the diver
-        diver = new DiverModel(0, 0);
+        diver = new DiverModel(0, 0, diverWidth, diverHeight);
         diver.setTexture(diverTexture);
         addObject(diver);
 
