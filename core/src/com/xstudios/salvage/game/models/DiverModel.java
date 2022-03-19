@@ -111,15 +111,21 @@ public class DiverModel extends GameObject {
         origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
     }
 
-    public boolean activatePhysics(World world) {
+public boolean activatePhysics(World world) {
+
         if (!super.activatePhysics(world)) {
             return false;
         }
 
+        // Make a body, if possible
+        setMass(10);
+
         bodyinfo.active = true;
         body = world.createBody(bodyinfo);
 
+
          body.setUserData(this);
+
         body.setFixedRotation(false);
         body.setType(BodyDef.BodyType.DynamicBody);
         // Only initialize if a body was created.
@@ -158,14 +164,20 @@ public class DiverModel extends GameObject {
 
     @Override
     public void draw(GameCanvas canvas) {
-        body.applyAngularImpulse(1f,false);
+//        body.applyAngularImpulse(1f,false);
+        System.out.println("Mass: " + body.getMass());
         float effect = faceRight ? 1.0f : -1.0f;
         effect =1;
         if (texture != null) {
-//            System.out.println("Draw: "+body.getPosition().toString());
 
             System.out.println("Draw x: "+(getX()*drawScale.x)+" y:"+getY()*drawScale.y);
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,body.getPosition().x,body.getPosition().y,getAngle(),effect*0.5f,0.5f);
+
+//            System.out.println(getX() + " " + getY());
+//            canvas.draw(texture, Color.WHITE,origin.x, origin.y,
+//                getX()*drawScale.x,origin.y /*getY()*drawScale.y*/,getAngle(),
+//                effect*0.5f,0.5f);
+
         }
     }
 
@@ -230,5 +242,23 @@ public class DiverModel extends GameObject {
     @Override
     public void drawDebug(GameCanvas canvas) {
 //        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
+    }
+
+    /**
+     * Returns the x-coordinate for this physics body
+     *
+     * @return the x-coordinate for this physics body
+     */
+    public float getX() {
+        return (body != null ? body.getPosition().x : super.getX());
+    }
+
+    /**
+     * Returns the y-coordinate for this physics body
+     *
+     * @return the y-coordinate for this physics body
+     */
+    public float getY() {
+        return (body != null ? body.getPosition().y : super.getY());
     }
 }

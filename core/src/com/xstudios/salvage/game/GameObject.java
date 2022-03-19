@@ -1090,7 +1090,11 @@ public abstract class GameObject {
         // Allocate the body information
         bodyinfo = new BodyDef();
 
-        bodyinfo.gravityScale = 10.0f;
+        // Added from physics lab to test
+        bodyinfo.awake  = true;
+        bodyinfo.allowSleep = true;
+
+        bodyinfo.gravityScale = 1.0f;
         bodyinfo.position.set(x,y);
         bodyinfo.fixedRotation = true;
         // Objects are physics objects unless otherwise noted
