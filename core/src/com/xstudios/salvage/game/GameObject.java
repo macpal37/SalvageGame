@@ -930,11 +930,10 @@ public abstract class GameObject {
 
         // Allocate the body information
         bodyinfo = new BodyDef();
-        bodyinfo.awake  = true;
-        bodyinfo.allowSleep = true;
-        bodyinfo.gravityScale = 1.0f;
+
+        bodyinfo.gravityScale = 10.0f;
         bodyinfo.position.set(x,y);
-        bodyinfo.fixedRotation = false;
+        bodyinfo.fixedRotation = true;
         // Objects are physics objects unless otherwise noted
         bodyinfo.type = BodyType.DynamicBody;
 
@@ -945,6 +944,7 @@ public abstract class GameObject {
         // Allocate the mass information, but turn it off
         masseffect = false;
         massdata = new MassData();
+
 
         // Set the default drawing scale
         drawScale = new Vector2(1,1);

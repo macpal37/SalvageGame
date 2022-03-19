@@ -20,6 +20,8 @@ public class DiverModel extends GameObject {
 
     /** Shape information for this box */
     protected PolygonShape shape;
+    /** The physics shape of this object */
+    private PolygonShape sensorShape;
     /** The width and height of the box */
     private Vector2 dimension;
     /** A cache value for when the user wants to access the dimensions */
@@ -28,7 +30,18 @@ public class DiverModel extends GameObject {
     private Fixture geometry;
     /** Cache of the polygon vertices (for resizing) */
     private float[] vertices;
-
+    /** The current horizontal movement of the character */
+    private float   movement;
+    /** The factor to multiply by the input */
+    private final float force;
+    /** The amount to slow the character down */
+    private final float damping;
+    /** The maximum character speed */
+    private final float maxspeed;
+    /** Which direction is the character facing */
+    private boolean faceRight;
+    /** Cache for internal force calculations */
+    private final Vector2 forceCache = new Vector2();
 
 
     /**
@@ -37,11 +50,46 @@ public class DiverModel extends GameObject {
      * @param x  Initial x position in world coordinates
      * @param y  Initial y position in world coordinates
      */
-    public DiverModel(float x, float y){
+    public DiverModel(float x, float y, float width, float height){
         super(x,y);
         shape = new PolygonShape();
         origin = new Vector2();
         body = null;
+        vertices = new float[8];
+        maxspeed = 5.0f*100;
+        damping = 10.0f*100;
+        force = 20.0f*100;
+        // Initialize
+        faceRight = true;;
+        resize(width, height);
+    }
+
+    /**
+     * Reset the polygon vertices in the shape to match the dimension.
+     */
+    private void resize(float width, float height) {
+        // Make the box with the center in the center
+        vertices[0] = -width/2.0f;
+        vertices[1] = -height/2.0f;
+        vertices[2] = -width/2.0f;
+        vertices[3] =  height/2.0f;
+        vertices[4] =  width/2.0f;
+        vertices[5] =  height/2.0f;
+        vertices[6] =  width/2.0f;
+        vertices[7] = -height/2.0f;
+        System.out.println(shape.toString());
+        shape.setAsBox(width,height);
+    }
+
+
+    public void setMovement(float value) {
+        movement = value;
+        // Change facing if appropriate
+        if (movement < 0) {
+            faceRight = false;
+        } else if (movement > 0) {
+            faceRight = true;
+        }
     }
     /**
      * Sets the object texture for drawing purposes.
@@ -59,8 +107,11 @@ public class DiverModel extends GameObject {
     public boolean activatePhysics(World world) {
         // Make a body, if possible
         bodyinfo.active = true;
+
         body = world.createBody(bodyinfo);
-        body.setUserData(this);
+        setMass(1);
+        System.out.println("BODYMASS: "+body.getMass());
+//        body.setUserData(this);
         body.setFixedRotation(false);
         body.setType(BodyDef.BodyType.DynamicBody);
         // Only initialize if a body was created.
@@ -69,7 +120,7 @@ public class DiverModel extends GameObject {
             return true;
         }
 
-        bodyinfo.active = false;
+        bodyinfo.active = true;
         return false;
     }
     /**
@@ -104,13 +155,81 @@ public class DiverModel extends GameObject {
     @Override
     public void draw(GameCanvas canvas) {
         body.applyAngularImpulse(1f,false);
+        float effect = faceRight ? 1.0f : -1.0f;
         if (texture != null) {
-            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x-texture.getRegionWidth()/2f,getY()*drawScale.y-texture.getRegionHeight()/2f,getAngle(),0.5f,0.5f);
+            canvas.draw(texture, Color.WHITE,body.getPosition().x,body.getPosition().y,getX()*drawScale.x-texture.getRegionWidth()/2f,getY()*drawScale.y-texture.getRegionHeight()/2f,getAngle(),effect*0.5f,0.5f);
         }
+    }
+
+
+    /**
+     * Returns left/right movement of this character.
+     *
+     * This is the result of input times dude force.
+     *
+     * @return left/right movement of this character.
+     */
+    public float getMovement() {
+        return movement;
+    }
+
+
+    /**
+     * Returns how much force to apply to get the dude moving
+     *
+     * Multiply this by the input to get the movement value.
+     *
+     * @return how much force to apply to get the dude moving
+     */
+    public float getForce() {
+        return force;
+    }
+
+    /**
+     * Returns ow hard the brakes are applied to get a dude to stop moving
+     *
+     * @return ow hard the brakes are applied to get a dude to stop moving
+     */
+    public float getDamping() {
+        return damping;
+    }
+
+    /**
+     * Returns the upper limit on dude left-right movement.
+     *
+     * This does NOT apply to vertical movement.
+     *
+     * @return the upper limit on dude left-right movement.
+     */
+    public float getMaxSpeed() {
+        return maxspeed;
+    }
+
+    public void applyForce() {
+        body.applyForce(new Vector2(0,9.8f),getPosition(),true);
+        if (!isActive()) {
+            return;
+        }
+
+        // Don't want to be moving. Damp out player motion
+        if (getMovement() == 0f) {
+            forceCache.set(-getDamping()*getVX(),0);
+
+            body.applyForce(forceCache,getPosition(),true);
+        }
+
+        // Velocity too high, clamp it
+        if (Math.abs(getVX()) >= getMaxSpeed()) {
+            setVX(Math.signum(getVX())*getMaxSpeed());
+        } else {
+            forceCache.set(getMovement(),0);
+            body.applyForce(forceCache,getPosition(),true);
+        }
+
     }
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-
+//        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
     }
 }

@@ -65,86 +65,10 @@ public abstract class LevelController implements Screen {
 
     /** Whether or not this is an active controller */
     private boolean active;
-    /** Whether we have completed this level */
-    private boolean complete;
-    /** Whether we have failed at this world (and need a reset) */
-    private boolean failed;
     /** Whether or not debug mode is active */
     private boolean debug;
-    /** Countdown active for winning or losing */
-    private int countdown;
 
-    /**
-     * Returns true if debug mode is active.
-     *
-     * If true, all objects will display their physics bodies.
-     *
-     * @return true if debug mode is active.
-     */
-    public boolean isDebug( ) {
-        return debug;
-    }
 
-    /**
-     * Sets whether debug mode is active.
-     *
-     * If true, all objects will display their physics bodies.
-     *
-     * @param value whether debug mode is active.
-     */
-    public void setDebug(boolean value) {
-        debug = value;
-    }
-
-    /**
-     * Returns true if the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @return true if the level is completed.
-     */
-    public boolean isComplete( ) {
-        return complete;
-    }
-
-    /**
-     * Sets whether the level is completed.
-     *
-     * If true, the level will advance after a countdown
-     *
-     * @param value whether the level is completed.
-     */
-    public void setComplete(boolean value) {
-        if (value) {
-            countdown = EXIT_COUNT;
-        }
-        complete = value;
-    }
-
-    /**
-     * Returns true if the level is failed.
-     *
-     * If true, the level will reset after a countdown
-     *
-     * @return true if the level is failed.
-     */
-    public boolean isFailure( ) {
-        return failed;
-    }
-
-    /**
-     * Sets whether the level is failed.
-     *
-     * If true, the level will reset after a countdown
-     *
-     * @param value whether the level is failed.
-     */
-    public void setFailure(boolean value) {
-        if (value) {
-            countdown = EXIT_COUNT;
-        }
-        failed = value;
-    }
 
     /**
      * Returns true if this is the active screen
@@ -224,14 +148,11 @@ public abstract class LevelController implements Screen {
      * @param gravity	The gravitational force on this Box2d world
      */
     protected LevelController(Rectangle bounds, Vector2 gravity) {
-        world = new World(gravity,false);
+        world = new World(gravity.scl(-1),false);
         this.bounds = new Rectangle(bounds);
         this.scale = new Vector2(1,1);
-        complete = false;
-        failed = false;
         debug  = false;
         active = false;
-        countdown = -1;
 
         System.out.println("BG: "+background);
     }
@@ -411,17 +332,18 @@ public abstract class LevelController implements Screen {
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE,background.getRegionWidth()/2f,background.getRegionHeight()/2f,0,0,0,4,4);
         for(GameObject obj : objects) {
             obj.draw(canvas);
+            obj.drawDebug(canvas);
         }
 
         canvas.end();
 
-//        if (debug) {
-//            canvas.beginDebug();
-//            for(GameObject obj : objects) {
-//                obj.drawDebug(canvas);
-//            }
-//            canvas.endDebug();
-//        }
+
+            canvas.beginDebug();
+            for(GameObject obj : objects) {
+                obj.drawDebug(canvas);
+            }
+            canvas.endDebug();
+
 
     }
 

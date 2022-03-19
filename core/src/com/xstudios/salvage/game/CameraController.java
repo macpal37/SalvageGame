@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -13,11 +14,19 @@ public class CameraController {
 
     private OrthographicCamera camera;
     private Viewport viewport;
-    private Vector2 cameraPosition;
+    private Vector3 cameraPosition;
+
+    private Vector3 targetPosition;
 
     private Rectangle bounds;
 
     private final float DEFAULT_CAMERA_SPEED = 10f;
+
+
+
+    private float smoothSpeed = 0.125f;
+
+
     private float cameraSpeed;
 
     private float aspectRatio;
@@ -28,8 +37,8 @@ public class CameraController {
 //        viewport = new ScreenViewport(width*aspectRatio,height,camera)
         viewport = new ScreenViewport(camera);
         viewport.apply();
-        cameraPosition = new Vector2(width/2,height/2);
-        camera.position.set(cameraPosition,0);
+        cameraPosition = new Vector3(width/2,height/2,0);
+        camera.position.scl(cameraPosition);
         cameraSpeed = DEFAULT_CAMERA_SPEED;
     }
     public CameraController(float x, float y, float width, float height){
@@ -37,8 +46,8 @@ public class CameraController {
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(width*aspectRatio,height,camera);
         viewport.apply();
-        cameraPosition = new Vector2(x,y);
-        camera.position.set(cameraPosition,0);
+        cameraPosition = new Vector3(x,y,0);
+        camera.position.scl(cameraPosition);
     }
     public void setBounds (int x, int y, int width,int height){
         bounds = new Rectangle(x-width/2,y-height/2,width/2,height/2);
@@ -52,8 +61,7 @@ public class CameraController {
     }
     public void resize (int width, int height){
         viewport.update(width,height);
-        cameraPosition = new Vector2((float)width/2,(float)height/2);
-        camera.position.set(cameraPosition,0);
+        setCameraPosition((float)width/2,(float)height/2);
 
     }
 
@@ -64,31 +72,38 @@ public class CameraController {
     public void render(){
         camera.update();
         InputController input = InputController.getInstance();
-        if(input.getHorizontal()!=0)
-        {
-
-           translate(input.getHorizontal()*cameraSpeed,0);
-        }
-        if(input.getVertical()!=0)
-        {
-           translate(0,input.getVertical()*cameraSpeed);
-        }
+//        if(input.getHorizontal()!=0)
+//        {
+//           translate(input.getHorizontal()*cameraSpeed,0);
+//        }
+//        if(input.getVertical()!=0)
+//        {
+//           translate(0,input.getVertical()*cameraSpeed);
+//        }
 
     }
 
     public void setCameraPosition(float x, float y){
-        cameraPosition.set(x,y);
-        camera.position.set(cameraPosition,0);
+        cameraPosition.set(x, y,0);
+        camera.position.set(cameraPosition);
     }
 
 
     public void translate(float x, float y){
         if(cameraPosition.x+x<bounds.width&&cameraPosition.x+x>bounds.x
         &&cameraPosition.y+y<bounds.height&&cameraPosition.y+y>bounds.y){
-            cameraPosition.add(x, y);
-            camera.position.set(cameraPosition,0);
+            updatePosition(x,y);
         }
 
     }
-
+    private void updatePosition(float x, float y){
+        cameraPosition.add(x, y,0);
+        camera.position.set(cameraPosition);
+    }
+    public void setSmoothSpeed(float smoothSpeed) {
+        this.smoothSpeed = smoothSpeed;
+    }
+    public float getSmoothSpeed() {
+        return smoothSpeed;
+    }
 }
