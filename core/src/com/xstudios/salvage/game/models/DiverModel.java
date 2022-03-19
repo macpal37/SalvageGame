@@ -11,8 +11,10 @@ public class DiverModel extends GameObject {
     /** The physics body for Box2D. */
     protected Body body;
 
+
     /** The texture for the shape. */
     protected TextureRegion texture;
+
 
     /** The texture origin for drawing */
     protected Vector2 origin;
@@ -63,6 +65,9 @@ public class DiverModel extends GameObject {
         faceRight = true;;
         resize(width, height);
     }
+    public Body getBody() {
+        return body;
+    }
 
     /**
      * Reset the polygon vertices in the shape to match the dimension.
@@ -80,6 +85,8 @@ public class DiverModel extends GameObject {
         System.out.println(shape.toString());
         shape.setAsBox(width,height);
     }
+
+
 
 
     public void setMovement(float value) {
@@ -103,15 +110,16 @@ public class DiverModel extends GameObject {
         texture = value;
         origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
     }
-    @Override
-    public boolean activatePhysics(World world) {
-        // Make a body, if possible
-        bodyinfo.active = true;
 
+    public boolean activatePhysics(World world) {
+        if (!super.activatePhysics(world)) {
+            return false;
+        }
+
+        bodyinfo.active = true;
         body = world.createBody(bodyinfo);
-        setMass(1);
-        System.out.println("BODYMASS: "+body.getMass());
-//        body.setUserData(this);
+
+         body.setUserData(this);
         body.setFixedRotation(false);
         body.setType(BodyDef.BodyType.DynamicBody);
         // Only initialize if a body was created.
@@ -119,9 +127,9 @@ public class DiverModel extends GameObject {
             createFixtures();
             return true;
         }
-
+//
         bodyinfo.active = true;
-        return false;
+        return true;
     }
     /**
      * Release the fixtures for this body, reseting the shape
@@ -147,17 +155,17 @@ public class DiverModel extends GameObject {
         markDirty(false);
     }
 
-    @Override
-    public void deactivatePhysics(World world) {
-
-    }
 
     @Override
     public void draw(GameCanvas canvas) {
         body.applyAngularImpulse(1f,false);
         float effect = faceRight ? 1.0f : -1.0f;
+        effect =1;
         if (texture != null) {
-            canvas.draw(texture, Color.WHITE,body.getPosition().x,body.getPosition().y,getX()*drawScale.x-texture.getRegionWidth()/2f,getY()*drawScale.y-texture.getRegionHeight()/2f,getAngle(),effect*0.5f,0.5f);
+//            System.out.println("Draw: "+body.getPosition().toString());
+
+            System.out.println("Draw x: "+(getX()*drawScale.x)+" y:"+getY()*drawScale.y);
+            canvas.draw(texture, Color.WHITE,origin.x,origin.y,body.getPosition().x,body.getPosition().y,getAngle(),effect*0.5f,0.5f);
         }
     }
 
@@ -205,26 +213,17 @@ public class DiverModel extends GameObject {
         return maxspeed;
     }
 
+
+//    public void applyUpwardForce(float dir){
+//        body.applyForce(new Vector2(0,1000*dir),getPosition(),true);
+//    }
+
     public void applyForce() {
-        body.applyForce(new Vector2(0,9.8f),getPosition(),true);
         if (!isActive()) {
             return;
         }
-
-        // Don't want to be moving. Damp out player motion
-        if (getMovement() == 0f) {
-            forceCache.set(-getDamping()*getVX(),0);
-
-            body.applyForce(forceCache,getPosition(),true);
-        }
-
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
-            setVX(Math.signum(getVX())*getMaxSpeed());
-        } else {
-            forceCache.set(getMovement(),0);
-            body.applyForce(forceCache,getPosition(),true);
-        }
+//        System.out.println("Movement:"+getMovement());
+//        body.applyForce(new Vector2(getMovement()*10,0),getPosition(),true);
 
     }
 

@@ -11,9 +11,8 @@ public class TestLevelController extends LevelController implements ContactListe
 public TestLevelController( ){
 super();
 
-
 }
-
+/*
 class Diver {
     public Body getBody() {
         return body;
@@ -62,8 +61,7 @@ class Diver {
         return true;
     }
 
-}
-
+}*/
 
     @Override
     public void reset() {
@@ -78,11 +76,10 @@ class Diver {
 
     private void resetLevel() {
         diver = new DiverModel(20, 10,100,50);
-
         diver.setTexture(diverTexture);
         diver.setDrawScale(scale);
         diver.setName("diver");
-        diver.setBodyType(BodyDef.BodyType.KinematicBody);
+//        diver.setBodyType(BodyDef.BodyType.KinematicBody);
 
         addObject(diver);
 
@@ -96,7 +93,6 @@ class Diver {
 //        float diverHeight = diverTexture.getRegionHeight();
 
         // add the diver
-        diver = new DiverModel(0, 0);
         diver.setTexture(diverTexture);
         addObject(diver);
 
@@ -115,16 +111,19 @@ class Diver {
     @Override
     public void update(float dt) {
         InputController input = InputController.getInstance();
-
         diver.setMovement(input.getHorizontal() *diver.getForce());
-        diver.setLinearVelocity(new Vector2(input.getHorizontal(),input.getVertical()));
 
         diver.applyForce();
-//        diver.setPosition(diver.getX()+0.01f,diver.getY());
+//        diver.applyUpwardForce(input.getVertical());
+
+//        System.out.println("Pos: "+diver.getPosition().toString());
+        System.out.println("Y: "+diver.getY());
+        if (diver.getBody()!=null){
+            System.out.println("Pos: "+diver.getBody().getPosition().toString());
+            cameraController.setCameraPosition(diver.getBody().getPosition());
+        }
+
         cameraController.render();
-//        canvas.begin();
-//        coolerDiver.draw(canvas);
-//        canvas.end();
     }
 
 

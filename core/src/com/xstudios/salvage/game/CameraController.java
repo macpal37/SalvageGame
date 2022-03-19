@@ -72,15 +72,13 @@ public class CameraController {
     public void render(){
         camera.update();
         InputController input = InputController.getInstance();
-//        if(input.getHorizontal()!=0)
-//        {
-//           translate(input.getHorizontal()*cameraSpeed,0);
-//        }
-//        if(input.getVertical()!=0)
-//        {
-//           translate(0,input.getVertical()*cameraSpeed);
-//        }
 
+
+    }
+
+    public void setCameraPosition(Vector2 newPos){
+        cameraPosition.set(newPos.x, newPos.y,0);
+        camera.position.set(cameraPosition);
     }
 
     public void setCameraPosition(float x, float y){

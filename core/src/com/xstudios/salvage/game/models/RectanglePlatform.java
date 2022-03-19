@@ -10,29 +10,24 @@ public class RectanglePlatform extends GameObject {
 
 
 
-    public RectanglePlatform(int x, int y, int widt, int height ){
+    public RectanglePlatform(int x, int y, int width, int height ){
 
 
     }
 
-
-    @Override
-    public boolean activatePhysics(World world) {
-        return false;
-    }
-
-    @Override
-    public void deactivatePhysics(World world) {
-
-    }
-
-    @Override
-    public void draw(GameCanvas canvas) {
-
-    }
 
     @Override
     public void drawDebug(GameCanvas canvas) {
+
+    }
+
+    @Override
+    protected void createFixtures() {
+
+    }
+
+    @Override
+    protected void releaseFixtures() {
 
     }
 }
