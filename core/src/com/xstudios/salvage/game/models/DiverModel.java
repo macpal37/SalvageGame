@@ -52,6 +52,9 @@ public class DiverModel extends GameObject {
      */
     public DiverModel(float x, float y, float width, float height){
         super(x,y);
+        setDensity(.001f);
+        setFriction(0.1f);
+        setRestitution(0.4f);
         shape = new PolygonShape();
         origin = new Vector2();
         body = null;
