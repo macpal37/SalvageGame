@@ -173,7 +173,7 @@ public class DiverModel extends GameObject {
         float effect = faceRight ? 1.0f : -1.0f;
 //        effect =1;
         if (texture != null) {
-            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.5f,0.5f);
+            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
 
         }
         if(ping) {
