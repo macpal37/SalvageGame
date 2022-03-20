@@ -9,16 +9,12 @@ import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 
 public class DiverModel extends GameObject {
-    /** The physics body for Box2D. */
-    protected Body body;
-
-
-    /** The texture for the shape. */
-    protected TextureRegion texture;
-
-
-    /** The texture origin for drawing */
-    protected Vector2 origin;
+//    /** The physics body for Box2D. */
+//    protected Body body;
+//    /** The texture for the shape. */
+//    protected TextureRegion texture;
+//    /** The texture origin for drawing */
+//    protected Vector2 origin;
 
 
     /** Shape information for this box */
@@ -46,7 +42,6 @@ public class DiverModel extends GameObject {
     /** Cache for internal force calculations */
     private final Vector2 forceCache = new Vector2();
 
-    
 
     public DiverModel(JsonValue data, float width, float height){
         super(data.get("pos").getFloat(0),
@@ -73,9 +68,6 @@ public class DiverModel extends GameObject {
         resetMass();
         setName("diver");
     }
-    public Body getBody() {
-        return body;
-    }
 
     /**
      * Reset the polygon vertices in the shape to match the dimension.
@@ -92,8 +84,6 @@ public class DiverModel extends GameObject {
         vertices[7] = -height/2.0f;
         shape.setAsBox(width,height);
     }
-
-
 
 
     public void setMovement(float value) {
@@ -125,23 +115,23 @@ public boolean activatePhysics(World world) {
         }
 
         // Make a body, if possible
-
-
-        bodyinfo.active = true;
-        body = world.createBody(bodyinfo);
-
-
-         body.setUserData(this);
-
-        body.setFixedRotation(false);
-        body.setType(BodyDef.BodyType.DynamicBody);
-        // Only initialize if a body was created.
-        if (body != null) {
-            createFixtures();
-            return true;
-        }
 //
-        bodyinfo.active = true;
+//
+//        bodyinfo.active = true;
+//        body = world.createBody(bodyinfo);
+//
+//
+//         body.setUserData(this);
+//
+//        body.setFixedRotation(false);
+//        body.setType(BodyDef.BodyType.DynamicBody);
+//        // Only initialize if a body was created.
+//        if (body != null) {
+//            createFixtures();
+//            return true;
+//        }
+////
+//        bodyinfo.active = true;
         return true;
     }
     /**
@@ -250,21 +240,4 @@ public boolean activatePhysics(World world) {
 //        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
     }
 
-    /**
-     * Returns the x-coordinate for this physics body
-     *
-     * @return the x-coordinate for this physics body
-     */
-    public float getX() {
-        return (body != null ? body.getPosition().x : super.getX());
-    }
-
-    /**
-     * Returns the y-coordinate for this physics body
-     *
-     * @return the y-coordinate for this physics body
-     */
-    public float getY() {
-        return (body != null ? body.getPosition().y : super.getY());
-    }
 }
