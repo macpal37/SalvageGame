@@ -1,11 +1,19 @@
-{"diver" : {
+{
+	"defaults" : {
+	    "gravity" : -14.7,
+    	"friction": 0.4,
+    	"density" : 0.0,
+    	"restitution": 0.1,
+    	"volume": 0.8
+	},
+"diver" : {
 		"pos": [20.0, 10.0],
 		"shrink": [0.7, 0.95],
 		"force": 20.0,
 		"damping": 10.0,
 		"density": 0.1,
 		"friction": 0.0,
-		"maxspeed": 5.0,
+		"maxspeed": 10.0,
 		"jump_force": 5.5,
 		"jump_cool": 30,
 		"shot_cool": 40,

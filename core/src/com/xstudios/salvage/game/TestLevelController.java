@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
+import com.xstudios.salvage.game.models.BoxPlatform;
 import com.xstudios.salvage.game.models.DiverModel;
 
 public class TestLevelController extends LevelController implements ContactListener {
@@ -39,8 +40,19 @@ super();
         diver.setTexture(diverTexture);
         diver.setDrawScale(scale);
         diver.setName("diver");
-
         addObject(diver);
+        JsonValue defaults = constants.get("defaults");
+        for(float i =0 ; i<10;i++){
+            BoxPlatform box = new BoxPlatform((100.0f*i)/32.0f,0.0f);
+            box.setDensity(defaults.getFloat( "density", 0 ));
+            box.setFriction(defaults.getFloat( "friction", 0 ));
+            box.setRestitution(defaults.getFloat( "restitution", 0 ));
+            box.setBodyType(BodyDef.BodyType.StaticBody);
+            box.setName("floor"+i);
+            box.setDrawScale(scale);
+            box.setTexture(wallTexture);
+            addObject(box);
+        }
 
     }
 
@@ -93,7 +105,7 @@ super();
 
         System.out.println("Move: "+diver.getMovement());
         if (diver.getBody()!=null){
-            cameraController.setCameraPosition(diver.getBody().getPosition());
+//            cameraController.setCameraPosition(diver.getBody().getPosition());
         }
 
         cameraController.render();
