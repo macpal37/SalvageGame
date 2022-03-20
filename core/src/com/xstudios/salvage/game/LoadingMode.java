@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 /*
  * LoadingMode.java
  *
@@ -31,7 +31,7 @@ import com.xstudios.salvage.assets.*;
 import com.xstudios.salvage.util.*;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
-=======
+
 package com.xstudios.salvage.game;
 
 import com.badlogic.gdx.Gdx;
@@ -48,7 +48,7 @@ import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.Controllers;
 import com.xstudios.salvage.util.ScreenListener;
 import com.xstudios.salvage.util.XBoxController;
->>>>>>> ce1ef31a1771b0f028ee781f41846a30b0980a12
+
 
 /**
  * Class that provides a loading screen for the state of the game.

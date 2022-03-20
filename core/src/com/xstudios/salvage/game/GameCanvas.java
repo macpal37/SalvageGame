@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*
  * GameCanvas.java
  *
@@ -26,6 +25,8 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.Align;
+
+package com.xstudios.salvage.game;
 
 /**
  * Primary view class for the game, abstracting the basic graphics calls.
