@@ -7,6 +7,8 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.models.DiverModel;
+import com.xstudios.salvage.game.models.ItemModel;
+import com.xstudios.salvage.game.models.ItemType;
 
 public class TestLevelController extends LevelController implements ContactListener {
 
@@ -41,6 +43,20 @@ super();
         diver.setName("diver");
 
         addObject(diver);
+
+//        key = new ItemModel(constants.get("diver"),itemTexture.getRegionWidth(),
+//                itemTexture.getRegionHeight(), ItemType.KEY, 0);
+
+        key = new ItemModel(constants.get("diver"),100,
+                100, ItemType.KEY, 0);
+
+        key.setTexture(itemTexture);
+        key.setDrawScale(scale);
+        key.setName("key");
+        addObject(key);
+//
+//        addObject(new ItemModel(constants.get("diver"),itemTexture.getRegionWidth(),
+//                itemTexture.getRegionHeight(), ItemType.KEY, 0));
 
     }
 

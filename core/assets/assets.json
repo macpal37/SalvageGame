@@ -2,9 +2,9 @@
 	"textures": {
 
         "models:diver": "models/diver.png",
-        "background:ocean":"background/ocean.png"
-
-        }
+        "background:ocean":"background/ocean.png",
+        "models:key": "models/key.png"
+    }
 ,"jsons"  : {
          "models:constants":  "models/constants.json",
 

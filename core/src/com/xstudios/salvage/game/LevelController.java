@@ -18,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.models.DiverModel;
+import com.xstudios.salvage.game.models.ItemModel;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 import java.util.Iterator;
@@ -26,11 +27,15 @@ public abstract class LevelController implements Screen {
     /** The texture for diver */
     protected TextureRegion diverTexture;
 
+    /** The texture for item */
+    protected TextureRegion itemTexture;
     /** Ocean Background Texture */
     protected TextureRegion background;
 
 
     protected DiverModel diver;
+
+    protected ItemModel key;
 
     protected CameraController cameraController;
 
@@ -193,7 +198,7 @@ public abstract class LevelController implements Screen {
         // Allocate the tiles
         diverTexture = new TextureRegion(directory.getEntry( "models:diver", Texture.class ));
         background = new TextureRegion(directory.getEntry( "background:ocean", Texture.class ));
-
+        itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
     }
 
     /**

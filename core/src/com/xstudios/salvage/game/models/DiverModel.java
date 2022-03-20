@@ -271,19 +271,23 @@ public class DiverModel extends GameObject {
             return;
         }
         if (getHorizontalMovement() == 0f) {
-            System.out.println("VX: " + body.getLinearVelocity().x);
             forceCache.x = -getDamping()*getVX();
-            body.applyForce(forceCache,getPosition(),true);
-        }
+            forceCache.y = 0;
+            System.out.println("force x damping : " + forceCache.x);
+            System.out.println("damping val: " + getDamping());
+            System.out.println("xvel: " + getVX());
+//            body.applyForce(forceCache,getPosition(),true);
 
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
+        } else if (Math.abs(getVX()) >= getMaxSpeed()) { // Velocity too high, clamp it
             setVX(Math.signum(getVX())*getMaxSpeed());
         } else {
             forceCache.x = getHorizontalMovement();
         }
+        if (getVerticalMovement() == 0f && Math.signum(getVY()) > 0) {
+            forceCache.y = -getDamping()*getVY();
+//            body.applyForce(forceCache,getPosition(),true);
 
-        if (Math.abs(getVY()) >= getMaxSpeed() &&
+        } else if (Math.abs(getVY()) >= getMaxSpeed() &&
                 Math.signum(getVY()) == Math.signum(getVerticalMovement())) {
             setVY(Math.signum(getVY())*getMaxSpeed());
         } else {
@@ -291,6 +295,12 @@ public class DiverModel extends GameObject {
         }
 
         body.applyForce(forceCache,getPosition(),true);
+
+        if(current_item != null) {
+            current_item.setHorizontalMovement(getHorizontalMovement());
+            current_item.setVerticalMovement(getVerticalMovement());
+            current_item.applyForce();
+        }
     }
 
     @Override
