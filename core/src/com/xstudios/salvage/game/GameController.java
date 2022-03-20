@@ -28,6 +28,9 @@ public class GameController implements Screen, ContactListener {
     JsonValue constants;
 
     // Models to be updated
+    protected TextureRegion wallTexture;
+    protected TextureRegion wallBackTexture;
+
     protected DiverModel diver;
 
     /** Camera centered on the player */
@@ -192,6 +195,8 @@ public class GameController implements Screen, ContactListener {
         diverTexture = new TextureRegion(directory.getEntry( "models:diver", Texture.class ));
         background = new TextureRegion(directory.getEntry( "background:ocean", Texture.class ));
         constants =  directory.getEntry( "models:constants", JsonValue.class );
+        wallTexture = new TextureRegion(directory.getEntry( "background:wooden_floor", Texture.class ));
+        wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
     }
 
     /**
@@ -385,9 +390,7 @@ public class GameController implements Screen, ContactListener {
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE,background.getRegionWidth()/2f,background.getRegionHeight()/2f,0,0,0,4,4);
         for(GameObject obj : objects) {
             obj.draw(canvas);
-            obj.drawDebug(canvas);
         }
-
         canvas.end();
 
 
