@@ -1,12 +1,7 @@
 package com.xstudios.salvage.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
@@ -17,10 +12,8 @@ public class GDXRoot extends Game implements ScreenListener {
 	private GameCanvas canvas;
 	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
 	private LoadingMode loading;
-	/** Player mode for the the game proper (CONTROLLER CLASS) */
-	private int current;
 	/** List of all WorldControllers */
-	private LevelController[] controllers;
+	private GameController controller;
 
 	private CameraController cameraController;
 
@@ -36,10 +29,8 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas = new GameCanvas(cameraController);
 		loading = new LoadingMode("assets.json", canvas, 1);
 		// Initialize the three game worlds
-		controllers = new LevelController[1];
-		controllers[0] = new TestLevelController();
-		controllers[0].setCameraController(cameraController);
-		current = 0;
+		controller = new GameController();
+		controller.setCameraController(cameraController);
 		loading.setScreenListener(this);
 		setScreen(loading);
 	}
@@ -52,9 +43,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	@Override
 	public void dispose () {
 		setScreen(null);
-		for(int ii = 0; ii < controllers.length; ii++) {
-			controllers[ii].dispose();
-		}
+		controller.dispose();
 
 		canvas.dispose();
 		canvas = null;
@@ -90,11 +79,11 @@ public class GDXRoot extends Game implements ScreenListener {
 		if (screen == loading) {
 
 			directory = loading.getAssets();
-			controllers[0].gatherAssets(directory);
-			controllers[0].setCanvas(canvas);
-			controllers[current].reset();
+			controller.gatherAssets(directory);
+			controller.setCanvas(canvas);
+			controller.reset();
 
-			setScreen(controllers[current]);
+			setScreen(controller);
 
 			loading.dispose();
 			loading = null;

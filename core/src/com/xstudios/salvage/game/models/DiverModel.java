@@ -42,6 +42,17 @@ public class DiverModel extends GameObject {
     /** whether user is pinging*/
     private Vector2 pingDirection;
 
+    /** Store oxygen level */
+    private float oxygenLevel;
+    private float MAX_OXYGEN;
+
+    /**
+     *
+     * @param data
+     * @param width
+     * @param height
+     */
+
     public DiverModel(JsonValue data, float width, float height){
         super(data.get("pos").getFloat(0),
                 data.get("pos").getFloat(1));
@@ -285,4 +296,7 @@ public class DiverModel extends GameObject {
         return current_item;
     }
 
+    public float getOxygenLevel() {
+        return oxygenLevel;
+    }
 }
