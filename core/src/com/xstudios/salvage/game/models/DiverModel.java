@@ -9,17 +9,6 @@ import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 
 public class DiverModel extends GameObject {
-    /** The physics body for Box2D. */
-//    protected Body body;
-
-
-    /** The texture for the shape. */
-//    protected TextureRegion texture;
-
-
-    /** The texture origin for drawing */
-//    protected Vector2 origin;
-
 
     /** Shape information for this box */
     protected PolygonShape shape;
@@ -52,7 +41,17 @@ public class DiverModel extends GameObject {
     private boolean ping;
     /** whether user is pinging*/
     private Vector2 pingDirection;
-    
+
+    /** Store oxygen level */
+    private float oxygenLevel;
+    private float MAX_OXYGEN;
+
+    /**
+     *
+     * @param data
+     * @param width
+     * @param height
+     */
 
     public DiverModel(JsonValue data, float width, float height){
         super(data.get("pos").getFloat(0),
@@ -83,9 +82,6 @@ public class DiverModel extends GameObject {
         ping = false;
         movement = new Vector2();
     }
-    public Body getBody() {
-        return body;
-    }
 
     /**
      * Reset the polygon vertices in the shape to match the dimension.
@@ -106,7 +102,6 @@ public class DiverModel extends GameObject {
     public void setVerticalMovement(float value) {
         movement.y = value;
     }
-
 
     public void setHorizontalMovement(float value) {
         movement.x = value;
@@ -144,21 +139,7 @@ public class DiverModel extends GameObject {
         if (!super.activatePhysics(world)) {
             return false;
         }
-        // Make a body, if possible
-//        bodyinfo.active = true;
-//        body = world.createBody(bodyinfo);
-//        body.setUserData(this);
-
-//        body.setFixedRotation(false);
-//        body.setType(BodyDef.BodyType.DynamicBody);
-        // Only initialize if a body was created.
-//        if (body != null) {
-//            createFixtures();
-//            return true;
-//        }
-////
-//        bodyinfo.active = true;
-//        return true;
+        body.setUserData(this);
         return true;
     }
     /**
@@ -262,10 +243,6 @@ public class DiverModel extends GameObject {
     }
 
 
-//    public void applyUpwardForce(float dir){
-//        body.applyForce(new Vector2(0,1000*dir),getPosition(),true);
-//    }
-
     public void applyForce() {
         if (!isActive()) {
             return;
@@ -273,9 +250,6 @@ public class DiverModel extends GameObject {
         if (getHorizontalMovement() == 0f) {
             forceCache.x = -getDamping()*getVX();
             forceCache.y = 0;
-            System.out.println("force x damping : " + forceCache.x);
-            System.out.println("damping val: " + getDamping());
-            System.out.println("xvel: " + getVX());
 //            body.applyForce(forceCache,getPosition(),true);
 
         } else if (Math.abs(getVX()) >= getMaxSpeed()) { // Velocity too high, clamp it
@@ -309,24 +283,6 @@ public class DiverModel extends GameObject {
     }
 
     /**
-     * Returns the x-coordinate for this physics body
-     *
-     * @return the x-coordinate for this physics body
-     */
-    public float getX() {
-        return (body != null ? body.getPosition().x : super.getX());
-    }
-
-    /**
-     * Returns the y-coordinate for this physics body
-     *
-     * @return the y-coordinate for this physics body
-     */
-    public float getY() {
-        return (body != null ? body.getPosition().y : super.getY());
-    }
-
-    /**
      * Set the current item the diver is carrying
      */
     public void setItem(ItemModel i) {
@@ -345,5 +301,9 @@ public class DiverModel extends GameObject {
      */
     public ItemModel getItem() {
         return current_item;
+    }
+
+    public float getOxygenLevel() {
+        return oxygenLevel;
     }
 }

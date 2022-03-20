@@ -4,8 +4,10 @@
         "models:diver": "models/diver.png",
         "background:ocean":"background/ocean.png",
         "models:key": "models/key.png"
-    }
-,"jsons"  : {
+        "background:wooden_floor":"background/wooden_floor.png",
+        "background:wooden_bg":"background/wooden_bg.png"
+        },
+    "jsons"  : {
          "models:constants":  "models/constants.json",
 
      },

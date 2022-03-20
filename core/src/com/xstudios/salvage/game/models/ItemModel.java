@@ -31,8 +31,6 @@ public class ItemModel extends GameObject {
     /** The current horizontal movement of the item */
     private Vector2 movement;
 
-
-
     public ItemModel(JsonValue data, float width, float height, ItemType item_type, int id){
         super(data.get("pos").getFloat(0),
                 data.get("pos").getFloat(1));
@@ -89,6 +87,7 @@ public class ItemModel extends GameObject {
             return false;
         }
 
+        body.setUserData(this);
         body.setFixedRotation(false);
         body.setType(BodyDef.BodyType.DynamicBody);
         return true;

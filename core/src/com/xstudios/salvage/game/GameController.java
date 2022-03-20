@@ -2,11 +2,8 @@ package com.xstudios.salvage.game;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Affine2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -15,29 +12,38 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.WorldManifold;
+import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.models.DiverModel;
 import com.xstudios.salvage.game.models.ItemModel;
+import com.xstudios.salvage.game.models.ItemType;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 import java.util.Iterator;
 
-public abstract class LevelController implements Screen {
+public class GameController implements Screen, ContactListener {
+    // Assets
     /** The texture for diver */
     protected TextureRegion diverTexture;
-
     /** The texture for item */
     protected TextureRegion itemTexture;
-    /** Ocean Background Texture */
+   /** Ocean Background Texture */
     protected TextureRegion background;
+    JsonValue constants;
 
+    // Models to be updated
+    protected TextureRegion wallTexture;
+    protected TextureRegion wallBackTexture;
 
     protected DiverModel diver;
 
     protected ItemModel key;
 
+    /** Camera centered on the player */
     protected CameraController cameraController;
+
+    /** manages collisions */
+    protected CollisionController collisionController;
 
     /** How many frames after winning/losing do we continue? */
     public static final int EXIT_COUNT = 120;
@@ -79,7 +85,56 @@ public abstract class LevelController implements Screen {
     /** Whether or not debug mode is active */
     private boolean debug;
 
+    // ======================= CONSTRUCTORS =================================
+    /**
+     * Creates a new game world with the default values.
+     *
+     * The game world is scaled so that the screen coordinates do not agree
+     * with the Box2d coordinates.  The bounds are in terms of the Box2d
+     * world, not the screen.
+     */
+    protected GameController() {
+        this(new Rectangle(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),
+            new Vector2(0,DEFAULT_GRAVITY));
 
+    }
+
+    /**
+     * Creates a new game world
+     *
+     * The game world is scaled so that the screen coordinates do not agree
+     * with the Box2d coordinates.  The bounds are in terms of the Box2d
+     * world, not the screen.
+     *
+     * @param width  	The width in Box2d coordinates
+     * @param height	The height in Box2d coordinates
+     * @param gravity	The downward gravity
+     */
+    protected GameController(float width, float height, float gravity) {
+        this(new Rectangle(0,0,width,height), new Vector2(0,gravity));
+    }
+
+    /**
+     * Creates a new game world
+     *
+     * The game world is scaled so that the screen coordinates do not agree
+     * with the Box2d coordinates.  The bounds are in terms of the Box2d
+     * world, not the screen.
+     *
+     * @param bounds	The game bounds in Box2d coordinates
+     * @param gravity	The gravitational force on this Box2d world
+     */
+    protected GameController(Rectangle bounds, Vector2 gravity) {
+        world = new World(gravity.scl(1),false);
+        this.bounds = new Rectangle(bounds);
+        this.scale = new Vector2(1,1);
+        debug  = false;
+        active = false;
+
+        System.out.println("BG: "+background);
+        collisionController = new CollisionController();
+        world.setContactListener(this);
+    }
 
     /**
      * Returns true if this is the active screen
@@ -121,54 +176,6 @@ public abstract class LevelController implements Screen {
     }
 
     /**
-     * Creates a new game world with the default values.
-     *
-     * The game world is scaled so that the screen coordinates do not agree
-     * with the Box2d coordinates.  The bounds are in terms of the Box2d
-     * world, not the screen.
-     */
-    protected LevelController() {
-        this(new Rectangle(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),
-            new Vector2(0,DEFAULT_GRAVITY));
-
-    }
-
-    /**
-     * Creates a new game world
-     *
-     * The game world is scaled so that the screen coordinates do not agree
-     * with the Box2d coordinates.  The bounds are in terms of the Box2d
-     * world, not the screen.
-     *
-     * @param width  	The width in Box2d coordinates
-     * @param height	The height in Box2d coordinates
-     * @param gravity	The downward gravity
-     */
-    protected LevelController(float width, float height, float gravity) {
-        this(new Rectangle(0,0,width,height), new Vector2(0,gravity));
-    }
-
-    /**
-     * Creates a new game world
-     *
-     * The game world is scaled so that the screen coordinates do not agree
-     * with the Box2d coordinates.  The bounds are in terms of the Box2d
-     * world, not the screen.
-     *
-     * @param bounds	The game bounds in Box2d coordinates
-     * @param gravity	The gravitational force on this Box2d world
-     */
-    protected LevelController(Rectangle bounds, Vector2 gravity) {
-        world = new World(gravity.scl(1),false);
-        this.bounds = new Rectangle(bounds);
-        this.scale = new Vector2(1,1);
-        debug  = false;
-        active = false;
-
-        System.out.println("BG: "+background);
-    }
-
-    /**
      * Dispose of all (non-static) resources allocated to this mode.
      */
     public void dispose() {
@@ -199,6 +206,9 @@ public abstract class LevelController implements Screen {
         diverTexture = new TextureRegion(directory.getEntry( "models:diver", Texture.class ));
         background = new TextureRegion(directory.getEntry( "background:ocean", Texture.class ));
         itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
+        constants =  directory.getEntry( "models:constants", JsonValue.class );
+        wallTexture = new TextureRegion(directory.getEntry( "background:wooden_floor", Texture.class ));
+        wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
     }
 
     /**
@@ -241,12 +251,53 @@ public abstract class LevelController implements Screen {
         return horiz && vert;
     }
 
+    public void reset() {
+        Vector2 gravity = new Vector2(world.getGravity() );
+        for(GameObject obj : objects) {
+            obj.deactivatePhysics(world);
+        }
+
+        world = new World(gravity,false);
+        world.setContactListener(this);
+        resetLevel();
+    }
+
+    private void resetLevel() {
+
+        diver = new DiverModel(constants.get("diver"),diverTexture.getRegionWidth(),
+            diverTexture.getRegionHeight());
+
+        diver.setTexture(diverTexture);
+        diver.setDrawScale(scale);
+        diver.setName("diver");
+
+        addObject(diver);
+
+        key = new ItemModel(constants.get("diver"),itemTexture.getRegionWidth(),
+                itemTexture.getRegionHeight(), ItemType.KEY, 0);
+
+        key.setTexture(itemTexture);
+        key.setDrawScale(scale);
+        key.setName("key");
+        key.setGravityScale(.01f);
+
+        addObject(key);
+    }
+
     /**
-     * Resets the status of the game so that we can play again.
-     *
-     * This method disposes of the world and creates a new one.
+     * Lays out the game geography.
      */
-    public abstract void reset();
+    private void populateLevel() {
+        float diverWidth = diverTexture.getRegionWidth();
+        float diverHeight = diverTexture.getRegionHeight();
+
+        // add the diver
+
+        diver = new DiverModel(constants.get("diver"), diverWidth, diverHeight);
+        diver.setTexture(diverTexture);
+        addObject(diver);
+
+    }
 
     /**
      * Returns whether to process the update loop
@@ -282,13 +333,39 @@ public abstract class LevelController implements Screen {
      * The core gameplay loop of this world.
      *
      * This method contains the specific update code for this mini-game. It does
-     * not handle collisions, as those are managed by the parent class LevelController.
+     * not handle collisions, as those are managed by the parent class WorldController.
      * This method is called after input is read, but before collisions are resolved.
      * The very last thing that it should do is apply forces to the appropriate objects.
      *
      * @param dt	Number of seconds since last animation frame
      */
-    public abstract void update(float dt);
+    public void update(float dt) {
+        InputController input = InputController.getInstance();
+        diver.setHorizontalMovement(input.getHorizontal() *diver.getForce());
+        diver.setVerticalMovement(input.getVertical() *diver.getForce());
+
+        diver.applyForce();
+        if(input.didPing()){
+//            diver.setPingDirection();
+        }
+        if(input.getOrDropObject()) {
+            if(diver.carryingItem()){
+                diver.setItem(null);
+            } else {
+                diver.setItem(null);
+            }
+        }
+        System.out.println("DIVER POS " + diver.getPosition());
+        System.out.println("ITEM POS " + key.getPosition());
+//        System.out.println("Move: "+diver.getHorizontalMovement());
+//        System.out.println("Move up: "+diver.getVerticalMovement());
+        if (diver.getBody()!=null){
+            cameraController.setCameraPosition(diver.getBody().getPosition());
+        }
+
+//        System.out.println("WORLD GRAVITY: " + world.getGravity());
+        cameraController.render();
+    }
 
     /**
      * Processes physics
@@ -343,9 +420,7 @@ public abstract class LevelController implements Screen {
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE,background.getRegionWidth()/2f,background.getRegionHeight()/2f,0,0,0,4,4);
         for(GameObject obj : objects) {
             obj.draw(canvas);
-            obj.drawDebug(canvas);
         }
-
         canvas.end();
 
 
@@ -375,7 +450,6 @@ public abstract class LevelController implements Screen {
     public long playSound(Sound sound, long soundId) {
         return playSound( sound, soundId, 1.0f );
     }
-
 
     /**
      * Method to ensure that a sound asset is only played once.
@@ -473,4 +547,41 @@ public abstract class LevelController implements Screen {
     public void setScreenListener(ScreenListener listener) {
         this.listener = listener;
     }
+
+    // ================= CONTACT LISTENER METHODS =============================
+    /**
+     * Callback method for the start of a collision
+     *
+     * This method is called when we first get a collision between two objects.  We use
+     * this method to test if it is the "right" kind of collision.  In particular, we
+     * use it to test if we made it to the win door.
+     *
+     * @param contact The two bodies that collided
+     */
+    public void beginContact(Contact contact) {
+        Body body1 = contact.getFixtureA().getBody();
+        Body body2 = contact.getFixtureB().getBody();
+
+        System.out.println("BEGIN CONTACT");
+        collisionController.manageCollisions(body1, body2);
+        // Call CollisionController to handle collisions
+    }
+
+    /**
+     * Callback method for the start of a collision
+     *
+     * This method is called when two objects cease to touch.
+     */
+    public void endContact(Contact contact) {}
+
+    /**
+     * Handles any modifications necessary before collision resolution
+     *
+     * This method is called just before Box2D resolves a collision.
+     */
+    public void preSolve(Contact contact, Manifold oldManifold) {
+    }
+
+    /** Unused ContactListener method */
+    public void postSolve(Contact contact, ContactImpulse impulse) {}
 }
