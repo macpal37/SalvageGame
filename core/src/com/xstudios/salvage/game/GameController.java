@@ -210,8 +210,8 @@ public class GameController implements Screen, ContactListener {
         diverTexture = new TextureRegion(directory.getEntry( "models:diver", Texture.class ));
         background = new TextureRegion(directory.getEntry( "background:ocean", Texture.class ));
         constants =  directory.getEntry( "models:constants", JsonValue.class );
-        wallTexture = new TextureRegion(directory.getEntry( "background:wooden_floor", Texture.class ));
-        wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
+        wallTexture = new TextureRegion(directory.getEntry( "wall", Texture.class ));
+        //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
     }
 
@@ -299,7 +299,7 @@ public class GameController implements Screen, ContactListener {
             obj.setFriction(0.4f);
             obj.setRestitution(0.1f);
             obj.setDrawScale(scale);
-            obj.setTexture(wallBackTexture);
+            obj.setTexture(wallTexture);
             obj.setDrawScale(scale);
             obj.setName("wall "+ii);
             addObject(obj);
