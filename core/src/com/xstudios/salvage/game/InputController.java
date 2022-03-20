@@ -31,6 +31,14 @@ public class InputController {
     /** The singleton instance of the input controller */
     private static InputController theController = null;
 
+    /** Are we carrying an object? */
+    private boolean carryingObject;
+    private boolean carryingObjectPrevious;
+
+    /** did we ping the body? */
+    private boolean pingPressed;
+    private boolean pingPrevious;
+
     /**
      * Return the singleton instance of the input controller
      *
@@ -92,12 +100,29 @@ public class InputController {
     }
 
     /**
+     * Returns whether we are carrying an object
+     *
+     * @return whether we are carrying an object.
+     */
+    public boolean getOrDropObject() {
+        return carryingObject && !carryingObjectPrevious;
+    }
+    /**
      * Returns true if the player wants to go toggle the debug mode.
      *
      * @return true if the player wants to go toggle the debug mode.
      */
     public boolean didDebug() {
         return debugPressed && !debugPrevious;
+    }
+
+    /**
+     * Returns true if the player wants to ping the body.
+     *
+     * @return true if the player wants to ping the body.
+     */
+    public boolean didPing() {
+        return pingPressed && !pingPrevious;
     }
 
 
@@ -132,6 +157,8 @@ public class InputController {
         // Helps us ignore buttons that are held down
         resetPrevious  = resetPressed;
         debugPrevious  = debugPressed;
+        carryingObjectPrevious = carryingObject;
+        pingPrevious = pingPressed;
 
         // Check to see if a GamePad is connected
         if (xbox != null && xbox.isConnected()) {
@@ -205,6 +232,12 @@ public class InputController {
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             vertical -= 1.0f;
         }
+
+        int pick_up = Input.Keys.Q;
+        int ping = Input.Keys.R;
+
+        carryingObject = Gdx.input.isKeyPressed(pick_up);
+        pingPressed = Gdx.input.isKeyPressed(ping);
     }
 
 
