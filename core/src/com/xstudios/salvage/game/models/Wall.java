@@ -12,16 +12,30 @@ import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 
 public class Wall extends GameObject {
-    /** Shape information for this box */
-    protected PolygonShape shape;
-    /** The width and height of the box */
+    /** An earclipping triangular to make sure we work with convex shapes */
+    private static final EarClippingTriangulator TRIANGULATOR = new EarClippingTriangulator();
+
+    /** Shape information for this physics object */
+    protected PolygonShape[] shapes;
+    /** Texture information for this object */
+    protected PolygonRegion region;
+
+    /** The polygon vertices, scaled for drawing */
+    private float[] scaled;
+    /** The triangle indices, used for drawing */
+    private short[] tridx;
+
+    /** A cache value for the fixtures (for resizing) */
+    private Fixture[] geoms;
+    /** The polygon bounding box (for resizing purposes) */
     private Vector2 dimension;
     /** A cache value for when the user wants to access the dimensions */
     private Vector2 sizeCache;
-    /** A cache value for the fixture (for resizing) */
-    private Fixture geometry;
     /** Cache of the polygon vertices (for resizing) */
     private float[] vertices;
+    /** The texture anchor upon region initialization */
+    protected Vector2 anchor;
+
 
     /**
      * Returns the dimensions of this box
@@ -54,9 +68,8 @@ public class Wall extends GameObject {
      * @param height  The height of this box
      */
     public void setDimension(float width, float height) {
-        dimension.set(width, height);
-        markDirty(true);
         resize(width, height);
+        markDirty(true);
     }
 
     /**
@@ -98,57 +111,160 @@ public class Wall extends GameObject {
     }
 
     /**
-     * Creates a new box at the origin.
+     * Creates a (not necessarily convex) polygon at the origin.
      *
-     * The size is expressed in physics units NOT pixels.  In order for
-     * drawing to work properly, you MUST set the drawScale. The drawScale
-     * converts the physics units to pixels.
+     * The points given are relative to the polygon's origin.  They
+     * are measured in physics units.  They tile the image according
+     * to the drawScale (which must be set for drawing to work
+     * properly).
      *
-     * @param width		The object width in physics units
-     * @param height	The object width in physics units
+     * @param points   The polygon vertices
      */
-    public Wall(float width, float height) {
-        this(0, 0, width, height);
+    public Wall(float[] points) {
+        this(points, 0, 0);
     }
 
     /**
-     * Creates a new box object.
+     * Creates a (not necessarily convex) polygon
      *
-     * The size is expressed in physics units NOT pixels.  In order for
-     * drawing to work properly, you MUST set the drawScale. The drawScale
-     * converts the physics units to pixels.
+     * The points given are relative to the polygon's origin.  They
+     * are measured in physics units.  They tile the image according
+     * to the drawScale (which must be set for drawing to work
+     * properly).
      *
-     * @param x  		Initial x position of the box center
-     * @param y  		Initial y position of the box center
-     * @param width		The object width in physics units
-     * @param height	The object width in physics units
+     * @param points   The polygon vertices
+     * @param x  Initial x position of the polygon center
+     * @param y  Initial y position of the polygon center
      */
-    public Wall(float x, float y, float width, float height) {
-        super(x,y);
-        dimension = new Vector2(width,height);
-        sizeCache = new Vector2();
-        shape = new PolygonShape();
-        vertices = new float[8];
-        geometry = null;
+    public Wall(float[] points, float x, float y) {
+        super(x, y);
+        assert points.length % 2 == 0;
 
-        // Initialize
-        resize(width, height);
+        // Compute the bounds.
+        initShapes(points);
+        initBounds();
     }
 
     /**
-     * Reset the polygon vertices in the shape to match the dimension.
+     * Initializes the bounding box (and drawing scale) for this polygon
+     */
+    private void initBounds() {
+        float minx = vertices[0];
+        float maxx = vertices[0];
+        float miny = vertices[1];
+        float maxy = vertices[1];
+
+        for(int ii = 2; ii < vertices.length; ii += 2) {
+            if (vertices[ii] < minx) {
+                minx = vertices[ii];
+            } else if (vertices[ii] > maxx) {
+                maxx = vertices[ii];
+            }
+            if (vertices[ii+1] < miny) {
+                miny = vertices[ii+1];
+            } else if (vertices[ii] > maxy) {
+                maxy = vertices[ii+1];
+            }
+        }
+        dimension = new Vector2((maxx-minx), (maxy-miny));
+        sizeCache = new Vector2(dimension);
+    }
+
+    /**
+     * Initializes the Box2d shapes for this polygon
+     *
+     * If the texture is not null, this method also allocates the PolygonRegion
+     * for drawing.  However, the points in the polygon region may be rescaled
+     * later.
+     *
+     * @param points   The polygon vertices
+     */
+    private void initShapes(float[] points) {
+        // Triangulate
+        ShortArray array = TRIANGULATOR.computeTriangles(points);
+        trimColinear(points,array);
+
+        tridx = new short[array.items.length];
+        System.arraycopy(array.items, 0, tridx, 0, tridx.length);
+
+        // Allocate space for physics triangles.
+        int tris = array.items.length / 3;
+        vertices = new float[tris*6];
+        shapes = new PolygonShape[tris];
+        geoms  = new Fixture[tris];
+        for(int ii = 0; ii < tris; ii++) {
+            for(int jj = 0; jj < 3; jj++) {
+                vertices[6*ii+2*jj  ] = points[2*array.items[3*ii+jj]  ];
+                vertices[6*ii+2*jj+1] = points[2*array.items[3*ii+jj]+1];
+            }
+            shapes[ii] = new PolygonShape();
+            shapes[ii].set(vertices,6*ii,6);
+        }
+
+        // Draw the shape with the appropriate scaling factor
+        scaled = new float[points.length];
+        for(int ii = 0; ii < points.length; ii+= 2) {
+            scaled[ii  ] = points[ii  ]*drawScale.x;
+            scaled[ii+1] = points[ii+1]*drawScale.y;
+        }
+        if (texture != null) {
+            // WARNING: PolygonRegion constructor by REFERENCE
+            region = new PolygonRegion(texture,scaled,tridx);
+        }
+
+    }
+
+    /**
+     * Removes colinear vertices from the given triangulation.
+     *
+     * For some reason, the LibGDX triangulator will occasionally return colinear
+     * vertices.
+     *
+     * @param points  The polygon vertices
+     * @param indices The triangulation indices
+     */
+    private void trimColinear(float[] points, ShortArray indices) {
+        int colinear = 0;
+        for(int ii = 0; ii < indices.size/3-colinear; ii++) {
+            float t1 = points[2*indices.items[3*ii  ]]*(points[2*indices.items[3*ii+1]+1]-points[2*indices.items[3*ii+2]+1]);
+            float t2 = points[2*indices.items[3*ii+1]]*(points[2*indices.items[3*ii+2]+1]-points[2*indices.items[3*ii  ]+1]);
+            float t3 = points[2*indices.items[3*ii+2]]*(points[2*indices.items[3*ii  ]+1]-points[2*indices.items[3*ii+1]+1]);
+            if (Math.abs(t1+t2+t3) < 0.0000001f) {
+                indices.swap(3*ii  ,  indices.size-3*colinear-3);
+                indices.swap(3*ii+1,  indices.size-3*colinear-2);
+                indices.swap(3*ii+2,  indices.size-3*colinear-1);
+                colinear++;
+            }
+        }
+        indices.size -= 3*colinear;
+        indices.shrink();
+    }
+
+    /**
+     * Resize this polygon (stretching uniformly out from origin)
+     *
+     * @param width The new width
+     * @param height The new height
      */
     private void resize(float width, float height) {
-        // Make the box with the center in the center
-        vertices[0] = -width/2.0f;
-        vertices[1] = -height/2.0f;
-        vertices[2] = -width/2.0f;
-        vertices[3] =  height/2.0f;
-        vertices[4] =  width/2.0f;
-        vertices[5] =  height/2.0f;
-        vertices[6] =  width/2.0f;
-        vertices[7] = -height/2.0f;
-        shape.set(vertices);
+        float scalex = width/dimension.x;
+        float scaley = height/dimension.y;
+
+        for(int ii = 0; ii < shapes.length; ii++) {
+            for(int jj = 0; jj < 3; jj++) {
+                vertices[6*ii+2*jj  ] *= scalex;
+                vertices[6*ii+2*jj+1] *= scaley;
+            }
+            shapes[ii].set(vertices,6*ii,6);
+        }
+
+        // Reset the drawing shape as well
+        for(int ii = 0; ii < scaled.length; ii+= 2) {
+            scaled[ii  ] *= scalex;
+            scaled[ii+1] *= scaley;
+        }
+
+        dimension.set(width,height);
     }
 
     /**
@@ -163,9 +279,11 @@ public class Wall extends GameObject {
 
         releaseFixtures();
 
-        // Create the fixture
-        fixture.shape = shape;
-        geometry = body.createFixture(fixture);
+        // Create the fixtures
+        for(int ii = 0; ii < shapes.length; ii++) {
+            fixture.shape = shapes[ii];
+            geoms[ii] = body.createFixture(fixture);
+        }
         markDirty(false);
     }
 
@@ -175,12 +293,82 @@ public class Wall extends GameObject {
      * This is the primary method to override for custom physics objects
      */
     protected void releaseFixtures() {
-        if (geometry != null) {
-            body.destroyFixture(geometry);
-            geometry = null;
+        if (geoms[0] != null) {
+            for(Fixture fix : geoms) {
+                body.destroyFixture(fix);
+            }
         }
     }
 
+    /**
+     * Sets the object texture for drawing purposes.
+     *
+     * In order for drawing to work properly, you MUST set the drawScale.
+     * The drawScale converts the physics units to pixels.
+     *
+     * @param value  the object texture for drawing purposes.
+     */
+    public void setTexture(TextureRegion value) {
+        texture = value;
+        initRegion();
+    }
+
+    private void initRegion() {
+        if (texture == null) {
+            return;
+        }
+        float[] scaled = new float[vertices.length];
+        for(int ii = 0; ii < scaled.length; ii++) {
+            if (ii % 2 == 0) {
+                scaled[ii] = (vertices[ii] +getX())* drawScale.x;
+            } else {
+                scaled[ii] = (vertices[ii] +getY())* drawScale.y;
+            }
+        }
+        short[] tris = {0,1,3,3,2,1};
+        anchor = new Vector2(getX(),getY());
+        region = new PolygonRegion(texture,scaled,tris);
+    }
+
+    /**
+     * Sets the drawing scale for this physics object
+     *
+     * The drawing scale is the number of pixels to draw before Box2D unit. Because
+     * mass is a function of area in Box2D, we typically want the physics objects
+     * to be small.  So we decouple that scale from the physics object.  However,
+     * we must track the scale difference to communicate with the scene graph.
+     *
+     * We allow for the scaling factor to be non-uniform.
+     *
+     * @param x  the x-axis scale for this physics object
+     * @param y  the y-axis scale for this physics object
+     */
+    public void setDrawScale(float x, float y) {
+        assert x != 0 && y != 0 : "Scale cannot be 0";
+        float dx = x/drawScale.x;
+        float dy = y/drawScale.y;
+        // Reset the drawing shape as well
+        for(int ii = 0; ii < scaled.length; ii+= 2) {
+            scaled[ii  ] *= dx;
+            scaled[ii+1] *= dy;
+        }
+        if (texture != null) {
+            region = new PolygonRegion(texture,scaled,tridx);
+        }
+        drawScale.set(x,y);
+    }
+
+    /**
+     * Draws the physics object.
+     *
+     * @param canvas Drawing context
+     */
+    public void draw(GameCanvas canvas) {
+        if (region != null) {
+            canvas.draw(region,Color.WHITE,0,0,(getX()-anchor.x)*drawScale.x,(getY()-anchor.y)*drawScale.y,getAngle(),1,1);
+        }
+
+    }
 
     /**
      * Draws the outline of the physics body.
@@ -189,8 +377,12 @@ public class Wall extends GameObject {
      *
      * @param canvas Drawing context
      */
+    @Override
     public void drawDebug(GameCanvas canvas) {
-        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        for(PolygonShape tri : shapes) {
+            canvas.drawPhysics(tri,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        }
+
     }
 
 

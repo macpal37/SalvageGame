@@ -263,6 +263,35 @@ public class GameController implements Screen, ContactListener {
 
         addObject(diver);
 
+        //add a wall
+
+        float[][] wallVerts={
+            {1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
+            { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
+            {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
+            {26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
+            {29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
+            {24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
+            {29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
+            {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
+            {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
+            { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
+        };
+
+        for (int ii = 0; ii < wallVerts.length; ii++) {
+            Wall obj;
+            obj = new Wall(wallVerts[ii], 0, 0);
+            obj.setBodyType(BodyDef.BodyType.StaticBody);
+            obj.setDensity(0);
+            obj.setFriction(0.4f);
+            obj.setRestitution(0.1f);
+            obj.setDrawScale(scale);
+            obj.setTexture(wallBackTexture);
+            obj.setDrawScale(scale);
+            obj.setName("wall "+ii);
+            addObject(obj);
+        }
+
     }
 
     /**
@@ -278,17 +307,7 @@ public class GameController implements Screen, ContactListener {
         diver.setTexture(diverTexture);
         addObject(diver);
 
-        //add a wall
-        Wall wall1 = new Wall(4.0f,14.0f,10f,10f);
-        wall1.setBodyType(BodyDef.BodyType.StaticBody);
-        wall1.setDensity(0f);
-        wall1.setFriction(0.4f);
-        wall1.setRestitution(0.1f);
-        wall1.setSensor(true);
-        wall1.setDrawScale(scale);
-        wall1.setTexture(wallTexture);
-        wall1.setName("wall1");
-        addObject(wall1);
+
 
 
 
