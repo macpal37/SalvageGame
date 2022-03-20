@@ -61,7 +61,7 @@ public class GameController implements Screen, ContactListener {
     /** Aspect ratio of the world*/
     protected static final float ASPECT_RATIO = DEFAULT_WIDTH/DEFAULT_HEIGHT;
     /** The default value of gravity (going down) */
-    protected static final float DEFAULT_GRAVITY = -4.9f*4;
+    protected static final float DEFAULT_GRAVITY = -4.9f;
 
 
     /** Reference to the game canvas */
@@ -348,19 +348,8 @@ public class GameController implements Screen, ContactListener {
         if(input.didPing()){
 //            diver.setPingDirection();
         }
-        if(input.getOrDropObject()) {
-            if(diver.carryingItem()){
-                diver.setItem(null);
-            } else {
-                diver.setItem(null);
-            }
-        }
-        System.out.println("DIVER POS " + diver.getPosition());
-        System.out.println("ITEM POS " + key.getPosition());
-//        System.out.println("Move: "+diver.getHorizontalMovement());
-//        System.out.println("Move up: "+diver.getVerticalMovement());
         if (diver.getBody()!=null){
-            cameraController.setCameraPosition(diver.getBody().getPosition());
+            cameraController.setCameraPosition(diver.getX()*diver.getDrawScale().x,diver.getY()*diver.getDrawScale().y);
         }
 
 //        System.out.println("WORLD GRAVITY: " + world.getGravity());
