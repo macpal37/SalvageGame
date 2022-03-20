@@ -15,6 +15,7 @@ public class CameraController {
     private OrthographicCamera camera;
     private Viewport viewport;
     private Vector3 cameraPosition;
+    private Vector2 cameraPosition2D;
 
     private Vector3 targetPosition;
 
@@ -38,15 +39,18 @@ public class CameraController {
         viewport = new ScreenViewport(camera);
         viewport.apply();
         cameraPosition = new Vector3(width/2,height/2,0);
+        cameraPosition2D = new Vector2(0, 0);
         camera.position.scl(cameraPosition);
         cameraSpeed = DEFAULT_CAMERA_SPEED;
     }
+
     public CameraController(float x, float y, float width, float height){
         aspectRatio = width/height;
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(width*aspectRatio,height,camera);
         viewport.apply();
         cameraPosition = new Vector3(x,y,0);
+        cameraPosition2D = new Vector2(0, 0);
         camera.position.scl(cameraPosition);
     }
     public void setBounds (int x, int y, int width,int height){
@@ -73,7 +77,15 @@ public class CameraController {
         camera.update();
         InputController input = InputController.getInstance();
 
-
+//           if(input.getHorizontal()!=0)
+//        {
+//
+//            translate(input.getHorizontal()*cameraSpeed,0);
+//        }
+//            if(input.getVertical()!=0)
+//            {
+//                translate(0,input.getVertical()*cameraSpeed);
+//            }
     }
 
     public void setCameraPosition(Vector2 newPos){
@@ -84,6 +96,12 @@ public class CameraController {
     public void setCameraPosition(float x, float y){
         cameraPosition.set(x, y,0);
         camera.position.set(cameraPosition);
+    }
+
+    public Vector2 getCameraPosition2D() {
+        cameraPosition2D.x = cameraPosition.x;
+        cameraPosition2D.y = cameraPosition.y;
+        return cameraPosition2D;
     }
 
 

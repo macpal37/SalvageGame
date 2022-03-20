@@ -60,7 +60,7 @@ public class GameController implements Screen, ContactListener {
     /** Aspect ratio of the world*/
     protected static final float ASPECT_RATIO = DEFAULT_WIDTH/DEFAULT_HEIGHT;
     /** The default value of gravity (going down) */
-    protected static final float DEFAULT_GRAVITY = -4.9f*4;
+    protected static final float DEFAULT_GRAVITY = -4.9f;
 
 
     /** Reference to the game canvas */
@@ -131,8 +131,8 @@ public class GameController implements Screen, ContactListener {
         active = false;
 
         // TODO: oxygen rate should be a parameter loaded from a json
-        passiveOxygenRate = -1.0f;
-        activeOxygenRate = -1.5f;
+        passiveOxygenRate = -.01f;
+        activeOxygenRate = -.02f;
 
         System.out.println("BG: "+background);
     }
@@ -345,15 +345,15 @@ public class GameController implements Screen, ContactListener {
 
         // decrease oxygen from movement
         if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
+//            System.out.println("moving");
             diver.changeOxygenLevel(activeOxygenRate);
         } else {
+//            System.out.println("passive Oxygen Rate: " + passiveOxygenRate);
             diver.changeOxygenLevel(passiveOxygenRate);
         }
 
-//        System.out.println("Move: "+diver.getHorizontalMovement());
-        System.out.println("Move up: "+diver.getVerticalMovement());
         if (diver.getBody()!=null){
-            cameraController.setCameraPosition(diver.getBody().getPosition());
+            cameraController.setCameraPosition(diver.getX()*diver.getDrawScale().x,diver.getY()*diver.getDrawScale().y);
         }
 
 //        System.out.println("WORLD GRAVITY: " + world.getGravity());
@@ -415,11 +415,13 @@ public class GameController implements Screen, ContactListener {
             obj.draw(canvas);
         }
 
-        // draw UI relative to the player position
-        canvas.drawText("Oxygen Level: " + (int)diver.getOxygenLevel(),
+        // draw UI relative to the camera position
+        // TODO: the text is shaking!!!!
+        canvas.drawText(
+            "Oxygen Level: " + (int) diver.getOxygenLevel(),
             displayFont,
-            diver.getX()* diver.getDrawScale().x,
-            diver.getX()* diver.getDrawScale().y);
+            cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
+            cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
 
         canvas.end();
 

@@ -174,15 +174,9 @@ public class DiverModel extends GameObject {
 //        body.applyAngularImpulse(1f,false);
 //        System.out.println("Mass: " + body.getMass());
         float effect = faceRight ? 1.0f : -1.0f;
-        effect =1;
+//        effect =1;
         if (texture != null) {
-
-            canvas.draw(texture, Color.WHITE,origin.x,origin.y,body.getPosition().x,body.getPosition().y,getAngle(),effect*0.5f,0.5f);
-
-//            System.out.println(getX() + " " + getY());
-//            canvas.draw(texture, Color.WHITE,origin.x, origin.y,
-//                getX()*drawScale.x,origin.y /*getY()*drawScale.y*/,getAngle(),
-//                effect*0.5f,0.5f);
+            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
 
         }
         if(ping) {
@@ -275,7 +269,8 @@ public class DiverModel extends GameObject {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-//        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
+        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
     }
 
     /**
@@ -312,6 +307,6 @@ public class DiverModel extends GameObject {
      */
     public void changeOxygenLevel(float delta) {
         float updatedOxygen = oxygenLevel + delta;
-        oxygenLevel = Math.max(updatedOxygen, MAX_OXYGEN);
+        oxygenLevel = Math.max(Math.min(updatedOxygen, MAX_OXYGEN), 0);
     }
 }
