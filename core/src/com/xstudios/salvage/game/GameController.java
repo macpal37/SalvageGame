@@ -6,15 +6,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.models.DiverModel;
+import com.xstudios.salvage.game.models.Wall;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 import java.util.Iterator;
@@ -71,11 +67,18 @@ public class GameController implements Screen, ContactListener {
     /** The world scale */
     protected Vector2 scale;
 
+
     /** Whether or not this is an active controller */
     private boolean active;
     /** Whether or not debug mode is active */
     private boolean debug;
 
+
+    //sample wall to get rid of later
+    public float[][] wall_indices={{16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
+            1.0f,  0.0f,  0.0f,  0.0f,  0.0f, 18.0f},
+            {32.0f, 18.0f, 32.0f,  0.0f, 31.0f,  0.0f,
+            31.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f}};
     // ======================= CONSTRUCTORS =================================
     /**
      * Creates a new game world with the default values.
@@ -274,6 +277,20 @@ public class GameController implements Screen, ContactListener {
         diver = new DiverModel(constants.get("diver"), diverWidth, diverHeight);
         diver.setTexture(diverTexture);
         addObject(diver);
+
+        //add a wall
+        Wall wall1 = new Wall(4.0f,14.0f,10f,10f);
+        wall1.setBodyType(BodyDef.BodyType.StaticBody);
+        wall1.setDensity(0f);
+        wall1.setFriction(0.4f);
+        wall1.setRestitution(0.1f);
+        wall1.setSensor(true);
+        wall1.setDrawScale(scale);
+        wall1.setTexture(wallTexture);
+        wall1.setName("wall1");
+        addObject(wall1);
+
+
 
     }
 

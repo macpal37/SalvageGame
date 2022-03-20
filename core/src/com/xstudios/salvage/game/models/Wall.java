@@ -1,15 +1,17 @@
 package com.xstudios.salvage.game.models;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.PolygonRegion;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.utils.ShortArray;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 
-public class BoxPlatform extends GameObject {
-
-
+public class Wall extends GameObject {
     /** Shape information for this box */
     protected PolygonShape shape;
     /** The width and height of the box */
@@ -20,33 +22,6 @@ public class BoxPlatform extends GameObject {
     private Fixture geometry;
     /** Cache of the polygon vertices (for resizing) */
     private float[] vertices;
-
-    private final float BOX_SIZE = 100;
-
-    public BoxPlatform(float x, float y ){
-        super(x,y);
-        dimension = new Vector2(BOX_SIZE,BOX_SIZE);
-        sizeCache = new Vector2();
-        shape = new PolygonShape();
-        vertices = new float[8];
-        geometry = null;
-
-        resize(BOX_SIZE,BOX_SIZE);
-    }
-
-    private void resize(float width, float height) {
-        // Make the box with the center in the center
-        vertices[0] = -width/2.0f;
-        vertices[1] = -height/2.0f;
-        vertices[2] = -width/2.0f;
-        vertices[3] =  height/2.0f;
-        vertices[4] =  width/2.0f;
-        vertices[5] =  height/2.0f;
-        vertices[6] =  width/2.0f;
-        vertices[7] = -height/2.0f;
-        shape.set(vertices);
-    }
-
 
     /**
      * Returns the dimensions of this box
@@ -112,10 +87,68 @@ public class BoxPlatform extends GameObject {
         return dimension.y;
     }
 
-    @Override
-    public void drawDebug(GameCanvas canvas) {
+    /**
+     * Sets the box height
+     *
+     * @param value  the box height
+     */
+    public void setHeight(float value) {
+        sizeCache.set(dimension.x,value);
+        setDimension(sizeCache);
+    }
 
-        canvas.drawPhysics(shape, Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+    /**
+     * Creates a new box at the origin.
+     *
+     * The size is expressed in physics units NOT pixels.  In order for
+     * drawing to work properly, you MUST set the drawScale. The drawScale
+     * converts the physics units to pixels.
+     *
+     * @param width		The object width in physics units
+     * @param height	The object width in physics units
+     */
+    public Wall(float width, float height) {
+        this(0, 0, width, height);
+    }
+
+    /**
+     * Creates a new box object.
+     *
+     * The size is expressed in physics units NOT pixels.  In order for
+     * drawing to work properly, you MUST set the drawScale. The drawScale
+     * converts the physics units to pixels.
+     *
+     * @param x  		Initial x position of the box center
+     * @param y  		Initial y position of the box center
+     * @param width		The object width in physics units
+     * @param height	The object width in physics units
+     */
+    public Wall(float x, float y, float width, float height) {
+        super(x,y);
+        dimension = new Vector2(width,height);
+        sizeCache = new Vector2();
+        shape = new PolygonShape();
+        vertices = new float[8];
+        geometry = null;
+
+        // Initialize
+        resize(width, height);
+    }
+
+    /**
+     * Reset the polygon vertices in the shape to match the dimension.
+     */
+    private void resize(float width, float height) {
+        // Make the box with the center in the center
+        vertices[0] = -width/2.0f;
+        vertices[1] = -height/2.0f;
+        vertices[2] = -width/2.0f;
+        vertices[3] =  height/2.0f;
+        vertices[4] =  width/2.0f;
+        vertices[5] =  height/2.0f;
+        vertices[6] =  width/2.0f;
+        vertices[7] = -height/2.0f;
+        shape.set(vertices);
     }
 
     /**
@@ -147,4 +180,18 @@ public class BoxPlatform extends GameObject {
             geometry = null;
         }
     }
+
+
+    /**
+     * Draws the outline of the physics body.
+     *
+     * This method can be helpful for understanding issues with collisions.
+     *
+     * @param canvas Drawing context
+     */
+    public void drawDebug(GameCanvas canvas) {
+        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+    }
+
+
 }
