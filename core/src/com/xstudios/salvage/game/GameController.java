@@ -3,6 +3,7 @@ package com.xstudios.salvage.game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -21,16 +22,23 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion diverTexture;
     /** Ocean Background Texture */
     protected TextureRegion background;
-    JsonValue constants;
-
-    // Models to be updated
     protected TextureRegion wallTexture;
     protected TextureRegion wallBackTexture;
 
+    /** The font for giving messages to the player */
+    protected BitmapFont displayFont;
+
+    JsonValue constants;
+
+    // Models to be updated
     protected DiverModel diver;
 
     /** Camera centered on the player */
     protected CameraController cameraController;
+
+    /** The rate at which oxygen should decrease passively */
+    protected float passiveOxygenRate;
+    protected float activeOxygenRate;
 
     /** How many frames after winning/losing do we continue? */
     public static final int EXIT_COUNT = 120;
@@ -125,6 +133,10 @@ public class GameController implements Screen, ContactListener {
         debug  = false;
         active = false;
 
+        // TODO: oxygen rate should be a parameter loaded from a json
+        passiveOxygenRate = -.01f;
+        activeOxygenRate = -.02f;
+
         System.out.println("BG: "+background);
     }
 
@@ -200,6 +212,7 @@ public class GameController implements Screen, ContactListener {
         constants =  directory.getEntry( "models:constants", JsonValue.class );
         wallTexture = new TextureRegion(directory.getEntry( "background:wooden_floor", Texture.class ));
         wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
+        displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
     }
 
     /**
@@ -354,13 +367,25 @@ public class GameController implements Screen, ContactListener {
      * @param dt	Number of seconds since last animation frame
      */
     public void update(float dt) {
+        // apply movement
         InputController input = InputController.getInstance();
         diver.setHorizontalMovement(input.getHorizontal() *diver.getForce());
         diver.setVerticalMovement(input.getVertical() *diver.getForce());
 
         diver.applyForce();
-        if(input.didPing()){
+
+        // do the ping
+        if (input.didPing()){
 //            diver.setPingDirection();
+        }
+
+        // decrease oxygen from movement
+        if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
+//            System.out.println("moving");
+            diver.changeOxygenLevel(activeOxygenRate);
+        } else {
+//            System.out.println("passive Oxygen Rate: " + passiveOxygenRate);
+            diver.changeOxygenLevel(passiveOxygenRate);
         }
 
         if (diver.getBody()!=null){
@@ -420,20 +445,27 @@ public class GameController implements Screen, ContactListener {
         canvas.clear();
 
         canvas.begin();
-
+        // draw game objects
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE,background.getRegionWidth()/2f,background.getRegionHeight()/2f,0,0,0,4,4);
         for(GameObject obj : objects) {
             obj.draw(canvas);
         }
-        canvas.end();
 
+        // draw UI relative to the camera position
+        // TODO: the text is shaking!!!!
+        canvas.drawText(
+            "Oxygen Level: " + (int) diver.getOxygenLevel(),
+            displayFont,
+            cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
+            cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
+
+        canvas.end();
 
             canvas.beginDebug();
             for(GameObject obj : objects) {
                 obj.drawDebug(canvas);
             }
             canvas.endDebug();
-
 
     }
 

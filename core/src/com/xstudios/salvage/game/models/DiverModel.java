@@ -44,8 +44,9 @@ public class DiverModel extends GameObject {
 
     /** Store oxygen level */
     private float oxygenLevel;
-    private float MAX_OXYGEN;
+    private float MAX_OXYGEN = 100;
 
+    // ======================== CONSTRUCTORS ================================
     /**
      *
      * @param data
@@ -81,6 +82,8 @@ public class DiverModel extends GameObject {
         current_item = null;
         ping = false;
         movement = new Vector2();
+
+        oxygenLevel = MAX_OXYGEN;
     }
 
     /**
@@ -291,7 +294,19 @@ public class DiverModel extends GameObject {
         return current_item;
     }
 
+    /**
+     * @return the current oxygen level of the diver
+     */
     public float getOxygenLevel() {
         return oxygenLevel;
+    }
+
+    /**
+     *
+     * @param delta
+     */
+    public void changeOxygenLevel(float delta) {
+        float updatedOxygen = oxygenLevel + delta;
+        oxygenLevel = Math.max(Math.min(updatedOxygen, MAX_OXYGEN), 0);
     }
 }

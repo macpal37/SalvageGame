@@ -6,9 +6,14 @@
          "background:wooden_floor":"background/wooden_floor.png",
           "background:wooden_bg":"background/wooden_bg.png"
 
-        }
-,"jsons"  : {
-         "models:constants":  "models/constants.json",
-
+        },
+  "jsons"  : {
+         "models:constants":  "models/constants.json"
      },
+  "fonts": {
+    "fonts:lightpixel": {
+      "file": "fonts/LightPixel7.ttf",
+      "size": 24
+    }
+  }
  }
