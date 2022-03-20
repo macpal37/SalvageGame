@@ -87,15 +87,21 @@ super();
     @Override
     public void update(float dt) {
         InputController input = InputController.getInstance();
-        diver.setMovement(input.getHorizontal() *diver.getForce());
+        diver.setHorizontalMovement(input.getHorizontal() *diver.getForce());
+        diver.setVerticalMovement(input.getVertical() *diver.getForce());
 
         diver.applyForce();
+        if(input.didPing()){
+//            diver.setPingDirection();
+        }
 
-        System.out.println("Move: "+diver.getMovement());
+//        System.out.println("Move: "+diver.getHorizontalMovement());
+        System.out.println("Move up: "+diver.getVerticalMovement());
         if (diver.getBody()!=null){
             cameraController.setCameraPosition(diver.getBody().getPosition());
         }
 
+//        System.out.println("WORLD GRAVITY: " + world.getGravity());
         cameraController.render();
     }
 

@@ -10,15 +10,15 @@ import com.xstudios.salvage.game.GameObject;
 
 public class DiverModel extends GameObject {
     /** The physics body for Box2D. */
-    protected Body body;
+//    protected Body body;
 
 
     /** The texture for the shape. */
-    protected TextureRegion texture;
+//    protected TextureRegion texture;
 
 
     /** The texture origin for drawing */
-    protected Vector2 origin;
+//    protected Vector2 origin;
 
 
     /** Shape information for this box */
@@ -34,7 +34,8 @@ public class DiverModel extends GameObject {
     /** Cache of the polygon vertices (for resizing) */
     private float[] vertices;
     /** The current horizontal movement of the character */
-    private float   movement;
+    private Vector2   movement;
+
     /** The factor to multiply by the input */
     private final float force;
     /** The amount to slow the character down */
@@ -45,7 +46,12 @@ public class DiverModel extends GameObject {
     private boolean faceRight;
     /** Cache for internal force calculations */
     private final Vector2 forceCache = new Vector2();
-
+    /** item that diver is currently carrying */
+    private ItemModel current_item;
+    /** whether user is pinging*/
+    private boolean ping;
+    /** whether user is pinging*/
+    private Vector2 pingDirection;
     
 
     public DiverModel(JsonValue data, float width, float height){
@@ -72,6 +78,10 @@ public class DiverModel extends GameObject {
         setMass(1);
         resetMass();
         setName("diver");
+
+        current_item = null;
+        ping = false;
+        movement = new Vector2();
     }
     public Body getBody() {
         return body;
@@ -93,15 +103,17 @@ public class DiverModel extends GameObject {
         shape.setAsBox(width,height);
     }
 
+    public void setVerticalMovement(float value) {
+        movement.y = value;
+    }
 
 
-
-    public void setMovement(float value) {
-        movement = value;
+    public void setHorizontalMovement(float value) {
+        movement.x = value;
         // Change facing if appropriate
-        if (movement < 0) {
+        if (movement.x < 0) {
             faceRight = false;
-        } else if (movement > 0) {
+        } else if (movement.x > 0) {
             faceRight = true;
         }
     }
@@ -118,30 +130,35 @@ public class DiverModel extends GameObject {
         origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
     }
 
-public boolean activatePhysics(World world) {
+    /**
+     * Sets the ping direction for drawing purposes.
+     *
+     * @param bodypos the ping direction for drawing purposes.
+     */
+    public void setPingDirection(Vector2 bodypos) {
+        pingDirection.set(bodypos).sub(getPosition());
+    }
+
+    public boolean activatePhysics(World world) {
 
         if (!super.activatePhysics(world)) {
             return false;
         }
-
         // Make a body, if possible
+//        bodyinfo.active = true;
+//        body = world.createBody(bodyinfo);
+//        body.setUserData(this);
 
-
-        bodyinfo.active = true;
-        body = world.createBody(bodyinfo);
-
-
-         body.setUserData(this);
-
-        body.setFixedRotation(false);
-        body.setType(BodyDef.BodyType.DynamicBody);
+//        body.setFixedRotation(false);
+//        body.setType(BodyDef.BodyType.DynamicBody);
         // Only initialize if a body was created.
-        if (body != null) {
-            createFixtures();
-            return true;
-        }
-//
-        bodyinfo.active = true;
+//        if (body != null) {
+//            createFixtures();
+//            return true;
+//        }
+////
+//        bodyinfo.active = true;
+//        return true;
         return true;
     }
     /**
@@ -168,11 +185,10 @@ public boolean activatePhysics(World world) {
         markDirty(false);
     }
 
-
     @Override
     public void draw(GameCanvas canvas) {
 //        body.applyAngularImpulse(1f,false);
-        System.out.println("Mass: " + body.getMass());
+//        System.out.println("Mass: " + body.getMass());
         float effect = faceRight ? 1.0f : -1.0f;
         effect =1;
         if (texture != null) {
@@ -185,6 +201,9 @@ public boolean activatePhysics(World world) {
 //                effect*0.5f,0.5f);
 
         }
+        if(ping) {
+            // DRAW SOME SPRITE
+        }
     }
 
 
@@ -195,8 +214,19 @@ public boolean activatePhysics(World world) {
      *
      * @return left/right movement of this character.
      */
-    public float getMovement() {
-        return movement;
+    public float getHorizontalMovement() {
+        return movement.x;
+    }
+
+    /**
+     * Returns up/down movement of this character.
+     *
+     * This is the result of input times dude force.
+     *
+     * @return left/right movement of this character.
+     */
+    public float getVerticalMovement() {
+        return movement.y;
     }
 
 
@@ -240,9 +270,27 @@ public boolean activatePhysics(World world) {
         if (!isActive()) {
             return;
         }
+        if (getHorizontalMovement() == 0f) {
+            System.out.println("VX: " + body.getLinearVelocity().x);
+            forceCache.x = -getDamping()*getVX();
+            body.applyForce(forceCache,getPosition(),true);
+        }
 
-        body.applyForce(new Vector2(getMovement()*10000,0),getPosition(),true);
+        // Velocity too high, clamp it
+        if (Math.abs(getVX()) >= getMaxSpeed()) {
+            setVX(Math.signum(getVX())*getMaxSpeed());
+        } else {
+            forceCache.x = getHorizontalMovement();
+        }
 
+        if (Math.abs(getVY()) >= getMaxSpeed() &&
+                Math.signum(getVY()) == Math.signum(getVerticalMovement())) {
+            setVY(Math.signum(getVY())*getMaxSpeed());
+        } else {
+            forceCache.y = getVerticalMovement();
+        }
+
+        body.applyForce(forceCache,getPosition(),true);
     }
 
     @Override
@@ -266,5 +314,26 @@ public boolean activatePhysics(World world) {
      */
     public float getY() {
         return (body != null ? body.getPosition().y : super.getY());
+    }
+
+    /**
+     * Set the current item the diver is carrying
+     */
+    public void setItem(ItemModel i) {
+        current_item = i;
+    }
+
+    /**
+     * @return if the diver is carrying an item
+     */
+    public boolean carryingItem() {
+        return current_item != null;
+    }
+
+    /**
+     * @return the current item the diver is carrying
+     */
+    public ItemModel getItem() {
+        return current_item;
     }
 }
