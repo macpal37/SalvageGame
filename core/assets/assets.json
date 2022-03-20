@@ -1,5 +1,6 @@
 {
 	"textures": {
+<<<<<<< HEAD
       "background": {
         "file":      "images/ocean.png",
         "minFilter": "linear",
@@ -65,3 +66,15 @@
         "torpedo": "sounds/torpedo.mp3"
     }
 }
+=======
+
+        "models:diver": "models/diver.png",
+        "background:ocean":"background/ocean.png"
+
+        }
+,"jsons"  : {
+         "models:constants":  "models/constants.json",
+
+     },
+ }
+>>>>>>> ce1ef31a1771b0f028ee781f41846a30b0980a12

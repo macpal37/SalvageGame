@@ -1,5 +1,6 @@
 {
 	"textures": {
+<<<<<<< HEAD
         "background": {
           "file":     "images/loading.png",
           "minFilter": "linear",
@@ -14,6 +15,12 @@
             "file":      "images/progressbar.png",
             "minFilter": "linear",
             "magFilter": "linear",
+=======
+        "background": "loading/loading.png",
+		"play": "loading/play.png",
+        "progress": {
+            "file":      "loading/progressbar.png",
+>>>>>>> ce1ef31a1771b0f028ee781f41846a30b0980a12
             "atlas":     {
                 "background" : [16,   0, 216, 30],
                 "backleft"   : [0,    0,  15, 30],

@@ -1,311 +1,18 @@
 package com.xstudios.salvage.game;
 
-<<<<<<< HEAD
-import com.badlogic.gdx.math.Vector2;
-import com.xstudios.salvage.util.*;
-import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.graphics.*;
 
-
-
-/**
- * Base class for all Model objects in the game.
- */
-public abstract class GameObject {
-
-    /**
-     * Enum specifying the type of this game object.
-     *
-     * This Enum is not strictly necessary.  We could use runtime-time
-     * typing instead.  However, enums can be used in switch statements
-     * (which are very fast), which types cannot. That is the motivation
-     * for this Enum.
-     * If you add new subclasses of GameObject, you will need to add
-     * to this Enum as well.
-     */
-    public enum ObjectType {
-        /** A shell, which lives until it is destroyed by a star or bullet */
-        BODY,
-        /** A ship, which lives until it is destroyed by a shell */
-        ITEM
-    }
-
-    // Attributes for all game objects
-    /** Object position (centered on the texture middle) */
-    protected Vector2 position;
-    /** Object start position (centered on the texture middle) */
-    protected Vector2 start_position;
-    /** Object velocity vector */
-    protected Vector2 velocity;
-    /** Reference to texture origin */
-    protected Vector2 origin;
-    /** Radius of the object (used for collisions) */
-    protected float radius;
-    /** Whether or not the object should be removed at next timestep. */
-    protected boolean destroyed;
-    /** CURRENT image for this object. May change over time. */
-    protected FilmStrip animator;
-
-    // ACCESSORS
-    public void setTexture(Texture texture) {
-        animator = new FilmStrip(texture,1,1,1);
-        radius = animator.getRegionHeight() / 2.0f;
-        origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
-    }
-
-    public Texture getTexture() {
-        return animator == null ? null : animator.getTexture();
-    }
-
-    /**
-     * Returns the position of this object (e.g. location of the center pixel)
-     *
-     * The value returned is a reference to the position vector, which may be
-     * modified freely.
-     *
-     * @return the position of this object
-     */
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    /**
-     * sets the position of this object (e.g. location of the center pixel)
-     *
-     * The value returned is a reference to the position vector, which may be
-     * modified freely.
-     *
-     */
-    public void setPosition(Vector2 v) {
-         position = v;
-    }
-
-
-    /**
-     * Returns the position of this object (e.g. location of the center pixel)
-     *
-     * The value returned is a reference to the position vector, which may be
-     * modified freely.
-     *
-     * @return the position of this object
-     */
-    public Vector2 getStartPosition() {
-        return start_position;
-    }
-
-    /**
-     * sets the position of this object (e.g. location of the center pixel)
-     *
-     * The value returned is a reference to the position vector, which may be
-     * modified freely.
-     *
-     */
-    public void setStartPosition(Vector2 v) {
-        start_position = v;
-    }
-    /**
-     * Returns the x-coordinate of the object position (center).
-     *
-     * @return the x-coordinate of the object position
-     */
-    public float getX() {
-        return position.x;
-    }
-
-    /**
-     * Sets the x-coordinate of the object position (center).
-     *
-     * @param value the x-coordinate of the object position
-     */
-    public void setX(float value) {
-        position.x = value;
-    }
-
-    /**
-     * Returns the y-coordinate of the object position (center).
-     *
-     * @return the y-coordinate of the object position
-     */
-    public float getY() {
-        return position.y;
-    }
-
-    /**
-     * Sets the y-coordinate of the object position (center).
-     *
-     * @param value the y-coordinate of the object position
-     */
-    public void setY(float value) {
-        position.y = value;
-    }
-
-    /**
-     * Returns the velocity of this object in pixels per animation frame.
-     *
-     * The value returned is a reference to the velocity vector, which may be
-     * modified freely.
-     *
-     * @return the velocity of this object
-     */
-    public Vector2 getVelocity() {
-        return velocity;
-    }
-
-    /**
-     * Returns the x-coordinate of the object velocity.
-     *
-     * @return the x-coordinate of the object velocity.
-     */
-    public float getVX() {
-        return velocity.x;
-    }
-
-    /**
-     * Sets the x-coordinate of the object velocity.
-     *
-     * @param value the x-coordinate of the object velocity.
-     */
-    public void setVX(float value) {
-        velocity.x = value;
-    }
-
-    /**
-     * Sets the y-coordinate of the object velocity.
-     *
-     */
-    public float getVY() {
-        return velocity.y;
-    }
-
-    /**
-     * Sets the y-coordinate of the object velocity.
-     *
-     * @param value the y-coordinate of the object velocity.
-     */
-    public void setVY(float value) {
-        velocity.y = value;
-    }
-
-
-    /**
-     * Returns true if this object is destroyed.
-     *
-     * Objects are not removed immediately when destroyed.  They are garbage collected
-     * at the end of the frame.  This tells us whether the object should be garbage
-     * collected at the frame end.
-     *
-     * @return true if this object is destroyed
-     */
-    public boolean isDestroyed() {
-        return destroyed;
-    }
-
-    /**
-     * Sets whether this object is destroyed.
-     *
-     * Objects are not removed immediately when destroyed.  They are garbage collected
-     * at the end of the frame.  This tells us whether the object should be garbage
-     * collected at the frame end.
-     *
-     * @param value whether this object is destroyed
-     */
-    public void setDestroyed(boolean value) {
-        destroyed = value;
-    }
-
-    /**
-     * Returns the radius of this object.
-     *
-     * All of our objects are circles, to make collision detection easy.
-     *
-     * @return the radius of this object.
-     */
-    public float getRadius() {
-        return radius;
-    }
-
-    /**
-     * Returns the type of this object.
-     *
-     * We use this instead of runtime-typing for performance reasons.
-     *
-     * @return the type of this object.
-     */
-    public abstract ObjectType getType();
-
-    /**
-     * Constructs a trivial game object
-     *
-     * The created object has no position or size.  These should be set by the subclasses.
-     */
-    public GameObject() {
-        position = new Vector2(0.0f, 0.0f);
-        start_position = new Vector2(0.0f, 0.0f);
-        velocity = new Vector2(0.0f, 0.0f);
-        radius = 0.0f;
-        destroyed = false;
-    }
-
-    /**
-     * Updates the state of this object.
-     *
-     * This method only is only intended to update values that change local state in
-     * well-defined ways, like position or a cooldown value.  It does not handle
-     * collisions (which are determined by the CollisionController).  It is
-     * not intended to interact with other objects in any way at all.
-     *
-     * @param delta Number of seconds since last animation frame
-     */
-    public void update(float delta) {
-        ;
-    }
-
-    /**
-     * Draws this object to the canvas
-     *
-     * There is only one drawing pass in this application, so you can draw the objects
-     * in any order.
-     *
-     * @param canvas The drawing context
-     */
-    public void draw(GameCanvas canvas) {
-        canvas.draw(animator, Color.WHITE, origin.x, origin.y,
-                position.x, position.y, 0.0f, 1.0f, 1.f);
-    }
-
-}
-=======
-/*
- * GameObject.java
- *
- * This class and all of the others in this package are provided to give you easy
- * access to Box2d.  Box2d's separation of bodies and shapes (e.g. fixtures) can
- * be a bit daunting. This class combines them together to simplify matters.
- *
- * This, and its superclasses, are fairly robust.  You may want to use
- * them in your game.  They make Box2D a lot easier.
- *
- * Many of the method comments in this class are taken from the Box2d manual by
- * Erin Catto (2011).
- *
- * Author: Walker M. White
- * Based on original PhysicsDemo Lab by Don Holden, 2007
- * LibGDX version, 2/6/2015
- */
-
-
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+
+import com.xstudios.salvage.game.*;
 
 
 /**
  * Base model class to support collisions.
  *
  * Instances represents a body and/or a group of bodies.
- * There should be NO game controlling logic code in a physixcs objects,
+ * There should be NO game controlling logic code in a physics objects,
  * that should reside in the Controllers.
  *
  * This abstract class has no Body or Shape information and should never
@@ -314,15 +21,37 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
  * to unify common functionality. In particular, it wraps the body and
  * and fixture information into a single interface.
  */
-public abstract class GameObject extends GObject{
-    /** The physics body for Box2D. */
-    protected Body body;
+public abstract class GObject {
+    /// Initialization structures to store body information
+    /** Stores the body information for this shape */
+    protected BodyDef bodyinfo;
+    /** Stores the fixture information for this shape */
+    protected FixtureDef fixture;
+    /** The mass data of this shape (which may override the fixture) */
+    protected MassData massdata;
+    /** Whether or not to use the custom mass data */
+    protected boolean masseffect;
+    /** A tag for debugging purposes */
+    private String nametag;
+    /** Drawing scale to convert physics units to pixels */
+    protected Vector2 drawScale;
 
-    /** The texture for the shape. */
-    protected TextureRegion texture;
+    /// Track garbage collection status
+    /** Whether the object should be removed from the world on next pass */
+    private boolean toRemove;
+    /** Whether the object has changed shape and needs a new fixture */
+    private boolean isDirty;
 
-    /** The texture origin for drawing */
-    protected Vector2 origin;
+    /// Caching objects
+    /** A cache value for when the user wants to access the body position */
+    protected Vector2 positionCache = new Vector2();
+    /** A cache value for when the user wants to access the linear velocity */
+    protected Vector2 velocityCache = new Vector2();
+    /** A cache value for when the user wants to access the center of mass */
+    protected Vector2 centroidCache = new Vector2();
+    /** A cache value for when the user wants to access the drawing scale */
+    protected Vector2 scaleCache = new Vector2();
+
 
     /// BodyDef Methods
     /**
@@ -335,7 +64,7 @@ public abstract class GameObject extends GObject{
      * @return the body type for Box2D physics
      */
     public BodyType getBodyType() {
-        return (body != null ? body.getType() : super.getBodyType());
+        return bodyinfo.type;
     }
 
     /**
@@ -348,11 +77,7 @@ public abstract class GameObject extends GObject{
      * @return the body type for Box2D physics
      */
     public void setBodyType(BodyType value) {
-        if (body != null) {
-            body.setType(value);
-        } else {
-            super.setBodyType(value);
-        }
+        bodyinfo.type = value;
     }
 
     /**
@@ -365,7 +90,7 @@ public abstract class GameObject extends GObject{
      * @return the current position for this physics body
      */
     public Vector2 getPosition() {
-        return (body != null ? body.getPosition() : super.getPosition());
+        return positionCache.set(bodyinfo.position);
     }
 
     /**
@@ -376,11 +101,7 @@ public abstract class GameObject extends GObject{
      * @param value  the current position for this physics body
      */
     public void setPosition(Vector2 value) {
-        if (body != null) {
-            body.setTransform(value,body.getAngle());
-        } else {
-            super.setPosition(value);
-        }
+        bodyinfo.position.set(value);
     }
 
     /**
@@ -390,12 +111,7 @@ public abstract class GameObject extends GObject{
      * @param y  the y-coordinate for this physics body
      */
     public void setPosition(float x, float y) {
-        if (body != null) {
-            positionCache.set(x,y);
-            body.setTransform(positionCache,body.getAngle());
-        } else {
-            super.setPosition(x,y);
-        }
+        bodyinfo.position.set(x, y);
     }
 
     /**
@@ -404,7 +120,7 @@ public abstract class GameObject extends GObject{
      * @return the x-coordinate for this physics body
      */
     public float getX() {
-        return (body != null ? body.getPosition().x : super.getX());
+        return bodyinfo.position.x;
     }
 
     /**
@@ -413,12 +129,7 @@ public abstract class GameObject extends GObject{
      * @param value  the x-coordinate for this physics body
      */
     public void setX(float value) {
-        if (body != null) {
-            positionCache.set(value,body.getPosition().y);
-            body.setTransform(positionCache,body.getAngle());
-        } else {
-            super.setX(value);
-        }
+        bodyinfo.position.x = value;
     }
 
     /**
@@ -427,7 +138,7 @@ public abstract class GameObject extends GObject{
      * @return the y-coordinate for this physics body
      */
     public float getY() {
-        return (body != null ? body.getPosition().y : super.getY());
+        return bodyinfo.position.y;
     }
 
     /**
@@ -436,12 +147,7 @@ public abstract class GameObject extends GObject{
      * @param value  the y-coordinate for this physics body
      */
     public void setY(float value) {
-        if (body != null) {
-            positionCache.set(body.getPosition().x,value);
-            body.setTransform(positionCache,body.getAngle());
-        } else {
-            super.setY(value);
-        }
+        bodyinfo.position.y = value;
     }
 
     /**
@@ -452,7 +158,7 @@ public abstract class GameObject extends GObject{
      * @return the angle of rotation for this body
      */
     public float getAngle() {
-        return (body != null ? body.getAngle() : super.getAngle());
+        return bodyinfo.angle;
     }
 
     /**
@@ -461,11 +167,7 @@ public abstract class GameObject extends GObject{
      * @param value  the angle of rotation for this body (in radians)
      */
     public void setAngle(float value) {
-        if (body != null) {
-            body.setTransform(body.getPosition(),value);
-        } else {
-            super.setAngle(value);
-        }
+        bodyinfo.angle = value;
     }
 
     /**
@@ -478,7 +180,7 @@ public abstract class GameObject extends GObject{
      * @return the linear velocity for this physics body
      */
     public Vector2 getLinearVelocity() {
-        return (body != null ? body.getLinearVelocity() : super.getLinearVelocity());
+        return velocityCache.set(bodyinfo.linearVelocity);
     }
 
     /**
@@ -489,11 +191,7 @@ public abstract class GameObject extends GObject{
      * @param value  the linear velocity for this physics body
      */
     public void setLinearVelocity(Vector2 value) {
-        if (body != null) {
-            body.setLinearVelocity(value);
-        } else {
-            super.setLinearVelocity(value);
-        }
+        bodyinfo.linearVelocity.set(value);
     }
 
     /**
@@ -502,7 +200,7 @@ public abstract class GameObject extends GObject{
      * @return the x-velocity for this physics body
      */
     public float getVX() {
-        return (body != null ? body.getLinearVelocity().x : super.getVX());
+        return bodyinfo.linearVelocity.x;
     }
 
     /**
@@ -511,12 +209,7 @@ public abstract class GameObject extends GObject{
      * @param value  the x-velocity for this physics body
      */
     public void setVX(float value) {
-        if (body != null) {
-            velocityCache.set(value,body.getLinearVelocity().y);
-            body.setLinearVelocity(velocityCache);
-        } else {
-            super.setVX(value);
-        }
+        bodyinfo.linearVelocity.x = value;
     }
 
     /**
@@ -525,7 +218,7 @@ public abstract class GameObject extends GObject{
      * @return the y-velocity for this physics body
      */
     public float getVY() {
-        return (body != null ? body.getLinearVelocity().y : super.getVY());
+        return bodyinfo.linearVelocity.y;
     }
 
     /**
@@ -534,12 +227,7 @@ public abstract class GameObject extends GObject{
      * @param value  the y-velocity for this physics body
      */
     public void setVY(float value) {
-        if (body != null) {
-            velocityCache.set(body.getLinearVelocity().x,value);
-            body.setLinearVelocity(velocityCache);
-        } else {
-            super.setVY(value);
-        }
+        bodyinfo.linearVelocity.y = value;
     }
 
     /**
@@ -550,7 +238,7 @@ public abstract class GameObject extends GObject{
      * @return the angular velocity for this physics body
      */
     public float getAngularVelocity() {
-        return (body != null ? body.getAngularVelocity() : super.getAngularVelocity());
+        return bodyinfo.angularVelocity;
     }
 
     /**
@@ -559,11 +247,7 @@ public abstract class GameObject extends GObject{
      * @param value the angular velocity for this physics body (in radians)
      */
     public void setAngularVelocity(float value) {
-        if (body != null) {
-            body.setAngularVelocity(value);
-        } else {
-            super.setAngularVelocity(value);
-        }
+        bodyinfo.angularVelocity = value;
     }
 
     /**
@@ -577,7 +261,7 @@ public abstract class GameObject extends GObject{
      * @return true if the body is active
      */
     public boolean isActive() {
-        return (body != null ? body.isActive() : super.isActive());
+        return bodyinfo.active;
     }
 
     /**
@@ -591,11 +275,7 @@ public abstract class GameObject extends GObject{
      * @param value  whether the body is active
      */
     public void setActive(boolean value) {
-        if (body != null) {
-            body.setActive(value);
-        } else {
-            super.setActive(value);
-        }
+        bodyinfo.active = value;
     }
 
     /**
@@ -609,7 +289,7 @@ public abstract class GameObject extends GObject{
      * @return true if the body is awake
      */
     public boolean isAwake() {
-        return (body != null ? body.isAwake() : super.isAwake());
+        return bodyinfo.awake;
     }
 
     /**
@@ -623,11 +303,7 @@ public abstract class GameObject extends GObject{
      * @param value  whether the body is awake
      */
     public void setAwake(boolean value) {
-        if (body != null) {
-            body.setAwake(value);
-        } else {
-            super.setAwake(value);
-        }
+        bodyinfo.awake = value;
     }
 
     /**
@@ -641,7 +317,7 @@ public abstract class GameObject extends GObject{
      * @return false if this body should never fall asleep
      */
     public boolean isSleepingAllowed() {
-        return (body != null ? body.isSleepingAllowed() : super.isSleepingAllowed());
+        return bodyinfo.allowSleep;
     }
 
     /**
@@ -655,11 +331,7 @@ public abstract class GameObject extends GObject{
      * @param value  whether the body should ever fall asleep
      */
     public void setSleepingAllowed(boolean value) {
-        if (body != null) {
-            body.setSleepingAllowed(value);
-        } else {
-            super.setSleepingAllowed(value);
-        }
+        bodyinfo.allowSleep = value;
     }
 
     /**
@@ -679,7 +351,7 @@ public abstract class GameObject extends GObject{
      * @return true if this body is a bullet
      */
     public boolean isBullet() {
-        return (body != null ? body.isBullet() : super.isBullet());
+        return bodyinfo.bullet;
     }
 
     /**
@@ -699,11 +371,7 @@ public abstract class GameObject extends GObject{
      * @param value  whether this body is a bullet
      */
     public void setBullet(boolean value) {
-        if (body != null) {
-            body.setBullet(value);
-        } else {
-            super.setBullet(value);
-        }
+        bodyinfo.bullet = value;
     }
 
     /**
@@ -714,7 +382,7 @@ public abstract class GameObject extends GObject{
      * @return true if this body be prevented from rotating
      */
     public boolean isFixedRotation() {
-        return (body != null ? body.isFixedRotation() : super.isFixedRotation());
+        return bodyinfo.fixedRotation;
     }
 
     /**
@@ -725,11 +393,7 @@ public abstract class GameObject extends GObject{
      * @param value  whether this body be prevented from rotating
      */
     public void setFixedRotation(boolean value) {
-        if (body != null) {
-            body.setFixedRotation(value);
-        } else {
-            super.setFixedRotation(value);
-        }
+        bodyinfo.fixedRotation = value;
     }
 
     /**
@@ -741,7 +405,7 @@ public abstract class GameObject extends GObject{
      * @return the gravity scale to apply to this body
      */
     public float getGravityScale() {
-        return (body != null ? body.getGravityScale() : super.getGravityScale());
+        return bodyinfo.gravityScale;
     }
 
     /**
@@ -753,11 +417,7 @@ public abstract class GameObject extends GObject{
      * @param value  the gravity scale to apply to this body
      */
     public void setGravityScale(float value) {
-        if (body != null) {
-            body.setGravityScale(value);
-        } else {
-            super.setGravityScale(value);
-        }
+        bodyinfo.gravityScale = value;
     }
 
     /**
@@ -774,7 +434,7 @@ public abstract class GameObject extends GObject{
      * @return the linear damping for this body.
      */
     public float getLinearDamping() {
-        return (body != null ? body.getLinearDamping() : super.getLinearDamping());
+        return bodyinfo.linearDamping;
     }
 
     /**
@@ -791,11 +451,7 @@ public abstract class GameObject extends GObject{
      * @param value  the linear damping for this body.
      */
     public void setLinearDamping(float value) {
-        if (body != null) {
-            body.setLinearDamping(value);
-        } else {
-            super.setLinearDamping(value);
-        }
+        bodyinfo.linearDamping = value;
     }
 
     /**
@@ -812,7 +468,7 @@ public abstract class GameObject extends GObject{
      * @return the angular damping for this body.
      */
     public float getAngularDamping() {
-        return (body != null ? body.getAngularDamping() : super.getAngularDamping());
+        return bodyinfo.angularDamping;
     }
 
     /**
@@ -829,14 +485,44 @@ public abstract class GameObject extends GObject{
      * @param value  the angular damping for this body.
      */
     public void setAngularDamping(float value) {
-        if (body != null) {
-            body.setAngularDamping(value);
-        } else {
-            super.setAngularDamping(value);
-        }
+        bodyinfo.angularDamping = value;
+    }
+
+    /**
+     * Copies the state from the given body to the body def.
+     *
+     * This is important if you want to save the state of the body before removing
+     * it from the world.
+     */
+    protected void setBodyState(Body body) {
+        bodyinfo.type   = body.getType();
+        bodyinfo.angle  = body.getAngle();
+        bodyinfo.active = body.isActive();
+        bodyinfo.awake  = body.isAwake();
+        bodyinfo.bullet = body.isBullet();
+        bodyinfo.position.set(body.getPosition());
+        bodyinfo.linearVelocity.set(body.getLinearVelocity());
+        bodyinfo.allowSleep = body.isSleepingAllowed();
+        bodyinfo.fixedRotation = body.isFixedRotation();
+        bodyinfo.gravityScale  = body.getGravityScale();
+        bodyinfo.angularDamping = body.getAngularDamping();
+        bodyinfo.linearDamping  = body.getLinearDamping();
     }
 
     /// FixtureDef Methods
+    /**
+     * Returns the density of this body
+     *
+     * The density is typically measured in usually in kg/m^2. The density can be zero or
+     * positive. You should generally use similar densities for all your fixtures. This
+     * will improve stacking stability.
+     *
+     * @return the density of this body
+     */
+    public float getDensity() {
+        return fixture.density;
+    }
+
     /**
      * Sets the density of this body
      *
@@ -847,12 +533,22 @@ public abstract class GameObject extends GObject{
      * @param value  the density of this body
      */
     public void setDensity(float value) {
-        super.setDensity(value);
-        if (body != null) {
-            for(Fixture f : body.getFixtureList()) {
-                f.setDensity(value);
-            }
-        }
+        fixture.density = value;
+    }
+
+    /**
+     * Returns the friction coefficient of this body
+     *
+     * The friction parameter is usually set between 0 and 1, but can be any non-negative
+     * value. A friction value of 0 turns off friction and a value of 1 makes the friction
+     * strong. When the friction force is computed between two shapes, Box2D must combine
+     * the friction parameters of the two parent fixtures. This is done with the geometric
+     * mean.
+     *
+     * @return the friction coefficient of this body
+     */
+    public float getFriction() {
+        return fixture.friction;
     }
 
     /**
@@ -867,12 +563,22 @@ public abstract class GameObject extends GObject{
      * @param value  the friction coefficient of this body
      */
     public void setFriction(float value) {
-        super.setFriction(value);
-        if (body != null) {
-            for(Fixture f : body.getFixtureList()) {
-                f.setFriction(value);
-            }
-        }
+        fixture.friction = value;
+    }
+
+    /**
+     * Returns the restitution of this body
+     *
+     * Restitution is used to make objects bounce. The restitution value is usually set
+     * to be between 0 and 1. Consider dropping a ball on a table. A value of zero means
+     * the ball won't bounce. This is called an inelastic collision. A value of one means
+     * the ball's velocity will be exactly reflected. This is called a perfectly elastic
+     * collision.
+     *
+     * @return the restitution of this body
+     */
+    public float getRestitution() {
+        return fixture.restitution;
     }
 
     /**
@@ -887,12 +593,20 @@ public abstract class GameObject extends GObject{
      * @param value  the restitution of this body
      */
     public void setRestitution(float value) {
-        super.setRestitution(value);
-        if (body != null) {
-            for(Fixture f : body.getFixtureList()) {
-                f.setRestitution(value);
-            }
-        }
+        fixture.restitution = value;
+    }
+
+    /**
+     * Returns true if this object is a sensor.
+     *
+     * Sometimes game logic needs to know when two entities overlap yet there should be
+     * no collision response. This is done by using sensors. A sensor is an entity that
+     * detects collision but does not produce a response.
+     *
+     * @return true if this object is a sensor.
+     */
+    public boolean isSensor() {
+        return fixture.isSensor;
     }
 
     /**
@@ -905,12 +619,22 @@ public abstract class GameObject extends GObject{
      * @param value  whether this object is a sensor.
      */
     public void setSensor(boolean value) {
-        super.setSensor(value);
-        if (body != null) {
-            for(Fixture f : body.getFixtureList()) {
-                f.setSensor(value);
-            }
-        }
+        fixture.isSensor = value;
+    }
+
+    /**
+     * Returns the filter data for this object (or null if there is none)
+     *
+     * Collision filtering allows you to prevent collision between fixtures. For example,
+     * say you make a character that rides a bicycle. You want the bicycle to collide
+     * with the terrain and the character to collide with the terrain, but you don't want
+     * the character to collide with the bicycle (because they must overlap). Box2D
+     * supports such collision filtering using categories and groups.
+     *
+     * @return the filter data for this object (or null if there is none)
+     */
+    public Filter getFilterData() {
+        return fixture.filter;
     }
 
     /**
@@ -927,11 +651,14 @@ public abstract class GameObject extends GObject{
      * @param value  the filter data for this object
      */
     public void setFilterData(Filter value) {
-        super.setFilterData(value);
-        if (body != null) {
-            for(Fixture f : body.getFixtureList()) {
-                f.setFilterData(value);
-            }
+        if (value !=  null) {
+            fixture.filter.categoryBits = value.categoryBits;
+            fixture.filter.groupIndex = value.groupIndex;
+            fixture.filter.maskBits   = value.maskBits;
+        } else {
+            fixture.filter.categoryBits = 0x0001;
+            fixture.filter.groupIndex = 0;
+            fixture.filter.maskBits   = -1;
         }
     }
 
@@ -946,7 +673,7 @@ public abstract class GameObject extends GObject{
      * @return the center of mass for this physics body
      */
     public Vector2 getCentroid() {
-        return  (body != null ? body.getLocalCenter() : super.getCentroid());
+        return centroidCache.set(massdata.center);
     }
 
     /**
@@ -957,10 +684,12 @@ public abstract class GameObject extends GObject{
      * @param value  the center of mass for this physics body
      */
     public void setCentroid(Vector2 value) {
-        super.setCentroid(value);
-        if (body != null) {
-            body.setMassData(massdata); // Protected accessor?
+        if (!masseffect) {
+            masseffect = true;
+            massdata.I = getInertia();
+            massdata.mass = getMass();
         }
+        massdata.center.set(value);
     }
 
     /**
@@ -972,7 +701,7 @@ public abstract class GameObject extends GObject{
      * @return the rotational inertia of this body
      */
     public float getInertia() {
-        return  (body != null ? body.getInertia() : super.getInertia());
+        return massdata.I;
     }
 
     /**
@@ -984,10 +713,12 @@ public abstract class GameObject extends GObject{
      * @param value  the rotational inertia of this body
      */
     public void setInertia(float value) {
-        super.setInertia(value);
-        if (body != null) {
-            body.setMassData(massdata); // Protected accessor?
+        if (!masseffect) {
+            masseffect = true;
+            massdata.center.set(getCentroid());
+            massdata.mass = getMass();
         }
+        massdata.I = value;
     }
 
     /**
@@ -998,7 +729,7 @@ public abstract class GameObject extends GObject{
      * @return the mass of this body
      */
     public float getMass() {
-        return  (body != null ? body.getMass() : super.getMass());
+        return massdata.mass;
     }
 
     /**
@@ -1009,57 +740,70 @@ public abstract class GameObject extends GObject{
      * @param value  the mass of this body
      */
     public void setMass(float value) {
-        super.setMass(value);
-        if (body != null) {
-            body.setMassData(massdata); // Protected accessor?
+        if (!masseffect) {
+            masseffect = true;
+            massdata.center.set(getCentroid());
+            massdata.I = getInertia();
         }
+        massdata.mass = value;
     }
 
     /**
      * Resets this body to use the mass computed from the its shape and density
      */
     public void resetMass() {
-        super.resetMass();
-        if (body != null) {
-            body.resetMassData();
-        }
+        masseffect = false;
     }
 
-    /// Texture Information
+    /// Garbage Collection Methods
     /**
-     * Returns the object texture for drawing purposes.
+     * Returns true if our object has been flagged for garbage collection
      *
-     * In order for drawing to work properly, you MUST set the drawScale.
-     * The drawScale converts the physics units to pixels.
+     * A garbage collected object will be removed from the physics world at
+     * the next time step.
      *
-     * @return the object texture for drawing purposes.
+     * @return true if our object has been flagged for garbage collection
      */
-    public TextureRegion getTexture() {
-        return texture;
+    public boolean isRemoved() {
+        return toRemove;
     }
 
     /**
-     * Sets the object texture for drawing purposes.
+     * Sets whether our object has been flagged for garbage collection
      *
-     * In order for drawing to work properly, you MUST set the drawScale.
-     * The drawScale converts the physics units to pixels.
+     * A garbage collected object will be removed from the physics world at
+     * the next time step.
      *
-     * @param value  the object texture for drawing purposes.
+     * @param value  whether our object has been flagged for garbage collection
      */
-    public void setTexture(TextureRegion value) {
-        texture = value;
-        origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
+    public void markRemoved(boolean value) {
+        toRemove = value;
     }
 
     /**
-     * Draws the physics object.
+     * Returns true if the shape information must be updated.
      *
-     * @param canvas Drawing context
+     * Attributes tied to the geometry (and not just forces/position) must wait for
+     * collisions to complete before they are reset.  Shapes (and their properties)
+     * are reset in the update method.
+     *
+     * @return true if the shape information must be updated.
      */
-    public void draw(GameCanvas canvas) {
-        if (texture != null) {
-            canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
-        }
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    /**
+     * Sets whether the shape information must be updated.
+     *
+     * Attributes tied to the geometry (and not just forces/position) must wait for
+     * collisions to complete before they are reset.  Shapes (and their properties)
+     * are reset in the update method.
+     *
+     * @param value  whether the shape information must be updated.
+     */
+    public void markDirty(boolean value) {
+        isDirty = value;
     }
 
     /**
@@ -1069,42 +813,128 @@ public abstract class GameObject extends GObject{
      *
      * @return the Box2D body for this object.
      */
-    @Override
     public Body getBody() {
-        return body;
+        return null;
+    }
+
+    /// DRAWING METHODS
+    /**
+     * Returns the drawing scale for this physics object
+     *
+     * The drawing scale is the number of pixels to draw before Box2D unit. Because
+     * mass is a function of area in Box2D, we typically want the physics objects
+     * to be small.  So we decouple that scale from the physics object.  However,
+     * we must track the scale difference to communicate with the scene graph.
+     *
+     * This method does NOT return a reference to the drawing scale. Changes to this
+     * vector will not affect the body.  However, it returns the same vector each time
+     * its is called, and so cannot be used as an allocator.
+
+     * We allow for the scaling factor to be non-uniform.
+     *
+     * @return the drawing scale for this physics object
+     */
+    public Vector2 getDrawScale() {
+        scaleCache.set(drawScale);
+        return scaleCache;
     }
 
     /**
-     * Creates a new simple physics object at the origin.
+     * Sets the drawing scale for this physics object
      *
-     * REMEMBER: The size is in physics units, not pixels.
+     * The drawing scale is the number of pixels to draw before Box2D unit. Because
+     * mass is a function of area in Box2D, we typically want the physics objects
+     * to be small.  So we decouple that scale from the physics object.  However,
+     * we must track the scale difference to communicate with the scene graph.
+     *
+     * We allow for the scaling factor to be non-uniform.
+     *
+     * @param value  the drawing scale for this physics object
      */
-    protected GameObject() {
+    public void setDrawScale(Vector2 value) {
+        setDrawScale(value.x,value.y);
+    }
+
+    /**
+     * Sets the drawing scale for this physics object
+     *
+     * The drawing scale is the number of pixels to draw before Box2D unit. Because
+     * mass is a function of area in Box2D, we typically want the physics objects
+     * to be small.  So we decouple that scale from the physics object.  However,
+     * we must track the scale difference to communicate with the scene graph.
+     *
+     * We allow for the scaling factor to be non-uniform.
+     *
+     * @param x  the x-axis scale for this physics object
+     * @param y  the y-axis scale for this physics object
+     */
+    public void setDrawScale(float x, float y) {
+        drawScale.set(x,y);
+    }
+
+    /// DEBUG METHODS
+    /**
+     * Returns the physics object tag.
+     *
+     * A tag is a string attached to an object, in order to identify it in debugging.
+     *
+     * @return the physics object tag.
+     */
+    public String getName() {
+        return nametag;
+    }
+
+    /**
+     * Sets the physics object tag.
+     *
+     * A tag is a string attached to an object, in order to identify it in debugging.
+     *
+     * @param  value    the physics object tag
+     */
+    public void setName(String value) {
+        nametag = value;
+    }
+
+    /**
+     * Create a new physics object at the origin.
+     */
+    protected GObject() {
         this(0,0);
     }
 
     /**
-     * Creates a new simple physics object
+     * Create a new physics object
      *
-     * @param x  Initial x position in world coordinates
-     * @param y  Initial y position in world coordinates
+     * @param x Initial x position in world coordinates
+     * @param y Initial y position in world coordinates
      */
-    /**
-     * Creates a new simple physics object
-     *
-     * @param x  Initial x position in world coordinates
-     * @param y  Initial y position in world coordinates
-     */
-    protected GameObject(float x, float y) {
-      super (x,y);
+    protected GObject(float x, float y) {
+        // Object has yet to be deactivated
+        toRemove = false;
 
+        // Allocate the body information
+        bodyinfo = new BodyDef();
+        bodyinfo.awake  = true;
+        bodyinfo.allowSleep = true;
+        bodyinfo.gravityScale = 1.0f;
+        bodyinfo.position.set(x,y);
+        bodyinfo.fixedRotation = false;
+        // Objects are physics objects unless otherwise noted
+        bodyinfo.type = BodyType.DynamicBody;
+
+        // Allocate the fixture information
+        // Default values are okay
+        fixture = new FixtureDef();
+
+        // Allocate the mass information, but turn it off
+        masseffect = false;
+        massdata = new MassData();
 
         // Set the default drawing scale
         drawScale = new Vector2(1,1);
-        origin = new Vector2();
-        body = null;
     }
 
+    /// Abstract Methods
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
      *
@@ -1115,21 +945,7 @@ public abstract class GameObject extends GObject{
      *
      * @return true if object allocation succeeded
      */
-    public boolean activatePhysics(World world) {
-        // Make a body, if possible
-        bodyinfo.active = true;
-        body = world.createBody(bodyinfo);
-        body.setUserData(this);
-
-        // Only initialize if a body was created.
-        if (body != null) {
-            createFixtures();
-            return true;
-        }
-
-        bodyinfo.active = false;
-        return false;
-    }
+    public abstract boolean activatePhysics(World world);
 
     /**
      * Destroys the physics Body(s) of this object if applicable,
@@ -1137,30 +953,7 @@ public abstract class GameObject extends GObject{
      *
      * @param world Box2D world that stores body
      */
-    public void deactivatePhysics(World world) {
-        // Should be good for most (simple) applications.
-        if (body != null) {
-            // Snapshot the values
-            setBodyState(body);
-            world.destroyBody(body);
-            body = null;
-            bodyinfo.active = false;
-        }
-    }
-
-    /**
-     * Create new fixtures for this body, defining the shape
-     *
-     * This is the primary method to override for custom physics objects
-     */
-    protected abstract void createFixtures();
-
-    /**
-     * Release the fixtures for this body, reseting the shape
-     *
-     * This is the primary method to override for custom physics objects.
-     */
-    protected abstract void releaseFixtures();
+    public abstract void deactivatePhysics(World world);
 
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
@@ -1173,11 +966,22 @@ public abstract class GameObject extends GObject{
      * @param delta Timing values from parent loop
      */
     public void update(float delta) {
-        // Recreate the fixture object if dimensions changed.
-        if (isDirty()) {
-            createFixtures();
-        }
     }
 
+    /**
+     * Draws the texture physics object.
+     *
+     * @param canvas Drawing context
+     */
+    public abstract void draw(GameCanvas canvas);
+
+    /**
+     * Draws the outline of the physics body.
+     *
+     * This method can be helpful for understanding issues with collisions.
+     *
+     * @param canvas Drawing context
+     */
+    public abstract void drawDebug(GameCanvas canvas);
+
 }
->>>>>>> ce1ef31a1771b0f028ee781f41846a30b0980a12
