@@ -1,22 +1,25 @@
 {
-	"textures": {
+  "textures": {
 
-        "models:diver": "models/diver.png",
-        "background:ocean":"background/ocean.png",
-      "wall": {
-        "file":"background/wooden_bg.png",
-        "wrapU":"repeated",
-        "wrapV": "repeated"
-      },
-      "second_wall": "background/wooden_floor.png"
-        },
+    "models:diver": "models/diver.png",
+    "background:ocean":"background/ocean.png",
+    "models:key": "models/key.png",
+    "models:ping": "models/ping.png",
+
+    "wall": {
+      "file":"background/wooden_bg.png",
+      "wrapU":"repeated",
+      "wrapV": "repeated"
+    },
+    "second_wall": "background/wooden_floor.png"
+  },
   "jsons"  : {
-         "models:constants":  "models/constants.json"
-     },
+    "models:constants":  "models/constants.json"
+  },
   "fonts": {
     "fonts:lightpixel": {
       "file": "fonts/LightPixel7.ttf",
       "size": 24
     }
   }
- }
+}

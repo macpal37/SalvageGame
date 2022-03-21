@@ -17,21 +17,21 @@ public class ItemModel extends GameObject {
     /** Cache of the polygon vertices (for resizing) */
     private float[] vertices;
     /** Type of item*/
-    private String item_type;
+    private ItemType item_type;
     /** unique id of item*/
     private int item_ID;
     /** The factor to multiply by the input */
     private final float force;
+    /** Cache for internal force calculations */
+    private final Vector2 forceCache = new Vector2();
     /** The amount to slow the character down */
     private final float damping;
     /** The maximum character speed */
     private final float maxspeed;
     /** The current horizontal movement of the item */
-    private float movement;
+    private Vector2 movement;
 
-
-
-    public ItemModel(JsonValue data, float width, float height, String item_type, int id){
+    public ItemModel(JsonValue data, float width, float height, ItemType item_type, int id){
         super(data.get("pos").getFloat(0),
                 data.get("pos").getFloat(1));
 
@@ -55,7 +55,7 @@ public class ItemModel extends GameObject {
         resize(1, 1);
         setMass(1);
         resetMass();
-        setName(item_type);
+        setName(item_type + "" + item_ID);
     }
     /**
      * Release the fixtures for this body, resetting the shape
@@ -87,24 +87,9 @@ public class ItemModel extends GameObject {
             return false;
         }
 
-        // Make a body, if possible
-
-
-        bodyinfo.active = true;
-        body = world.createBody(bodyinfo);
-
-
         body.setUserData(this);
-
-        body.setFixedRotation(false);
-        body.setType(BodyDef.BodyType.DynamicBody);
-        // Only initialize if a body was created.
-        if (body != null) {
-            createFixtures();
-            return true;
-        }
-//
-        bodyinfo.active = true;
+//        body.setFixedRotation(false);
+//        body.setType(BodyDef.BodyType.DynamicBody);
         return true;
     }
 
@@ -125,17 +110,17 @@ public class ItemModel extends GameObject {
     @Override
     public void draw(GameCanvas canvas) {
 //        body.applyAngularImpulse(1f,false);
-        System.out.println("Mass: " + body.getMass());
+//        System.out.println("Mass: " + body.getMass());
         if (texture != null) {
-
-            canvas.draw(texture, Color.WHITE,origin.x,origin.y,body.getPosition().x,body.getPosition().y,getAngle(),0.5f,0.5f);
+            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),0.25f, 0.25f);
         }
     }
 
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-//        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
+        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
     }
 
     /**
@@ -158,8 +143,9 @@ public class ItemModel extends GameObject {
         if (!isActive()) {
             return;
         }
-
-        body.applyForce(new Vector2(getMovement()*10000,0),getPosition(),true);
+        forceCache.x = getHorizontalMovement();
+        forceCache.y = getVerticalMovement();
+        body.applyForce(forceCache,getPosition(),true);
 
     }
 
@@ -181,9 +167,6 @@ public class ItemModel extends GameObject {
         return (body != null ? body.getPosition().y : super.getY());
     }
 
-    public void setMovement(float value) {
-        movement = value;
-    }
     /**
      * Returns left/right movement of this character.
      *
@@ -191,12 +174,32 @@ public class ItemModel extends GameObject {
      *
      * @return left/right movement of this character.
      */
-    public float getMovement() {
-        return movement;
+    public float getHorizontalMovement() {
+        return movement.x;
+    }
+
+    /**
+     * Returns up/down movement of this character.
+     *
+     * This is the result of input times dude force.
+     *
+     * @return left/right movement of this character.
+     */
+    public float getVerticalMovement() {
+        return movement.y;
     }
 
 
-    public String getItemType() {
+    public void setVerticalMovement(float value) {
+        movement.y = value;
+    }
+
+
+    public void setHorizontalMovement(float value) {
+        movement.x = value;
+    }
+
+    public ItemType getItemType() {
         return item_type;
     }
 

@@ -11,6 +11,8 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.models.DiverModel;
+import com.xstudios.salvage.game.models.ItemModel;
+import com.xstudios.salvage.game.models.ItemType;
 import com.xstudios.salvage.game.models.Wall;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
@@ -20,22 +22,33 @@ public class GameController implements Screen, ContactListener {
     // Assets
     /** The texture for diver */
     protected TextureRegion diverTexture;
-    /** Ocean Background Texture */
+    /** The texture for item */
+    protected TextureRegion itemTexture;
+   /** Ocean Background Texture */
     protected TextureRegion background;
+    /** The texture for ping */
+    protected TextureRegion pingTexture;
+
+    JsonValue constants;
+
+    // Models to be updated
     protected TextureRegion wallTexture;
     protected TextureRegion wallBackTexture;
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
 
-    JsonValue constants;
 
     // Models to be updated
     protected DiverModel diver;
 
+    protected ItemModel key;
+
     /** Camera centered on the player */
     protected CameraController cameraController;
 
+    /** manages collisions */
+    protected CollisionController collisionController;
     /** The rate at which oxygen should decrease passively */
     protected float passiveOxygenRate;
     protected float activeOxygenRate;
@@ -141,6 +154,8 @@ public class GameController implements Screen, ContactListener {
         forceCache = new Vector2(0, 0);
 
         System.out.println("BG: "+background);
+        collisionController = new CollisionController();
+        world.setContactListener(this);
     }
 
     /**
@@ -212,7 +227,9 @@ public class GameController implements Screen, ContactListener {
         // Allocate the tiles
         diverTexture = new TextureRegion(directory.getEntry( "models:diver", Texture.class ));
         background = new TextureRegion(directory.getEntry( "background:ocean", Texture.class ));
+        itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         constants =  directory.getEntry( "models:constants", JsonValue.class );
+        pingTexture = new TextureRegion(directory.getEntry( "models:ping", Texture.class ));
         wallTexture = new TextureRegion(directory.getEntry( "wall", Texture.class ));
         //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
@@ -265,6 +282,7 @@ public class GameController implements Screen, ContactListener {
         }
 
         world = new World(gravity,false);
+        world.setContactListener(this);
         resetLevel();
     }
 
@@ -274,11 +292,21 @@ public class GameController implements Screen, ContactListener {
             diverTexture.getRegionHeight());
 
         diver.setTexture(diverTexture);
+        diver.setPingTexture(pingTexture);
         diver.setDrawScale(scale);
         diver.setName("diver");
 
         addObject(diver);
 
+        key = new ItemModel(constants.get("diver"),itemTexture.getRegionWidth(),
+                itemTexture.getRegionHeight(), ItemType.KEY, 0);
+
+        key.setTexture(itemTexture);
+        key.setDrawScale(scale);
+        key.setName("key");
+        key.setGravityScale(.01f);
+
+        addObject(key);
         //add a wall
 
         float[][] wallVerts={
@@ -322,10 +350,6 @@ public class GameController implements Screen, ContactListener {
         diver = new DiverModel(constants.get("diver"), diverWidth, diverHeight);
         diver.setTexture(diverTexture);
         addObject(diver);
-
-
-
-
 
     }
 
@@ -376,25 +400,35 @@ public class GameController implements Screen, ContactListener {
         forceCache.y = input.getVertical() *diver.getForce();
 
         // kicking off of an obstacle
-//        System.out.println("Kicked: " + input.didKickOff());
-//        System.out.println("isTouchingObstacle: "f + diver
-//        .isTouchingObstacle());
-//        System.out.println("isLatchedOn: " + diver.isLatchedOn());
+        System.out.println("Kicked: " + input.didKickOff());
+        System.out.println("isTouchingObstacle: " + diver
+        .isTouchingObstacle());
+        System.out.println("isLatchedOn: " + diver.isLatchedOn());
+        // player wants to kick, diver is near a wall and has yet to latch on
         if (input.didKickOff() && diver.isTouchingObstacle() && !diver.isLatchedOn()) {
             // set velocity and forces to 0
             forceCache.x = 0;
             forceCache.y = 0;
             diver.setLinearVelocity(forceCache);
+            diver.setGravityScale(0);
             diver.setLatchedOn(true);
+            // player wants to kick, diver is near a wall, and is latched on
         } else if (input.didKickOff() && diver.isTouchingObstacle() && diver.isLatchedOn()) {
+            // double forces for a boost in speed!
             forceCache.x *= 2;
             forceCache.y *= 2;
+            diver.setBoostedVelocity(forceCache);
+            diver.setGravityScale(1);
             diver.setLatchedOn(false);
-        } else if (diver.isLatchedOn()) {
+            // player is latched on but has not
+        } else if (diver.isTouchingObstacle() && diver.isLatchedOn()) {
             // rotate the diver to face the direction of the arrow keys
             forceCache.x = 0;
             forceCache.y = 0;
             diver.setLinearVelocity(forceCache);
+        } else {
+            diver.setGravityScale(1);
+            diver.setLatchedOn(false);
         }
 
         // apply movement
@@ -404,9 +438,12 @@ public class GameController implements Screen, ContactListener {
         diver.applyForce();
 
         // do the ping
+        diver.setPing(input.didPing());
         if (input.didPing()){
-//            diver.setPingDirection();
+            diver.setPingDirection(new Vector2(3,3));
         }
+        diver.setPickUpOrDrop(input.getOrDropObject());
+        diver.setItem();
 
         // decrease oxygen from movement
         if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
@@ -632,12 +669,10 @@ public class GameController implements Screen, ContactListener {
     public void beginContact(Contact contact) {
         Body body1 = contact.getFixtureA().getBody();
         Body body2 = contact.getFixtureB().getBody();
-        System.out.println("Contact");
+
         // Call CollisionController to handle collisions
-        if (body1.getUserData() == diver || body2.getUserData() == diver) {
-            System.out.println("body collided");
-            diver.setTouchingObstacle(true);
-        }
+//        System.out.println("BEGIN CONTACT");
+        collisionController.startContact(body1, body2);
     }
 
     /**
@@ -650,9 +685,8 @@ public class GameController implements Screen, ContactListener {
         Body body2 = contact.getFixtureB().getBody();
 
         // Call CollisionController to handle collisions
-        if (body1.getUserData() == diver || body2.getUserData() == diver) {
-            diver.setTouchingObstacle(false);
-        }
+//        System.out.println("END CONTACT");
+        collisionController.endContact(body1, body2);
     }
 
     /**
