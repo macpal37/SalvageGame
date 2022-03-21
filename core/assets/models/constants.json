@@ -6,7 +6,7 @@
     	"restitution": 0.1,
     	"volume": 0.8
 	},
-"diver" : {
+	"diver" : {
 		"pos": [20.0, 10.0],
 		"shrink": [0.7, 0.95],
 		"force": 10.0,
@@ -17,6 +17,19 @@
 		"jump_force": 5.5,
 		"jump_cool": 30,
 		"shot_cool": 40,
+		"sensor": {
+			"shrink" : 0.6,
+			"height" : 0.05
+		}
+	},
+	"dead_body" : {
+		"pos": [40.0, 10.0],
+		"shrink": [0.7, 0.95],
+		"force": 10.0,
+		"damping": 10.0,
+		"density": 0.1,
+		"friction": 0.0,
+		"maxspeed": 10.0,
 		"sensor": {
 			"shrink" : 0.6,
 			"height" : 0.05

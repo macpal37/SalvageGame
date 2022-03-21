@@ -14,6 +14,8 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.models.DiverModel;
+import com.xstudios.salvage.game.models.ItemModel;
+import com.xstudios.salvage.game.models.ItemType;
 import com.xstudios.salvage.game.models.Wall;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
@@ -24,22 +26,36 @@ public class GameController implements Screen, ContactListener {
     // Assets
     /** The texture for diver */
     protected TextureRegion diverTexture;
-    /** Ocean Background Texture */
+    /** The texture for item */
+    protected TextureRegion itemTexture;
+   /** Ocean Background Texture */
     protected TextureRegion background;
+    /** The texture for ping */
+    protected TextureRegion pingTexture;
+    /** The texture for dead body */
+    protected TextureRegion deadBodyTexture;
+
+    JsonValue constants;
+
+    // Models to be updated
     protected TextureRegion wallTexture;
     protected TextureRegion wallBackTexture;
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
 
-    JsonValue constants;
 
     // Models to be updated
     protected DiverModel diver;
 
+    protected ItemModel key;
+    protected ItemModel dead_body;
+
     /** Camera centered on the player */
     protected CameraController cameraController;
 
+    /** manages collisions */
+    protected CollisionController collisionController;
     /** The rate at which oxygen should decrease passively */
     protected float passiveOxygenRate;
     protected float activeOxygenRate;
@@ -151,6 +167,10 @@ public class GameController implements Screen, ContactListener {
 
         light = new PointLight(rayHandler,100, Color.BLACK,10,0,0);
         light.setContactFilter((short)1,(short)1,(short)1);
+
+        System.out.println("BG: "+background);
+        collisionController = new CollisionController();
+        world.setContactListener(this);
     }
 
     /**
@@ -229,10 +249,13 @@ public class GameController implements Screen, ContactListener {
         // Allocate the tiles
         diverTexture = new TextureRegion(directory.getEntry( "models:diver", Texture.class ));
         background = new TextureRegion(directory.getEntry( "background:ocean", Texture.class ));
+        itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         constants =  directory.getEntry( "models:constants", JsonValue.class );
+        pingTexture = new TextureRegion(directory.getEntry( "models:ping", Texture.class ));
         wallTexture = new TextureRegion(directory.getEntry( "wall", Texture.class ));
         //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
+        deadBodyTexture = new TextureRegion(directory.getEntry( "models:dead_body", Texture.class ));
     }
 
     /**
@@ -283,9 +306,12 @@ public class GameController implements Screen, ContactListener {
             obj.deactivatePhysics(world);
         }
 
+
         populateLevel();
-        System.out.println("DIVER BODY: "+diver.getBody());
-//        lightController.setBody(diver);
+
+        world = new World(gravity,false);
+        world.setContactListener(this);
+
     }
     /**
      * Lays out the game geography.
@@ -296,12 +322,36 @@ public class GameController implements Screen, ContactListener {
             diverTexture.getRegionHeight());
 
         diver.setTexture(diverTexture);
+        diver.setPingTexture(pingTexture);
         diver.setDrawScale(scale);
         diver.setName("diver");
 
         addObject(diver);
 
+
         light.setPosition((diver.getX()*diver.getDrawScale().x)/32f,(diver.getY()*diver.getDrawScale().y)/32f);
+
+        key = new ItemModel(constants.get("diver"),itemTexture.getRegionWidth(),
+                itemTexture.getRegionHeight(), ItemType.KEY, 0);
+
+        key.setTexture(itemTexture);
+        key.setDrawScale(scale);
+        key.setName("key");
+        key.setGravityScale(.01f);
+
+        addObject(key);
+
+        dead_body = new ItemModel(constants.get("dead_body"),deadBodyTexture.getRegionWidth(),
+                deadBodyTexture.getRegionHeight(), ItemType.DEAD_BODY, 0);
+
+        dead_body.setTexture(deadBodyTexture);
+        dead_body.setDrawScale(scale);
+        dead_body.setName("dead_body");
+        dead_body.setGravityScale(.01f);
+
+        addObject(dead_body);
+
+        //add a wall
 
 
         float[][] wallVerts={
@@ -333,7 +383,20 @@ public class GameController implements Screen, ContactListener {
 
     }
 
+    /**
+     * Lays out the game geography.
+     */
+    private void populateLevel() {
+        float diverWidth = diverTexture.getRegionWidth();
+        float diverHeight = diverTexture.getRegionHeight();
 
+        // add the diver
+
+        diver = new DiverModel(constants.get("diver"), diverWidth, diverHeight);
+        diver.setTexture(diverTexture);
+        addObject(diver);
+
+    }
 
 
     /**
@@ -393,9 +456,13 @@ public class GameController implements Screen, ContactListener {
         diver.applyForce();
 
         // do the ping
-        if (input.didPing()){
-//            diver.setPingDirection();
-        }
+        diver.setPing(input.didPing());
+//        if (input.didPing()){
+            diver.setPingDirection(dead_body.getPosition());
+//        }
+        diver.setPickUpOrDrop(input.getOrDropObject());
+        diver.setItem();
+        key.setCarried(diver.carryingItem());
 
         // decrease oxygen from movement
         if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
@@ -621,6 +688,8 @@ public class GameController implements Screen, ContactListener {
         Body body1 = contact.getFixtureA().getBody();
         Body body2 = contact.getFixtureB().getBody();
 
+//        System.out.println("BEGIN CONTACT");
+        collisionController.startContact(body1, body2);
         // Call CollisionController to handle collisions
     }
 
@@ -629,7 +698,13 @@ public class GameController implements Screen, ContactListener {
      *
      * This method is called when two objects cease to touch.
      */
-    public void endContact(Contact contact) {}
+    public void endContact(Contact contact) {
+        Body body1 = contact.getFixtureA().getBody();
+        Body body2 = contact.getFixtureB().getBody();
+
+//        System.out.println("END CONTACT");
+        collisionController.endContact(body1, body2);
+    }
 
     /**
      * Handles any modifications necessary before collision resolution
