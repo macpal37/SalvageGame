@@ -329,8 +329,8 @@ public class DiverModel extends GameObject {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
-        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
+//        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+//        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
     }
 
     /**
