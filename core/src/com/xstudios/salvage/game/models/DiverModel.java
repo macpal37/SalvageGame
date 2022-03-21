@@ -284,6 +284,7 @@ public class DiverModel extends GameObject {
 
 
     public void applyForce() {
+        body.applyForce(new Vector2(100,0),getPosition(),true);
         if (!isActive()) {
             return;
         }
@@ -307,6 +308,7 @@ public class DiverModel extends GameObject {
             forceCache.y = getVerticalMovement();
         }
         body.applyForce(forceCache,getPosition(),true);
+
         if (current_item != null) {
             current_item.setVX(getVX());
             current_item.setVY(getVY());

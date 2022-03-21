@@ -331,7 +331,7 @@ public class GameController implements Screen, ContactListener {
 
         light.setPosition((diver.getX()*diver.getDrawScale().x)/32f,(diver.getY()*diver.getDrawScale().y)/32f);
 
-        key = new ItemModel(constants.get("diver"),itemTexture.getRegionWidth(),
+        key = new ItemModel(constants.get("key"),itemTexture.getRegionWidth(),
                 itemTexture.getRegionHeight(), ItemType.KEY, 0);
 
         key.setTexture(itemTexture);
@@ -383,20 +383,8 @@ public class GameController implements Screen, ContactListener {
 
     }
 
-    /**
-     * Lays out the game geography.
-     */
-    private void populateLevel() {
-        float diverWidth = diverTexture.getRegionWidth();
-        float diverHeight = diverTexture.getRegionHeight();
 
-        // add the diver
 
-        diver = new DiverModel(constants.get("diver"), diverWidth, diverHeight);
-        diver.setTexture(diverTexture);
-        addObject(diver);
-
-    }
 
 
     /**
@@ -448,11 +436,15 @@ public class GameController implements Screen, ContactListener {
 //                cameraController.getCamera().viewportWidth*100,cameraController.getCamera().viewportHeight*100);
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
+        System.out.println("TYPE: "+diver.getBodyType());
+
+//        diver.setPosition(diver.getX()+0.1f,diver.getY());
+
         // apply movement
         InputController input = InputController.getInstance();
         diver.setHorizontalMovement(input.getHorizontal() *diver.getForce());
         diver.setVerticalMovement(input.getVertical() *diver.getForce());
-
+//        diver.getBody().applyForce(new Vector2(100,0),diver.getPosition(),true);
         diver.applyForce();
 
         // do the ping
@@ -466,10 +458,8 @@ public class GameController implements Screen, ContactListener {
 
         // decrease oxygen from movement
         if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
-//            System.out.println("moving");
             diver.changeOxygenLevel(activeOxygenRate);
         } else {
-//            System.out.println("passive Oxygen Rate: " + passiveOxygenRate);
             diver.changeOxygenLevel(passiveOxygenRate);
         }
 
