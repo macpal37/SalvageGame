@@ -32,7 +32,6 @@ public class ItemModel extends GameObject {
     private Vector2 movement;
     /** If item is being carried */
     private boolean carried;
-
     public ItemModel(JsonValue data, float width, float height, ItemType item_type, int id){
         super(data.get("pos").getFloat(0),
                 data.get("pos").getFloat(1));
