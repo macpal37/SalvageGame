@@ -941,7 +941,7 @@ public class GameCanvas {
         debugRender.setProjectionMatrix(camera.combined);
         debugRender.begin(ShapeRenderer.ShapeType.Filled);
         debugRender.setColor(Color.RED);
-        debugRender.circle(0, 0, 10);
+        debugRender.circle(500, 500, 10);
         debugRender.end();
 
         debugRender.begin(ShapeRenderer.ShapeType.Line);

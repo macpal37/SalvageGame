@@ -248,15 +248,15 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
         } else {
             Color tint = (pressState == 1 ? Color.GRAY : Color.WHITE);
             canvas.draw(
-                playButton,
-                tint,
-                playButton.getWidth() / 2,
-                playButton.getHeight() / 2,
-                centerX,
-                centerY,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
+                    playButton,
+                    tint,
+                    playButton.getWidth() / 2,
+                    playButton.getHeight() / 2,
+                    centerX,
+                    centerY,
+                    0,
+                    BUTTON_SCALE * scale,
+                    BUTTON_SCALE * scale);
         }
         canvas.end();
     }
@@ -271,61 +271,61 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      */
     private void drawProgress(GameCanvas canvas) {
         canvas.draw(
-            statusBkgLeft,
-            Color.WHITE,
-            centerX - width / 2,
-            centerY,
-            scale * statusBkgLeft.getRegionWidth(),
-            scale * statusBkgLeft.getRegionHeight());
+                statusBkgLeft,
+                Color.WHITE,
+                centerX - width / 2,
+                centerY,
+                scale * statusBkgLeft.getRegionWidth(),
+                scale * statusBkgLeft.getRegionHeight());
         canvas.draw(
-            statusBkgRight,
-            Color.WHITE,
-            centerX + width / 2 - scale * statusBkgRight.getRegionWidth(),
-            centerY,
-            scale * statusBkgRight.getRegionWidth(),
-            scale * statusBkgRight.getRegionHeight());
+                statusBkgRight,
+                Color.WHITE,
+                centerX + width / 2 - scale * statusBkgRight.getRegionWidth(),
+                centerY,
+                scale * statusBkgRight.getRegionWidth(),
+                scale * statusBkgRight.getRegionHeight());
         canvas.draw(
-            statusBkgMiddle,
-            Color.WHITE,
-            centerX - width / 2 + scale * statusBkgLeft.getRegionWidth(),
-            centerY,
-            width - scale * (statusBkgRight.getRegionWidth() + statusBkgLeft.getRegionWidth()),
-            scale * statusBkgMiddle.getRegionHeight());
+                statusBkgMiddle,
+                Color.WHITE,
+                centerX - width / 2 + scale * statusBkgLeft.getRegionWidth(),
+                centerY,
+                width - scale * (statusBkgRight.getRegionWidth() + statusBkgLeft.getRegionWidth()),
+                scale * statusBkgMiddle.getRegionHeight());
 
         canvas.draw(
-            statusFrgLeft,
-            Color.WHITE,
-            centerX - width / 2,
-            centerY,
-            scale * statusFrgLeft.getRegionWidth(),
-            scale * statusFrgLeft.getRegionHeight());
+                statusFrgLeft,
+                Color.WHITE,
+                centerX - width / 2,
+                centerY,
+                scale * statusFrgLeft.getRegionWidth(),
+                scale * statusFrgLeft.getRegionHeight());
         if (progress > 0) {
             float span =
-                progress
-                    * (width - scale * (statusFrgLeft.getRegionWidth() + statusFrgRight.getRegionWidth()))
-                    / 2.0f;
+                    progress
+                            * (width - scale * (statusFrgLeft.getRegionWidth() + statusFrgRight.getRegionWidth()))
+                            / 2.0f;
             canvas.draw(
-                statusFrgRight,
-                Color.WHITE,
-                centerX - width / 2 + scale * statusFrgLeft.getRegionWidth() + span,
-                centerY,
-                scale * statusFrgRight.getRegionWidth(),
-                scale * statusFrgRight.getRegionHeight());
+                    statusFrgRight,
+                    Color.WHITE,
+                    centerX - width / 2 + scale * statusFrgLeft.getRegionWidth() + span,
+                    centerY,
+                    scale * statusFrgRight.getRegionWidth(),
+                    scale * statusFrgRight.getRegionHeight());
             canvas.draw(
-                statusFrgMiddle,
-                Color.WHITE,
-                centerX - width / 2 + scale * statusFrgLeft.getRegionWidth(),
-                centerY,
-                span,
-                scale * statusFrgMiddle.getRegionHeight());
+                    statusFrgMiddle,
+                    Color.WHITE,
+                    centerX - width / 2 + scale * statusFrgLeft.getRegionWidth(),
+                    centerY,
+                    span,
+                    scale * statusFrgMiddle.getRegionHeight());
         } else {
             canvas.draw(
-                statusFrgRight,
-                Color.WHITE,
-                centerX - width / 2 + scale * statusFrgLeft.getRegionWidth(),
-                centerY,
-                scale * statusFrgRight.getRegionWidth(),
-                scale * statusFrgRight.getRegionHeight());
+                    statusFrgRight,
+                    Color.WHITE,
+                    centerX - width / 2 + scale * statusFrgLeft.getRegionWidth(),
+                    centerY,
+                    scale * statusFrgRight.getRegionWidth(),
+                    scale * statusFrgRight.getRegionHeight());
         }
     }
 
@@ -438,7 +438,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
         // Play button is a circle.
         float radius = BUTTON_SCALE * scale * playButton.getWidth() / 2.0f;
         float dist =
-            (screenX - centerX) * (screenX - centerX) + (screenY - centerY) * (screenY - centerY);
+                (screenX - centerX) * (screenX - centerX) + (screenY - centerY) * (screenY - centerY);
         if (dist < radius * radius) {
             pressState = 1;
         }
