@@ -46,15 +46,19 @@ public class DiverModel extends GameObject {
 
     /** whether user is pinging*/
     private boolean ping;
+    /** ping cooldown */
+    private int ping_cooldown;
     /** whether user is pinging*/
     private Vector2 pingDirection;
+    private final int MAX_PING_COOLDOWN = 20;
     /** whether user wants to pick up/drop item*/
     private boolean pickUpOrDrop;
 
     /** Store oxygen level */
     private float oxygenLevel;
-    private float MAX_OXYGEN;
+    private float MAX_OXYGEN = 100;
 
+    // ======================== CONSTRUCTORS ================================
     /**
      *
      * @param data
@@ -90,6 +94,9 @@ public class DiverModel extends GameObject {
         current_item = null;
         ping = false;
         movement = new Vector2();
+        oxygenLevel = MAX_OXYGEN;
+        pingDirection = new Vector2();
+        ping_cooldown = 0;
     }
 
     /**
@@ -155,6 +162,13 @@ public class DiverModel extends GameObject {
         pingDirection.nor();
     }
 
+    public void setPing(boolean p) {
+        ping = p;
+        if(ping){
+            ping_cooldown = MAX_PING_COOLDOWN;
+        }
+    }
+
     public boolean activatePhysics(World world) {
 
         if (!super.activatePhysics(world)) {
@@ -197,10 +211,10 @@ public class DiverModel extends GameObject {
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
 
         }
-        if(ping) {
+        if(ping || ping_cooldown > 0) {
             canvas.draw(pingTexture, Color.WHITE,origin.x + pingDirection.x,
             origin.y + pingDirection.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
-
+            ping_cooldown--;
         }
     }
 
@@ -265,31 +279,30 @@ public class DiverModel extends GameObject {
             return;
         }
         if (getHorizontalMovement() == 0f) {
+//            System.out.println("VX: " + body.getLinearVelocity().x);
             forceCache.x = -getDamping()*getVX();
-            forceCache.y = 0;
-//            body.applyForce(forceCache,getPosition(),true);
+            body.applyForce(forceCache,getPosition(),true);
+        }
 
-        } else if (Math.abs(getVX()) >= getMaxSpeed()) { // Velocity too high, clamp it
+        // Velocity too high, clamp it
+        if (Math.abs(getVX()) >= getMaxSpeed()) {
             setVX(Math.signum(getVX())*getMaxSpeed());
         } else {
             forceCache.x = getHorizontalMovement();
         }
-        if (getVerticalMovement() == 0f && Math.signum(getVY()) > 0) {
-            forceCache.y = -getDamping()*getVY();
-//            body.applyForce(forceCache,getPosition(),true);
 
-        } else if (Math.abs(getVY()) >= getMaxSpeed() &&
+        if (Math.abs(getVY()) >= getMaxSpeed() &&
                 Math.signum(getVY()) == Math.signum(getVerticalMovement())) {
             setVY(Math.signum(getVY())*getMaxSpeed());
         } else {
             forceCache.y = getVerticalMovement();
         }
         body.applyForce(forceCache,getPosition(),true);
-
-        if(current_item != null) {
+        if (current_item != null) {
             current_item.setVX(getVX());
             current_item.setVY(getVY());
         }
+
     }
 
     @Override
@@ -302,7 +315,7 @@ public class DiverModel extends GameObject {
      * Set the current item the diver is carrying
      */
     public void setItem() {
-        System.out.println("SIZE OF POTENTIAL OBJECTS" + potential_items.size());
+//        System.out.println("SIZE OF POTENTIAL OBJECTS" + potential_items.size());
         if(pickUpOrDrop) {
             if(potential_items.size() > 0) {
                 current_item = potential_items.pop();
@@ -334,10 +347,6 @@ public class DiverModel extends GameObject {
         pickUpOrDrop = val;
     }
 
-    public float getOxygenLevel() {
-        return oxygenLevel;
-    }
-
     public void addPotentialItem(ItemModel i) {
         potential_items.add(i);
     }
@@ -348,6 +357,21 @@ public class DiverModel extends GameObject {
 
     public boolean containsPotentialItem(ItemModel i) {
         return potential_items.contains(i);
+    }
+    /**
+     * @return the current oxygen level of the diver
+     */
+    public float getOxygenLevel() {
+        return oxygenLevel;
+    }
+
+    /**
+     *
+     * @param delta
+     */
+    public void changeOxygenLevel(float delta) {
+        float updatedOxygen = oxygenLevel + delta;
+        oxygenLevel = Math.max(Math.min(updatedOxygen, MAX_OXYGEN), 0);
     }
 
 }
