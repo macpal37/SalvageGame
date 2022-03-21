@@ -306,7 +306,7 @@ public class GameController implements Screen, ContactListener {
 
         addObject(diver);
 
-        key = new ItemModel(constants.get("diver"),itemTexture.getRegionWidth(),
+        key = new ItemModel(constants.get("key"),itemTexture.getRegionWidth(),
                 itemTexture.getRegionHeight(), ItemType.KEY, 0);
 
         key.setTexture(itemTexture);
