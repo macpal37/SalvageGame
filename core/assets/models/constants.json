@@ -6,7 +6,7 @@
     	"restitution": 0.1,
     	"volume": 0.8
 	},
-"diver" : {
+	"diver" : {
 		"pos": [20.0, 10.0],
 		"shrink": [0.7, 0.95],
 		"force": 10.0,

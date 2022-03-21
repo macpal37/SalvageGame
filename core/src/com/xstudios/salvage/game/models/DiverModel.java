@@ -7,11 +7,14 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
+import com.xstudios.salvage.util.PooledList;
 
 public class DiverModel extends GameObject {
 
     /** Shape information for this box */
     protected PolygonShape shape;
+    /** The texture for the shape. */
+    protected TextureRegion pingTexture;
     /** The physics shape of this object */
     private PolygonShape sensorShape;
     /** The width and height of the box */
@@ -37,10 +40,19 @@ public class DiverModel extends GameObject {
     private final Vector2 forceCache = new Vector2();
     /** item that diver is currently carrying */
     private ItemModel current_item;
+
+    /** All the itemModels diver is in contact with */
+    protected PooledList<ItemModel> potential_items  = new PooledList<ItemModel>();
+
     /** whether user is pinging*/
     private boolean ping;
+    /** ping cooldown */
+    private int ping_cooldown;
     /** whether user is pinging*/
     private Vector2 pingDirection;
+    private final int MAX_PING_COOLDOWN = 20;
+    /** whether user wants to pick up/drop item*/
+    private boolean pickUpOrDrop;
 
     /** Store oxygen level */
     private float oxygenLevel;
@@ -72,7 +84,7 @@ public class DiverModel extends GameObject {
         force = data.getFloat("force", 0);
 
         // Initialize
-        faceRight = true;;
+        faceRight = true;
         resize(width/4, height/4);
         resize(1, 1);
         setMass(1);
@@ -82,8 +94,9 @@ public class DiverModel extends GameObject {
         current_item = null;
         ping = false;
         movement = new Vector2();
-
         oxygenLevel = MAX_OXYGEN;
+        pingDirection = new Vector2();
+        ping_cooldown = 0;
     }
 
     /**
@@ -129,12 +142,31 @@ public class DiverModel extends GameObject {
     }
 
     /**
+     * Sets the object texture for drawing purposes.
+     *
+     * In order for drawing to work properly, you MUST set the drawScale.
+     * The drawScale converts the physics units to pixels.
+     *
+     * @param value  the object texture for drawing purposes.
+     */
+    public void setPingTexture(TextureRegion value) {
+        pingTexture = value;
+    }
+    /**
      * Sets the ping direction for drawing purposes.
      *
      * @param bodypos the ping direction for drawing purposes.
      */
     public void setPingDirection(Vector2 bodypos) {
         pingDirection.set(bodypos).sub(getPosition());
+        pingDirection.nor();
+    }
+
+    public void setPing(boolean p) {
+        ping = p;
+        if(ping){
+            ping_cooldown = MAX_PING_COOLDOWN;
+        }
     }
 
     public boolean activatePhysics(World world) {
@@ -142,7 +174,7 @@ public class DiverModel extends GameObject {
         if (!super.activatePhysics(world)) {
             return false;
         }
-
+        body.setUserData(this);
         return true;
     }
     /**
@@ -179,8 +211,10 @@ public class DiverModel extends GameObject {
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
 
         }
-        if(ping) {
-            // DRAW SOME SPRITE
+        if(ping || ping_cooldown > 0) {
+            canvas.draw(pingTexture, Color.WHITE,origin.x + pingDirection.x,
+            origin.y + pingDirection.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
+            ping_cooldown--;
         }
     }
 
@@ -245,7 +279,7 @@ public class DiverModel extends GameObject {
             return;
         }
         if (getHorizontalMovement() == 0f) {
-            System.out.println("VX: " + body.getLinearVelocity().x);
+//            System.out.println("VX: " + body.getLinearVelocity().x);
             forceCache.x = -getDamping()*getVX();
             body.applyForce(forceCache,getPosition(),true);
         }
@@ -263,8 +297,12 @@ public class DiverModel extends GameObject {
         } else {
             forceCache.y = getVerticalMovement();
         }
-
         body.applyForce(forceCache,getPosition(),true);
+        if (current_item != null) {
+            current_item.setVX(getVX());
+            current_item.setVY(getVY());
+        }
+
     }
 
     @Override
@@ -276,8 +314,19 @@ public class DiverModel extends GameObject {
     /**
      * Set the current item the diver is carrying
      */
-    public void setItem(ItemModel i) {
-        current_item = i;
+    public void setItem() {
+//        System.out.println("SIZE OF POTENTIAL OBJECTS" + potential_items.size());
+        if(pickUpOrDrop) {
+            if(potential_items.size() > 0) {
+                current_item = potential_items.pop();
+                current_item.setX(getX());
+                current_item.setY(getY());
+                current_item.setGravityScale(1);
+            } else if(current_item != null){
+                current_item.setGravityScale(.1f);
+                current_item = null;
+            }
+        }
     }
 
     /**
@@ -294,6 +343,21 @@ public class DiverModel extends GameObject {
         return current_item;
     }
 
+    public void setPickUpOrDrop(boolean val) {
+        pickUpOrDrop = val;
+    }
+
+    public void addPotentialItem(ItemModel i) {
+        potential_items.add(i);
+    }
+
+    public void removePotentialItem(ItemModel i) {
+        potential_items.remove(i);
+    }
+
+    public boolean containsPotentialItem(ItemModel i) {
+        return potential_items.contains(i);
+    }
     /**
      * @return the current oxygen level of the diver
      */
@@ -309,4 +373,5 @@ public class DiverModel extends GameObject {
         float updatedOxygen = oxygenLevel + delta;
         oxygenLevel = Math.max(Math.min(updatedOxygen, MAX_OXYGEN), 0);
     }
+
 }
