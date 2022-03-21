@@ -34,8 +34,17 @@
 			"shrink" : 0.6,
 			"height" : 0.05
 		}
-
+	},"key" : {
+      		"pos": [10.0, 10.0],
+      		"shrink": [0.7, 0.95],
+      		"force": 10.0,
+      		"damping": 10.0,
+      		"density": 0.1,
+      		"friction": 0.0,
+      		"maxspeed": 10.0,
+      		"sensor": {
+      			"shrink" : 0.6,
+      			"height" : 0.05
+      		}
+      	}
 	}
-
-	}
-}

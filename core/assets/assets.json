@@ -21,6 +21,7 @@
   "jsons"  : {
     "models:constants":  "models/constants.json"
   },
+
   "fonts": {
     "fonts:lightpixel": {
       "file": "fonts/LightPixel7.ttf",

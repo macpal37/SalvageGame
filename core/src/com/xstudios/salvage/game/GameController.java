@@ -343,7 +343,7 @@ public class GameController implements Screen, ContactListener {
      */
     private void populateLevel() {
 
-        diver = new DiverModel(constants.get("key"),diverTexture.getRegionWidth(),
+        diver = new DiverModel(constants.get("diver"),diverTexture.getRegionWidth(),
             diverTexture.getRegionHeight());
 
         diver.setTexture(diverTexture);
@@ -359,9 +359,9 @@ public class GameController implements Screen, ContactListener {
         key = new ItemModel(constants.get("diver"),itemTexture.getRegionWidth(),
                 itemTexture.getRegionHeight(), ItemType.KEY, 0);
 
-        key.setBodyType(BodyDef.BodyType.StaticBody);
+//        key.setBodyType(BodyDef.BodyType.StaticBody);
 
-        key.setSensor(true);
+//        key.setSensor(true);
         key.setTexture(itemTexture);
         key.setDrawScale(scale);
         key.setName("key");
@@ -452,7 +452,7 @@ public class GameController implements Screen, ContactListener {
         door.setName("door");
         addObject(door);
         door.setUserData(door);
-        doors.add(door);
+//        doors.add(door);
 
         float[] doorverts1= { 20.0f, 13.0f, 20.0f, 9.0f , 20.5f, 9.0f, 20.5f, 13.0f};
         Door door1=new Door(doorverts1, 0,0, key);
@@ -462,7 +462,7 @@ public class GameController implements Screen, ContactListener {
         door1.setName("door1");
         addObject(door1);
         door1.setUserData(door1);
-        doors.add(door1);
+//        doors.add(door1);
 
 
 
@@ -477,7 +477,7 @@ public class GameController implements Screen, ContactListener {
         // diver.setTexture(diverTexture);
         // diver.setName("Diver");
         // addObject(diver);
-    }
+
 
 
     /**
@@ -537,15 +537,15 @@ public class GameController implements Screen, ContactListener {
         diver.applyForce();
 
 
-        if(diver.hasItem()&& input.getOrDropObject()){
-            diver.dropItem();
-        }
-
-
-        if(nearItem && input.getOrDropObject()){
-            diver.addPotentialItem(key);
-        }
-        if(diver.hasItem())key.setPosition(diver.getX()*diver.getDrawScale().x,diver.getY()*diver.getDrawScale().y);
+//        if(diver.hasItem()&& input.getOrDropObject()){
+//            diver.dropItem();
+//        }
+//
+//
+//        if(nearItem && input.getOrDropObject()){
+//            diver.addPotentialItem(key);
+//        }
+//        if(diver.hasItem())key.setPosition(diver.getX()*diver.getDrawScale().x,diver.getY()*diver.getDrawScale().y);
 
 
         // do the ping
@@ -784,7 +784,7 @@ public class GameController implements Screen, ContactListener {
         this.listener = listener;
     }
 
-    boolean nearItem;
+//    boolean nearItem;
     // ================= CONTACT LISTENER METHODS =============================
     /**
      * Callback method for the start of a collision
@@ -795,35 +795,72 @@ public class GameController implements Screen, ContactListener {
      *
      * @param contact The two bodies that collided
      */
+//    public void beginContact(Contact contact) {
+//
+//        Fixture fix1 = contact.getFixtureA();
+//        Fixture fix2 = contact.getFixtureB();
+//
+//        Body body1 = fix1.getBody();
+//        Body body2 = fix2.getBody();
+//
+//        Object fd1 = fix1.getUserData();
+//        Object fd2 = fix2.getUserData();
+//
+//        try {
+//            GameObject bd1 = (GameObject)body1.getUserData();
+//            GameObject bd2 = (GameObject)body2.getUserData();
+//
+////        if (pickedUp)
+////            System.out.println("jkabdabdjhkabsdfkhjbasdkfhj");
+//
+//            // See if we have landed on the ground.
+//
+//
+//            // Check for win condition
+//            if (bd1 == diver   && bd2 == key) {
+////
+//                nearItem = true;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+    /**
+     * Callback method for the start of a collision
+     *
+     * This method is called when two objects cease to touch.
+     */
+//    public void endContact(Contact contact) {
+//        Body body1 = contact.getFixtureA().getBody();
+//        Body body2 = contact.getFixtureB().getBody();
+//        nearItem = false;
+////        System.out.println("END CONTACT");
+////        collisionController.endContact(body1, body2);
+//    }
     public void beginContact(Contact contact) {
 
-        Fixture fix1 = contact.getFixtureA();
-        Fixture fix2 = contact.getFixtureB();
-
-        Body body1 = fix1.getBody();
-        Body body2 = fix2.getBody();
-
-        Object fd1 = fix1.getUserData();
-        Object fd2 = fix2.getUserData();
-
-        try {
-            GameObject bd1 = (GameObject)body1.getUserData();
-            GameObject bd2 = (GameObject)body2.getUserData();
-
-//        if (pickedUp)
-//            System.out.println("jkabdabdjhkabsdfkhjbasdkfhj");
-
-            // See if we have landed on the ground.
+        Body body1 = contact.getFixtureA().getBody();
+        Body body2 = contact.getFixtureB().getBody();
 
 
-            // Check for win condition
-            if (bd1 == diver   && bd2 == key) {
-//
-                nearItem = true;
+
+        if(body1.getUserData() instanceof DiverModel){
+            if(body2.getUserData() instanceof ItemModel){
+                CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        else if (body2.getUserData() instanceof DiverModel){
+            if (body1.getUserData() instanceof ItemModel){
+                CollisionController.pickUp(diver, (ItemModel)body1.getUserData());
+            }
+        }
+
+        // ================= CONTACT LISTENER METHODS =============================
+
+
+
+
     }
 
     /**
@@ -834,11 +871,17 @@ public class GameController implements Screen, ContactListener {
     public void endContact(Contact contact) {
         Body body1 = contact.getFixtureA().getBody();
         Body body2 = contact.getFixtureB().getBody();
-        nearItem = false;
-//        System.out.println("END CONTACT");
-//        collisionController.endContact(body1, body2);
-    }
 
+        if (body1.getUserData() instanceof DiverModel) {
+            if (body2.getUserData() instanceof ItemModel) {
+                CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
+            }
+        } else if (body2.getUserData() instanceof DiverModel) {
+            if (body1.getUserData() instanceof ItemModel) {
+                CollisionController.pickUp(diver, (ItemModel) body1.getUserData());
+            }
+        }
+    }
     /**
      * Handles any modifications necessary before collision resolution
      *
