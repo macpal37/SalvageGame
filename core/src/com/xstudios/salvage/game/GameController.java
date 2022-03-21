@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
+import com.xstudios.salvage.audio.AudioController;
 import com.xstudios.salvage.game.models.DiverModel;
 import com.xstudios.salvage.game.models.Wall;
 import com.xstudios.salvage.util.PooledList;
@@ -81,6 +82,7 @@ public class GameController implements Screen, ContactListener {
     /** Whether or not debug mode is active */
     private boolean debug;
 
+    private AudioController audioController;
 
     //sample wall to get rid of later
     public float[][] wall_indices={{16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
@@ -138,6 +140,8 @@ public class GameController implements Screen, ContactListener {
         activeOxygenRate = -.02f;
 
         System.out.println("BG: "+background);
+        audioController = new AudioController();
+        audioController.intialize();
     }
 
     /**
