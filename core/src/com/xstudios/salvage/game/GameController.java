@@ -369,6 +369,7 @@ public class GameController implements Screen, ContactListener {
         door.setName("door");
         addObject(door);
         door.setUserData(door);
+        door.setActive(true);
         doors.add(door);
 
         float[] doorverts1= { 20.0f, 13.0f, 20.0f, 9.0f , 20.5f, 9.0f, 20.5f, 13.0f};
@@ -379,6 +380,7 @@ public class GameController implements Screen, ContactListener {
         door1.setName("door1");
         addObject(door1);
         door1.setUserData(door1);
+        door1.setActive(true);
         doors.add(door1);
 
 
@@ -480,12 +482,6 @@ public class GameController implements Screen, ContactListener {
                     System.out.println("HI");
                     door.setActive(false);
                 }
-            }
-        }
-
-        else{
-            for (Door door: doors){
-                door.setActive(true);
             }
         }
 
