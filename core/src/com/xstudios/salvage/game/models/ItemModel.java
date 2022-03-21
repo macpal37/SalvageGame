@@ -72,6 +72,9 @@ public class ItemModel extends GameObject {
             geometry = null;
         }
     }
+
+
+
     protected void createFixtures() {
         if (body == null) {
             return;
@@ -81,6 +84,7 @@ public class ItemModel extends GameObject {
 
         // Create the fixture
         fixture.shape = shape;
+        fixture.filter.maskBits = 1;
         geometry = body.createFixture(fixture);
         markDirty(false);
     }
@@ -90,11 +94,11 @@ public class ItemModel extends GameObject {
         if (!super.activatePhysics(world)) {
             return false;
         }
-
+//
         body.setUserData(this);
 //        body.setFixedRotation(false);
 //        body.setType(BodyDef.BodyType.DynamicBody);
-        return true;
+        return false;
     }
 
     /**
@@ -135,7 +139,6 @@ public class ItemModel extends GameObject {
     @Override
     public void drawDebug(GameCanvas canvas) {
         canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
-        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
     }
 
     /**
@@ -161,7 +164,8 @@ public class ItemModel extends GameObject {
         forceCache.x = getHorizontalMovement();
         forceCache.y = getVerticalMovement();
         body.applyForce(forceCache,getPosition(),true);
-
+        setHorizontalMovement(0);
+        setVerticalMovement(0);
     }
 
     /**
