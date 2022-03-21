@@ -1116,6 +1116,8 @@ public class GameCanvas {
         debugRender.ellipse(x0-w, y0-h, 2*w, 2*h, 12);
     }
 
+
+
     /**
      * Compute the affine transform (and store it in local) for this image.
      *

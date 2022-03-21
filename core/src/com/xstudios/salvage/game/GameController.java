@@ -581,6 +581,17 @@ public class GameController implements Screen, ContactListener {
             (diver.getX() * diver.getDrawScale().x) / 40f,
             (diver.getY() * diver.getDrawScale().y) / 40f);
         }
+
+        //deactivates unlocked doors
+        if(diver.carryingItem() && diver.getItem().getItemType().equals(ItemType.KEY)){
+
+            for(Door door:doors){
+                if(door.getKey() == diver.getItem()){
+                    System.out.println("HI");
+                    door.setActive(false);
+                }
+            }
+        }
         // TODO: why wasnt this in marco's code?
         cameraController.render();
 
@@ -653,13 +664,6 @@ public class GameController implements Screen, ContactListener {
             obj.draw(canvas);
         }
 
-        // draw UI relative to the camera position
-        // TODO: the text is shaking!!!!
-        canvas.drawText(
-            "Oxygen Level: " + (int) diver.getOxygenLevel(),
-            displayFont,
-            cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
-            cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
         rayHandler.updateAndRender();
 //        rayHandler.update();
 //        rayHandler.render();
@@ -671,8 +675,17 @@ public class GameController implements Screen, ContactListener {
 //
             canvas.beginDebug();
             for(GameObject obj : objects) {
-                obj.drawDebug(canvas);
+                if (!(obj instanceof Wall)) {
+                    obj.drawDebug(canvas);
+                }
             }
+//            // draw UI relative to the camera position
+//            // TODO: the text is shaking!!!!
+//            canvas.drawText(
+//                "Oxygen Level: " + (int) diver.getOxygenLevel(),
+//                displayFont,
+//                cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
+//                cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
             canvas.endDebug();
 
     }
@@ -882,11 +895,13 @@ public class GameController implements Screen, ContactListener {
 
         if (body1.getUserData() instanceof DiverModel) {
             if (body2.getUserData() instanceof ItemModel) {
-                CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
+                CollisionController.putDown(diver,
+                    (ItemModel) body2.getUserData());
             }
         } else if (body2.getUserData() instanceof DiverModel) {
             if (body1.getUserData() instanceof ItemModel) {
-                CollisionController.pickUp(diver, (ItemModel) body1.getUserData());
+                CollisionController.putDown(diver,
+                    (ItemModel) body1.getUserData());
             }
         }
     }
