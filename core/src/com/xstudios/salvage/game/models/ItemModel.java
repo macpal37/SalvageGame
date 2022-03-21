@@ -30,6 +30,8 @@ public class ItemModel extends GameObject {
     private final float maxspeed;
     /** The current horizontal movement of the item */
     private Vector2 movement;
+    /** If item is being carried */
+    private boolean carried;
 
     public ItemModel(JsonValue data, float width, float height, ItemType item_type, int id){
         super(data.get("pos").getFloat(0),
@@ -56,6 +58,8 @@ public class ItemModel extends GameObject {
         setMass(1);
         resetMass();
         setName(item_type + "" + item_ID);
+
+        movement = new Vector2();
     }
     /**
      * Release the fixtures for this body, resetting the shape
@@ -112,7 +116,20 @@ public class ItemModel extends GameObject {
 //        body.applyAngularImpulse(1f,false);
 //        System.out.println("Mass: " + body.getMass());
         if (texture != null) {
-            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),0.25f, 0.25f);
+            switch(item_type) {
+                case KEY:
+                    if(!carried) {
+                        canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+                    }
+                break;
+                case DEAD_BODY:
+                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+                break;
+                default:
+                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+                break;
+
+            }
         }
     }
 
@@ -205,5 +222,13 @@ public class ItemModel extends GameObject {
 
     public int getItemID() {
         return item_ID;
+    }
+
+    public void setCarried(boolean b) {
+        carried = b;
+    }
+
+    public boolean isCarried() {
+        return carried;
     }
 }
