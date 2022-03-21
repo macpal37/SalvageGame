@@ -394,21 +394,40 @@ public class GameController implements Screen, ContactListener {
 //            { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
 //        };
         float[][] wallVerts={
-                {-50.0f, 5.0f, 60.0f, 5.0f, 60.0f, 4.5f, -50.0f, 4.5f},
-                {-50.0f, 15.0f, 60.0f, 15.0f, 60.0f, 14.5f, -50.0f, 14.5f},
-                {41.0f, 5.0f, 42.0f, 05.0f, 42.0f, 25.0f, 40.0f, 25.0f}};
 
-        float[] doorVerts =  {30.0f, 5.0f, 32.0f, 05.0f, 32.0f, 25.0f, 30.0f, 25.0f};
-        Door door = new Door(doorVerts,0,0,key);
-        door.setBodyType(BodyDef.BodyType.StaticBody);
-        door.setDensity(0);
-        door.setFriction(0.4f);
-        door.setRestitution(0.1f);
-        door.setDrawScale(scale);
-        door.setTexture(doorTexture);
-        door.setDrawScale(scale);
-        door.setName("door");
-        addAboveObject(door);
+        //         {-50.0f, 5.0f, 60.0f, 5.0f, 60.0f, 4.5f, -50.0f, 4.5f},
+        //         {-50.0f, 15.0f, 60.0f, 15.0f, 60.0f, 14.5f, -50.0f, 14.5f},
+        //         {41.0f, 5.0f, 42.0f, 05.0f, 42.0f, 25.0f, 40.0f, 25.0f}};
+        //
+        // float[] doorVerts =  {30.0f, 5.0f, 32.0f, 05.0f, 32.0f, 25.0f, 30.0f, 25.0f};
+        // Door door = new Door(doorVerts,0,0,key);
+        // door.setBodyType(BodyDef.BodyType.StaticBody);
+        // door.setDensity(0);
+        // door.setFriction(0.4f);
+        // door.setRestitution(0.1f);
+        // door.setDrawScale(scale);
+        // door.setTexture(doorTexture);
+        // door.setDrawScale(scale);
+        // door.setName("door");
+        // addAboveObject(door);
+
+                //walls
+            {-50.0f, 18.0f, -40.0f, 0.0f, -39.5f,  0.0f, -49.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f,},
+            { 46.0f, 18.0f,  32.0f, -9.0f,  31.0f,  -10.0f,  45.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f},
+                //first floor
+            { -35.0f, -9.0f, -35.0f, -10.0f ,  32.0f, -10.0f,  32.0f, -9.0f},
+
+            { -40.5f, 0.0f, -40.0f, -1.0f,  -13.0f, -1.0f,  -13.0f, 0.0f},
+            { -3.0f, 0.0f, -3.0f, -9.0f, -2.0f, -9.0f, -2.0f, -1.0f,  6.0f, -1.0f, 6.0f, 0.0f},
+            { 14.0f, 0.0f, 14.0f, -4.0f, 15.0f, -4.0f, 15.0f, -1.0f, 28.0f, -1.0f, 28.0f, 0.0f},
+
+                //second floor
+            { -33.0f, 9.0f, -33.0f, 8.0f , 32.0f, 8.0f, 32.0f, 9.0f},
+            { 22.0f, 8.0f, 22.0f, 0.0f , 23.0f, 0.0f, 23.0f, 8.0f},
+                //third floor
+            {-10.0f, 17.0f, -10.0f, 9.0f , -9.0f, 9.0f, -9.0f, 17.0f},
+            {20.0f, 17.0f, 20.0f, 13.0f , 21f, 13.0f, 21f, 17.0f}
+        };
 
         for (int ii = 0; ii < wallVerts.length; ii++) {
             Wall obj;
@@ -424,9 +443,41 @@ public class GameController implements Screen, ContactListener {
             addObject(obj);
         }
 
+
+        float[] doorverts= {14f, -4.0f, 14f, -9.0f, 14.5f, -4.0f, 14.5f, -9.0f};
+        Door door=new Door(doorverts, 0,0, key);
+        door.setBodyType(BodyDef.BodyType.StaticBody);
+        door.setTexture(doorTexture);
+        door.setDrawScale(scale);
+        door.setName("door");
+        addObject(door);
+        door.setUserData(door);
+        doors.add(door);
+
+        float[] doorverts1= { 20.0f, 13.0f, 20.0f, 9.0f , 20.5f, 9.0f, 20.5f, 13.0f};
+        Door door1=new Door(doorverts1, 0,0, key);
+        door1.setBodyType(BodyDef.BodyType.StaticBody);
+        door1.setTexture(doorTexture);
+        door1.setDrawScale(scale);
+        door1.setName("door1");
+        addObject(door1);
+        door1.setUserData(door1);
+        doors.add(door1);
+
+
+
+
+
+
     }
 
 
+
+        // diver = new DiverModel(constants.get("diver"), diverWidth, diverHeight);
+        // diver.setTexture(diverTexture);
+        // diver.setName("Diver");
+        // addObject(diver);
+    }
 
 
     /**
