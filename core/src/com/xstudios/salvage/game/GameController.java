@@ -37,6 +37,7 @@ public class GameController implements Screen, ContactListener {
     // Models to be updated
     protected TextureRegion wallTexture;
     protected TextureRegion wallBackTexture;
+    protected TextureRegion doorTexture;
 
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
@@ -47,6 +48,8 @@ public class GameController implements Screen, ContactListener {
 
     protected ItemModel key;
     protected ItemModel dead_body;
+
+    protected Door door;
 
     /** Camera centered on the player */
     protected CameraController cameraController;
@@ -99,11 +102,7 @@ public class GameController implements Screen, ContactListener {
     private boolean debug;
 
 
-    //sample wall to get rid of later
-    public float[][] wall_indices={{16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-            1.0f,  0.0f,  0.0f,  0.0f,  0.0f, 18.0f},
-            {32.0f, 18.0f, 32.0f,  0.0f, 31.0f,  0.0f,
-            31.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f}};
+
     // ======================= CONSTRUCTORS =================================
     /**
      * Creates a new game world with the default values.
@@ -232,6 +231,7 @@ public class GameController implements Screen, ContactListener {
         constants =  directory.getEntry( "models:constants", JsonValue.class );
         pingTexture = new TextureRegion(directory.getEntry( "models:ping", Texture.class ));
         wallTexture = new TextureRegion(directory.getEntry( "wall", Texture.class ));
+        doorTexture=new TextureRegion(directory.getEntry("door", Texture.class));
         //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
         deadBodyTexture = new TextureRegion(directory.getEntry( "models:dead_body", Texture.class ));
@@ -300,39 +300,17 @@ public class GameController implements Screen, ContactListener {
 
         addObject(diver);
 
-        key = new ItemModel(constants.get("diver"),itemTexture.getRegionWidth(),
-                itemTexture.getRegionHeight(), ItemType.KEY, 0);
-
-        key.setTexture(itemTexture);
-        key.setDrawScale(scale);
-        key.setName("key");
-        key.setGravityScale(.01f);
-
-        addObject(key);
-
-        dead_body = new ItemModel(constants.get("dead_body"),deadBodyTexture.getRegionWidth(),
-                deadBodyTexture.getRegionHeight(), ItemType.DEAD_BODY, 0);
-
-        dead_body.setTexture(deadBodyTexture);
-        dead_body.setDrawScale(scale);
-        dead_body.setName("dead_body");
-        dead_body.setGravityScale(.01f);
-
-        addObject(dead_body);
-
-        //add a wall
-
         float[][] wallVerts={
-            {1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
-            { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
-            {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
-            {26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
-            {29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
-            {24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
-            {29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
-            {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
-            {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
-            { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
+                {1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
+                { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
+                {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
+                {26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
+                {29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
+                {24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
+                {29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
+                {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
+                {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
+                { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
         };
 
         for (int ii = 0; ii < wallVerts.length; ii++) {
@@ -349,7 +327,45 @@ public class GameController implements Screen, ContactListener {
             addObject(obj);
         }
 
-        
+        float[] doorVerts={-5.0f, 3.0f, -3.0f, 3.0f, -3.0f, 2.5f, -5.0f, 2.5f};
+
+        key = new ItemModel(constants.get("diver"),itemTexture.getRegionWidth(),
+                itemTexture.getRegionHeight(), ItemType.KEY, 0);
+
+        door=new Door(doorVerts, 0,0);
+        door.setBodyType(BodyDef.BodyType.StaticBody);
+        door.setTexture(doorTexture);
+        door.setDrawScale(scale);
+        door.setName("door ");
+
+        key.addDoor(door);
+        key.setTexture(itemTexture);
+        key.setDrawScale(scale);
+        key.setName("key");
+        key.setGravityScale(.01f);
+        door.addKey(key);
+
+        addObject(key);
+        door.setUserData(door);
+        addObject(door);
+
+
+
+        dead_body = new ItemModel(constants.get("dead_body"),deadBodyTexture.getRegionWidth(),
+                deadBodyTexture.getRegionHeight(), ItemType.DEAD_BODY, 0, null);
+
+        dead_body.setTexture(deadBodyTexture);
+        dead_body.setDrawScale(scale);
+        dead_body.setName("dead_body");
+        dead_body.setGravityScale(.01f);
+
+        addObject(dead_body);
+
+        //add a wall
+
+
+
+
 
 
 

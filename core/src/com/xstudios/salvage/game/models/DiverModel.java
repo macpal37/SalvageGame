@@ -362,6 +362,9 @@ public class DiverModel extends GameObject {
 
     public void addPotentialItem(ItemModel i) {
         potential_items.add(i);
+        if(i.getDoor()!=null){
+            i.getDoor().setActive(false);
+        }
     }
 
     public void removePotentialItem(ItemModel i) {
