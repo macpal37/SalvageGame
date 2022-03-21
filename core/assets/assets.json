@@ -12,7 +12,11 @@
       "wrapU":"repeated",
       "wrapV": "repeated"
     },
-    "second_wall": "background/wooden_floor.png"
+    "door": {
+      "file": "models/door.png",
+      "wrapU": "repeated",
+      "wrapV": "repeated"
+    }
   },
   "jsons"  : {
     "models:constants":  "models/constants.json"

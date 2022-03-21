@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.models.DiverModel;
@@ -31,6 +32,8 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion pingTexture;
     /** The texture for dead body */
     protected TextureRegion deadBodyTexture;
+    /**The texture for the door*/
+    protected TextureRegion doorTexture;
 
     JsonValue constants;
 
@@ -47,6 +50,8 @@ public class GameController implements Screen, ContactListener {
 
     protected ItemModel key;
     protected ItemModel dead_body;
+
+    private Array<Door> doors=new Array<Door>();
 
     /** Camera centered on the player */
     protected CameraController cameraController;
@@ -232,6 +237,7 @@ public class GameController implements Screen, ContactListener {
         constants =  directory.getEntry( "models:constants", JsonValue.class );
         pingTexture = new TextureRegion(directory.getEntry( "models:ping", Texture.class ));
         wallTexture = new TextureRegion(directory.getEntry( "wall", Texture.class ));
+        doorTexture=new TextureRegion(directory.getEntry("door", Texture.class));
         //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
         deadBodyTexture = new TextureRegion(directory.getEntry( "models:dead_body", Texture.class ));
@@ -349,6 +355,17 @@ public class GameController implements Screen, ContactListener {
             addObject(obj);
         }
 
+        float[] doorverts={3.0f, 1.0f, 3.0f, 6.0f, 2.5f, 6f, 2.5f, 1f};
+        Door door=new Door(doorverts, 0,0, key);
+        door.setBodyType(BodyDef.BodyType.StaticBody);
+        door.setTexture(doorTexture);
+        door.setDrawScale(scale);
+        door.setName("door");
+        addObject(door);
+        door.setUserData(door);
+        doors.add(door);
+
+
         
 
 
@@ -439,6 +456,22 @@ public class GameController implements Screen, ContactListener {
 
         if (diver.getBody()!=null){
             cameraController.setCameraPosition(diver.getX()*diver.getDrawScale().x,diver.getY()*diver.getDrawScale().y);
+        }
+        //deactivates unlocked doors
+        if(diver.carryingItem() && diver.getItem().getItemType().equals(ItemType.KEY)){
+
+            for(Door door:doors){
+                if(door.getKey() == diver.getItem()){
+                    System.out.println("HI");
+                    door.setActive(false);
+                }
+            }
+        }
+
+        else{
+            for (Door door: doors){
+                door.setActive(true);
+            }
         }
 
 //        System.out.println("WORLD GRAVITY: " + world.getGravity());

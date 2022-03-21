@@ -361,6 +361,7 @@ public class DiverModel extends GameObject {
     }
 
     public void addPotentialItem(ItemModel i) {
+
         potential_items.add(i);
     }
 
