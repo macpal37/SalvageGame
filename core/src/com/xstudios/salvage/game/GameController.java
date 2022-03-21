@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.models.*;
@@ -50,6 +51,8 @@ public class GameController implements Screen, ContactListener {
 
     protected ItemModel key;
     protected ItemModel dead_body;
+
+    private Array<Door> doors=new Array<Door>();
 
     /** Camera centered on the player */
     protected CameraController cameraController;
@@ -353,10 +356,9 @@ public class GameController implements Screen, ContactListener {
 
         addObject(diver);
 
-
         light.setPosition((diver.getX()*diver.getDrawScale().x)/32f,(diver.getY()*diver.getDrawScale().y)/32f);
 
-        key = new ItemModel(constants.get("diver"),itemTexture.getRegionWidth(),
+        key = new ItemModel(constants.get("key"),itemTexture.getRegionWidth(),
                 itemTexture.getRegionHeight(), ItemType.KEY, 0);
 
 //        key.setBodyType(BodyDef.BodyType.StaticBody);
@@ -452,7 +454,9 @@ public class GameController implements Screen, ContactListener {
         door.setName("door");
         addObject(door);
         door.setUserData(door);
-//        doors.add(door);
+
+        door.setActive(true);
+        doors.add(door);
 
         float[] doorverts1= { 20.0f, 13.0f, 20.0f, 9.0f , 20.5f, 9.0f, 20.5f, 13.0f};
         Door door1=new Door(doorverts1, 0,0, key);
@@ -462,12 +466,9 @@ public class GameController implements Screen, ContactListener {
         door1.setName("door1");
         addObject(door1);
         door1.setUserData(door1);
-//        doors.add(door1);
 
-
-
-
-
+        door1.setActive(true);
+        doors.add(door1);
 
     }
 
@@ -566,14 +567,15 @@ public class GameController implements Screen, ContactListener {
             diver.changeOxygenLevel(passiveOxygenRate);
         }
 
-        if (diver.getBody()!=null){
-            cameraController.setCameraPosition(diver.getX()*diver.getDrawScale().x,diver.getY()*diver.getDrawScale().y);
-//
-            light.setPosition((diver.getX()*diver.getDrawScale().x)/40f,(diver.getY()*diver.getDrawScale().y)/40f);
-
+    if (diver.getBody() != null) {
+        cameraController.setCameraPosition(
+            diver.getX() * diver.getDrawScale().x, diver.getY() * diver.getDrawScale().y);
+          //
+        light.setPosition(
+            (diver.getX() * diver.getDrawScale().x) / 40f,
+            (diver.getY() * diver.getDrawScale().y) / 40f);
         }
-
-
+        // TODO: why wasnt this in marco's code?
         cameraController.render();
 
     }
