@@ -232,4 +232,5 @@ public class ItemModel extends GameObject {
     public boolean isCarried() {
         return carried;
     }
+
 }

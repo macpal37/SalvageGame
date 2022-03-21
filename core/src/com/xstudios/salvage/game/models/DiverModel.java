@@ -9,6 +9,8 @@ import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.PooledList;
 
+import java.util.ArrayList;
+
 public class DiverModel extends GameObject {
 
     /** Shape information for this box */
@@ -42,7 +44,7 @@ public class DiverModel extends GameObject {
     private ItemModel current_item;
 
     /** All the itemModels diver is in contact with */
-    protected PooledList<ItemModel> potential_items  = new PooledList<ItemModel>();
+    protected ArrayList<ItemModel> potential_items  = new ArrayList<ItemModel>();
 
     /** whether user is pinging*/
     private boolean ping;
@@ -140,7 +142,9 @@ public class DiverModel extends GameObject {
         texture = value;
         origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
     }
-
+    public boolean hasItem(){
+        return potential_items.size()>0;
+    }
     /**
      * Sets the object texture for drawing purposes.
      *
@@ -336,13 +340,14 @@ public class DiverModel extends GameObject {
 //        System.out.println("SIZE OF POTENTIAL OBJECTS" + potential_items.size());
         if(pickUpOrDrop) {
             if(potential_items.size() > 0) {
-                current_item = potential_items.pop();
+                current_item = potential_items.get(0);
                 current_item.setX(getX());
                 current_item.setY(getY());
                 current_item.setGravityScale(1);
             } else if(current_item != null){
                 current_item.setGravityScale(.1f);
                 current_item = null;
+                potential_items.clear();
             }
         }
     }
@@ -390,6 +395,12 @@ public class DiverModel extends GameObject {
     public void changeOxygenLevel(float delta) {
         float updatedOxygen = oxygenLevel + delta;
         oxygenLevel = Math.max(Math.min(updatedOxygen, MAX_OXYGEN), 0);
+    }
+
+
+    public void dropItem() {
+        potential_items.clear();
+
     }
 
 }
