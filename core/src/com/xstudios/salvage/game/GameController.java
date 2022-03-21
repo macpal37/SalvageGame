@@ -329,16 +329,22 @@ public class GameController implements Screen, ContactListener {
         //add a wall
 
         float[][] wallVerts={
-            {1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
-            { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
-            {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
-            {26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
-            {29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
-            {24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
-            {29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
-            {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
-            {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
-            { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
+                //walls
+            {-50.0f, 18.0f, -40.0f, 0.0f, -39.5f,  0.0f, -49.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f,},
+            { 46.0f, 18.0f,  32.0f, -9.0f,  31.0f,  -10.0f,  45.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f},
+                //first floor
+            { -35.0f, -9.0f, -35.0f, -10.0f ,  32.0f, -10.0f,  32.0f, -9.0f},
+
+            { -40.5f, 0.0f, -40.0f, -1.0f,  -13.0f, -1.0f,  -13.0f, 0.0f},
+            { -3.0f, 0.0f, -3.0f, -9.0f, -2.0f, -9.0f, -2.0f, -1.0f,  6.0f, -1.0f, 6.0f, 0.0f},
+            { 14.0f, 0.0f, 14.0f, -4.0f, 15.0f, -4.0f, 15.0f, -1.0f, 28.0f, -1.0f, 28.0f, 0.0f},
+
+                //second floor
+            { -33.0f, 9.0f, -33.0f, 8.0f , 32.0f, 8.0f, 32.0f, 9.0f},
+            { 22.0f, 8.0f, 22.0f, 0.0f , 23.0f, 0.0f, 23.0f, 8.0f},
+                //third floor
+            {-10.0f, 17.0f, -10.0f, 9.0f , -9.0f, 9.0f, -9.0f, 17.0f},
+            {20.0f, 17.0f, 20.0f, 13.0f , 21f, 13.0f, 21f, 17.0f}
         };
 
         for (int ii = 0; ii < wallVerts.length; ii++) {
@@ -355,7 +361,7 @@ public class GameController implements Screen, ContactListener {
             addObject(obj);
         }
 
-        float[] doorverts={3.0f, 1.0f, 3.0f, 6.0f, 2.5f, 6f, 2.5f, 1f};
+        float[] doorverts= {14f, -4.0f, 14f, -9.0f, 14.5f, -4.0f, 14.5f, -9.0f};
         Door door=new Door(doorverts, 0,0, key);
         door.setBodyType(BodyDef.BodyType.StaticBody);
         door.setTexture(doorTexture);
@@ -365,8 +371,18 @@ public class GameController implements Screen, ContactListener {
         door.setUserData(door);
         doors.add(door);
 
+        float[] doorverts1= { 20.0f, 13.0f, 20.0f, 9.0f , 20.5f, 9.0f, 20.5f, 13.0f};
+        Door door1=new Door(doorverts1, 0,0, key);
+        door1.setBodyType(BodyDef.BodyType.StaticBody);
+        door1.setTexture(doorTexture);
+        door1.setDrawScale(scale);
+        door1.setName("door1");
+        addObject(door1);
+        door1.setUserData(door1);
+        doors.add(door1);
 
-        
+
+
 
 
 
@@ -385,7 +401,6 @@ public class GameController implements Screen, ContactListener {
         diver.setTexture(diverTexture);
         diver.setName("Diver");
         addObject(diver);
-
     }
 
     /**
