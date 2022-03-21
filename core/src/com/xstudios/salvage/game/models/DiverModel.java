@@ -287,24 +287,27 @@ public class DiverModel extends GameObject {
 
 
     public void applyForce() {
+
         if (!isActive()) {
             return;
         }
         if (getHorizontalMovement() == 0f) {
 //            System.out.println("VX: " + body.getLinearVelocity().x);
             forceCache.x = -getDamping()*getVX();
+            body.applyForce(forceCache,getPosition(),true);
         }
         if (getVerticalMovement() == 0f) {
 //            System.out.println("VX: " + body.getLinearVelocity().x);
             forceCache.y = -getDamping()*getVY();
+            body.applyForce(forceCache,getPosition(),true);
         }
-//        body.applyForce(forceCache,getPosition(),true);
 
         // Velocity too high, clamp it
         if (Math.abs(getVX()) >= getMaxSpeed()) {
             setVX(Math.signum(getVX())*getMaxSpeed());
         } else {
             forceCache.x = getHorizontalMovement();
+            body.applyForce(forceCache,getPosition(),true);
         }
 
         if (Math.abs(getVY()) >= getMaxSpeed() &&
@@ -312,20 +315,39 @@ public class DiverModel extends GameObject {
             setVY(Math.signum(getVY())*getMaxSpeed());
         } else {
             forceCache.y = getVerticalMovement();
+            body.applyForce(forceCache,getPosition(),true);
         }
 
 
-        forceCache.x += -getDamping()*boostedSpeed.x;
-        forceCache.y += -getDamping()*boostedSpeed.y;
-        // Boosted max velocity
-        if (Math.abs(boostedSpeed.x) > boostedMaxSpeed) {
-            forceCache.x = boostedMaxSpeed;
-        }
-        if (Math.abs(boostedSpeed.y) > boostedMaxSpeed) {
-            forceCache.y = boostedMaxSpeed;
-        }
+        // must override setVX and setVY from
+//        System.out.println("forceX: " + forceCache.x);
+//        System.out.println("forceY: " + forceCache.y);
+//        System.out.println("boostedSpeedX: " + boostedSpeed.x);
+//        System.out.println("boostedSpeedY: " + boostedSpeed.y);
+//        System.out.println("Damping: " + getDamping());
+        //apply damping
+//        forceCache.x = -getDamping()/100*boostedSpeed.x;
+//        forceCache.y = -getDamping()/100*boostedSpeed.y;
+//        body.applyForce(forceCache,getPosition(),true);
 
+        //apply boosted force
+        forceCache.x = boostedSpeed.x;
+        forceCache.y = boostedSpeed.y;
+        System.out.println("forceX: " + forceCache.x);
+        System.out.println("forceY: " + forceCache.y);
         body.applyForce(forceCache,getPosition(),true);
+
+        System.out.println("VX:" + getVX());
+        System.out.println("VX:" + getVY());
+
+        // Boosted max velocity
+//        if (Math.abs(boostedSpeed.x) > boostedMaxSpeed) {
+//            forceCache.x = boostedMaxSpeed;
+//        }
+//        if (Math.abs(boostedSpeed.y) > boostedMaxSpeed) {
+//            forceCache.y = boostedMaxSpeed;
+//        }
+
         if (current_item != null) {
             current_item.setVX(getVX());
             current_item.setVY(getVY());

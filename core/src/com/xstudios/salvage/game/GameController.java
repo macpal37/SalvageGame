@@ -398,34 +398,36 @@ public class GameController implements Screen, ContactListener {
 
         forceCache.x = input.getHorizontal() *diver.getForce();
         forceCache.y = input.getVertical() *diver.getForce();
+        System.out.println(input.getHorizontal());
+        System.out.println(input.getVertical());
+        System.out.println(diver.getForce());
 
         // kicking off of an obstacle
         System.out.println("Kicked: " + input.didKickOff());
         System.out.println("isTouchingObstacle: " + diver
         .isTouchingObstacle());
         System.out.println("isLatchedOn: " + diver.isLatchedOn());
-        // player wants to kick, diver is near a wall and has yet to latch on
-        if (input.didKickOff() && diver.isTouchingObstacle() && !diver.isLatchedOn()) {
+        // when player is holding space near an obstacle
+        if (input.didKickOff() && diver.isTouchingObstacle()) {
             // set velocity and forces to 0
             forceCache.x = 0;
             forceCache.y = 0;
             diver.setLinearVelocity(forceCache);
             diver.setGravityScale(0);
             diver.setLatchedOn(true);
-            // player wants to kick, diver is near a wall, and is latched on
-        } else if (input.didKickOff() && diver.isTouchingObstacle() && diver.isLatchedOn()) {
+            // rotate the diver to face the direction of the arrow keys
+
+
+            // when player releases the kick button
+        } else if (!input.didKickOff() && diver.isLatchedOn()) {
             // double forces for a boost in speed!
-            forceCache.x *= 2;
-            forceCache.y *= 2;
+            forceCache.x *= 5;
+            forceCache.y *= 5;
+            diver.setLinearVelocity(forceCache);
             diver.setBoostedVelocity(forceCache);
             diver.setGravityScale(1);
             diver.setLatchedOn(false);
-            // player is latched on but has not
-        } else if (diver.isTouchingObstacle() && diver.isLatchedOn()) {
-            // rotate the diver to face the direction of the arrow keys
-            forceCache.x = 0;
-            forceCache.y = 0;
-            diver.setLinearVelocity(forceCache);
+            // otherwise
         } else {
             diver.setGravityScale(1);
             diver.setLatchedOn(false);
@@ -434,6 +436,10 @@ public class GameController implements Screen, ContactListener {
         // apply movement
         diver.setHorizontalMovement(forceCache.x);
         diver.setVerticalMovement(forceCache.y);
+
+//        System.out.println("forceX: " + forceCache.x);
+//        System.out.println("forceX: " + forceCache.y);
+
 
         diver.applyForce();
 
