@@ -7,11 +7,14 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
+import com.xstudios.salvage.util.PooledList;
 
 public class DiverModel extends GameObject {
 
     /** Shape information for this box */
     protected PolygonShape shape;
+    /** The texture for the shape. */
+    protected TextureRegion pingTexture;
     /** The physics shape of this object */
     private PolygonShape sensorShape;
     /** The width and height of the box */
@@ -37,10 +40,16 @@ public class DiverModel extends GameObject {
     private final Vector2 forceCache = new Vector2();
     /** item that diver is currently carrying */
     private ItemModel current_item;
+
+    /** All the itemModels diver is in contact with */
+    protected PooledList<ItemModel> potential_items  = new PooledList<ItemModel>();
+
     /** whether user is pinging*/
     private boolean ping;
     /** whether user is pinging*/
     private Vector2 pingDirection;
+    /** whether user wants to pick up/drop item*/
+    private boolean pickUpOrDrop;
 
     /** Store oxygen level */
     private float oxygenLevel;
@@ -71,7 +80,7 @@ public class DiverModel extends GameObject {
         force = data.getFloat("force", 0);
 
         // Initialize
-        faceRight = true;;
+        faceRight = true;
         resize(width/4, height/4);
         resize(1, 1);
         setMass(1);
@@ -126,12 +135,24 @@ public class DiverModel extends GameObject {
     }
 
     /**
+     * Sets the object texture for drawing purposes.
+     *
+     * In order for drawing to work properly, you MUST set the drawScale.
+     * The drawScale converts the physics units to pixels.
+     *
+     * @param value  the object texture for drawing purposes.
+     */
+    public void setPingTexture(TextureRegion value) {
+        pingTexture = value;
+    }
+    /**
      * Sets the ping direction for drawing purposes.
      *
      * @param bodypos the ping direction for drawing purposes.
      */
     public void setPingDirection(Vector2 bodypos) {
         pingDirection.set(bodypos).sub(getPosition());
+        pingDirection.nor();
     }
 
     public boolean activatePhysics(World world) {
@@ -177,7 +198,9 @@ public class DiverModel extends GameObject {
 
         }
         if(ping) {
-            // DRAW SOME SPRITE
+            canvas.draw(pingTexture, Color.WHITE,origin.x + pingDirection.x,
+            origin.y + pingDirection.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
+
         }
     }
 
@@ -261,13 +284,11 @@ public class DiverModel extends GameObject {
         } else {
             forceCache.y = getVerticalMovement();
         }
-
         body.applyForce(forceCache,getPosition(),true);
 
         if(current_item != null) {
-            current_item.setHorizontalMovement(getHorizontalMovement());
-            current_item.setVerticalMovement(getVerticalMovement());
-            current_item.applyForce();
+            current_item.setVX(getVX());
+            current_item.setVY(getVY());
         }
     }
 
@@ -280,8 +301,19 @@ public class DiverModel extends GameObject {
     /**
      * Set the current item the diver is carrying
      */
-    public void setItem(ItemModel i) {
-        current_item = i;
+    public void setItem() {
+        System.out.println("SIZE OF POTENTIAL OBJECTS" + potential_items.size());
+        if(pickUpOrDrop) {
+            if(potential_items.size() > 0) {
+                current_item = potential_items.pop();
+                current_item.setX(getX());
+                current_item.setY(getY());
+                current_item.setGravityScale(1);
+            } else if(current_item != null){
+                current_item.setGravityScale(.1f);
+                current_item = null;
+            }
+        }
     }
 
     /**
@@ -298,7 +330,24 @@ public class DiverModel extends GameObject {
         return current_item;
     }
 
+    public void setPickUpOrDrop(boolean val) {
+        pickUpOrDrop = val;
+    }
+
     public float getOxygenLevel() {
         return oxygenLevel;
     }
+
+    public void addPotentialItem(ItemModel i) {
+        potential_items.add(i);
+    }
+
+    public void removePotentialItem(ItemModel i) {
+        potential_items.remove(i);
+    }
+
+    public boolean containsPotentialItem(ItemModel i) {
+        return potential_items.contains(i);
+    }
+
 }

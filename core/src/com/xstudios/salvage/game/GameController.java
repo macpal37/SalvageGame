@@ -29,6 +29,9 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion itemTexture;
    /** Ocean Background Texture */
     protected TextureRegion background;
+    /** The texture for ping */
+    protected TextureRegion pingTexture;
+
     JsonValue constants;
 
     // Models to be updated
@@ -209,6 +212,7 @@ public class GameController implements Screen, ContactListener {
         constants =  directory.getEntry( "models:constants", JsonValue.class );
         wallTexture = new TextureRegion(directory.getEntry( "background:wooden_floor", Texture.class ));
         wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
+        pingTexture = new TextureRegion(directory.getEntry( "models:ping", Texture.class ));
     }
 
     /**
@@ -268,6 +272,7 @@ public class GameController implements Screen, ContactListener {
             diverTexture.getRegionHeight());
 
         diver.setTexture(diverTexture);
+        diver.setPingTexture(pingTexture);
         diver.setDrawScale(scale);
         diver.setName("diver");
 
@@ -348,6 +353,9 @@ public class GameController implements Screen, ContactListener {
         if(input.didPing()){
 //            diver.setPingDirection();
         }
+        diver.setPickUpOrDrop(input.getOrDropObject());
+        diver.setItem();
+
         if (diver.getBody()!=null){
             cameraController.setCameraPosition(diver.getX()*diver.getDrawScale().x,diver.getY()*diver.getDrawScale().y);
         }
@@ -552,7 +560,7 @@ public class GameController implements Screen, ContactListener {
         Body body2 = contact.getFixtureB().getBody();
 
         System.out.println("BEGIN CONTACT");
-        collisionController.manageCollisions(body1, body2);
+        collisionController.startContact(body1, body2);
         // Call CollisionController to handle collisions
     }
 
@@ -561,7 +569,13 @@ public class GameController implements Screen, ContactListener {
      *
      * This method is called when two objects cease to touch.
      */
-    public void endContact(Contact contact) {}
+    public void endContact(Contact contact) {
+        Body body1 = contact.getFixtureA().getBody();
+        Body body2 = contact.getFixtureB().getBody();
+
+        System.out.println("END CONTACT");
+        collisionController.endContact(body1, body2);
+    }
 
     /**
      * Handles any modifications necessary before collision resolution

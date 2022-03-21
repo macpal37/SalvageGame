@@ -88,8 +88,8 @@ public class ItemModel extends GameObject {
         }
 
         body.setUserData(this);
-        body.setFixedRotation(false);
-        body.setType(BodyDef.BodyType.DynamicBody);
+//        body.setFixedRotation(false);
+//        body.setType(BodyDef.BodyType.DynamicBody);
         return true;
     }
 
@@ -110,17 +110,17 @@ public class ItemModel extends GameObject {
     @Override
     public void draw(GameCanvas canvas) {
 //        body.applyAngularImpulse(1f,false);
-        System.out.println("Mass: " + body.getMass());
+//        System.out.println("Mass: " + body.getMass());
         if (texture != null) {
-
-            canvas.draw(texture, Color.WHITE,origin.x,origin.y,body.getPosition().x,body.getPosition().y,getAngle(),0.5f,0.5f);
+            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),0.25f, 0.25f);
         }
     }
 
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-//        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
+        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
     }
 
     /**

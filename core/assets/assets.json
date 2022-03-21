@@ -3,7 +3,8 @@
 
         "models:diver": "models/diver.png",
         "background:ocean":"background/ocean.png",
-        "models:key": "models/key.png"
+        "models:key": "models/key.png",
+        "models:ping": "models/ping.png",
         "background:wooden_floor":"background/wooden_floor.png",
         "background:wooden_bg":"background/wooden_bg.png"
         },
