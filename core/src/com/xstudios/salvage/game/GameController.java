@@ -13,10 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
-import com.xstudios.salvage.game.models.DiverModel;
-import com.xstudios.salvage.game.models.ItemModel;
-import com.xstudios.salvage.game.models.ItemType;
-import com.xstudios.salvage.game.models.Wall;
+import com.xstudios.salvage.game.models.*;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 
@@ -34,6 +31,9 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion pingTexture;
     /** The texture for dead body */
     protected TextureRegion deadBodyTexture;
+    /** The texture for dead body */
+    protected TextureRegion doorTexture;
+
 
     JsonValue constants;
 
@@ -83,6 +83,8 @@ public class GameController implements Screen, ContactListener {
     protected GameCanvas canvas;
     /** All the objects in the world. */
     protected PooledList<GameObject> objects  = new PooledList<GameObject>();
+
+    protected PooledList<GameObject> aboveObjects  = new PooledList<GameObject>();
     /** Queue for adding objects */
     protected PooledList<GameObject> addQueue = new PooledList<GameObject>();
     /** Listener that will update the player mode when we are done */
@@ -169,6 +171,12 @@ public class GameController implements Screen, ContactListener {
         light = new PointLight(rayHandler,100, Color.BLACK,10,0,0);
         light.setContactFilter((short)1,(short)1,(short)1);
 
+        Filter f = new Filter();
+        f.maskBits = 1;
+        f.groupIndex = 1;
+        f.categoryBits = 1;
+
+        light.setContactFilter(f);
         System.out.println("BG: "+background);
         collisionController = new CollisionController();
         world.setContactListener(this);
@@ -223,9 +231,13 @@ public class GameController implements Screen, ContactListener {
     public void dispose() {
         for(GameObject obj : objects) {
             obj.deactivatePhysics(world);
+        }
+        for(GameObject obj : aboveObjects) {
+            obj.deactivatePhysics(world);
 
 
         }
+        aboveObjects.clear();
         objects.clear();
         addQueue.clear();
         world.dispose();
@@ -254,6 +266,7 @@ public class GameController implements Screen, ContactListener {
         constants =  directory.getEntry( "models:constants", JsonValue.class );
         pingTexture = new TextureRegion(directory.getEntry( "models:ping", Texture.class ));
         wallTexture = new TextureRegion(directory.getEntry( "wall", Texture.class ));
+        doorTexture= new TextureRegion(directory.getEntry( "door", Texture.class ));
         //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
         deadBodyTexture = new TextureRegion(directory.getEntry( "models:dead_body", Texture.class ));
@@ -283,9 +296,19 @@ public class GameController implements Screen, ContactListener {
         objects.add(obj);
         obj.activatePhysics(world);
 
-
     }
 
+    /**
+     * Immediately adds the object to the physics world
+     *
+     * param obj The object to add
+     */
+    protected void addAboveObject(GameObject obj) {
+        assert inBounds(obj) : "Object is not in bounds";
+        aboveObjects.add(obj);
+        obj.activatePhysics(world);
+
+    }
     /**
      * Returns true if the object is in bounds.
      *
@@ -306,7 +329,9 @@ public class GameController implements Screen, ContactListener {
         for(GameObject obj : objects) {
             obj.deactivatePhysics(world);
         }
-
+        for(GameObject obj : aboveObjects) {
+            obj.deactivatePhysics(world);
+        }
 
 
         world.setContactListener(this);
@@ -373,6 +398,18 @@ public class GameController implements Screen, ContactListener {
                 {-50.0f, 15.0f, 60.0f, 15.0f, 60.0f, 14.5f, -50.0f, 14.5f},
                 {41.0f, 5.0f, 42.0f, 05.0f, 42.0f, 25.0f, 40.0f, 25.0f}};
 
+        float[] doorVerts =  {30.0f, 5.0f, 32.0f, 05.0f, 32.0f, 25.0f, 30.0f, 25.0f};
+        Door door = new Door(doorVerts,0,0,key);
+        door.setBodyType(BodyDef.BodyType.StaticBody);
+        door.setDensity(0);
+        door.setFriction(0.4f);
+        door.setRestitution(0.1f);
+        door.setDrawScale(scale);
+        door.setTexture(doorTexture);
+        door.setDrawScale(scale);
+        door.setName("door");
+        addAboveObject(door);
+
         for (int ii = 0; ii < wallVerts.length; ii++) {
             Wall obj;
             obj = new Wall(wallVerts[ii], 0, 0);
@@ -435,7 +472,7 @@ public class GameController implements Screen, ContactListener {
      * @param dt	Number of seconds since last animation frame
      */
     public void update(float dt) {
-        rayHandler.update();
+
 //        rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(32f),cameraController.
 //                        getCamera().position.x,cameraController.getCamera().position.y,
 //                cameraController.getCamera().viewportWidth*100,cameraController.getCamera().viewportHeight*100);
@@ -523,6 +560,18 @@ public class GameController implements Screen, ContactListener {
                 obj.update(dt);
             }
         }
+        iterator = aboveObjects.entryIterator();
+        while (iterator.hasNext()) {
+            PooledList<GameObject>.Entry entry = iterator.next();
+            GameObject obj = entry.getValue();
+            if (obj.isRemoved()) {
+                obj.deactivatePhysics(world);
+                entry.remove();
+            } else {
+                // Note that update is called last!
+                obj.update(dt);
+            }
+        }
     }
 
     /**
@@ -552,16 +601,21 @@ public class GameController implements Screen, ContactListener {
             displayFont,
             cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
             cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
+        rayHandler.updateAndRender();
+//        rayHandler.update();
+//        rayHandler.render();
 
-
+        for(GameObject obj : aboveObjects) {
+            obj.draw(canvas);
+        }
         canvas.end();
-
+//
             canvas.beginDebug();
             for(GameObject obj : objects) {
                 obj.drawDebug(canvas);
             }
             canvas.endDebug();
-        rayHandler.render();
+
     }
 
     /**

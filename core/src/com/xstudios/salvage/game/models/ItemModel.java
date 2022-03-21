@@ -82,12 +82,31 @@ public class ItemModel extends GameObject {
         releaseFixtures();
 
         // Create the fixture
-        fixture.shape = shape;
-        fixture.filter.maskBits = 1;
+
+
+        System.out.println("BODY: "+body);
+
+        fixture.filter.maskBits = 1; fixture.filter.groupIndex = 1;
+        fixture.filter.categoryBits = 1;
         geometry = body.createFixture(fixture);
         markDirty(false);
     }
 
+//    public boolean activatePhysics(World world) {
+////         Make a body, if possible
+//        bodyinfo.active = true;
+//        body = world.createBody(bodyinfo);
+//        body.setUserData(this);
+//
+////         Only initialize if a body was created.
+//        if (body != null) {
+//            createFixtures();
+//            return true;
+//        }
+//
+//        bodyinfo.active = false;
+//        return false;
+//    }
     public boolean activatePhysics(World world) {
 
         if (!super.activatePhysics(world)) {
