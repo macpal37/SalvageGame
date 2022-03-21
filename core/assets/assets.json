@@ -5,6 +5,7 @@
     "background:ocean":"background/ocean.png",
     "models:key": "models/key.png",
     "models:ping": "models/ping.png",
+    "models:dead_body": "models/dead_body.png",
 
     "wall": {
       "file":"background/wooden_bg.png",

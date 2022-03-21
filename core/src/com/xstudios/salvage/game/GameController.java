@@ -28,6 +28,8 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion background;
     /** The texture for ping */
     protected TextureRegion pingTexture;
+    /** The texture for dead body */
+    protected TextureRegion deadBodyTexture;
 
     JsonValue constants;
 
@@ -43,6 +45,7 @@ public class GameController implements Screen, ContactListener {
     protected DiverModel diver;
 
     protected ItemModel key;
+    protected ItemModel dead_body;
 
     /** Camera centered on the player */
     protected CameraController cameraController;
@@ -230,6 +233,7 @@ public class GameController implements Screen, ContactListener {
         wallTexture = new TextureRegion(directory.getEntry( "wall", Texture.class ));
         //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
+        deadBodyTexture = new TextureRegion(directory.getEntry( "models:dead_body", Texture.class ));
     }
 
     /**
@@ -304,6 +308,17 @@ public class GameController implements Screen, ContactListener {
         key.setGravityScale(.01f);
 
         addObject(key);
+
+        dead_body = new ItemModel(constants.get("dead_body"),deadBodyTexture.getRegionWidth(),
+                deadBodyTexture.getRegionHeight(), ItemType.DEAD_BODY, 0);
+
+        dead_body.setTexture(deadBodyTexture);
+        dead_body.setDrawScale(scale);
+        dead_body.setName("dead_body");
+        dead_body.setGravityScale(.01f);
+
+        addObject(dead_body);
+
         //add a wall
 
         float[][] wallVerts={
@@ -400,11 +415,12 @@ public class GameController implements Screen, ContactListener {
 
         // do the ping
         diver.setPing(input.didPing());
-        if (input.didPing()){
-            diver.setPingDirection(new Vector2(3,3));
-        }
+//        if (input.didPing()){
+            diver.setPingDirection(dead_body.getPosition());
+//        }
         diver.setPickUpOrDrop(input.getOrDropObject());
         diver.setItem();
+        key.setCarried(diver.carryingItem());
 
         // decrease oxygen from movement
         if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {

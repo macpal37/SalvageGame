@@ -158,8 +158,12 @@ public class DiverModel extends GameObject {
      * @param bodypos the ping direction for drawing purposes.
      */
     public void setPingDirection(Vector2 bodypos) {
-        pingDirection.set(bodypos).sub(getPosition());
+        pingDirection.set(getPosition()).sub(bodypos);//.sub(texture.getRegionWidth()/2f + body_width, texture.getRegionHeight()/2f + body_height);
+//        if(faceRight) {
+//            pingDirection.sub(texture.getRegionWidth(), texture.getRegionHeight());
+//        }
         pingDirection.nor();
+        pingDirection.scl(getTexture().getRegionWidth());
     }
 
     public void setPing(boolean p) {
@@ -213,7 +217,7 @@ public class DiverModel extends GameObject {
         }
         if(ping || ping_cooldown > 0) {
             canvas.draw(pingTexture, Color.WHITE,origin.x + pingDirection.x,
-            origin.y + pingDirection.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
+            origin.y + pingDirection.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),0.25f,0.25f);
             ping_cooldown--;
         }
     }
@@ -301,6 +305,15 @@ public class DiverModel extends GameObject {
         if (current_item != null) {
             current_item.setVX(getVX());
             current_item.setVY(getVY());
+//            current_item.setX(getX()+ 2);
+//            current_item.setY(getY()+2);
+//            current_item.setVerticalMovement(getVerticalMovement());
+//            current_item.setHorizontalMovement(getHorizontalMovement());
+//            current_item.applyForce();
+            System.out.println("X POS: " + current_item.getX());
+            System.out.println("Y POS: " + current_item.getY());
+            System.out.println("DIVER X POS: " + getX());
+            System.out.println("DIVER Y POS: " + getY());
         }
 
     }
