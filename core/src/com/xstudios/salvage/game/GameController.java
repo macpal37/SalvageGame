@@ -81,6 +81,8 @@ public class GameController implements Screen, ContactListener {
     /** Whether or not debug mode is active */
     private boolean debug;
 
+    private Vector2 forceCache;
+
 
     //sample wall to get rid of later
     public float[][] wall_indices={{16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
@@ -136,6 +138,7 @@ public class GameController implements Screen, ContactListener {
         // TODO: oxygen rate should be a parameter loaded from a json
         passiveOxygenRate = -.01f;
         activeOxygenRate = -.02f;
+        forceCache = new Vector2(0, 0);
 
         System.out.println("BG: "+background);
     }
@@ -367,10 +370,36 @@ public class GameController implements Screen, ContactListener {
      * @param dt	Number of seconds since last animation frame
      */
     public void update(float dt) {
-        // apply movement
         InputController input = InputController.getInstance();
-        diver.setHorizontalMovement(input.getHorizontal() *diver.getForce());
-        diver.setVerticalMovement(input.getVertical() *diver.getForce());
+
+        forceCache.x = input.getHorizontal() *diver.getForce();
+        forceCache.y = input.getVertical() *diver.getForce();
+
+        // kicking off of an obstacle
+//        System.out.println("Kicked: " + input.didKickOff());
+//        System.out.println("isTouchingObstacle: "f + diver
+//        .isTouchingObstacle());
+//        System.out.println("isLatchedOn: " + diver.isLatchedOn());
+        if (input.didKickOff() && diver.isTouchingObstacle() && !diver.isLatchedOn()) {
+            // set velocity and forces to 0
+            forceCache.x = 0;
+            forceCache.y = 0;
+            diver.setLinearVelocity(forceCache);
+            diver.setLatchedOn(true);
+        } else if (input.didKickOff() && diver.isTouchingObstacle() && diver.isLatchedOn()) {
+            forceCache.x *= 2;
+            forceCache.y *= 2;
+            diver.setLatchedOn(false);
+        } else if (diver.isLatchedOn()) {
+            // rotate the diver to face the direction of the arrow keys
+            forceCache.x = 0;
+            forceCache.y = 0;
+            diver.setLinearVelocity(forceCache);
+        }
+
+        // apply movement
+        diver.setHorizontalMovement(forceCache.x);
+        diver.setVerticalMovement(forceCache.y);
 
         diver.applyForce();
 
@@ -458,6 +487,12 @@ public class GameController implements Screen, ContactListener {
             displayFont,
             cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
             cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
+//        canvas.drawText(
+//            "Carrying: " + diver.getItem().getItemType(),
+//            displayFont,
+//            cameraController.getCameraPosition2D().x - canvas.getWidth() / 2 + 50,
+//            cameraController.getCameraPosition2D().y
+//                - canvas.getHeight() / 2 + 50 + displayFont.getAscent());
 
         canvas.end();
 
@@ -597,8 +632,12 @@ public class GameController implements Screen, ContactListener {
     public void beginContact(Contact contact) {
         Body body1 = contact.getFixtureA().getBody();
         Body body2 = contact.getFixtureB().getBody();
-
+        System.out.println("Contact");
         // Call CollisionController to handle collisions
+        if (body1.getUserData() == diver || body2.getUserData() == diver) {
+            System.out.println("body collided");
+            diver.setTouchingObstacle(true);
+        }
     }
 
     /**
@@ -606,7 +645,15 @@ public class GameController implements Screen, ContactListener {
      *
      * This method is called when two objects cease to touch.
      */
-    public void endContact(Contact contact) {}
+    public void endContact(Contact contact) {
+        Body body1 = contact.getFixtureA().getBody();
+        Body body2 = contact.getFixtureB().getBody();
+
+        // Call CollisionController to handle collisions
+        if (body1.getUserData() == diver || body2.getUserData() == diver) {
+            diver.setTouchingObstacle(false);
+        }
+    }
 
     /**
      * Handles any modifications necessary before collision resolution

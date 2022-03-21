@@ -46,6 +46,10 @@ public class DiverModel extends GameObject {
     private float oxygenLevel;
     private float MAX_OXYGEN = 100;
 
+    private boolean isTouchingObstacle;
+    /** if the player is currently latched onto a wall */
+    private boolean latchedOn;
+
     // ======================== CONSTRUCTORS ================================
     /**
      *
@@ -245,7 +249,7 @@ public class DiverModel extends GameObject {
             return;
         }
         if (getHorizontalMovement() == 0f) {
-            System.out.println("VX: " + body.getLinearVelocity().x);
+//            System.out.println("VX: " + body.getLinearVelocity().x);
             forceCache.x = -getDamping()*getVX();
             body.applyForce(forceCache,getPosition(),true);
         }
@@ -308,5 +312,28 @@ public class DiverModel extends GameObject {
     public void changeOxygenLevel(float delta) {
         float updatedOxygen = oxygenLevel + delta;
         oxygenLevel = Math.max(Math.min(updatedOxygen, MAX_OXYGEN), 0);
+    }
+
+    public boolean isTouchingObstacle() {
+        return isTouchingObstacle;
+    }
+
+    public void setTouchingObstacle(boolean isTouching) {
+        isTouchingObstacle = isTouching;
+    }
+    /**
+     *
+     * @return whether the player has latched onto the wall
+     */
+    public boolean isLatchedOn() {
+        return latchedOn;
+    }
+
+    /**
+     *
+     * @param latched used to set whether the player has latched onto somethings
+     */
+    public void setLatchedOn(boolean latched) {
+        latchedOn = latched;
     }
 }

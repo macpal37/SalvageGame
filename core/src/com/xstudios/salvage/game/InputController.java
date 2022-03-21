@@ -15,6 +15,7 @@ package com.xstudios.salvage.game;
  */
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.*;
 
 import com.badlogic.gdx.utils.Array;
@@ -38,6 +39,9 @@ public class InputController {
     /** did we ping the body? */
     private boolean pingPressed;
     private boolean pingPrevious;
+
+    /** do we want to grab onto the wall? */
+    private boolean kickOff;
 
     /**
      * Return the singleton instance of the input controller
@@ -123,6 +127,13 @@ public class InputController {
      */
     public boolean didPing() {
         return pingPressed && !pingPrevious;
+    }
+
+    /**
+     * @return true when the player is trying to grab or kick off a wall
+     */
+    public boolean didKickOff() {
+        return kickOff;
     }
 
 
@@ -238,6 +249,8 @@ public class InputController {
 
         carryingObject = Gdx.input.isKeyPressed(pick_up);
         pingPressed = Gdx.input.isKeyPressed(ping);
+
+        kickOff = Gdx.input.isKeyPressed(Keys.SPACE);
     }
 
 
