@@ -79,6 +79,14 @@ public abstract class GameObject extends GObject{
             super.setBodyType(value);
         }
     }
+    /**
+     * Sets the user data for a Box2d body,
+     * used to determine what object type a body is
+     */
+    public void setUserData(Object userData){
+        body.setUserData(userData);
+    }
+
 
     /**
      * Returns the current position for this physics body

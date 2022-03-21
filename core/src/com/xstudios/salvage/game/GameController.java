@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.models.DiverModel;
+import com.xstudios.salvage.game.models.Door;
 import com.xstudios.salvage.game.models.Wall;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
@@ -318,6 +319,7 @@ public class GameController implements Screen, ContactListener {
 
         diver = new DiverModel(constants.get("diver"), diverWidth, diverHeight);
         diver.setTexture(diverTexture);
+        diver.setName("Diver");
         addObject(diver);
 
 
@@ -598,7 +600,24 @@ public class GameController implements Screen, ContactListener {
         Body body1 = contact.getFixtureA().getBody();
         Body body2 = contact.getFixtureB().getBody();
 
+        Door door=null;
+
         // Call CollisionController to handle collisions
+        if(body1.getUserData() instanceof DiverModel || body2.getUserData() instanceof DiverModel){
+            if(body1.getUserData() instanceof Door){
+                door=(Door)body1.getUserData();
+            }
+            else if (body2.getUserData() instanceof Door){
+                door=(Door)body2.getUserData();
+            }
+            if(door !=null){
+                if (diver.getItem().equals(door.getKey())){
+                    door.setAwake(false);
+
+                }
+            }
+        }
+
     }
 
     /**
