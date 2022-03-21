@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -35,21 +36,22 @@ public class CameraController {
     public CameraController(float width, float height){
         aspectRatio = width/height;
         camera = new OrthographicCamera();
-//        viewport = new ScreenViewport(width*aspectRatio,height,camera)
-        viewport = new ScreenViewport(camera);
+        viewport = new ScreenViewport();
+//        viewport = new FillViewport(width*aspectRatio,height,camera);
         viewport.apply();
         cameraPosition = new Vector3(width/2,height/2,0);
-        cameraPosition2D = new Vector2(0, 0);
+        cameraPosition2D = new Vector2(500, 500);
         camera.position.scl(cameraPosition);
         cameraSpeed = DEFAULT_CAMERA_SPEED;
+
     }
 
     public CameraController(float x, float y, float width, float height){
         aspectRatio = width/height;
         camera = new OrthographicCamera();
-        viewport = new ExtendViewport(width*aspectRatio,height,camera);
+        viewport = new FillViewport(width*aspectRatio,height,camera);
         viewport.apply();
-        cameraPosition = new Vector3(x,y,0);
+        cameraPosition = new Vector3(x,y+100,0);
         cameraPosition2D = new Vector2(0, 0);
         camera.position.scl(cameraPosition);
     }

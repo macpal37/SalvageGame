@@ -1,7 +1,10 @@
 package com.xstudios.salvage.game;
 
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -14,6 +17,7 @@ import com.xstudios.salvage.game.models.DiverModel;
 import com.xstudios.salvage.game.models.Wall;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
+
 import java.util.Iterator;
 
 public class GameController implements Screen, ContactListener {
@@ -82,6 +86,9 @@ public class GameController implements Screen, ContactListener {
     private boolean debug;
 
 
+//    private LightController lightController;
+
+
     //sample wall to get rid of later
     public float[][] wall_indices={{16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
             1.0f,  0.0f,  0.0f,  0.0f,  0.0f, 18.0f},
@@ -116,6 +123,10 @@ public class GameController implements Screen, ContactListener {
         this(new Rectangle(0,0,width,height), new Vector2(0,gravity));
     }
 
+
+    private PointLight light ;
+    private RayHandler rayHandler;
+
     /**
      * Creates a new game world
      *
@@ -132,12 +143,14 @@ public class GameController implements Screen, ContactListener {
         this.scale = new Vector2(1,1);
         debug  = false;
         active = false;
-
         // TODO: oxygen rate should be a parameter loaded from a json
         passiveOxygenRate = -.01f;
         activeOxygenRate = -.02f;
+        rayHandler = new RayHandler(world);
+        rayHandler.setAmbientLight(.01f);
 
-        System.out.println("BG: "+background);
+        light = new PointLight(rayHandler,100, Color.BLACK,10,0,0);
+        light.setContactFilter((short)1,(short)1,(short)1);
     }
 
     /**
@@ -163,6 +176,10 @@ public class GameController implements Screen, ContactListener {
     public void setCameraController(  CameraController cameraController){
         this.cameraController = cameraController;
         cameraController.setBounds(0,0,5400*2/5,3035*2/5);
+
+
+
+
     }
 
     /**
@@ -185,10 +202,13 @@ public class GameController implements Screen, ContactListener {
     public void dispose() {
         for(GameObject obj : objects) {
             obj.deactivatePhysics(world);
+
+
         }
         objects.clear();
         addQueue.clear();
         world.dispose();
+        rayHandler.dispose();
         objects = null;
         addQueue = null;
         bounds = null;
@@ -238,6 +258,8 @@ public class GameController implements Screen, ContactListener {
         assert inBounds(obj) : "Object is not in bounds";
         objects.add(obj);
         obj.activatePhysics(world);
+
+
     }
 
     /**
@@ -261,11 +283,14 @@ public class GameController implements Screen, ContactListener {
             obj.deactivatePhysics(world);
         }
 
-        world = new World(gravity,false);
-        resetLevel();
+        populateLevel();
+        System.out.println("DIVER BODY: "+diver.getBody());
+//        lightController.setBody(diver);
     }
-
-    private void resetLevel() {
+    /**
+     * Lays out the game geography.
+     */
+    private void populateLevel() {
 
         diver = new DiverModel(constants.get("diver"),diverTexture.getRegionWidth(),
             diverTexture.getRegionHeight());
@@ -276,7 +301,8 @@ public class GameController implements Screen, ContactListener {
 
         addObject(diver);
 
-        //add a wall
+        light.setPosition((diver.getX()*diver.getDrawScale().x)/32f,(diver.getY()*diver.getDrawScale().y)/32f);
+
 
         float[][] wallVerts={
             {1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
@@ -307,24 +333,8 @@ public class GameController implements Screen, ContactListener {
 
     }
 
-    /**
-     * Lays out the game geography.
-     */
-    private void populateLevel() {
-        float diverWidth = diverTexture.getRegionWidth();
-        float diverHeight = diverTexture.getRegionHeight();
-
-        // add the diver
-
-        diver = new DiverModel(constants.get("diver"), diverWidth, diverHeight);
-        diver.setTexture(diverTexture);
-        addObject(diver);
 
 
-
-
-
-    }
 
     /**
      * Returns whether to process the update loop
@@ -354,6 +364,8 @@ public class GameController implements Screen, ContactListener {
             reset();
         }
         return true;
+
+
     }
 
     /**
@@ -367,6 +379,12 @@ public class GameController implements Screen, ContactListener {
      * @param dt	Number of seconds since last animation frame
      */
     public void update(float dt) {
+        rayHandler.update();
+//        rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(32f),cameraController.
+//                        getCamera().position.x,cameraController.getCamera().position.y,
+//                cameraController.getCamera().viewportWidth*100,cameraController.getCamera().viewportHeight*100);
+
+        rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
         // apply movement
         InputController input = InputController.getInstance();
         diver.setHorizontalMovement(input.getHorizontal() *diver.getForce());
@@ -390,10 +408,14 @@ public class GameController implements Screen, ContactListener {
 
         if (diver.getBody()!=null){
             cameraController.setCameraPosition(diver.getX()*diver.getDrawScale().x,diver.getY()*diver.getDrawScale().y);
+//
+            light.setPosition((diver.getX()*diver.getDrawScale().x)/40f,(diver.getY()*diver.getDrawScale().y)/40f);
+
         }
 
-//        System.out.println("WORLD GRAVITY: " + world.getGravity());
+
         cameraController.render();
+
     }
 
     /**
@@ -459,6 +481,7 @@ public class GameController implements Screen, ContactListener {
             cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
             cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
 
+
         canvas.end();
 
             canvas.beginDebug();
@@ -466,7 +489,7 @@ public class GameController implements Screen, ContactListener {
                 obj.drawDebug(canvas);
             }
             canvas.endDebug();
-
+        rayHandler.render();
     }
 
     /**

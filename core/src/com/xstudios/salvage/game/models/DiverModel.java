@@ -155,6 +155,8 @@ public class DiverModel extends GameObject {
             body.destroyFixture(geometry);
             geometry = null;
         }
+
+        System.out.println("NOO!!!!");
     }
     protected void createFixtures() {
         if (body == null) {
@@ -162,19 +164,22 @@ public class DiverModel extends GameObject {
         }
 
         releaseFixtures();
-
+        System.out.println("HELPPP!!!!");
         // Create the fixture
         fixture.shape = shape;
+        fixture.filter.categoryBits = 0x001;
+        fixture.filter.groupIndex = 0x001;
+        fixture.filter.maskBits = 0x001;
         geometry = body.createFixture(fixture);
+
         markDirty(false);
     }
 
     @Override
     public void draw(GameCanvas canvas) {
-//        body.applyAngularImpulse(1f,false);
-//        System.out.println("Mass: " + body.getMass());
+
         float effect = faceRight ? 1.0f : -1.0f;
-//        effect =1;
+
         if (texture != null) {
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
 
@@ -245,7 +250,6 @@ public class DiverModel extends GameObject {
             return;
         }
         if (getHorizontalMovement() == 0f) {
-            System.out.println("VX: " + body.getLinearVelocity().x);
             forceCache.x = -getDamping()*getVX();
             body.applyForce(forceCache,getPosition(),true);
         }

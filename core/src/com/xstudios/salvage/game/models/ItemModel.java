@@ -124,8 +124,6 @@ public class ItemModel extends GameObject {
 
     @Override
     public void draw(GameCanvas canvas) {
-//        body.applyAngularImpulse(1f,false);
-        System.out.println("Mass: " + body.getMass());
         if (texture != null) {
 
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,body.getPosition().x,body.getPosition().y,getAngle(),0.5f,0.5f);
