@@ -32,20 +32,8 @@ public class ItemModel extends GameObject {
     private Vector2 movement;
     /** If item is being carried */
     private boolean carried;
-    /** the door that this key unlocks*/
-    private Door door;
-
-    public Door getDoor(){return door;}
-
-    public void addDoor(Door door){
-        this.door=door;
-    }
 
     public ItemModel(JsonValue data, float width, float height, ItemType item_type, int id){
-        this(data,width,height,item_type, id, null);
-    }
-
-    public ItemModel(JsonValue data, float width, float height, ItemType item_type, int id, Door door){
         super(data.get("pos").getFloat(0),
                 data.get("pos").getFloat(1));
 
@@ -72,7 +60,6 @@ public class ItemModel extends GameObject {
         setName(item_type + "" + item_ID);
 
         movement = new Vector2();
-        this.door=door;
     }
     /**
      * Release the fixtures for this body, resetting the shape
