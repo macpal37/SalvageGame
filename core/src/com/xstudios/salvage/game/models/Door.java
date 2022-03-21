@@ -15,10 +15,6 @@ public class Door extends Wall{
 
     public ItemModel getKey(){return key;}
 
-
-
-
-
-
+    public boolean isActive(){return body.isActive();}
 
 }

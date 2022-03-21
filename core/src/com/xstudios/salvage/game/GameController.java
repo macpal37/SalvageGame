@@ -334,6 +334,10 @@ public class GameController implements Screen, ContactListener {
             addObject(obj);
         }
 
+        
+
+
+
     }
 
     /**
