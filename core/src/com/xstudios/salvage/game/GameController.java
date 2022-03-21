@@ -624,26 +624,27 @@ public class GameController implements Screen, ContactListener {
      * @param contact The two bodies that collided
      */
     public void beginContact(Contact contact) {
+
         Body body1 = contact.getFixtureA().getBody();
         Body body2 = contact.getFixtureB().getBody();
 
-        Door door=null;
 
-        // Call CollisionController to handle collisions
-        if(body1.getUserData() instanceof DiverModel || body2.getUserData() instanceof DiverModel){
-            if(body1.getUserData() instanceof Door){
-                door=(Door)body1.getUserData();
-            }
-            else if (body2.getUserData() instanceof Door){
-                door=(Door)body2.getUserData();
-            }
-            if(door !=null){
-                if (diver.getItem().equals(door.getKey())){
-                    door.setAwake(false);
 
-                }
+        if(body1.getUserData() instanceof DiverModel){
+            if(body2.getUserData() instanceof ItemModel){
+                CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
             }
         }
+        else if (body2.getUserData() instanceof DiverModel){
+            if (body1.getUserData() instanceof ItemModel){
+                CollisionController.pickUp(diver, (ItemModel)body1.getUserData());
+            }
+        }
+
+        // ================= CONTACT LISTENER METHODS =============================
+
+
+
 
     }
 
@@ -656,8 +657,19 @@ public class GameController implements Screen, ContactListener {
         Body body1 = contact.getFixtureA().getBody();
         Body body2 = contact.getFixtureB().getBody();
 
+        if(body1.getUserData() instanceof DiverModel){
+            if(body2.getUserData() instanceof ItemModel){
+                CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
+            }
+        }
+        else if (body2.getUserData() instanceof DiverModel){
+            if (body1.getUserData() instanceof ItemModel){
+                CollisionController.pickUp(diver, (ItemModel)body1.getUserData());
+            }
+        }
+
 //        System.out.println("END CONTACT");
-        collisionController.endContact(body1, body2);
+        //collisionController.endContact(body1, body2);
     }
 
     /**
