@@ -185,7 +185,7 @@ public class GameController implements Screen, ContactListener {
 
         light.setContactFilter(f);
         System.out.println("BG: "+background);
-        audioController = new AudioController();
+        audioController = new AudioController(100.0f);
         audioController.intialize();
         collisionController = new CollisionController();
         world.setContactListener(this);
@@ -214,10 +214,6 @@ public class GameController implements Screen, ContactListener {
     public void setCameraController(  CameraController cameraController){
         this.cameraController = cameraController;
         cameraController.setBounds(0,0,5400*2/5,3035*2/5);
-
-
-
-
     }
 
     /**
@@ -573,28 +569,29 @@ public class GameController implements Screen, ContactListener {
             diver.changeOxygenLevel(passiveOxygenRate);
         }
 
-    if (diver.getBody() != null) {
-        cameraController.setCameraPosition(
-            diver.getX() * diver.getDrawScale().x, diver.getY() * diver.getDrawScale().y);
-          //
-        light.setPosition(
-            (diver.getX() * diver.getDrawScale().x) / 40f,
-            (diver.getY() * diver.getDrawScale().y) / 40f);
-        }
+        audioController.update(diver.getOxygenLevel());
 
-        //deactivates unlocked doors
-        if(diver.carryingItem() && diver.getItem().getItemType().equals(ItemType.KEY)){
+        if (diver.getBody() != null) {
+            cameraController.setCameraPosition(
+                diver.getX() * diver.getDrawScale().x, diver.getY() * diver.getDrawScale().y);
+              //
+            light.setPosition(
+                (diver.getX() * diver.getDrawScale().x) / 40f,
+                (diver.getY() * diver.getDrawScale().y) / 40f);
+            }
 
-            for(Door door:doors){
-                if(door.getKey() == diver.getItem()){
-                    System.out.println("HI");
-                    door.setActive(false);
+            //deactivates unlocked doors
+            if(diver.carryingItem() && diver.getItem().getItemType().equals(ItemType.KEY)){
+
+                for(Door door:doors){
+                    if(door.getKey() == diver.getItem()){
+                        System.out.println("HI");
+                        door.setActive(false);
+                    }
                 }
             }
-        }
         // TODO: why wasnt this in marco's code?
         cameraController.render();
-
     }
 
     /**
@@ -690,45 +687,6 @@ public class GameController implements Screen, ContactListener {
 
     }
 
-    /**
-     * Method to ensure that a sound asset is only played once.
-     *
-     * Every time you play a sound asset, it makes a new instance of that sound.
-     * If you play the sounds to close together, you will have overlapping copies.
-     * To prevent that, you must stop the sound before you play it again.  That
-     * is the purpose of this method.  It stops the current instance playing (if
-     * any) and then returns the id of the new instance for tracking.
-     *
-     * @param sound		The sound asset to play
-     * @param soundId	The previously playing sound instance
-     *
-     * @return the new sound instance for this asset.
-     */
-    public long playSound(Sound sound, long soundId) {
-        return playSound( sound, soundId, 1.0f );
-    }
-
-    /**
-     * Method to ensure that a sound asset is only played once.
-     *
-     * Every time you play a sound asset, it makes a new instance of that sound.
-     * If you play the sounds to close together, you will have overlapping copies.
-     * To prevent that, you must stop the sound before you play it again.  That
-     * is the purpose of this method.  It stops the current instance playing (if
-     * any) and then returns the id of the new instance for tracking.
-     *
-     * @param sound		The sound asset to play
-     * @param soundId	The previously playing sound instance
-     * @param volume	The sound volume
-     *
-     * @return the new sound instance for this asset.
-     */
-    public long playSound(Sound sound, long soundId, float volume) {
-        if (soundId != -1) {
-            sound.stop( soundId );
-        }
-        return sound.play(volume);
-    }
 
     /**
      * Called when the Screen is resized.
@@ -865,20 +823,24 @@ public class GameController implements Screen, ContactListener {
         Body body2 = contact.getFixtureB().getBody();
 
 
-
         if(body1.getUserData() instanceof DiverModel){
             if(body2.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
+            }
+            else{
+                audioController.wall_collision(diver.getForce());
             }
         }
         else if (body2.getUserData() instanceof DiverModel){
             if (body1.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel)body1.getUserData());
             }
+            else{
+                audioController.wall_collision(diver.getForce());
+            }
         }
 
         // ================= CONTACT LISTENER METHODS =============================
-
 
 
 
@@ -904,6 +866,8 @@ public class GameController implements Screen, ContactListener {
                     (ItemModel) body1.getUserData());
             }
         }
+
+
     }
     /**
      * Handles any modifications necessary before collision resolution
