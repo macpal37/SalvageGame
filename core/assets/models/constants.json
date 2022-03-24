@@ -19,7 +19,7 @@
 		"shot_cool": 40,
 		"sensor": {
 			"shrink" : 0.6,
-			"height" : 0.05
+			"width" : 1
 		}
 	},
 	"dead_body" : {

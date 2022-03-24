@@ -6,7 +6,8 @@
     "models:key": "models/key.png",
     "models:ping": "models/ping.png",
     "models:dead_body": "models/dead_body.png",
-
+    "models:door_open": "models/door_open.png",
+    "models:door_closed": "models/door_closed.png",
     "wall": {
       "file":"background/wooden_bg.png",
       "wrapU":"repeated",

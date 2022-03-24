@@ -38,10 +38,7 @@ public class LightController {
     }
 DiverModel diver;
     public void setBody(DiverModel diver){
-       System.out.println( diver.getBody().getFixtureList().get(0).getFilterData().groupIndex);
-        System.out.println( diver.getBody().getFixtureList().get(0).getFilterData().categoryBits);
-        System.out.println( diver.getBody().getFixtureList().get(0).getFilterData().maskBits);
-        light.setContactFilter((short) 1,(short)1,(short)1);
+         light.setContactFilter((short) 1,(short)1,(short)1);
         light.setPosition(diver.getX()*diver.getDrawScale().x,diver.getY()*diver.getDrawScale().y);
         this.diver = diver;
     }

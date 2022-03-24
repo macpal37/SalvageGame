@@ -20,9 +20,9 @@ public class AudioController {
 
     public AudioController(float initial_oxygen){
         audio = Audio.init();
-        SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("../../core/assets/audio/heartbeat.wav"));
-        wall_collision = WaveLoader.load(Gdx.files.internal("../../core/assets/audio/wall_collision.wav"));
-        background = new StreamedSoundSource(Gdx.files.internal("../../core/assets/audio/background_music.ogg"));
+        SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("audio/heartbeat.wav"));
+        wall_collision = WaveLoader.load(Gdx.files.internal("audio/wall_collision.wav"));
+        background = new StreamedSoundSource(Gdx.files.internal("audio/background_music.ogg"));
         heartbeat = audio.obtainSource(heartbeat_wav);
         background.setLooping(true);
         heartbeat.setLooping(true);
