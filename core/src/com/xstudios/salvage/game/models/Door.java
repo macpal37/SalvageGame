@@ -45,9 +45,8 @@ public class Door extends Wall {
                 canvas.draw(region, Color.WHITE, 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
                 } else {
                     canvas.draw(openDoor, Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
-                canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
                 canvas.draw(region, Color.WHITE, 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
-                canvas.setBlendState(GameCanvas.BlendState.ALPHA_BLEND);
+
                 }
             }
         }
@@ -65,7 +64,9 @@ protected void createFixtures() {
     // Create the fixtures
     for(int ii = 0; ii < shapes.length; ii++) {
         fixture.shape = shapes[ii];
-        fixture.filter.groupIndex = -1;
+        fixture.filter.categoryBits = 0x002;
+        fixture.filter.groupIndex = 0x004;
+        fixture.filter.maskBits = -1;
         geoms[ii] = body.createFixture(fixture);
 
     }

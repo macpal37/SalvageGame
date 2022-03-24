@@ -5,9 +5,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
+import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.PooledList;
+import sun.security.x509.OtherName;
 
 import java.util.ArrayList;
 
@@ -58,12 +60,17 @@ public class DiverModel extends GameObject {
     /** Diver Sensor Used to pick up items and open doors*/
 
     /** Identifier to allow us to track the sensor in ContactListener */
-    private final String sensorName;
+    private final String sensorNameRight;
+    private final String sensorNameLeft;
     /** The physics shape of this object */
-    private PolygonShape sensorShape;
-    /** Whether you are touching another GameObject */
-    private boolean isTouching;
+    private PolygonShape sensorShapeRight;
+    private PolygonShape sensorShapeLeft;
 
+    /** Whether you are touching another GameObject */
+    private ArrayList<GObject> touchingRight;
+    private ArrayList<GObject> touchingLeft;
+//    private boolean isTouchingRight;
+//    private boolean isTouchingLeft;
 
     /** The initializing data (to avoid magic numbers) */
     private final JsonValue data;
@@ -75,6 +82,9 @@ public class DiverModel extends GameObject {
     private Vector2 dimension;
     /** A cache value for when the user wants to access the dimensions */
     private Vector2 sizeCache;
+
+    private Vector2 directionCache;
+
 
     // ======================== CONSTRUCTORS ================================
     /**
@@ -103,11 +113,16 @@ public class DiverModel extends GameObject {
 
         dimension = new Vector2();
         sizeCache = new Vector2();
-        sensorName = "DiverSensor";
+
+
+        sensorNameRight = "DiverSensorRight";
+        sensorNameLeft = "DiverSensorLeft";
+        touchingRight = new ArrayList<>();
+        touchingLeft = new ArrayList<>();
         // Initialize
         faceRight = true;
-        resize(width/4, height/4);
-        resize(1, 1);
+        setDimension(1,1);
+        directionCache  = new Vector2( (getWidth()),0);
         setMass(1);
         resetMass();
         setName("diver");
@@ -143,6 +158,10 @@ public class DiverModel extends GameObject {
         movement.y = value;
     }
 
+    private boolean switchDir = false;
+
+
+
     public void setHorizontalMovement(float value) {
         movement.x = value;
         // Change facing if appropriate
@@ -151,6 +170,13 @@ public class DiverModel extends GameObject {
         } else if (movement.x > 0) {
             faceRight = true;
         }
+//        if (switchDir == faceRight) {
+//            if (faceRight)
+//            System.out.println("Right!!");
+//            else
+//                System.out.println("Left!!");
+//
+//        }
     }
     /**
      * Sets the object texture for drawing purposes.
@@ -199,6 +225,7 @@ public class DiverModel extends GameObject {
         }
     }
 
+
     /**
      * Returns the name of the ground sensor
      *
@@ -207,7 +234,20 @@ public class DiverModel extends GameObject {
      * @return the name of the ground sensor
      */
     public String getSensorName() {
-        return sensorName;
+
+       if(faceRight){
+           return getSensorNameRight();
+       }else{
+           return  getSensorNameLeft();
+       }
+
+    }
+
+    public String getSensorNameRight() {
+        return sensorNameRight;
+    }
+    public String getSensorNameLeft() {
+        return sensorNameLeft;
     }
     public boolean activatePhysics(World world) {
 
@@ -216,19 +256,38 @@ public class DiverModel extends GameObject {
         }
         body.setUserData(this);
 
-//        Vector2 sensorCenter = new Vector2(0, -getHeight() / 2);
-//        FixtureDef sensorDef = new FixtureDef();
-//        sensorDef.density = data.getFloat("density",0);
-//        sensorDef.isSensor = true;
-//        sensorShape = new PolygonShape();
-//        JsonValue sensorjv = data.get("sensor");
-//        sensorShape.setAsBox(sensorjv.getFloat("shrink",0)*getWidth()/2.0f,
-//                sensorjv.getFloat("height",0), sensorCenter, 0.0f);
-//        sensorDef.shape = sensorShape;
-//
-//        // Ground sensor to represent our feet
-//        Fixture sensorFixture = body.createFixture( sensorDef );
-//        sensorFixture.setUserData(getSensorName());
+
+        JsonValue sensorjv = data.get("sensor");
+        FixtureDef sensorDef = new FixtureDef();
+        sensorDef.density = data.getFloat("density",0);
+        sensorDef.isSensor = true;
+        sensorDef.filter.groupIndex = -1;
+        sensorShapeRight = new PolygonShape();
+
+        sensorShapeRight.setAsBox( sensorjv.getFloat("width",0),sensorjv.getFloat("shrink",0)*getWidth()/2.0f,
+                new Vector2(getWidth()+getWidth()/2,0), 0.0f);
+        sensorDef.shape = sensorShapeRight;
+//        sensorDef.filter.groupIndex=-1;
+//        sensorDef.filter.maskBits =  0x0004;
+//        sensorDef.filter.categoryBits =  0x0002;
+        // Ground sensor to represent our feet
+        Fixture sensorFixture = body.createFixture( sensorDef );
+        sensorFixture.setUserData(getSensorNameRight());
+
+
+
+        FixtureDef sensorDef2 = new FixtureDef();
+        sensorDef2.density = data.getFloat("density",0);
+        sensorDef2.isSensor = true;
+        sensorDef2.filter.groupIndex = -1;
+        sensorShapeLeft = new PolygonShape();
+
+        sensorShapeLeft.setAsBox( sensorjv.getFloat("width",0),sensorjv.getFloat("shrink",0)*getWidth()/2.0f,
+                new Vector2(-getWidth()-getWidth()/2,0), 0.0f);
+        sensorDef2.shape = sensorShapeLeft;
+        // Ground sensor to represent our feet
+        Fixture sensorFixture2 = body.createFixture( sensorDef2 );
+        sensorFixture2.setUserData(getSensorNameLeft());
         return true;
     }
     /**
@@ -241,8 +300,6 @@ public class DiverModel extends GameObject {
             body.destroyFixture(geometry);
             geometry = null;
         }
-
-        System.out.println("NOO!!!!");
     }
     protected void createFixtures() {
         if (body == null) {
@@ -250,12 +307,11 @@ public class DiverModel extends GameObject {
         }
 
         releaseFixtures();
-        System.out.println("HELPPP!!!!");
         // Create the fixture
         fixture.shape = shape;
-        fixture.filter.categoryBits = 0x001;
-        fixture.filter.groupIndex = 0x001;
-        fixture.filter.maskBits = 0x001;
+        fixture.filter.categoryBits = 0x002;
+        fixture.filter.groupIndex = 0x004;
+        fixture.filter.maskBits = -1;
         geometry = body.createFixture(fixture);
 
         markDirty(false);
@@ -375,8 +431,9 @@ public class DiverModel extends GameObject {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-//        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
-//        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
+        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        canvas.drawPhysics(sensorShapeRight,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        canvas.drawPhysics(sensorShapeLeft,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
 
     /**
@@ -448,6 +505,35 @@ public class DiverModel extends GameObject {
         potential_items.clear();
 
     }
+
+    /** Player Sensor Stuff*/
+    public void addTouching(String name,GObject obj) {
+
+        if(name.equals(sensorNameRight)&&!touchingRight.contains(obj))
+        touchingRight.add(obj);
+    else if(name.equals(sensorNameLeft)&&!touchingLeft.contains(obj))
+            touchingLeft.add(obj);
+}
+    public void removeTouching(String name,GObject obj) {
+        if(name.equals(sensorNameRight))
+            touchingRight.remove(obj);
+        else if(name.equals(sensorNameLeft))
+            touchingLeft.remove(obj);
+
+    }
+
+
+
+    public boolean isTouching() {
+        System.out.println("Right: "+touchingRight.size());
+        System.out.println("Left: "+touchingLeft.size());
+
+        if (faceRight)
+            return touchingRight.size()>0;
+            else return  touchingLeft.size()>0;
+    }
+
+
 
     /**
      * Sets the dimensions of this box

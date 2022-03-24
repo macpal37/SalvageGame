@@ -178,11 +178,12 @@ public class GameController implements Screen, ContactListener {
 
 
         light = new PointLight(rayHandler,100, Color.BLACK,10,0,0);
-        light.setContactFilter((short)1,(short)1,(short)1);
+//        light.setContactFilter((short)1,(short)1,(short)1);
 
         Filter f = new Filter();
-
-        f.groupIndex = -1;
+        f.categoryBits = 0x0002;
+        f.maskBits =0x0004;
+        f.groupIndex = 1;
 
 
         light.setContactFilter(f);
@@ -191,6 +192,7 @@ public class GameController implements Screen, ContactListener {
         audioController.intialize();
         collisionController = new CollisionController();
         world.setContactListener(this);
+
     }
 
     /**
@@ -307,17 +309,7 @@ public class GameController implements Screen, ContactListener {
 
     }
 
-    /**
-     * Immediately adds the object to the physics world
-     *
-     * param obj The object to add
-     */
-    protected void addAboveObject(GameObject obj) {
-        assert inBounds(obj) : "Object is not in bounds";
-        aboveObjects.add(obj);
-        obj.activatePhysics(world);
 
-    }
     /**
      * Returns true if the object is in bounds.
      *
@@ -336,9 +328,6 @@ public class GameController implements Screen, ContactListener {
     public void reset() {
         Vector2 gravity = new Vector2(world.getGravity() );
         for(GameObject obj : objects) {
-            obj.deactivatePhysics(world);
-        }
-        for(GameObject obj : aboveObjects) {
             obj.deactivatePhysics(world);
         }
 
@@ -537,6 +526,8 @@ public class GameController implements Screen, ContactListener {
                     }
                 }
             }
+//            if (diver.isTouching())
+//                System.out.println("TOUCH!!!");
         // TODO: why wasnt this in marco's code?
         cameraController.render();
     }
@@ -621,17 +612,15 @@ public class GameController implements Screen, ContactListener {
                 cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
                 cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
         canvas.end();
-//
+
             canvas.beginDebug();
             for(GameObject obj : objects) {
                 if (!(obj instanceof Wall)) {
                     obj.drawDebug(canvas);
                 }
             }
-
-
             canvas.endDebug();
-
+        diver.isTouching();
     }
 
 
@@ -710,86 +699,66 @@ public class GameController implements Screen, ContactListener {
         this.listener = listener;
     }
 
-//    boolean nearItem;
-    // ================= CONTACT LISTENER METHODS =============================
-    /**
-     * Callback method for the start of a collision
-     *
-     * This method is called when we first get a collision between two objects.  We use
-     * this method to test if it is the "right" kind of collision.  In particular, we
-     * use it to test if we made it to the win door.
-     *
-     * @param contact The two bodies that collided
-     */
-//    public void beginContact(Contact contact) {
-//
-//        Fixture fix1 = contact.getFixtureA();
-//        Fixture fix2 = contact.getFixtureB();
-//
-//        Body body1 = fix1.getBody();
-//        Body body2 = fix2.getBody();
-//
-//        Object fd1 = fix1.getUserData();
-//        Object fd2 = fix2.getUserData();
-//
-//        try {
-//            GameObject bd1 = (GameObject)body1.getUserData();
-//            GameObject bd2 = (GameObject)body2.getUserData();
-//
-////        if (pickedUp)
-////            System.out.println("jkabdabdjhkabsdfkhjbasdkfhj");
-//
-//            // See if we have landed on the ground.
-//
-//
-//            // Check for win condition
-//            if (bd1 == diver   && bd2 == key) {
-////
-//                nearItem = true;
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 
-    /**
-     * Callback method for the start of a collision
-     *
-     * This method is called when two objects cease to touch.
-     */
-//    public void endContact(Contact contact) {
-//        Body body1 = contact.getFixtureA().getBody();
-//        Body body2 = contact.getFixtureB().getBody();
-//        nearItem = false;
-////        System.out.println("END CONTACT");
-////        collisionController.endContact(body1, body2);
-//    }
+    // ================= CONTACT LISTENER METHODS =============================
+
     public void beginContact(Contact contact) {
 
-        Body body1 = contact.getFixtureA().getBody();
-        Body body2 = contact.getFixtureB().getBody();
+        Fixture fix1 = contact.getFixtureA();
+        Fixture fix2 = contact.getFixtureB();
 
+        Body body1 = fix1.getBody();
+        Body body2 = fix2.getBody();
+
+        Object fd1 = fix1.getUserData();
+        Object fd2 = fix2.getUserData();
+
+        try {
+            GObject bd1 = (GObject)body1.getUserData();
+            GObject bd2 = (GObject)body2.getUserData();
+
+            if ((diver.getSensorNameLeft().equals(fd2) && diver != bd1) ||
+                    (diver.getSensorNameLeft().equals(fd1) && diver != bd2)) {
+
+               if(diver != bd1)
+                diver.addTouching(diver.getSensorNameLeft(),bd1);
+               else
+                   diver.addTouching(diver.getSensorNameLeft(),bd2);
+
+            }
+            if ((diver.getSensorNameRight().equals(fd2) && diver != bd1) ||
+                    (diver.getSensorNameRight().equals(fd1) && diver != bd2)) {
+
+                if(diver != bd1)
+                    diver.addTouching(diver.getSensorNameRight(),bd1);
+                else
+                    diver.addTouching(diver.getSensorNameRight(),bd2);
+
+            }
+
+
+            if(bd1 instanceof DiverModel && !diver.getSensorNameRight().equals(fd1) && !diver.getSensorNameLeft().equals(fd1)  && bd2 instanceof Wall){
+                audioController.wall_collision(diver.getForce());
+            }
 
         if(body1.getUserData() instanceof DiverModel){
             if(body2.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
             }
-            else{
-                audioController.wall_collision(diver.getForce());
-            }
+
         }
         else if (body2.getUserData() instanceof DiverModel){
             if (body1.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel)body1.getUserData());
             }
-            else{
-                audioController.wall_collision(diver.getForce());
-            }
+
         }
 
-        // ================= CONTACT LISTENER METHODS =============================
 
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -799,11 +768,40 @@ public class GameController implements Screen, ContactListener {
      * This method is called when two objects cease to touch.
      */
     public void endContact(Contact contact) {
-        Body body1 = contact.getFixtureA().getBody();
-        Body body2 = contact.getFixtureB().getBody();
+        Fixture fix1 = contact.getFixtureA();
+        Fixture fix2 = contact.getFixtureB();
 
+        Body body1 = fix1.getBody();
+        Body body2 = fix2.getBody();
+
+        Object fd1 = fix1.getUserData();
+        Object fd2 = fix2.getUserData();
+
+       try{
+           GObject bd1 = (GObject)body1.getUserData();
+           GObject bd2 = (GObject)body2.getUserData();
+
+           if ((diver.getSensorNameLeft().equals(fd2) && diver != bd1) ||
+                   (diver.getSensorNameLeft().equals(fd1) && diver != bd2)) {
+
+               if(diver != bd1)
+                   diver.removeTouching(diver.getSensorNameLeft(),bd1);
+               else
+                   diver.removeTouching(diver.getSensorNameLeft(),bd2);
+
+           }
+           if ((diver.getSensorNameRight().equals(fd2) && diver != bd1) ||
+                   (diver.getSensorNameRight().equals(fd1) && diver != bd2)) {
+
+               if(diver != bd1)
+                   diver.removeTouching(diver.getSensorNameRight(),bd1);
+               else
+                   diver.removeTouching(diver.getSensorNameRight(),bd2);
+
+           }
         if (body1.getUserData() instanceof DiverModel) {
-            if (body2.getUserData() instanceof ItemModel) {
+
+            if ( body2.getUserData() instanceof ItemModel) {
                 CollisionController.putDown(diver,
                     (ItemModel) body2.getUserData());
             }
@@ -814,7 +812,9 @@ public class GameController implements Screen, ContactListener {
             }
         }
 
-
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
     }
     /**
      * Handles any modifications necessary before collision resolution
