@@ -37,18 +37,19 @@ public class Door extends Wall {
     public void draw(GameCanvas canvas) {
 
         if (region != null) {
-//            if (openDoor!=null && closedDoor!=null) {
+            if (openDoor!=null && closedDoor!=null) {
+                float x = vertices[0]+1;
+                float y = vertices[1]-2.5f;
                 if (isActive()) {
-//                    canvas.draw(openDoor, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1f, 1f);
+                    canvas.draw(closedDoor, Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
                 canvas.draw(region, Color.WHITE, 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
                 } else {
-//                    canvas.draw(closedDoor, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1f, 1f);
-
+                    canvas.draw(openDoor, Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
                 canvas.setBlendState(GameCanvas.BlendState.ADDITIVE);
                 canvas.draw(region, Color.WHITE, 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
                 canvas.setBlendState(GameCanvas.BlendState.ALPHA_BLEND);
                 }
-//            }
+            }
         }
 
     }

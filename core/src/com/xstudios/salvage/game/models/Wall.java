@@ -32,7 +32,7 @@ public class Wall extends GameObject {
     /** A cache value for when the user wants to access the dimensions */
     private Vector2 sizeCache;
     /** Cache of the polygon vertices (for resizing) */
-    private float[] vertices;
+    protected float[] vertices;
     /** The texture anchor upon region initialization */
     protected Vector2 anchor;
 

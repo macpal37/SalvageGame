@@ -422,7 +422,7 @@ public class GameController implements Screen, ContactListener {
         Door door=new Door(doorverts, 0,0, key);
         door.setBodyType(BodyDef.BodyType.StaticBody);
         door.setTexture(doorTexture);
-        door.addTextures(doorOpenTexture,doorCloseTexture);
+        door.addTextures(doorCloseTexture,doorOpenTexture);
         door.setDrawScale(scale);
         door.setName("door");
         addObject(door);
