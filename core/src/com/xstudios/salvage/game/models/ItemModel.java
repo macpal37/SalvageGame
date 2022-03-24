@@ -2,12 +2,14 @@ package com.xstudios.salvage.game.models;
 
 import box2dLight.Light;
 import box2dLight.RayHandler;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GameCanvas;
+import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 
 import static com.xstudios.salvage.game.models.ItemType.DEAD_BODY;
@@ -38,6 +40,8 @@ public class ItemModel extends GameObject {
     /** If item is being carried */
     private boolean carried;
 
+    private boolean isTouched;
+
 //    private RayHandler
     private Light light;
 
@@ -62,8 +66,7 @@ public class ItemModel extends GameObject {
         force = data.getFloat("force", 0);
 
         // Initialize
-        resize(width/4, height/4);
-        resize(1, 1);
+        setDimension(1, 1);
         setMass(1);
         resetMass();
         setName(item_type + "" + item_ID);
@@ -128,8 +131,10 @@ public class ItemModel extends GameObject {
     public void draw(GameCanvas canvas) {
         if (texture != null) {
             if(item_type==DEAD_BODY || !carried){
-                canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+                canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
             }
+            if(!carried&&isTouched)
+            canvas.drawText("Press q",GameController.displayFont,(getX()-getWidth()*1.25f) * drawScale.x, (getY()+getHeight()*1.5f)  * drawScale.y);
         }
     }
 
@@ -143,7 +148,7 @@ public class ItemModel extends GameObject {
     /**
      * Reset the polygon vertices in the shape to match the dimension.
      */
-    private void resize(float width, float height) {
+    protected void resize(float width, float height) {
         // Make the box with the center in the center
         vertices[0] = -width/2.0f;
         vertices[1] = -height/2.0f;
@@ -234,4 +239,12 @@ public class ItemModel extends GameObject {
         return carried;
     }
 
+
+    public boolean isTouched() {
+        return isTouched;
+    }
+
+    public void setTouched(boolean touched) {
+        isTouched = touched;
+    }
 }

@@ -49,6 +49,11 @@ public abstract class GameObject extends GObject{
     /** The texture origin for drawing */
     protected Vector2 origin;
 
+    /** The width and height of the box */
+    private Vector2 dimension;
+    /** A cache value for when the user wants to access the dimensions */
+    private Vector2 sizeCache;
+
     /// BodyDef Methods
     /**
      * Returns the body type for Box2D physics
@@ -832,11 +837,15 @@ public abstract class GameObject extends GObject{
       super (x,y);
 
 
+       dimension = new Vector2();
+          sizeCache = new Vector2();;
         // Set the default drawing scale
         drawScale = new Vector2(1,1);
         origin = new Vector2();
         body = null;
     }
+
+    protected  abstract void  resize(float width, float height) ;
 
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
@@ -911,5 +920,67 @@ public abstract class GameObject extends GObject{
             createFixtures();
         }
     }
+
+    /**
+     * Sets the dimensions of this box
+     *
+     * This method does not keep a reference to the parameter.
+     *
+     * @param value  the dimensions of this box
+     */
+    public void setDimension(Vector2 value) {
+        setDimension(value.x, value.y);
+    }
+
+    /**
+     * Sets the dimensions of this box
+     *
+     * @param width   The width of this box
+     * @param height  The height of this box
+     */
+    public void setDimension(float width, float height) {
+        dimension.set(width, height);
+        markDirty(true);
+        resize(width, height);
+    }
+
+    /**
+     * Returns the box width
+     *
+     * @return the box width
+     */
+    public float getWidth() {
+        return dimension.x;
+    }
+
+    /**
+     * Sets the box width
+     *
+     * @param value  the box width
+     */
+    public void setWidth(float value) {
+        sizeCache.set(value,dimension.y);
+        setDimension(sizeCache);
+    }
+
+    /**
+     * Returns the box height
+     *
+     * @return the box height
+     */
+    public float getHeight() {
+        return dimension.y;
+    }
+
+    /**
+     * Sets the box height
+     *
+     * @param value  the box height
+     */
+    public void setHeight(float value) {
+        sizeCache.set(dimension.x,value);
+        setDimension(sizeCache);
+    }
+
 
 }

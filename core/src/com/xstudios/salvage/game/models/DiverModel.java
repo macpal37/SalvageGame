@@ -83,7 +83,7 @@ public class DiverModel extends GameObject {
     /** A cache value for when the user wants to access the dimensions */
     private Vector2 sizeCache;
 
-    private Vector2 directionCache;
+
 
 
     // ======================== CONSTRUCTORS ================================
@@ -122,7 +122,6 @@ public class DiverModel extends GameObject {
         // Initialize
         faceRight = true;
         setDimension(1,1);
-        directionCache  = new Vector2( (getWidth()),0);
         setMass(1);
         resetMass();
         setName("diver");
@@ -141,7 +140,7 @@ public class DiverModel extends GameObject {
     /**
      * Reset the polygon vertices in the shape to match the dimension.
      */
-    private void resize(float width, float height) {
+    protected void resize(float width, float height) {
         // Make the box with the center in the center
         vertices[0] = -width/2.0f;
         vertices[1] = -height/2.0f;
@@ -540,65 +539,5 @@ public class DiverModel extends GameObject {
 
 
 
-    /**
-     * Sets the dimensions of this box
-     *
-     * This method does not keep a reference to the parameter.
-     *
-     * @param value  the dimensions of this box
-     */
-    public void setDimension(Vector2 value) {
-        setDimension(value.x, value.y);
-    }
-
-    /**
-     * Sets the dimensions of this box
-     *
-     * @param width   The width of this box
-     * @param height  The height of this box
-     */
-    public void setDimension(float width, float height) {
-        dimension.set(width, height);
-        markDirty(true);
-        resize(width, height);
-    }
-
-    /**
-     * Returns the box width
-     *
-     * @return the box width
-     */
-    public float getWidth() {
-        return dimension.x;
-    }
-
-    /**
-     * Sets the box width
-     *
-     * @param value  the box width
-     */
-    public void setWidth(float value) {
-        sizeCache.set(value,dimension.y);
-        setDimension(sizeCache);
-    }
-
-    /**
-     * Returns the box height
-     *
-     * @return the box height
-     */
-    public float getHeight() {
-        return dimension.y;
-    }
-
-    /**
-     * Sets the box height
-     *
-     * @param value  the box height
-     */
-    public void setHeight(float value) {
-        sizeCache.set(dimension.x,value);
-        setDimension(sizeCache);
-    }
 
 }

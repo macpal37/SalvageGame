@@ -48,7 +48,7 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion wallBackTexture;
 
     /** The font for giving messages to the player */
-    protected BitmapFont displayFont;
+    public static BitmapFont displayFont;
 
 
     // Models to be updated
@@ -461,7 +461,8 @@ public class GameController implements Screen, ContactListener {
         }
 
         // Toggle debug
-        if (input.didDebug()) {
+        if (input.didPing()) {
+
             debug = !debug;
         }
 
@@ -492,6 +493,11 @@ public class GameController implements Screen, ContactListener {
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
         // apply movement
         InputController input = InputController.getInstance();
+
+        if (input.didPing()) {
+
+//            debug = !debug;
+        }
         diver.setHorizontalMovement(input.getHorizontal() *diver.getForce());
         diver.setVerticalMovement(input.getVertical() *diver.getForce());
 
@@ -525,6 +531,7 @@ public class GameController implements Screen, ContactListener {
                 (diver.getY() * diver.getDrawScale().y) / 40f);
             }
         // TODO: why wasnt this in marco's code?
+
         cameraController.render();
     }
 
@@ -598,6 +605,7 @@ public class GameController implements Screen, ContactListener {
         for(GameObject obj : aboveObjects) {
             obj.draw(canvas);
         }
+        if(!debug)
     rayHandler.updateAndRender();
         canvas.end();
         canvas.begin();
@@ -609,13 +617,15 @@ public class GameController implements Screen, ContactListener {
                 cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
         canvas.end();
 
+        if(debug) {
             canvas.beginDebug();
-            for(GameObject obj : objects) {
+            for (GameObject obj : objects) {
                 if (!(obj instanceof Wall)) {
                     obj.drawDebug(canvas);
                 }
             }
             canvas.endDebug();
+        }
     }
 
 
@@ -739,29 +749,27 @@ public class GameController implements Screen, ContactListener {
         if(body1.getUserData() instanceof DiverModel){
             if(body2.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
+               ((ItemModel) body2.getUserData()).setTouched(true);
             }
 
             else if(body2.getUserData() instanceof Door){
                 System.out.println("Attempt Unlock");
                 toUnlock=CollisionController.attemptUnlock(diver, (Door)body2.getUserData());
             }
-            else{
-                audioController.wall_collision(diver.getForce());
-            }
+
 
         }
         else if (body2.getUserData() instanceof DiverModel){
             if (body1.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel)body1.getUserData());
+                ((ItemModel) body1.getUserData()).setTouched(true);
             }
 
             else if(body1.getUserData() instanceof Door){
                 System.out.println("Attempt Unlock");
                 toUnlock=CollisionController.attemptUnlock(diver, (Door)body1.getUserData());
             }
-            else{
-                audioController.wall_collision(diver.getForce());
-            }
+
         }
 
 
@@ -814,11 +822,13 @@ public class GameController implements Screen, ContactListener {
             if ( body2.getUserData() instanceof ItemModel) {
                 CollisionController.putDown(diver,
                     (ItemModel) body2.getUserData());
+                ((ItemModel) body2.getUserData()).setTouched(false);
             }
         } else if (body2.getUserData() instanceof DiverModel) {
             if (body1.getUserData() instanceof ItemModel) {
                 CollisionController.putDown(diver,
                     (ItemModel) body1.getUserData());
+                ((ItemModel) body1.getUserData()).setTouched(false);
             }
         }
 

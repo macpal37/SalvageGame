@@ -181,7 +181,7 @@ public class InputController {
      */
     private void readGamepad(Rectangle bounds, Vector2 scale) {
         resetPressed = xbox.getStart();
-        debugPressed  = xbox.getY();
+//        debugPressed  = xbox.getY();
 
         // Increase animation frame, but only if trying to move
         horizontal = xbox.getLeftX();
@@ -200,11 +200,12 @@ public class InputController {
     private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary) {
         // Give priority to gamepad results
         resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
-        debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.D));
+        debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.F));
 
 
         carryingObject = (secondary && carryingObject) ||Gdx.input.isKeyPressed(Input.Keys.Q);
         pingPressed =(secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.R);
+
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
