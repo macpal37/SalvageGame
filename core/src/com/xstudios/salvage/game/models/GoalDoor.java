@@ -150,7 +150,7 @@ public class GoalDoor extends GameObject {
     /**
      * Reset the polygon vertices in the shape to match the dimension.
      */
-    private void resize(float width, float height) {
+    public void resize(float width, float height) {
         // Make the box with the center in the center
         vertices[0] = -width / 2.0f;
         vertices[1] = -height / 2.0f;
