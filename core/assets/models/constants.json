@@ -35,7 +35,7 @@
 			"height" : 0.05
 		}
 	},"key" : {
-      		"pos": [-15.0, 11.0],
+      		"pos": [-15.0, 10.0],
       		"shrink": [0.7, 0.95],
       		"force": 10.0,
       		"damping": 10.0,
@@ -46,5 +46,12 @@
       			"shrink" : 0.6,
       			"height" : 0.05
       		}
-      	}
+      	},
+	"goal" : {
+		"width": 3,
+		"height": 3,
+		"density": 0.0,
+		"friction": 0.0,
+		"restitution": 0.0
 	}
+}
