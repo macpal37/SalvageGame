@@ -630,15 +630,15 @@ public class GameController implements Screen, ContactListener {
                 cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
         canvas.end();
 //
-            canvas.beginDebug();
-            for(GameObject obj : objects) {
-                if (!(obj instanceof Wall)) {
-                    obj.drawDebug(canvas);
-                }
-            }
-
-
-            canvas.endDebug();
+//            canvas.beginDebug();
+//            for(GameObject obj : objects) {
+//                if (!(obj instanceof Wall)) {
+//                    obj.drawDebug(canvas);
+//                }
+//            }
+//
+//
+//            canvas.endDebug();
 
     }
 
