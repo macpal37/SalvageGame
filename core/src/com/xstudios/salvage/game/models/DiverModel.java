@@ -339,15 +339,20 @@ public class DiverModel extends GameObject {
     public void setItem() {
 //        System.out.println("SIZE OF POTENTIAL OBJECTS" + potential_items.size());
         if(pickUpOrDrop) {
-            if(potential_items.size() > 0) {
+            if(current_item!=null){
+                current_item.setGravityScale(0f);
+                current_item.setVerticalMovement(0);
+                current_item.setVX(0);
+                current_item.setVY(0);
+                current_item = null;
+                dropItem();
+            }
+            else if(potential_items.size() > 0) {
                 current_item = potential_items.get(0);
+                System.out.println("Current Item: "+current_item);
                 current_item.setX(getX());
                 current_item.setY(getY());
                 current_item.setGravityScale(1);
-            } else if(current_item != null){
-                current_item.setGravityScale(.1f);
-                current_item = null;
-                potential_items.clear();
             }
         }
     }

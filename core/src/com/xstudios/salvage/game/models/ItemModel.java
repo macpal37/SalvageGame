@@ -8,6 +8,9 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 
+import static com.xstudios.salvage.game.models.ItemType.DEAD_BODY;
+import static com.xstudios.salvage.game.models.ItemType.KEY;
+
 public class ItemModel extends GameObject {
 
     /** Shape information for this box */
@@ -117,22 +120,12 @@ public class ItemModel extends GameObject {
     @Override
     public void draw(GameCanvas canvas) {
         if (texture != null) {
-            switch(item_type) {
-                case KEY:
-                    if(!carried) {
-                        canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
-                    }
-                break;
-                case DEAD_BODY:
-                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
-                break;
-                default:
-                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
-                break;
-
+            if(item_type==DEAD_BODY || !carried){
+                canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
             }
         }
     }
+
 
 
     @Override
@@ -227,6 +220,7 @@ public class ItemModel extends GameObject {
 
     public void setCarried(boolean b) {
         carried = b;
+
     }
 
     public boolean isCarried() {
