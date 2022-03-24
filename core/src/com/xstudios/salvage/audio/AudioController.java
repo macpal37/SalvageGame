@@ -18,12 +18,12 @@ public class AudioController {
 
     public AudioController(float initial_oxygen){
         audio = Audio.init();
-        SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("../../core/assets/audio/heartbeat.wav"));
-        SoundBuffer oxygen_alarm_wav = WaveLoader.load(Gdx.files.internal("../../core/assets/audio/oxygen_alarm.wav"));
-        music = new StreamedSoundSource(Gdx.files.internal("../../core/assets/audio/background_music.ogg"));
-        bubbles = new StreamedSoundSource(Gdx.files.internal("../../core/assets/audio/bubbles.ogg"));
-        background_roar = WaveLoader.load(Gdx.files.internal("../../core/assets/audio/suble_roar.wav"));
-        wall_collision = WaveLoader.load(Gdx.files.internal("../../core/assets/audio/wall_collision.wav"));
+        SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("audio/heartbeat.wav"));
+        SoundBuffer oxygen_alarm_wav = WaveLoader.load(Gdx.files.internal("audio/oxygen_alarm.wav"));
+        music = new StreamedSoundSource(Gdx.files.internal("audio/background_music.ogg"));
+        bubbles = new StreamedSoundSource(Gdx.files.internal("audio/bubbles.ogg"));
+        background_roar = WaveLoader.load(Gdx.files.internal("audio/suble_roar.wav"));
+        wall_collision = WaveLoader.load(Gdx.files.internal("audio/wall_collision.wav"));
         oxygen_alarm = audio.obtainSource(oxygen_alarm_wav);
         heartbeat = audio.obtainSource(heartbeat_wav);
         music.setLooping(true);
