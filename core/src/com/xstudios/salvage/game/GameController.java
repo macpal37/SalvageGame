@@ -37,7 +37,9 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion deadBodyTexture;
     /** The texture for dead body */
     protected TextureRegion doorTexture;
-
+    /** Texturs for the door */
+    protected TextureRegion doorOpenTexture;
+    protected TextureRegion doorCloseTexture;
 
     JsonValue constants;
 
@@ -179,9 +181,9 @@ public class GameController implements Screen, ContactListener {
         light.setContactFilter((short)1,(short)1,(short)1);
 
         Filter f = new Filter();
-        f.maskBits = 1;
-        f.groupIndex = 1;
-        f.categoryBits = 1;
+
+        f.groupIndex = -1;
+
 
         light.setContactFilter(f);
         System.out.println("BG: "+background);
@@ -273,6 +275,8 @@ public class GameController implements Screen, ContactListener {
         wallTexture = new TextureRegion(directory.getEntry( "wall", Texture.class ));
         doorTexture= new TextureRegion(directory.getEntry( "door", Texture.class ));
         //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
+        doorOpenTexture = new TextureRegion(directory.getEntry( "models:door_open", Texture.class ));
+        doorCloseTexture = new TextureRegion(directory.getEntry( "models:door_closed", Texture.class ));
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
         deadBodyTexture = new TextureRegion(directory.getEntry( "models:dead_body", Texture.class ));
     }
@@ -362,10 +366,6 @@ public class GameController implements Screen, ContactListener {
 
         key = new ItemModel(constants.get("key"),itemTexture.getRegionWidth(),
                 itemTexture.getRegionHeight(), ItemType.KEY, 0);
-
-//        key.setBodyType(BodyDef.BodyType.StaticBody);
-
-//        key.setSensor(true);
         key.setTexture(itemTexture);
         key.setDrawScale(scale);
         key.setName("key");
@@ -383,37 +383,7 @@ public class GameController implements Screen, ContactListener {
 
         addObject(dead_body);
 
-        //add a wall
-
-//        float[][] wallVerts={
-//            {1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
-//            { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
-//            {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
-//            {26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
-//            {29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
-//            {24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
-//            {29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
-//            {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
-//            {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
-//            { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
-//        };
         float[][] wallVerts={
-
-        //         {-50.0f, 5.0f, 60.0f, 5.0f, 60.0f, 4.5f, -50.0f, 4.5f},
-        //         {-50.0f, 15.0f, 60.0f, 15.0f, 60.0f, 14.5f, -50.0f, 14.5f},
-        //         {41.0f, 5.0f, 42.0f, 05.0f, 42.0f, 25.0f, 40.0f, 25.0f}};
-        //
-        // float[] doorVerts =  {30.0f, 5.0f, 32.0f, 05.0f, 32.0f, 25.0f, 30.0f, 25.0f};
-        // Door door = new Door(doorVerts,0,0,key);
-        // door.setBodyType(BodyDef.BodyType.StaticBody);
-        // door.setDensity(0);
-        // door.setFriction(0.4f);
-        // door.setRestitution(0.1f);
-        // door.setDrawScale(scale);
-        // door.setTexture(doorTexture);
-        // door.setDrawScale(scale);
-        // door.setName("door");
-        // addAboveObject(door);
 
                 //walls
             {-50.0f, 18.0f, -40.0f, 0.0f, -39.5f,  0.0f, -49.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f,},
@@ -452,6 +422,7 @@ public class GameController implements Screen, ContactListener {
         Door door=new Door(doorverts, 0,0, key);
         door.setBodyType(BodyDef.BodyType.StaticBody);
         door.setTexture(doorTexture);
+//        door.addTextures(doorOpenTexture,doorCloseTexture);
         door.setDrawScale(scale);
         door.setName("door");
         addObject(door);
@@ -527,10 +498,6 @@ public class GameController implements Screen, ContactListener {
      */
     public void update(float dt) {
 
-//        rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(32f),cameraController.
-//                        getCamera().position.x,cameraController.getCamera().position.y,
-//                cameraController.getCamera().viewportWidth*100,cameraController.getCamera().viewportHeight*100);
-
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
         // apply movement
         InputController input = InputController.getInstance();
@@ -538,18 +505,6 @@ public class GameController implements Screen, ContactListener {
         diver.setVerticalMovement(input.getVertical() *diver.getForce());
 
         diver.applyForce();
-
-
-//        if(diver.hasItem()&& input.getOrDropObject()){
-//            diver.dropItem();
-//        }
-//
-//
-//        if(nearItem && input.getOrDropObject()){
-//            diver.addPotentialItem(key);
-//        }
-//        if(diver.hasItem())key.setPosition(diver.getX()*diver.getDrawScale().x,diver.getY()*diver.getDrawScale().y);
-
 
         // do the ping
         diver.setPing(input.didPing());
@@ -661,13 +616,18 @@ public class GameController implements Screen, ContactListener {
             obj.draw(canvas);
         }
 
-        rayHandler.updateAndRender();
-//        rayHandler.update();
-//        rayHandler.render();
-
         for(GameObject obj : aboveObjects) {
             obj.draw(canvas);
         }
+    rayHandler.updateAndRender();
+        canvas.end();
+        canvas.begin();
+        canvas.drawText(
+
+                "Oxygen Level: " + (int) diver.getOxygenLevel(),
+                displayFont,
+                cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
+                cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
         canvas.end();
 //
             canvas.beginDebug();
@@ -676,13 +636,8 @@ public class GameController implements Screen, ContactListener {
                     obj.drawDebug(canvas);
                 }
             }
-//            // draw UI relative to the camera position
-//            // TODO: the text is shaking!!!!
-//            canvas.drawText(
-//                "Oxygen Level: " + (int) diver.getOxygenLevel(),
-//                displayFont,
-//                cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
-//                cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
+
+
             canvas.endDebug();
 
     }

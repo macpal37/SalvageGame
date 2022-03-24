@@ -75,15 +75,17 @@ public class ItemModel extends GameObject {
 
 
     protected void createFixtures() {
+        System.out.println("Comming in!");
         if (body == null) {
             return;
         }
 
         releaseFixtures();
-
+        System.out.println("Got Through in!");
         // Create the fixture
+        short filter = -1;
         fixture.shape = shape;
-        fixture.filter.maskBits = 1;
+        fixture.filter.groupIndex = filter;
         geometry = body.createFixture(fixture);
         markDirty(false);
     }
@@ -93,10 +95,8 @@ public class ItemModel extends GameObject {
         if (!super.activatePhysics(world)) {
             return false;
         }
-//
+
         body.setUserData(this);
-//        body.setFixedRotation(false);
-//        body.setType(BodyDef.BodyType.DynamicBody);
         return false;
     }
 
