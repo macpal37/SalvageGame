@@ -56,6 +56,7 @@ public class GameController implements Screen, ContactListener {
 
     protected ItemModel key;
     protected ItemModel dead_body;
+    protected GoalDoor goal_door;
 
     private Array<Door> doors=new Array<Door>();
 
@@ -112,6 +113,8 @@ public class GameController implements Screen, ContactListener {
     private boolean debug;
 
     private AudioController audioController;
+
+    private boolean reach_target = false;
 
 //    private LightController lightController;
 
@@ -342,9 +345,13 @@ public class GameController implements Screen, ContactListener {
             obj.deactivatePhysics(world);
         }
 
+        objects.clear();
+        addQueue.clear();
+//        world.dispose();
 
-        world.setContactListener(this);
-            populateLevel();
+//        world = new World(gravity,false);
+//        world.setContactListener(this);
+        populateLevel();
 
     }
     /**
@@ -382,6 +389,20 @@ public class GameController implements Screen, ContactListener {
         dead_body.setGravityScale(.01f);
 
         addObject(dead_body);
+
+        JsonValue goal = constants.get("goal");
+        goal_door = new GoalDoor(diver.getX(),diver.getY(),
+                goal.getFloat("width"),goal.getFloat("height"));
+        goal_door.setBodyType(BodyDef.BodyType.StaticBody);
+        goal_door.setDensity(goal.getFloat("density", 0));
+        goal_door.setFriction(goal.getFloat("friction", 0));
+        goal_door.setRestitution(goal.getFloat("restitution", 0));
+        goal_door.setSensor(true);
+        goal_door.setDrawScale(scale);
+        goal_door.setTexture(doorOpenTexture);
+        goal_door.setName("goal");
+        addObject(goal_door);
+
 
         float[][] wallVerts={
 
@@ -471,8 +492,9 @@ public class GameController implements Screen, ContactListener {
         }
 
         // Handle resets
-        if (input.didReset()) {
+        if (input.didReset() || reach_target) {
             reset();
+            reach_target = false;
         }
         return true;
 
@@ -532,7 +554,7 @@ public class GameController implements Screen, ContactListener {
 
                 for(Door door:doors){
                     if(door.getKey() == diver.getItem()){
-                        System.out.println("HI");
+//                        System.out.println("HI");
                         door.setActive(false);
                     }
                 }
@@ -787,6 +809,21 @@ public class GameController implements Screen, ContactListener {
             }
         }
 
+        if(body1.getUserData() instanceof DiverModel){
+            if(body2.getUserData() instanceof GoalDoor){
+                if(CollisionController.winGame(diver, (GoalDoor) body2.getUserData())
+                        && listener!=null) {
+                    reach_target = true;//listener.exitScreen(this, 0);
+                }
+            }
+        } else if(body2.getUserData() instanceof DiverModel){
+            if(body1.getUserData() instanceof GoalDoor){
+                if(CollisionController.winGame(diver, (GoalDoor) body1.getUserData())
+                        && listener!=null) {
+                    reach_target = true;//listener.exitScreen(this, 0);
+                }
+            }
+        }
         // ================= CONTACT LISTENER METHODS =============================
 
 

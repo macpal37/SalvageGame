@@ -31,7 +31,7 @@ public class Door extends Wall {
     }
 
     public boolean isActive() {
-        return body.isActive();
+        return body!=null && body.isActive();
     }
 
     public void draw(GameCanvas canvas) {
