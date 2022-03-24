@@ -447,13 +447,6 @@ public class GameController implements Screen, ContactListener {
 
 
 
-        // diver = new DiverModel(constants.get("diver"), diverWidth, diverHeight);
-        // diver.setTexture(diverTexture);
-        // diver.setName("Diver");
-        // addObject(diver);
-
-
-
     /**
      * Returns whether to process the update loop
      *
@@ -508,19 +501,18 @@ public class GameController implements Screen, ContactListener {
 
         // do the ping
         diver.setPing(input.didPing());
-//        if (input.didPing()){
             diver.setPingDirection(dead_body.getPosition());
-//        }
+
         diver.setPickUpOrDrop(input.getOrDropObject());
         diver.setItem();
         key.setCarried(diver.carryingItem());
 
         // decrease oxygen from movement
         if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
-//            System.out.println("moving");
+
             diver.changeOxygenLevel(activeOxygenRate);
         } else {
-//            System.out.println("passive Oxygen Rate: " + passiveOxygenRate);
+
             diver.changeOxygenLevel(passiveOxygenRate);
         }
 
