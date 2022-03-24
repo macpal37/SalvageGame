@@ -258,6 +258,7 @@ public class GameController implements Screen, ContactListener {
         scale  = null;
         world  = null;
         canvas = null;
+        audioController.dispose();
     }
 
     /**
