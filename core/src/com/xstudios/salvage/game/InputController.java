@@ -204,7 +204,8 @@ public class InputController {
 
 
         carryingObject = (secondary && carryingObject) ||Gdx.input.isKeyPressed(Input.Keys.Q);
-        pingPressed =(secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.R);
+
+        pingPressed =(secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.E);
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);

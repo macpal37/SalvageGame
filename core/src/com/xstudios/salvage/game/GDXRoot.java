@@ -32,6 +32,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		controller = new GameController();
 		controller.setCameraController(cameraController);
 		loading.setScreenListener(this);
+		controller.setScreenListener(this);
 		setScreen(loading);
 	}
 
@@ -87,6 +88,12 @@ public class GDXRoot extends Game implements ScreenListener {
 
 			loading.dispose();
 			loading = null;
+		} else if(screen == controller){
+			System.out.println("EXIT CONTROLLER");
+			System.out.println("IS SCREEN NULL: " + controller == null);
+//			controller.setCanvas(canvas);
+//			controller.reset();
+//			setScreen(controller);
 		}
 	}
 }
