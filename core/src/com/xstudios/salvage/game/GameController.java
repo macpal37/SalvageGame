@@ -396,17 +396,23 @@ public class GameController implements Screen, ContactListener {
     public void update(float dt) {
         InputController input = InputController.getInstance();
 
+        // if velocity falls below some threshold, stop boosting
+        if (diver.getLinearVelocity().len() < 15 && diver.isBoosting()) {
+            diver.setBoosting(false);
+        }
+
         forceCache.x = input.getHorizontal() *diver.getForce();
         forceCache.y = input.getVertical() *diver.getForce();
-        System.out.println(input.getHorizontal());
-        System.out.println(input.getVertical());
-        System.out.println(diver.getForce());
+//        System.out.println("Horizontal: " + input.getHorizontal());
+//        System.out.println("Vertical: " + input.getVertical());
+//        System.out.println("Force: " + diver.getForce());
 
         // kicking off of an obstacle
-        System.out.println("Kicked: " + input.didKickOff());
-        System.out.println("isTouchingObstacle: " + diver
-        .isTouchingObstacle());
-        System.out.println("isLatchedOn: " + diver.isLatchedOn());
+//        System.out.println("Kicked: " + input.didKickOff());
+//        System.out.println("isTouchingObstacle: " + diver
+//        .isTouchingObstacle());
+//        System.out.println("isLatchedOn: " + diver.isLatchedOn());
+
         // when player is holding space near an obstacle
         if (input.didKickOff() && diver.isTouchingObstacle()) {
             // set velocity and forces to 0
@@ -417,15 +423,13 @@ public class GameController implements Screen, ContactListener {
             diver.setLatchedOn(true);
             // rotate the diver to face the direction of the arrow keys
 
-
             // when player releases the kick button
         } else if (!input.didKickOff() && diver.isLatchedOn()) {
             // double forces for a boost in speed!
-            forceCache.x *= 5;
-            forceCache.y *= 5;
-            diver.setLinearVelocity(forceCache);
-            diver.setBoostedVelocity(forceCache);
             diver.setGravityScale(1);
+            diver.boost(forceCache); // set impulse in a direction
+            diver.setBoosting(true); // toggle is boosting, which will be used
+            // to prevent user input until the diver has drifted to a stop
             diver.setLatchedOn(false);
             // otherwise
         } else {
@@ -433,13 +437,15 @@ public class GameController implements Screen, ContactListener {
             diver.setLatchedOn(false);
         }
 
-        // apply movement
-        diver.setHorizontalMovement(forceCache.x);
-        diver.setVerticalMovement(forceCache.y);
-
+        // apply movement. Player should not be able to control movement
+        // while boosting
+//        System.out.println("isBoosting: " + diver.isBoosting());
+        if (!diver.isBoosting()) {
+            diver.setHorizontalMovement(forceCache.x);
+            diver.setVerticalMovement(forceCache.y);
+        }
 //        System.out.println("forceX: " + forceCache.x);
 //        System.out.println("forceX: " + forceCache.y);
-
 
         diver.applyForce();
 

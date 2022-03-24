@@ -31,9 +31,9 @@ public class DiverModel extends GameObject {
     /** The factor to multiply by the input */
     private final float force;
     /** The amount to slow the character down */
-    private final float damping;
+    private float damping;
     /** The maximum character speed */
-    private final float maxspeed;
+    private final float swimMaxSpeed;
     /** Which direction is the character facing */
     private boolean faceRight;
     /** Cache for internal force calculations */
@@ -65,7 +65,11 @@ public class DiverModel extends GameObject {
     /** the max speed given that there is a speed boost which exceeds the
      * normal max speed*/
     private final float boostedMaxSpeed;
-    private Vector2 boostedSpeed;
+    private float maxSpeed;
+    private boolean boosting;
+
+    private final float swimDamping;
+    private final float boostDamping;
 
     // ======================== CONSTRUCTORS ================================
     /**
@@ -88,7 +92,7 @@ public class DiverModel extends GameObject {
         setFriction(data.getFloat("friction", 0));  /// HE WILL STICK TO WALLS IF YOU FORGET
         setMass(1);
         setFixedRotation(true);
-        maxspeed = data.getFloat("maxspeed", 0);
+        swimMaxSpeed = data.getFloat("maxspeed", 0);
         damping = data.getFloat("damping", 0);
         force = data.getFloat("force", 0);
 
@@ -107,8 +111,10 @@ public class DiverModel extends GameObject {
         pingDirection = new Vector2();
         ping_cooldown = 0;
         // TODO: Put this in the constants JSON
-        boostedMaxSpeed = 30;
-        boostedSpeed = new Vector2(0, 0);
+        boostedMaxSpeed = swimMaxSpeed*3;
+        maxSpeed = swimMaxSpeed;
+        swimDamping = damping;
+        boostDamping = damping/100;
     }
 
     /**
@@ -282,7 +288,11 @@ public class DiverModel extends GameObject {
      * @return the upper limit on dude left-right movement.
      */
     public float getMaxSpeed() {
-        return maxspeed;
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(float speed) {
+        maxSpeed = speed;
     }
 
 
@@ -291,13 +301,22 @@ public class DiverModel extends GameObject {
         if (!isActive()) {
             return;
         }
-        if (getHorizontalMovement() == 0f) {
-//            System.out.println("VX: " + body.getLinearVelocity().x);
+
+        // swimming vs boosting have different max speeds and damping
+        if (isBoosting()) {
+            setMaxSpeed(boostedMaxSpeed);
+            setLinearDamping(boostDamping);
+        } else {
+           setMaxSpeed(swimMaxSpeed);
+           setLinearDamping(swimDamping);
+        }
+
+        // if not actively moving, slow down the velocity over time
+        if (isBoosting() || getHorizontalMovement() == 0f) {
             forceCache.x = -getDamping()*getVX();
             body.applyForce(forceCache,getPosition(),true);
         }
-        if (getVerticalMovement() == 0f) {
-//            System.out.println("VX: " + body.getLinearVelocity().x);
+        if (isBoosting() || getVerticalMovement() == 0f) {
             forceCache.y = -getDamping()*getVY();
             body.applyForce(forceCache,getPosition(),true);
         }
@@ -309,7 +328,6 @@ public class DiverModel extends GameObject {
             forceCache.x = getHorizontalMovement();
             body.applyForce(forceCache,getPosition(),true);
         }
-
         if (Math.abs(getVY()) >= getMaxSpeed() &&
                 Math.signum(getVY()) == Math.signum(getVerticalMovement())) {
             setVY(Math.signum(getVY())*getMaxSpeed());
@@ -318,35 +336,6 @@ public class DiverModel extends GameObject {
             body.applyForce(forceCache,getPosition(),true);
         }
 
-
-        // must override setVX and setVY from
-//        System.out.println("forceX: " + forceCache.x);
-//        System.out.println("forceY: " + forceCache.y);
-//        System.out.println("boostedSpeedX: " + boostedSpeed.x);
-//        System.out.println("boostedSpeedY: " + boostedSpeed.y);
-//        System.out.println("Damping: " + getDamping());
-        //apply damping
-//        forceCache.x = -getDamping()/100*boostedSpeed.x;
-//        forceCache.y = -getDamping()/100*boostedSpeed.y;
-//        body.applyForce(forceCache,getPosition(),true);
-
-        //apply boosted force
-        forceCache.x = boostedSpeed.x;
-        forceCache.y = boostedSpeed.y;
-        System.out.println("forceX: " + forceCache.x);
-        System.out.println("forceY: " + forceCache.y);
-        body.applyForce(forceCache,getPosition(),true);
-
-        System.out.println("VX:" + getVX());
-        System.out.println("VX:" + getVY());
-
-        // Boosted max velocity
-//        if (Math.abs(boostedSpeed.x) > boostedMaxSpeed) {
-//            forceCache.x = boostedMaxSpeed;
-//        }
-//        if (Math.abs(boostedSpeed.y) > boostedMaxSpeed) {
-//            forceCache.y = boostedMaxSpeed;
-//        }
 
         if (current_item != null) {
             current_item.setVX(getVX());
@@ -447,7 +436,28 @@ public class DiverModel extends GameObject {
         latchedOn = latched;
     }
 
-    public void setBoostedVelocity(Vector2 boost) {
-        boostedSpeed = boost;
+    public void setBoosting(boolean boost) {
+        boosting = boost;
     }
+
+    public boolean isBoosting() {
+        return boosting;
+    }
+    public void boost(Vector2 direction) {
+        // set impulse in a certain direction
+
+        forceCache.x = direction.x * 10;
+        forceCache.y = direction.y * 10;
+        setLinearVelocity(forceCache);
+
+        forceCache.x = direction.x * 10;
+        forceCache.y = direction.y * 10;
+        System.out.println("X: " + forceCache.x);
+        System.out.println("Y: " + forceCache.y);
+        body.applyForce(forceCache, body.getPosition(), true);
+//        forceCache.x = direction.x * 5;
+//        forceCache.y = direction.y * 5;
+//        body.applyLinearImpulse(forceCache, body.getPosition(), true);
+    }
+
 }

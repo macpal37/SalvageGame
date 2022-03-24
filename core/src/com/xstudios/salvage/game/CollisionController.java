@@ -54,11 +54,11 @@ public class CollisionController {
      */
     public void startDiverToObstacle(Body b1, Body b2) {
         if (b1.getUserData().getClass() == DiverModel.class && b2.getUserData().getClass() == Wall.class) {
-            System.out.println("body collided");
+//            System.out.println("body collided");
             ((DiverModel) b1.getUserData()).setTouchingObstacle(true);
         }
         if (b2.getUserData() == DiverModel.class && b1.getUserData().getClass() == Wall.class) {
-            System.out.println("body collided");
+//            System.out.println("body collided");
             ((DiverModel) b2.getUserData()).setTouchingObstacle(true);
         }
     }
