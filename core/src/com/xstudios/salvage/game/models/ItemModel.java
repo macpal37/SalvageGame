@@ -1,5 +1,7 @@
 package com.xstudios.salvage.game.models;
 
+import box2dLight.Light;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -32,6 +34,11 @@ public class ItemModel extends GameObject {
     private Vector2 movement;
     /** If item is being carried */
     private boolean carried;
+
+//    private RayHandler
+    private Light light;
+
+
     public ItemModel(JsonValue data, float width, float height, ItemType item_type, int id){
         super(data.get("pos").getFloat(0),
                 data.get("pos").getFloat(1));
@@ -80,10 +87,12 @@ public class ItemModel extends GameObject {
         }
 
         releaseFixtures();
-
         // Create the fixture
+        fixture.filter.categoryBits = 0x002;
+        fixture.filter.groupIndex = 0x004;
+        fixture.filter.maskBits = -1;
         fixture.shape = shape;
-        fixture.filter.maskBits = 1;
+
         geometry = body.createFixture(fixture);
         markDirty(false);
     }
@@ -93,10 +102,8 @@ public class ItemModel extends GameObject {
         if (!super.activatePhysics(world)) {
             return false;
         }
-//
+
         body.setUserData(this);
-//        body.setFixedRotation(false);
-//        body.setType(BodyDef.BodyType.DynamicBody);
         return false;
     }
 

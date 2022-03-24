@@ -26,13 +26,13 @@ public class Wall extends GameObject {
     private short[] tridx;
 
     /** A cache value for the fixtures (for resizing) */
-    private Fixture[] geoms;
+    protected Fixture[] geoms;
     /** The polygon bounding box (for resizing purposes) */
     private Vector2 dimension;
     /** A cache value for when the user wants to access the dimensions */
     private Vector2 sizeCache;
     /** Cache of the polygon vertices (for resizing) */
-    private float[] vertices;
+    protected float[] vertices;
     /** The texture anchor upon region initialization */
     protected Vector2 anchor;
 
@@ -281,11 +281,11 @@ public class Wall extends GameObject {
 
         // Create the fixtures
         for(int ii = 0; ii < shapes.length; ii++) {
-            fixture.filter.categoryBits = 0x001;
-            fixture.filter.groupIndex = 0x001;
-            fixture.filter.maskBits = 0x001;
             fixture.shape = shapes[ii];
             geoms[ii] = body.createFixture(fixture);
+            fixture.filter.categoryBits = 0x004;
+            fixture.filter.groupIndex = 0x002;
+            fixture.filter.maskBits = -1;
 
         }
         markDirty(false);

@@ -37,7 +37,9 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion deadBodyTexture;
     /** The texture for dead body */
     protected TextureRegion doorTexture;
-
+    /** Texturs for the door */
+    protected TextureRegion doorOpenTexture;
+    protected TextureRegion doorCloseTexture;
 
     JsonValue constants;
 
@@ -176,12 +178,13 @@ public class GameController implements Screen, ContactListener {
 
 
         light = new PointLight(rayHandler,100, Color.BLACK,10,0,0);
-        light.setContactFilter((short)1,(short)1,(short)1);
+//        light.setContactFilter((short)1,(short)1,(short)1);
 
         Filter f = new Filter();
-        f.maskBits = 1;
+        f.categoryBits = 0x0002;
+        f.maskBits =0x0004;
         f.groupIndex = 1;
-        f.categoryBits = 1;
+
 
         light.setContactFilter(f);
         System.out.println("BG: "+background);
@@ -189,6 +192,7 @@ public class GameController implements Screen, ContactListener {
         audioController.intialize();
         collisionController = new CollisionController();
         world.setContactListener(this);
+
     }
 
     /**
@@ -273,6 +277,8 @@ public class GameController implements Screen, ContactListener {
         wallTexture = new TextureRegion(directory.getEntry( "wall", Texture.class ));
         doorTexture= new TextureRegion(directory.getEntry( "door", Texture.class ));
         //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
+        doorOpenTexture = new TextureRegion(directory.getEntry( "models:door_open", Texture.class ));
+        doorCloseTexture = new TextureRegion(directory.getEntry( "models:door_closed", Texture.class ));
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
         deadBodyTexture = new TextureRegion(directory.getEntry( "models:dead_body", Texture.class ));
     }
@@ -303,17 +309,7 @@ public class GameController implements Screen, ContactListener {
 
     }
 
-    /**
-     * Immediately adds the object to the physics world
-     *
-     * param obj The object to add
-     */
-    protected void addAboveObject(GameObject obj) {
-        assert inBounds(obj) : "Object is not in bounds";
-        aboveObjects.add(obj);
-        obj.activatePhysics(world);
 
-    }
     /**
      * Returns true if the object is in bounds.
      *
@@ -332,9 +328,6 @@ public class GameController implements Screen, ContactListener {
     public void reset() {
         Vector2 gravity = new Vector2(world.getGravity() );
         for(GameObject obj : objects) {
-            obj.deactivatePhysics(world);
-        }
-        for(GameObject obj : aboveObjects) {
             obj.deactivatePhysics(world);
         }
 
@@ -362,10 +355,6 @@ public class GameController implements Screen, ContactListener {
 
         key = new ItemModel(constants.get("key"),itemTexture.getRegionWidth(),
                 itemTexture.getRegionHeight(), ItemType.KEY, 0);
-
-//        key.setBodyType(BodyDef.BodyType.StaticBody);
-
-//        key.setSensor(true);
         key.setTexture(itemTexture);
         key.setDrawScale(scale);
         key.setName("key");
@@ -383,37 +372,7 @@ public class GameController implements Screen, ContactListener {
 
         addObject(dead_body);
 
-        //add a wall
-
-//        float[][] wallVerts={
-//            {1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
-//            { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
-//            {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
-//            {26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
-//            {29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
-//            {24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
-//            {29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
-//            {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
-//            {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
-//            { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
-//        };
         float[][] wallVerts={
-
-        //         {-50.0f, 5.0f, 60.0f, 5.0f, 60.0f, 4.5f, -50.0f, 4.5f},
-        //         {-50.0f, 15.0f, 60.0f, 15.0f, 60.0f, 14.5f, -50.0f, 14.5f},
-        //         {41.0f, 5.0f, 42.0f, 05.0f, 42.0f, 25.0f, 40.0f, 25.0f}};
-        //
-        // float[] doorVerts =  {30.0f, 5.0f, 32.0f, 05.0f, 32.0f, 25.0f, 30.0f, 25.0f};
-        // Door door = new Door(doorVerts,0,0,key);
-        // door.setBodyType(BodyDef.BodyType.StaticBody);
-        // door.setDensity(0);
-        // door.setFriction(0.4f);
-        // door.setRestitution(0.1f);
-        // door.setDrawScale(scale);
-        // door.setTexture(doorTexture);
-        // door.setDrawScale(scale);
-        // door.setName("door");
-        // addAboveObject(door);
 
                 //walls
             {-50.0f, 18.0f, -40.0f, 0.0f, -39.5f,  0.0f, -49.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f,},
@@ -452,6 +411,7 @@ public class GameController implements Screen, ContactListener {
         Door door=new Door(doorverts, 0,0, key);
         door.setBodyType(BodyDef.BodyType.StaticBody);
         door.setTexture(doorTexture);
+        door.addTextures(doorCloseTexture,doorOpenTexture);
         door.setDrawScale(scale);
         door.setName("door");
         addObject(door);
@@ -473,13 +433,6 @@ public class GameController implements Screen, ContactListener {
         doors.add(door1);
 
     }
-
-
-
-        // diver = new DiverModel(constants.get("diver"), diverWidth, diverHeight);
-        // diver.setTexture(diverTexture);
-        // diver.setName("Diver");
-        // addObject(diver);
 
 
 
@@ -527,10 +480,6 @@ public class GameController implements Screen, ContactListener {
      */
     public void update(float dt) {
 
-//        rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(32f),cameraController.
-//                        getCamera().position.x,cameraController.getCamera().position.y,
-//                cameraController.getCamera().viewportWidth*100,cameraController.getCamera().viewportHeight*100);
-
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
         // apply movement
         InputController input = InputController.getInstance();
@@ -539,33 +488,20 @@ public class GameController implements Screen, ContactListener {
 
         diver.applyForce();
 
-
-//        if(diver.hasItem()&& input.getOrDropObject()){
-//            diver.dropItem();
-//        }
-//
-//
-//        if(nearItem && input.getOrDropObject()){
-//            diver.addPotentialItem(key);
-//        }
-//        if(diver.hasItem())key.setPosition(diver.getX()*diver.getDrawScale().x,diver.getY()*diver.getDrawScale().y);
-
-
         // do the ping
         diver.setPing(input.didPing());
-//        if (input.didPing()){
             diver.setPingDirection(dead_body.getPosition());
-//        }
+
         diver.setPickUpOrDrop(input.getOrDropObject());
         diver.setItem();
         key.setCarried(diver.carryingItem());
 
         // decrease oxygen from movement
         if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
-//            System.out.println("moving");
+
             diver.changeOxygenLevel(activeOxygenRate);
         } else {
-//            System.out.println("passive Oxygen Rate: " + passiveOxygenRate);
+
             diver.changeOxygenLevel(passiveOxygenRate);
         }
 
@@ -590,6 +526,8 @@ public class GameController implements Screen, ContactListener {
                     }
                 }
             }
+//            if (diver.isTouching())
+//                System.out.println("TOUCH!!!");
         // TODO: why wasnt this in marco's code?
         cameraController.render();
     }
@@ -661,30 +599,28 @@ public class GameController implements Screen, ContactListener {
             obj.draw(canvas);
         }
 
-        rayHandler.updateAndRender();
-//        rayHandler.update();
-//        rayHandler.render();
-
         for(GameObject obj : aboveObjects) {
             obj.draw(canvas);
         }
+    rayHandler.updateAndRender();
         canvas.end();
-//
+        canvas.begin();
+        canvas.drawText(
+
+                "Oxygen Level: " + (int) diver.getOxygenLevel(),
+                displayFont,
+                cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
+                cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
+        canvas.end();
+
             canvas.beginDebug();
             for(GameObject obj : objects) {
                 if (!(obj instanceof Wall)) {
                     obj.drawDebug(canvas);
                 }
             }
-//            // draw UI relative to the camera position
-//            // TODO: the text is shaking!!!!
-//            canvas.drawText(
-//                "Oxygen Level: " + (int) diver.getOxygenLevel(),
-//                displayFont,
-//                cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
-//                cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
             canvas.endDebug();
-
+        diver.isTouching();
     }
 
 
@@ -763,86 +699,66 @@ public class GameController implements Screen, ContactListener {
         this.listener = listener;
     }
 
-//    boolean nearItem;
-    // ================= CONTACT LISTENER METHODS =============================
-    /**
-     * Callback method for the start of a collision
-     *
-     * This method is called when we first get a collision between two objects.  We use
-     * this method to test if it is the "right" kind of collision.  In particular, we
-     * use it to test if we made it to the win door.
-     *
-     * @param contact The two bodies that collided
-     */
-//    public void beginContact(Contact contact) {
-//
-//        Fixture fix1 = contact.getFixtureA();
-//        Fixture fix2 = contact.getFixtureB();
-//
-//        Body body1 = fix1.getBody();
-//        Body body2 = fix2.getBody();
-//
-//        Object fd1 = fix1.getUserData();
-//        Object fd2 = fix2.getUserData();
-//
-//        try {
-//            GameObject bd1 = (GameObject)body1.getUserData();
-//            GameObject bd2 = (GameObject)body2.getUserData();
-//
-////        if (pickedUp)
-////            System.out.println("jkabdabdjhkabsdfkhjbasdkfhj");
-//
-//            // See if we have landed on the ground.
-//
-//
-//            // Check for win condition
-//            if (bd1 == diver   && bd2 == key) {
-////
-//                nearItem = true;
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 
-    /**
-     * Callback method for the start of a collision
-     *
-     * This method is called when two objects cease to touch.
-     */
-//    public void endContact(Contact contact) {
-//        Body body1 = contact.getFixtureA().getBody();
-//        Body body2 = contact.getFixtureB().getBody();
-//        nearItem = false;
-////        System.out.println("END CONTACT");
-////        collisionController.endContact(body1, body2);
-//    }
+    // ================= CONTACT LISTENER METHODS =============================
+
     public void beginContact(Contact contact) {
 
-        Body body1 = contact.getFixtureA().getBody();
-        Body body2 = contact.getFixtureB().getBody();
+        Fixture fix1 = contact.getFixtureA();
+        Fixture fix2 = contact.getFixtureB();
 
+        Body body1 = fix1.getBody();
+        Body body2 = fix2.getBody();
+
+        Object fd1 = fix1.getUserData();
+        Object fd2 = fix2.getUserData();
+
+        try {
+            GObject bd1 = (GObject)body1.getUserData();
+            GObject bd2 = (GObject)body2.getUserData();
+
+            if ((diver.getSensorNameLeft().equals(fd2) && diver != bd1) ||
+                    (diver.getSensorNameLeft().equals(fd1) && diver != bd2)) {
+
+               if(diver != bd1)
+                diver.addTouching(diver.getSensorNameLeft(),bd1);
+               else
+                   diver.addTouching(diver.getSensorNameLeft(),bd2);
+
+            }
+            if ((diver.getSensorNameRight().equals(fd2) && diver != bd1) ||
+                    (diver.getSensorNameRight().equals(fd1) && diver != bd2)) {
+
+                if(diver != bd1)
+                    diver.addTouching(diver.getSensorNameRight(),bd1);
+                else
+                    diver.addTouching(diver.getSensorNameRight(),bd2);
+
+            }
+
+
+            if(bd1 instanceof DiverModel && !diver.getSensorNameRight().equals(fd1) && !diver.getSensorNameLeft().equals(fd1)  && bd2 instanceof Wall){
+                audioController.wall_collision(diver.getForce());
+            }
 
         if(body1.getUserData() instanceof DiverModel){
             if(body2.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
             }
-            else{
-                audioController.wall_collision(diver.getForce());
-            }
+
         }
         else if (body2.getUserData() instanceof DiverModel){
             if (body1.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel)body1.getUserData());
             }
-            else{
-                audioController.wall_collision(diver.getForce());
-            }
+
         }
 
-        // ================= CONTACT LISTENER METHODS =============================
 
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -852,11 +768,40 @@ public class GameController implements Screen, ContactListener {
      * This method is called when two objects cease to touch.
      */
     public void endContact(Contact contact) {
-        Body body1 = contact.getFixtureA().getBody();
-        Body body2 = contact.getFixtureB().getBody();
+        Fixture fix1 = contact.getFixtureA();
+        Fixture fix2 = contact.getFixtureB();
 
+        Body body1 = fix1.getBody();
+        Body body2 = fix2.getBody();
+
+        Object fd1 = fix1.getUserData();
+        Object fd2 = fix2.getUserData();
+
+       try{
+           GObject bd1 = (GObject)body1.getUserData();
+           GObject bd2 = (GObject)body2.getUserData();
+
+           if ((diver.getSensorNameLeft().equals(fd2) && diver != bd1) ||
+                   (diver.getSensorNameLeft().equals(fd1) && diver != bd2)) {
+
+               if(diver != bd1)
+                   diver.removeTouching(diver.getSensorNameLeft(),bd1);
+               else
+                   diver.removeTouching(diver.getSensorNameLeft(),bd2);
+
+           }
+           if ((diver.getSensorNameRight().equals(fd2) && diver != bd1) ||
+                   (diver.getSensorNameRight().equals(fd1) && diver != bd2)) {
+
+               if(diver != bd1)
+                   diver.removeTouching(diver.getSensorNameRight(),bd1);
+               else
+                   diver.removeTouching(diver.getSensorNameRight(),bd2);
+
+           }
         if (body1.getUserData() instanceof DiverModel) {
-            if (body2.getUserData() instanceof ItemModel) {
+
+            if ( body2.getUserData() instanceof ItemModel) {
                 CollisionController.putDown(diver,
                     (ItemModel) body2.getUserData());
             }
@@ -867,7 +812,9 @@ public class GameController implements Screen, ContactListener {
             }
         }
 
-
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
     }
     /**
      * Handles any modifications necessary before collision resolution
