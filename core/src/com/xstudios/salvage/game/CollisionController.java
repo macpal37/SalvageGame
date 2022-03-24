@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.xstudios.salvage.game.models.DiverModel;
 import com.xstudios.salvage.game.models.Door;
 import com.xstudios.salvage.game.models.ItemModel;
+import com.xstudios.salvage.game.models.ItemType;
 import com.xstudios.salvage.util.PooledList;
 
 public class CollisionController {
@@ -18,6 +19,20 @@ public class CollisionController {
         if(diver.getItem() !=  item) {
             diver.addPotentialItem(item);
         }
+    }
+
+    /**
+     * Checks to see if the diver can unlock the door, if so return true
+     * @param diver diver object
+     * @param door door currently colliding with
+     */
+    public static boolean attemptUnlock(DiverModel diver, Door door){
+        if(diver.getItem()!=null) {
+            if (diver.getItem() == door.getKey() || diver.getItem().getItemType() == ItemType.DEAD_BODY) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

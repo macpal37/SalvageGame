@@ -113,6 +113,9 @@ public class GameController implements Screen, ContactListener {
 
     private AudioController audioController;
 
+    /** whether to unlock door*/
+    private boolean toUnlock=false;
+
 //    private LightController lightController;
 
 
@@ -257,6 +260,7 @@ public class GameController implements Screen, ContactListener {
         scale  = null;
         world  = null;
         canvas = null;
+        audioController.dispose();
     }
 
     /**
@@ -358,7 +362,8 @@ public class GameController implements Screen, ContactListener {
         key.setTexture(itemTexture);
         key.setDrawScale(scale);
         key.setName("key");
-        key.setGravityScale(.01f);
+        key.setGravityScale(0f);
+        key.setSensor(true);
 
         addObject(key);
 
@@ -368,7 +373,8 @@ public class GameController implements Screen, ContactListener {
         dead_body.setTexture(deadBodyTexture);
         dead_body.setDrawScale(scale);
         dead_body.setName("dead_body");
-        dead_body.setGravityScale(.01f);
+        dead_body.setGravityScale(0f);
+        dead_body.setSensor(true);
 
         addObject(dead_body);
 
@@ -416,7 +422,6 @@ public class GameController implements Screen, ContactListener {
         door.setName("door");
         addObject(door);
         door.setUserData(door);
-
         door.setActive(true);
         doors.add(door);
 
@@ -424,6 +429,7 @@ public class GameController implements Screen, ContactListener {
         Door door1=new Door(doorverts1, 0,0, key);
         door1.setBodyType(BodyDef.BodyType.StaticBody);
         door1.setTexture(doorTexture);
+        door.addTextures(doorCloseTexture,doorOpenTexture);
         door1.setDrawScale(scale);
         door1.setName("door1");
         addObject(door1);
@@ -479,6 +485,9 @@ public class GameController implements Screen, ContactListener {
      * @param dt	Number of seconds since last animation frame
      */
     public void update(float dt) {
+        for (Door door: doors){
+            door.setActive(!toUnlock);
+        }
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
         // apply movement
@@ -515,19 +524,6 @@ public class GameController implements Screen, ContactListener {
                 (diver.getX() * diver.getDrawScale().x) / 40f,
                 (diver.getY() * diver.getDrawScale().y) / 40f);
             }
-
-            //deactivates unlocked doors
-            if(diver.carryingItem() && diver.getItem().getItemType().equals(ItemType.KEY)){
-
-                for(Door door:doors){
-                    if(door.getKey() == diver.getItem()){
-                        System.out.println("HI");
-                        door.setActive(false);
-                    }
-                }
-            }
-//            if (diver.isTouching())
-//                System.out.println("TOUCH!!!");
         // TODO: why wasnt this in marco's code?
         cameraController.render();
     }
@@ -620,7 +616,6 @@ public class GameController implements Screen, ContactListener {
                 }
             }
             canvas.endDebug();
-        diver.isTouching();
     }
 
 
@@ -746,12 +741,27 @@ public class GameController implements Screen, ContactListener {
                 CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
             }
 
+            else if(body2.getUserData() instanceof Door){
+                System.out.println("Attempt Unlock");
+                toUnlock=CollisionController.attemptUnlock(diver, (Door)body2.getUserData());
+            }
+            else{
+                audioController.wall_collision(diver.getForce());
+            }
+
         }
         else if (body2.getUserData() instanceof DiverModel){
             if (body1.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel)body1.getUserData());
             }
 
+            else if(body1.getUserData() instanceof Door){
+                System.out.println("Attempt Unlock");
+                toUnlock=CollisionController.attemptUnlock(diver, (Door)body1.getUserData());
+            }
+            else{
+                audioController.wall_collision(diver.getForce());
+            }
         }
 
 
