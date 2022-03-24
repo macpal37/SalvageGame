@@ -213,6 +213,9 @@ public class InputController {
         resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
         debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.D));
 
+
+        carryingObject = (secondary && carryingObject) ||Gdx.input.isKeyPressed(Input.Keys.Q);
+        pingPressed =(secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.R);
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
@@ -244,13 +247,8 @@ public class InputController {
             vertical -= 1.0f;
         }
 
-        int pick_up = Input.Keys.Q;
-        int ping = Input.Keys.R;
-
-        carryingObject = Gdx.input.isKeyPressed(pick_up);
-        pingPressed = Gdx.input.isKeyPressed(ping);
-
         kickOff = Gdx.input.isKeyPressed(Keys.SPACE);
+
     }
 
 

@@ -30,7 +30,8 @@ public class ItemModel extends GameObject {
     private final float maxspeed;
     /** The current horizontal movement of the item */
     private Vector2 movement;
-
+    /** If item is being carried */
+    private boolean carried;
     public ItemModel(JsonValue data, float width, float height, ItemType item_type, int id){
         super(data.get("pos").getFloat(0),
                 data.get("pos").getFloat(1));
@@ -56,6 +57,8 @@ public class ItemModel extends GameObject {
         setMass(1);
         resetMass();
         setName(item_type + "" + item_ID);
+
+        movement = new Vector2();
     }
     /**
      * Release the fixtures for this body, resetting the shape
@@ -68,6 +71,9 @@ public class ItemModel extends GameObject {
             geometry = null;
         }
     }
+
+
+
     protected void createFixtures() {
         if (body == null) {
             return;
@@ -77,6 +83,7 @@ public class ItemModel extends GameObject {
 
         // Create the fixture
         fixture.shape = shape;
+        fixture.filter.maskBits = 1;
         geometry = body.createFixture(fixture);
         markDirty(false);
     }
@@ -86,11 +93,11 @@ public class ItemModel extends GameObject {
         if (!super.activatePhysics(world)) {
             return false;
         }
-
+//
         body.setUserData(this);
 //        body.setFixedRotation(false);
 //        body.setType(BodyDef.BodyType.DynamicBody);
-        return true;
+        return false;
     }
 
     /**
@@ -109,10 +116,21 @@ public class ItemModel extends GameObject {
 
     @Override
     public void draw(GameCanvas canvas) {
-//        body.applyAngularImpulse(1f,false);
-//        System.out.println("Mass: " + body.getMass());
         if (texture != null) {
-            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),0.25f, 0.25f);
+            switch(item_type) {
+                case KEY:
+                    if(!carried) {
+                        canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+                    }
+                break;
+                case DEAD_BODY:
+                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+                break;
+                default:
+                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+                break;
+
+            }
         }
     }
 
@@ -120,7 +138,6 @@ public class ItemModel extends GameObject {
     @Override
     public void drawDebug(GameCanvas canvas) {
         canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
-        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
     }
 
     /**
@@ -146,7 +163,8 @@ public class ItemModel extends GameObject {
         forceCache.x = getHorizontalMovement();
         forceCache.y = getVerticalMovement();
         body.applyForce(forceCache,getPosition(),true);
-
+        setHorizontalMovement(0);
+        setVerticalMovement(0);
     }
 
     /**
@@ -206,4 +224,13 @@ public class ItemModel extends GameObject {
     public int getItemID() {
         return item_ID;
     }
+
+    public void setCarried(boolean b) {
+        carried = b;
+    }
+
+    public boolean isCarried() {
+        return carried;
+    }
+
 }

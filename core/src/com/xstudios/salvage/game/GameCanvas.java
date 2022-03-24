@@ -941,7 +941,7 @@ public class GameCanvas {
         debugRender.setProjectionMatrix(camera.combined);
         debugRender.begin(ShapeRenderer.ShapeType.Filled);
         debugRender.setColor(Color.RED);
-        debugRender.circle(0, 0, 10);
+        debugRender.circle(500, 500, 10);
         debugRender.end();
 
         debugRender.begin(ShapeRenderer.ShapeType.Line);
@@ -1115,6 +1115,8 @@ public class GameCanvas {
         debugRender.setColor(color);
         debugRender.ellipse(x0-w, y0-h, 2*w, 2*h, 12);
     }
+
+
 
     /**
      * Compute the affine transform (and store it in local) for this image.

@@ -9,6 +9,8 @@ import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.PooledList;
 
+import java.util.ArrayList;
+
 public class DiverModel extends GameObject {
 
     /** Shape information for this box */
@@ -42,7 +44,7 @@ public class DiverModel extends GameObject {
     private ItemModel current_item;
 
     /** All the itemModels diver is in contact with */
-    protected PooledList<ItemModel> potential_items  = new PooledList<ItemModel>();
+    protected ArrayList<ItemModel> potential_items  = new ArrayList<ItemModel>();
 
     /** whether user is pinging*/
     private boolean ping;
@@ -158,7 +160,9 @@ public class DiverModel extends GameObject {
         texture = value;
         origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
     }
-
+    public boolean hasItem(){
+        return potential_items.size()>0;
+    }
     /**
      * Sets the object texture for drawing purposes.
      *
@@ -176,8 +180,12 @@ public class DiverModel extends GameObject {
      * @param bodypos the ping direction for drawing purposes.
      */
     public void setPingDirection(Vector2 bodypos) {
-        pingDirection.set(bodypos).sub(getPosition());
+        pingDirection.set(getPosition()).sub(bodypos);//.sub(texture.getRegionWidth()/2f + body_width, texture.getRegionHeight()/2f + body_height);
+//        if(faceRight) {
+//            pingDirection.sub(texture.getRegionWidth(), texture.getRegionHeight());
+//        }
         pingDirection.nor();
+        pingDirection.scl(getTexture().getRegionWidth());
     }
 
     public void setPing(boolean p) {
@@ -205,6 +213,8 @@ public class DiverModel extends GameObject {
             body.destroyFixture(geometry);
             geometry = null;
         }
+
+        System.out.println("NOO!!!!");
     }
     protected void createFixtures() {
         if (body == null) {
@@ -212,26 +222,29 @@ public class DiverModel extends GameObject {
         }
 
         releaseFixtures();
-
+        System.out.println("HELPPP!!!!");
         // Create the fixture
         fixture.shape = shape;
+        fixture.filter.categoryBits = 0x001;
+        fixture.filter.groupIndex = 0x001;
+        fixture.filter.maskBits = 0x001;
         geometry = body.createFixture(fixture);
+
         markDirty(false);
     }
 
     @Override
     public void draw(GameCanvas canvas) {
-//        body.applyAngularImpulse(1f,false);
-//        System.out.println("Mass: " + body.getMass());
+
         float effect = faceRight ? 1.0f : -1.0f;
-//        effect =1;
+
         if (texture != null) {
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
 
         }
         if(ping || ping_cooldown > 0) {
             canvas.draw(pingTexture, Color.WHITE,origin.x + pingDirection.x,
-            origin.y + pingDirection.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
+            origin.y + pingDirection.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),0.25f,0.25f);
             ping_cooldown--;
         }
     }
@@ -340,14 +353,23 @@ public class DiverModel extends GameObject {
         if (current_item != null) {
             current_item.setVX(getVX());
             current_item.setVY(getVY());
+//            current_item.setX(getX()+ 2);
+//            current_item.setY(getY()+2);
+//            current_item.setVerticalMovement(getVerticalMovement());
+//            current_item.setHorizontalMovement(getHorizontalMovement());
+//            current_item.applyForce();
+            System.out.println("X POS: " + current_item.getX());
+            System.out.println("Y POS: " + current_item.getY());
+            System.out.println("DIVER X POS: " + getX());
+            System.out.println("DIVER Y POS: " + getY());
         }
 
     }
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
-        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
+//        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+//        canvas.drawPhysics(shape,Color.GREEN,origin.x, origin.y);
     }
 
     /**
@@ -357,13 +379,14 @@ public class DiverModel extends GameObject {
 //        System.out.println("SIZE OF POTENTIAL OBJECTS" + potential_items.size());
         if(pickUpOrDrop) {
             if(potential_items.size() > 0) {
-                current_item = potential_items.pop();
+                current_item = potential_items.get(0);
                 current_item.setX(getX());
                 current_item.setY(getY());
                 current_item.setGravityScale(1);
             } else if(current_item != null){
                 current_item.setGravityScale(.1f);
                 current_item = null;
+                potential_items.clear();
             }
         }
     }
@@ -458,6 +481,10 @@ public class DiverModel extends GameObject {
 //        forceCache.x = direction.x * 5;
 //        forceCache.y = direction.y * 5;
 //        body.applyLinearImpulse(forceCache, body.getPosition(), true);
+    }
+
+    public void dropItem() {
+        potential_items.clear();
     }
 
 }
