@@ -11,6 +11,8 @@ public class Door extends Wall {
 
     private TextureRegion openDoor;
     private TextureRegion closedDoor;
+    private boolean toUnlock;
+
     public Door(float[] points, ItemModel key) {
         this(points, 0, 0, key);
     }
@@ -18,6 +20,7 @@ public class Door extends Wall {
     public Door(float[] points, float x, float y, ItemModel key) {
         super(points, x, y);
         this.key = key;
+        toUnlock = false;
     }
 
     public void addTextures(TextureRegion closed, TextureRegion open){
@@ -32,6 +35,14 @@ public class Door extends Wall {
 
     public boolean isActive() {
         return body!=null && body.isActive();
+    }
+
+    public void setUnlock(boolean unlock) {
+        toUnlock = unlock;
+    }
+
+    public boolean getUnlock() {
+        return toUnlock && key.isCarried();
     }
 
     public void draw(GameCanvas canvas) {
