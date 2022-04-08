@@ -33,6 +33,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.xstudios.salvage.util.*;
+import de.pottgames.tuningfork.SoundBuffer;
+import de.pottgames.tuningfork.SoundBufferLoader;
 //import com.xstudios.salvage.util.utils.ResourceManager;
 
 /**
@@ -158,6 +160,8 @@ public class AssetDirectory extends AssetManager {
         setLoader( FilmStrip.class, new FilmStripLoader( resolver ) );
 
         setLoader( JsonValue.class, new JsonValueLoader( resolver ) );
+
+        setLoader( SoundBuffer.class, ".wav", new SoundBufferLoader( resolver ) );
 
         // Why not?
         setLoader( Skin.class, new SkinLoader( resolver ) );
