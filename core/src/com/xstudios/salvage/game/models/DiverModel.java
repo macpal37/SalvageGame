@@ -40,6 +40,12 @@ public class DiverModel extends GameObject {
     /** item that diver is currently carrying */
     private ItemModel current_item;
 
+    /** dead body that is the target for the level*/
+    private DeadBodyModel dead_body;
+
+    private boolean carrying_body;
+    private boolean contact_body;
+
     /** All the itemModels diver is in contact with */
     protected ArrayList<ItemModel> potential_items  = new ArrayList<ItemModel>();
 
@@ -134,7 +140,8 @@ public class DiverModel extends GameObject {
         pingDirection = new Vector2();
         ping_cooldown = 0;
 
-
+        carrying_body = false;
+        dead_body = null;
     }
 
     /**
@@ -191,6 +198,29 @@ public class DiverModel extends GameObject {
     }
     public boolean hasItem(){
         return potential_items.size()>0;
+    }
+
+    public void setDeadBody(DeadBodyModel b) {
+        dead_body = b;
+    }
+
+    public boolean hasBody() {
+        return carrying_body;
+    }
+
+    public void updateDeadBodyPos() {
+        if(dead_body!=null){
+            dead_body.setX(getX());
+            dead_body.setY(getY());
+        }
+    }
+    public void setCarryingBody(boolean carryingPressed) {
+        if(carryingPressed && contact_body) {
+            carrying_body = true;
+        } else if (carryingPressed) {
+            carrying_body = false;
+            updateDeadBodyPos();
+        }
     }
     /**
      * Sets the object texture for drawing purposes.
@@ -413,17 +443,17 @@ public class DiverModel extends GameObject {
         }
         body.applyForce(forceCache,getPosition(),true);
         if (current_item != null) {
-            current_item.setVX(getVX());
-            current_item.setVY(getVY());
+//            current_item.setVX(getVX());
+//            current_item.setVY(getVY());
 //            current_item.setX(getX()+ 2);
 //            current_item.setY(getY()+2);
 //            current_item.setVerticalMovement(getVerticalMovement());
 //            current_item.setHorizontalMovement(getHorizontalMovement());
 //            current_item.applyForce();
-            System.out.println("X POS: " + current_item.getX());
-            System.out.println("Y POS: " + current_item.getY());
-            System.out.println("DIVER X POS: " + getX());
-            System.out.println("DIVER Y POS: " + getY());
+//            System.out.println("X POS: " + current_item.getX());
+//            System.out.println("Y POS: " + current_item.getY());
+//            System.out.println("DIVER X POS: " + getX());
+//            System.out.println("DIVER Y POS: " + getY());
         }
 
     }
@@ -442,19 +472,23 @@ public class DiverModel extends GameObject {
 //        System.out.println("SIZE OF POTENTIAL OBJECTS" + potential_items.size());
         if(pickUpOrDrop) {
             if(current_item!=null){
+                System.out.println("SUPPOSED TO DROP OBJECT");
                 current_item.setGravityScale(0f);
+                current_item.setX(getX());
+                current_item.setY(getY());
                 current_item.setVerticalMovement(0);
                 current_item.setVX(0);
                 current_item.setVY(0);
-                current_item = null;
                 dropItem();
             }
             else if(potential_items.size() > 0) {
+//                System.out.println("SUPPOSED TO PICK UP OBJECT");
                 current_item = potential_items.get(0);
-                System.out.println("Current Item: "+current_item);
+//                System.out.println("Current Item: "+current_item);
                 current_item.setX(getX());
                 current_item.setY(getY());
-                current_item.setGravityScale(1);
+                //current_item.setGravityScale(1);
+                current_item.setCarried(true);
             }
         }
     }
@@ -488,6 +522,14 @@ public class DiverModel extends GameObject {
     public boolean containsPotentialItem(ItemModel i) {
         return potential_items.contains(i);
     }
+
+    public void setBodyContact(boolean b) {
+        contact_body = b;
+    }
+
+    public boolean isBodyContact() {
+        return contact_body;
+    }
     /**
      * @return the current oxygen level of the diver
      */
@@ -506,8 +548,18 @@ public class DiverModel extends GameObject {
 
 
     public void dropItem() {
+        current_item.setCarried(false);
+        current_item = null;
         potential_items.clear();
+    }
 
+    public void dropBody() {
+        carrying_body = false;
+    }
+    public void pickUpBody() {
+        if(contact_body) {
+            carrying_body = true;
+        }
     }
 
     /** Player Sensor Stuff*/

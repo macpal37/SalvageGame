@@ -54,7 +54,7 @@ public class CollisionController {
      * @return whether win condition is met (diver is carrying body)
      */
     public static boolean winGame(DiverModel diver, GoalDoor door){
-        return diver.getItem() != null;
+        return diver.hasBody();//diver.getItem() != null
 //                && diver.getItem().getItemType() == ItemType.DEAD_BODY;
     }
 }

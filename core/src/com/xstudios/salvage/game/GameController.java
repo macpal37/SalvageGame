@@ -55,7 +55,8 @@ public class GameController implements Screen, ContactListener {
     protected DiverModel diver;
 
     protected ItemModel key;
-    protected ItemModel dead_body;
+//    protected ItemModel dead_body;
+    protected DeadBodyModel dead_body;
     protected GoalDoor goal_door;
 
     private Array<Door> doors=new Array<Door>();
@@ -105,6 +106,8 @@ public class GameController implements Screen, ContactListener {
     protected Rectangle bounds;
     /** The world scale */
     protected Vector2 scale;
+    /** The symbol scale */
+    protected Vector2 symbol_scale;
 
 
     /** Whether or not this is an active controller */
@@ -176,6 +179,7 @@ public class GameController implements Screen, ContactListener {
         world = new World(gravity.scl(1),false);
         this.bounds = new Rectangle(bounds);
         this.scale = new Vector2(1,1);
+        this.symbol_scale = new Vector2(.2f, .2f);
         debug  = false;
         active = false;
         // TODO: oxygen rate should be a parameter loaded from a json
@@ -347,7 +351,6 @@ public class GameController implements Screen, ContactListener {
 //        world = new World(gravity,false);
 //        world.setContactListener(this);
         populateLevel();
-
     }
     /**
      * Lays out the game geography.
@@ -369,21 +372,28 @@ public class GameController implements Screen, ContactListener {
         key = new ItemModel(constants.get("key"),itemTexture.getRegionWidth(),
                 itemTexture.getRegionHeight(), ItemType.KEY, 0);
         key.setTexture(itemTexture);
+        key.setBodyType(BodyDef.BodyType.StaticBody);
         key.setDrawScale(scale);
+        key.setDrawSymbolScale(symbol_scale);
         key.setName("key");
         key.setGravityScale(0f);
         key.setSensor(true);
 
         addObject(key);
 
-        dead_body = new ItemModel(constants.get("dead_body"),deadBodyTexture.getRegionWidth(),
-                deadBodyTexture.getRegionHeight(), ItemType.DEAD_BODY, 0);
+//        dead_body = new ItemModel(constants.get("dead_body"),deadBodyTexture.getRegionWidth(),
+//                deadBodyTexture.getRegionHeight(), ItemType.DEAD_BODY, 0);
+
+        dead_body = new DeadBodyModel(constants.get("dead_body"),deadBodyTexture.getRegionWidth(),
+                deadBodyTexture.getRegionHeight());
 
         dead_body.setTexture(deadBodyTexture);
         dead_body.setDrawScale(scale);
+        dead_body.setDrawSymbolScale(symbol_scale);
         dead_body.setName("dead_body");
         dead_body.setGravityScale(0f);
         dead_body.setSensor(true);
+        diver.setDeadBody(dead_body);
 
         addObject(dead_body);
 
@@ -484,8 +494,7 @@ public class GameController implements Screen, ContactListener {
         }
 
         // Toggle debug
-        if (input.didPing()) {
-
+        if (input.didDebug()) {
             debug = !debug;
         }
 
@@ -511,17 +520,13 @@ public class GameController implements Screen, ContactListener {
      */
     public void update(float dt) {
         for (Door door: doors){
-            door.setActive(!toUnlock);
+            door.setActive(!door.getUnlock());
         }
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
         // apply movement
         InputController input = InputController.getInstance();
 
-        if (input.didPing()) {
-
-//            debug = !debug;
-        }
         diver.setHorizontalMovement(input.getHorizontal() *diver.getForce());
         diver.setVerticalMovement(input.getVertical() *diver.getForce());
 
@@ -529,18 +534,17 @@ public class GameController implements Screen, ContactListener {
 
         // do the ping
         diver.setPing(input.didPing());
-            diver.setPingDirection(dead_body.getPosition());
+        diver.setPingDirection(dead_body.getPosition());
 
         diver.setPickUpOrDrop(input.getOrDropObject());
         diver.setItem();
-        key.setCarried(diver.carryingItem());
+        diver.setCarryingBody(input.getOrDropBody());
+        dead_body.setCarried(diver.hasBody());
 
         // decrease oxygen from movement
         if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
-
             diver.changeOxygenLevel(activeOxygenRate);
         } else {
-
             diver.changeOxygenLevel(passiveOxygenRate);
         }
 
@@ -553,19 +557,7 @@ public class GameController implements Screen, ContactListener {
             light.setPosition(
                 (diver.getX() * diver.getDrawScale().x) / 40f,
                 (diver.getY() * diver.getDrawScale().y) / 40f);
-            }
-
-
-            //deactivates unlocked doors
-            if(diver.carryingItem() && diver.getItem().getItemType().equals(ItemType.KEY)){
-
-                for(Door door:doors){
-                    if(door.getKey() == diver.getItem()){
-//                        System.out.println("HI");
-                        door.setActive(false);
-                    }
-                }
-            }
+        }
 
         // TODO: why wasnt this in marco's code?
 
@@ -650,8 +642,19 @@ public class GameController implements Screen, ContactListener {
 
                 "Oxygen Level: " + (int) diver.getOxygenLevel(),
                 displayFont,
-                cameraController.getCameraPosition2D().x - canvas.getWidth()/2 + 50,
-                cameraController.getCameraPosition2D().y - canvas.getHeight()/2 + 50);
+                cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + 50,
+                cameraController.getCameraPosition2D().y - canvas.getHeight()/2f + 50);
+
+        for(GameObject o: objects) {
+            if(o instanceof DiverObjectModel && ((DiverObjectModel)o).isCarried()) {
+                DiverObjectModel d_obj = (DiverObjectModel)o;
+
+                canvas.draw(d_obj.getTexture(), Color.WHITE, d_obj.origin.x, d_obj.origin.y,
+                        cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + d_obj.getDrawSymbolPos().x,
+                        cameraController.getCameraPosition2D().y - canvas.getHeight()/2f + d_obj.getDrawSymbolPos().y,
+                        d_obj.getAngle(), d_obj.getDrawSymbolScale().x, d_obj.getDrawSymbolScale().y);
+            }
+        }
         canvas.end();
 
         if(debug) {
@@ -787,11 +790,12 @@ public class GameController implements Screen, ContactListener {
             if(body2.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
                ((ItemModel) body2.getUserData()).setTouched(true);
-            }
-
-            else if(body2.getUserData() instanceof Door){
+            } else if(body2.getUserData() instanceof Door){
                 System.out.println("Attempt Unlock");
-                toUnlock=CollisionController.attemptUnlock(diver, (Door)body2.getUserData());
+//                toUnlock=CollisionController.attemptUnlock(diver, (Door)body2.getUserData());
+                ((Door)body2.getUserData()).setUnlock(CollisionController.attemptUnlock(diver, (Door)body2.getUserData()));
+            }  else if(body2.getUserData() instanceof DeadBodyModel){
+                ((DiverModel) body1.getUserData()).setBodyContact(true);
             }
 
 
@@ -800,11 +804,13 @@ public class GameController implements Screen, ContactListener {
             if (body1.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel)body1.getUserData());
                 ((ItemModel) body1.getUserData()).setTouched(true);
-            }
-
-            else if(body1.getUserData() instanceof Door){
+            } else if(body1.getUserData() instanceof Door){
                 System.out.println("Attempt Unlock");
-                toUnlock=CollisionController.attemptUnlock(diver, (Door)body1.getUserData());
+//                toUnlock=CollisionController.attemptUnlock(diver, (Door)body1.getUserData());
+                ((Door)body1.getUserData()).setUnlock(CollisionController.attemptUnlock(diver, (Door)body1.getUserData()));
+
+            } else if(body1.getUserData() instanceof DeadBodyModel){
+                ((DiverModel) body2.getUserData()).setBodyContact(true);
             }
 
         }
@@ -879,12 +885,18 @@ public class GameController implements Screen, ContactListener {
                 CollisionController.putDown(diver,
                     (ItemModel) body2.getUserData());
                 ((ItemModel) body2.getUserData()).setTouched(false);
+            }  else if(body2.getUserData() instanceof DeadBodyModel){
+                System.out.println("end contact with body");
+                ((DiverModel) body1.getUserData()).setBodyContact(false);
             }
         } else if (body2.getUserData() instanceof DiverModel) {
             if (body1.getUserData() instanceof ItemModel) {
                 CollisionController.putDown(diver,
                     (ItemModel) body1.getUserData());
                 ((ItemModel) body1.getUserData()).setTouched(false);
+            } else if(body2.getUserData() instanceof DeadBodyModel){
+                System.out.println("end contact with body");
+                ((DiverModel) body2.getUserData()).setBodyContact(true);
             }
         }
 

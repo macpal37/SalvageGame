@@ -15,7 +15,7 @@ import com.xstudios.salvage.game.GameObject;
 import static com.xstudios.salvage.game.models.ItemType.DEAD_BODY;
 import static com.xstudios.salvage.game.models.ItemType.KEY;
 
-public class ItemModel extends DiverObjectModel {
+public class DeadBodyModel extends DiverObjectModel {
 
 //    /** Shape information for this box */
 //    protected PolygonShape shape;
@@ -23,11 +23,7 @@ public class ItemModel extends DiverObjectModel {
 //    private Fixture geometry;
 //    /** Cache of the polygon vertices (for resizing) */
 //    private float[] vertices;
-    /** Type of item*/
-    private ItemType item_type;
-    /** unique id of item*/
-    private int item_ID;
-    /** The factor to multiply by the input */
+//    /** The factor to multiply by the input */
 //    private final float force;
 //    /** Cache for internal force calculations */
 //    private final Vector2 forceCache = new Vector2();
@@ -35,22 +31,12 @@ public class ItemModel extends DiverObjectModel {
 //    private final float damping;
 //    /** The maximum character speed */
 //    private final float maxspeed;
-    /** The current horizontal movement of the item */
-    private Vector2 movement;
-
-//    private RayHandler
-    private Light light;
+//
+//    private boolean isTouched;
 
 
-    public ItemModel(JsonValue data, float width, float height, ItemType item_type, int id){
-
+    public DeadBodyModel(JsonValue data, float width, float height){
         super(data);
-
-        this.item_type = item_type;
-        this.item_ID = id;
-        drawSymbolPos.add(data.getFloat("symbol_dist", 50.0f), 0);
-        setName(item_type + "" + item_ID);
-        movement = new Vector2();
     }
     /**
      * Release the fixtures for this body, resetting the shape
@@ -112,8 +98,9 @@ public class ItemModel extends DiverObjectModel {
             if(!carried){
                 canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
             }
-            if(!carried&&isTouched)
-            canvas.drawText("Press q",GameController.displayFont,(getX()-getWidth()*1.25f) * drawScale.x, (getY()+getHeight()*1.5f)  * drawScale.y);
+            if(isTouched) {
+                canvas.drawText("Press q", GameController.displayFont, (getX() - getWidth() * 1.25f) * drawScale.x, (getY() + getHeight() * 1.5f) * drawScale.y);
+            }
         }
     }
 
@@ -140,17 +127,6 @@ public class ItemModel extends DiverObjectModel {
         shape.setAsBox(width,height);
     }
 
-    public void applyForce() {
-        if (!isActive()) {
-            return;
-        }
-        forceCache.x = getHorizontalMovement();
-        forceCache.y = getVerticalMovement();
-        body.applyForce(forceCache,getPosition(),true);
-        setHorizontalMovement(0);
-        setVerticalMovement(0);
-    }
-
     /**
      * Returns the x-coordinate for this physics body
      *
@@ -169,61 +145,4 @@ public class ItemModel extends DiverObjectModel {
         return (body != null ? body.getPosition().y : super.getY());
     }
 
-    /**
-     * Returns left/right movement of this character.
-     *
-     * This is the result of input times dude force.
-     *
-     * @return left/right movement of this character.
-     */
-    public float getHorizontalMovement() {
-        return movement.x;
-    }
-
-    /**
-     * Returns up/down movement of this character.
-     *
-     * This is the result of input times dude force.
-     *
-     * @return left/right movement of this character.
-     */
-    public float getVerticalMovement() {
-        return movement.y;
-    }
-
-
-    public void setVerticalMovement(float value) {
-        movement.y = value;
-    }
-
-
-    public void setHorizontalMovement(float value) {
-        movement.x = value;
-    }
-
-    public ItemType getItemType() {
-        return item_type;
-    }
-
-    public int getItemID() {
-        return item_ID;
-    }
-
-//    public void setCarried(boolean b) {
-//        carried = b;
-//
-//    }
-//
-//    public boolean isCarried() {
-//        return carried;
-//    }
-//
-//
-//    public boolean isTouched() {
-//        return isTouched;
-//    }
-//
-//    public void setTouched(boolean touched) {
-//        isTouched = touched;
-//    }
 }
