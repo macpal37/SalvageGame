@@ -8,6 +8,7 @@
     "models:dead_body": "models/dead_body.png",
     "models:door_open": "models/door_open.png",
     "models:door_closed": "models/door_closed.png",
+    "levels:tilesets:old_ship_tileset":"levels/tilesets/old_ship_tileset.png",
     "wall": {
       "file":"background/wooden_bg.png",
       "wrapU":"repeated",

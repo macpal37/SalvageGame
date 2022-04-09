@@ -15,12 +15,14 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.audio.AudioController;
+import com.xstudios.salvage.game.levels.LevelBuilder;
 import com.xstudios.salvage.game.models.DiverModel;
 import com.xstudios.salvage.game.models.Wall;
 import com.xstudios.salvage.game.models.*;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class GameController implements Screen, ContactListener {
@@ -41,6 +43,7 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion doorOpenTexture;
     protected TextureRegion doorCloseTexture;
 
+    protected TextureRegion tileset;
     JsonValue constants;
 
     // Models to be updated
@@ -124,7 +127,7 @@ public class GameController implements Screen, ContactListener {
     private boolean reach_target = false;
 
 
-//    private LightController lightController;
+    private LevelBuilder levelBuilder;
 
 
     //sample wall to get rid of later
@@ -204,7 +207,7 @@ public class GameController implements Screen, ContactListener {
         audioController.intialize();
         collisionController = new CollisionController();
         world.setContactListener(this);
-
+        levelBuilder = new LevelBuilder();
     }
 
     /**
@@ -282,6 +285,7 @@ public class GameController implements Screen, ContactListener {
      */
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the tiles
+        tileset =  new TextureRegion(directory.getEntry( "levels:tilesets:old_ship_tileset", Texture.class ));
         diverTexture = new TextureRegion(directory.getEntry( "models:diver", Texture.class ));
         background = new TextureRegion(directory.getEntry( "background:ocean", Texture.class ));
         itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
@@ -346,17 +350,15 @@ public class GameController implements Screen, ContactListener {
 
         objects.clear();
         addQueue.clear();
-//        world.dispose();
 
-//        world = new World(gravity,false);
-//        world.setContactListener(this);
         populateLevel();
     }
     /**
      * Lays out the game geography.
      */
     private void populateLevel() {
-
+//        System.out.println("Hello?");
+        ArrayList<GObject> objects =  levelBuilder.createLevel("small_ship","old_ship_tileset",tileset);
         diver = new DiverModel(constants.get("diver"),diverTexture.getRegionWidth(),
             diverTexture.getRegionHeight());
 
@@ -367,35 +369,35 @@ public class GameController implements Screen, ContactListener {
 
         addObject(diver);
 
-        light.setPosition((diver.getX()*diver.getDrawScale().x)/32f,(diver.getY()*diver.getDrawScale().y)/32f);
-
-        key = new ItemModel(constants.get("key"),itemTexture.getRegionWidth(),
-                itemTexture.getRegionHeight(), ItemType.KEY, 0);
-        key.setTexture(itemTexture);
-        key.setBodyType(BodyDef.BodyType.StaticBody);
-        key.setDrawScale(scale);
-        key.setDrawSymbolScale(symbol_scale);
-        key.setName("key");
-        key.setGravityScale(0f);
-        key.setSensor(true);
-
-        addObject(key);
+//        light.setPosition((diver.getX()*diver.getDrawScale().x)/32f,(diver.getY()*diver.getDrawScale().y)/32f);
+//
+//        key = new ItemModel(constants.get("key"),itemTexture.getRegionWidth(),
+//                itemTexture.getRegionHeight(), ItemType.KEY, 0);
+//        key.setTexture(itemTexture);
+//        key.setBodyType(BodyDef.BodyType.StaticBody);
+//        key.setDrawScale(scale);
+//        key.setDrawSymbolScale(symbol_scale);
+//        key.setName("key");
+//        key.setGravityScale(0f);
+//        key.setSensor(true);
+//
+//        addObject(key);
 
 //        dead_body = new ItemModel(constants.get("dead_body"),deadBodyTexture.getRegionWidth(),
 //                deadBodyTexture.getRegionHeight(), ItemType.DEAD_BODY, 0);
 
-        dead_body = new DeadBodyModel(constants.get("dead_body"),deadBodyTexture.getRegionWidth(),
-                deadBodyTexture.getRegionHeight());
-
-        dead_body.setTexture(deadBodyTexture);
-        dead_body.setDrawScale(scale);
-        dead_body.setDrawSymbolScale(symbol_scale);
-        dead_body.setName("dead_body");
-        dead_body.setGravityScale(0f);
-        dead_body.setSensor(true);
-        diver.setDeadBody(dead_body);
-
-        addObject(dead_body);
+//        dead_body = new DeadBodyModel(constants.get("dead_body"),deadBodyTexture.getRegionWidth(),
+//                deadBodyTexture.getRegionHeight());
+//
+//        dead_body.setTexture(deadBodyTexture);
+//        dead_body.setDrawScale(scale);
+//        dead_body.setDrawSymbolScale(symbol_scale);
+//        dead_body.setName("dead_body");
+//        dead_body.setGravityScale(0f);
+//        dead_body.setSensor(true);
+//        diver.setDeadBody(dead_body);
+//
+//        addObject(dead_body);
 
         JsonValue goal = constants.get("goal");
         goal_door = new GoalDoor(diver.getX(),diver.getY(),
@@ -411,39 +413,27 @@ public class GameController implements Screen, ContactListener {
         addObject(goal_door);
 
 
-        float[][] wallVerts={
+        int wallCounter = 0;
+        for(GObject go:objects){
 
-                //walls
-            {-50.0f, 18.0f, -40.0f, 0.0f, -39.5f,  0.0f, -49.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f,},
-            { 46.0f, 18.0f,  32.0f, -9.0f,  31.0f,  -10.0f,  45.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f},
-                //first floor
-            { -35.0f, -9.0f, -35.0f, -10.0f ,  32.0f, -10.0f,  32.0f, -9.0f},
+            if(go instanceof Wall){
 
-            { -40.5f, 0.0f, -40.0f, -1.0f,  -13.0f, -1.0f,  -13.0f, 0.0f},
-            { -3.0f, 0.0f, -3.0f, -9.0f, -2.0f, -9.0f, -2.0f, -1.0f,  6.0f, -1.0f, 6.0f, 0.0f},
-            { 14.0f, 0.0f, 14.0f, -4.0f, 15.0f, -4.0f, 15.0f, -1.0f, 28.0f, -1.0f, 28.0f, 0.0f},
 
-                //second floor
-            { -33.0f, 9.0f, -33.0f, 8.0f , 32.0f, 8.0f, 32.0f, 9.0f},
-            { 22.0f, 8.0f, 22.0f, 0.0f , 23.0f, 0.0f, 23.0f, 8.0f},
-                //third floor
-            {-10.0f, 17.0f, -10.0f, 9.0f , -9.0f, 9.0f, -9.0f, 17.0f},
-            {20.0f, 17.0f, 20.0f, 13.0f , 21f, 13.0f, 21f, 17.0f}
-        };
+                Wall obj = (Wall) go;
+                obj.setBodyType(BodyDef.BodyType.StaticBody);
+                obj.setDensity(0);
+                obj.setFriction(0.4f);
+                obj.setRestitution(0.1f);
+                obj.setDrawScale(scale);
+                obj.setTexture(wallTexture);
+                obj.setDrawScale(scale);
+                obj.setName("wall "+wallCounter++);
+                addObject(obj);
 
-        for (int ii = 0; ii < wallVerts.length; ii++) {
-            Wall obj;
-            obj = new Wall(wallVerts[ii], 0, 0);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(0);
-            obj.setFriction(0.4f);
-            obj.setRestitution(0.1f);
-            obj.setDrawScale(scale);
-            obj.setTexture(wallTexture);
-            obj.setDrawScale(scale);
-            obj.setName("wall "+ii);
-            addObject(obj);
+            }
+
         }
+
 
 
         float[] doorverts= {14f, -4.0f, 14f, -9.0f, 14.5f, -4.0f, 14.5f, -9.0f};
@@ -657,7 +647,7 @@ public class GameController implements Screen, ContactListener {
         }
         canvas.end();
 
-        if(debug) {
+//        if(debug) {
             canvas.beginDebug();
             for (GameObject obj : objects) {
                 if (!(obj instanceof Wall)) {
@@ -665,7 +655,7 @@ public class GameController implements Screen, ContactListener {
                 }
             }
             canvas.endDebug();
-        }
+//        }
     }
 
 
