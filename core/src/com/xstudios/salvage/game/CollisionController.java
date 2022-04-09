@@ -57,4 +57,18 @@ public class CollisionController {
         return diver.hasBody();//diver.getItem() != null
 //                && diver.getItem().getItemType() == ItemType.DEAD_BODY;
     }
+
+    public static void staticHazardCollision(DiverModel diver, HazardModel hazard){
+        if(diver.getStunCooldown()<0 && diver.getStunCooldown()>-300){
+            diver.setStunned(false);
+        }
+        else {
+            if (!diver.getStunned()) {
+                diver.setStunned(true);
+                diver.setStunCooldown(hazard.getStunDuration());
+            }
+
+            diver.changeOxygenLevel(hazard.getOxygenDrain());
+        }
+    }
 }

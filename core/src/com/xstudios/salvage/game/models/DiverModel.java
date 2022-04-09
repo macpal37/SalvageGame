@@ -59,6 +59,11 @@ public class DiverModel extends GameObject {
     /** whether user wants to pick up/drop item*/
     private boolean pickUpOrDrop;
 
+    /** whether the diver is stunned*/
+    private boolean stunned;
+    /** cooldown on stun*/
+    private float stunCooldown;
+
     /** Store oxygen level */
     private float oxygenLevel;
     private float MAX_OXYGEN = 150;
@@ -164,7 +169,9 @@ public class DiverModel extends GameObject {
         movement.y = value;
     }
 
+    //TODO Why is this just hanging out in the middle of the code?
     private boolean switchDir = false;
+
 
 
 
@@ -222,6 +229,8 @@ public class DiverModel extends GameObject {
             updateDeadBodyPos();
         }
     }
+
+
     /**
      * Sets the object texture for drawing purposes.
      *
@@ -253,6 +262,19 @@ public class DiverModel extends GameObject {
             ping_cooldown = MAX_PING_COOLDOWN;
         }
     }
+
+    /**set stunned*/
+    public void setStunned(boolean stun){stunned=stun;}
+
+    /**set stun cooldown*/
+    public void setStunCooldown(float cooldown){stunCooldown=cooldown;}
+
+    /** decrement stun cooldown*/
+    public void decrementStunCooldown(float decrement){stunCooldown-=decrement;}
+
+    public boolean getStunned(){return stunned;}
+
+    public float getStunCooldown(){return stunCooldown;}
 
 
     /**

@@ -559,6 +559,11 @@ public class GameController implements Screen, ContactListener {
                 (diver.getY() * diver.getDrawScale().y) / 40f);
         }
 
+        //deal with hazard stun
+        diver.setStunCooldown(diver.getStunCooldown()-1);
+
+
+
         // TODO: why wasnt this in marco's code?
 
         cameraController.render();
@@ -787,7 +792,13 @@ public class GameController implements Screen, ContactListener {
             }
 
         if(body1.getUserData() instanceof DiverModel){
-            if(body2.getUserData() instanceof ItemModel){
+            if(body2.getUserData() instanceof GoalDoor){
+                if(CollisionController.winGame(diver, (GoalDoor) body2.getUserData())
+                        && listener!=null) {
+                    reach_target = true;//listener.exitScreen(this, 0);
+                }
+            }
+            else if(body2.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
                ((ItemModel) body2.getUserData()).setTouched(true);
             } else if(body2.getUserData() instanceof Door){
@@ -796,12 +807,21 @@ public class GameController implements Screen, ContactListener {
                 ((Door)body2.getUserData()).setUnlock(CollisionController.attemptUnlock(diver, (Door)body2.getUserData()));
             }  else if(body2.getUserData() instanceof DeadBodyModel){
                 ((DiverModel) body1.getUserData()).setBodyContact(true);
+            }  else if (body2.getUserData() instanceof HazardModel){
+                CollisionController.staticHazardCollision(diver, (HazardModel)body2.getUserData());
             }
+
 
 
         }
         else if (body2.getUserData() instanceof DiverModel){
-            if (body1.getUserData() instanceof ItemModel){
+            if(body1.getUserData() instanceof GoalDoor){
+                if(CollisionController.winGame(diver, (GoalDoor) body1.getUserData())
+                        && listener!=null) {
+                    reach_target = true;//listener.exitScreen(this, 0);
+                }
+            }
+            else if (body1.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel)body1.getUserData());
                 ((ItemModel) body1.getUserData()).setTouched(true);
             } else if(body1.getUserData() instanceof Door){
@@ -812,25 +832,12 @@ public class GameController implements Screen, ContactListener {
             } else if(body1.getUserData() instanceof DeadBodyModel){
                 ((DiverModel) body2.getUserData()).setBodyContact(true);
             }
+            else if (body2.getUserData() instanceof HazardModel){
+                CollisionController.staticHazardCollision(diver, (HazardModel)body1.getUserData());
+            }
 
         }
 
-
-        if(body1.getUserData() instanceof DiverModel){
-            if(body2.getUserData() instanceof GoalDoor){
-                if(CollisionController.winGame(diver, (GoalDoor) body2.getUserData())
-                        && listener!=null) {
-                    reach_target = true;//listener.exitScreen(this, 0);
-                }
-            }
-        } else if(body2.getUserData() instanceof DiverModel){
-            if(body1.getUserData() instanceof GoalDoor){
-                if(CollisionController.winGame(diver, (GoalDoor) body1.getUserData())
-                        && listener!=null) {
-                    reach_target = true;//listener.exitScreen(this, 0);
-                }
-            }
-        }
         // ================= CONTACT LISTENER METHODS =============================
 
 
