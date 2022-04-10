@@ -1,5 +1,6 @@
 package com.xstudios.salvage.game.models;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -152,4 +153,7 @@ public abstract class DiverObjectModel extends GameObject {
         isTouched = touched;
     }
 
+    public Color getColor() {
+        return Color.WHITE;
+    }
 }

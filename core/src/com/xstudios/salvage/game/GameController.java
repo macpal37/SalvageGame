@@ -86,7 +86,7 @@ public class GameController implements Screen, ContactListener {
     /** Aspect ratio of the world*/
     protected static final float ASPECT_RATIO = DEFAULT_WIDTH/DEFAULT_HEIGHT;
     /** The default value of gravity (going down) */
-    protected static final float DEFAULT_GRAVITY = -4.9f;
+    protected static final float DEFAULT_GRAVITY = 0;//-4.9f;
 
 
     /** Reference to the game canvas */
@@ -116,10 +116,7 @@ public class GameController implements Screen, ContactListener {
     private boolean debug;
 
     private AudioController audioController;
-
-
-    /** whether to unlock door*/
-    private boolean toUnlock=false;
+    private PhysicsController physicsController;
 
     private boolean reach_target = false;
 
@@ -179,7 +176,7 @@ public class GameController implements Screen, ContactListener {
         world = new World(gravity.scl(1),false);
         this.bounds = new Rectangle(bounds);
         this.scale = new Vector2(1,1);
-        this.symbol_scale = new Vector2(.2f, .2f);
+        this.symbol_scale = new Vector2(.4f, .4f);
         debug  = false;
         active = false;
         // TODO: oxygen rate should be a parameter loaded from a json
@@ -203,6 +200,7 @@ public class GameController implements Screen, ContactListener {
         audioController = new AudioController(100.0f);
         audioController.intialize();
         collisionController = new CollisionController();
+        physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
 
     }
@@ -529,7 +527,8 @@ public class GameController implements Screen, ContactListener {
 
         diver.setHorizontalMovement(input.getHorizontal() *diver.getForce());
         diver.setVerticalMovement(input.getVertical() *diver.getForce());
-
+        diver.setDriftMovement(physicsController.getCurrentVector(diver.getPosition()).x,
+                physicsController.getCurrentVector(diver.getPosition()).y);
         diver.applyForce();
 
         // do the ping
@@ -649,7 +648,7 @@ public class GameController implements Screen, ContactListener {
             if(o instanceof DiverObjectModel && ((DiverObjectModel)o).isCarried()) {
                 DiverObjectModel d_obj = (DiverObjectModel)o;
 
-                canvas.draw(d_obj.getTexture(), Color.WHITE, d_obj.origin.x, d_obj.origin.y,
+                canvas.draw(d_obj.getTexture(), d_obj.getColor(), d_obj.origin.x, d_obj.origin.y,
                         cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + d_obj.getDrawSymbolPos().x,
                         cameraController.getCameraPosition2D().y - canvas.getHeight()/2f + d_obj.getDrawSymbolPos().y,
                         d_obj.getAngle(), d_obj.getDrawSymbolScale().x, d_obj.getDrawSymbolScale().y);
