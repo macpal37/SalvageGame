@@ -59,16 +59,14 @@ public class CollisionController {
     }
 
     public static void staticHazardCollision(DiverModel diver, HazardModel hazard){
-        if(diver.getStunCooldown()<0 && diver.getStunCooldown()>-300){
-            diver.setStunned(false);
+        System.out.println("Hazard Contact");
+        if (!diver.getStunned()) {
+            diver.setStunned(true);
+            diver.setStunCooldown(hazard.getStunDuration());
+            diver.setStunned(true);
         }
-        else {
-            if (!diver.getStunned()) {
-                diver.setStunned(true);
-                diver.setStunCooldown(hazard.getStunDuration());
-            }
 
-            diver.changeOxygenLevel(hazard.getOxygenDrain());
-        }
+        diver.changeOxygenLevel(hazard.getOxygenDrain());
+
     }
 }

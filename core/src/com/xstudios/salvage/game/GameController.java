@@ -467,9 +467,23 @@ public class GameController implements Screen, ContactListener {
         door1.setName("door1");
         addObject(door1);
         door1.setUserData(door1);
-
         door1.setActive(true);
         doors.add(door1);
+
+        float[] staticHazardVerts={12f, -4.0f, 12f, -9.0f, 12.5f, -4.0f, 12.5f, -9.0f};
+        HazardModel hazard=new HazardModel(staticHazardVerts, 25, 10);
+        hazard.setBodyType(BodyDef.BodyType.StaticBody);
+        hazard.setDensity(0);
+        hazard.setFriction(0.4f);
+        hazard.setRestitution(0.1f);
+        hazard.setTexture(doorCloseTexture);
+        hazard.setDrawScale(scale);
+        hazard.setName("hazard");
+        addObject(hazard);
+        hazard.setUserData(hazard);
+        hazard.setActive(true);
+
+
 
     }
 
@@ -527,10 +541,11 @@ public class GameController implements Screen, ContactListener {
         // apply movement
         InputController input = InputController.getInstance();
 
-        diver.setHorizontalMovement(input.getHorizontal() *diver.getForce());
-        diver.setVerticalMovement(input.getVertical() *diver.getForce());
-
-        diver.applyForce();
+        if(!diver.getStunned()) {
+            diver.setHorizontalMovement(input.getHorizontal() * diver.getForce());
+            diver.setVerticalMovement(input.getVertical() * diver.getForce());
+            diver.applyForce();
+        }
 
         // do the ping
         diver.setPing(input.didPing());
@@ -542,7 +557,7 @@ public class GameController implements Screen, ContactListener {
         dead_body.setCarried(diver.hasBody());
 
         // decrease oxygen from movement
-        if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
+        if ((!diver.getStunned()) && (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0)) {
             diver.changeOxygenLevel(activeOxygenRate);
         } else {
             diver.changeOxygenLevel(passiveOxygenRate);
@@ -560,7 +575,11 @@ public class GameController implements Screen, ContactListener {
         }
 
         //deal with hazard stun
+        System.out.println(diver.getStunCooldown());
         diver.setStunCooldown(diver.getStunCooldown()-1);
+        if(diver.getStunCooldown()<=0){
+            diver.setStunned(false);
+        }
 
 
 

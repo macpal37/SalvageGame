@@ -11,11 +11,11 @@ public class HazardModel extends Wall{
 
     public float getStunDuration(){return stunDuration;}
 
-    public HazardModel(float oxygenDrain, float stunDuration, float[] points){
-        this(oxygenDrain, stunDuration, points, 0,0);
+    public HazardModel(float[] points, float oxygenDrain, float stunDuration){
+        this(points, 0, 0, oxygenDrain, stunDuration);
     }
 
-    public HazardModel(float oxygenDrain, float stunDuration, float[] points, float x, float y){
+    public HazardModel(float points[], float x, float y, float oxygenDrain, float stunDuration){
         super(points, x,y);
         this.oxygenDrain=oxygenDrain;
         this.stunDuration=stunDuration;
