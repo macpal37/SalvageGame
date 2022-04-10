@@ -50,6 +50,9 @@ public class GameController implements Screen, ContactListener {
     /** The font for giving messages to the player */
     public static BitmapFont displayFont;
 
+    /** how much the object that's stunning the diver is draining their oxygen by*/
+    float hostileOxygenDrain=0.0f;
+
 
     // Models to be updated
     protected DiverModel diver;
@@ -471,7 +474,7 @@ public class GameController implements Screen, ContactListener {
         doors.add(door1);
 
         float[] staticHazardVerts={12f, -4.0f, 12f, -9.0f, 12.5f, -4.0f, 12.5f, -9.0f};
-        HazardModel hazard=new HazardModel(staticHazardVerts, 25, 10);
+        HazardModel hazard=new HazardModel(staticHazardVerts, -0.02f, 180);
         hazard.setBodyType(BodyDef.BodyType.StaticBody);
         hazard.setDensity(0);
         hazard.setFriction(0.4f);
@@ -579,7 +582,9 @@ public class GameController implements Screen, ContactListener {
         diver.setStunCooldown(diver.getStunCooldown()-1);
         if(diver.getStunCooldown()<=0){
             diver.setStunned(false);
+            hostileOxygenDrain=0.0f;
         }
+        diver.changeOxygenLevel(hostileOxygenDrain);
 
 
 
@@ -827,7 +832,7 @@ public class GameController implements Screen, ContactListener {
             }  else if(body2.getUserData() instanceof DeadBodyModel){
                 ((DiverModel) body1.getUserData()).setBodyContact(true);
             }  else if (body2.getUserData() instanceof HazardModel){
-                CollisionController.staticHazardCollision(diver, (HazardModel)body2.getUserData());
+                hostileOxygenDrain = CollisionController.staticHazardCollision(diver, (HazardModel)body2.getUserData());
             }
 
 
@@ -852,7 +857,7 @@ public class GameController implements Screen, ContactListener {
                 ((DiverModel) body2.getUserData()).setBodyContact(true);
             }
             else if (body2.getUserData() instanceof HazardModel){
-                CollisionController.staticHazardCollision(diver, (HazardModel)body1.getUserData());
+                hostileOxygenDrain=CollisionController.staticHazardCollision(diver, (HazardModel)body1.getUserData());
             }
 
         }

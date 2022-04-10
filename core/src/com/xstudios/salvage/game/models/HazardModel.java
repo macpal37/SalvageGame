@@ -7,8 +7,10 @@ public class HazardModel extends Wall{
     /** number of frames the stun lasts for*/
     private float stunDuration;
 
+    /** get oxygen drain rate*/
     public float getOxygenDrain(){return oxygenDrain;}
 
+    /** get stun duration*/
     public float getStunDuration(){return stunDuration;}
 
     public HazardModel(float[] points, float oxygenDrain, float stunDuration){
