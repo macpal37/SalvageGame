@@ -35,6 +35,8 @@ public class Wall extends GameObject {
     protected float[] vertices;
     /** The texture anchor upon region initialization */
     protected Vector2 anchor;
+    /** Whether the wall is invisible or not.*/
+    protected boolean invisible = false;
 
 
     /**
@@ -267,6 +269,10 @@ public class Wall extends GameObject {
         dimension.set(width,height);
     }
 
+    public void setInvisible(boolean invisible) {
+        this.invisible = invisible;
+    }
+
     /**
      * Create new fixtures for this body, defining the shape
      *
@@ -280,14 +286,22 @@ public class Wall extends GameObject {
         releaseFixtures();
 
         // Create the fixtures
-        for(int ii = 0; ii < shapes.length; ii++) {
-            fixture.filter.categoryBits = 0x004;
-            fixture.filter.groupIndex = 0x002;
-            fixture.filter.maskBits = -1;
-            fixture.shape = shapes[ii];
-            geoms[ii] = body.createFixture(fixture);
-
-
+        if (invisible){
+            for (int ii = 0; ii < shapes.length; ii++) {
+                fixture.filter.categoryBits = 0x002;
+                fixture.filter.groupIndex = 0x004;
+                fixture.filter.maskBits = -1;
+                fixture.shape = shapes[ii];
+                geoms[ii] = body.createFixture(fixture);
+            }
+        }else {
+            for (int ii = 0; ii < shapes.length; ii++) {
+                fixture.filter.categoryBits = 0x004;
+                fixture.filter.groupIndex = 0x002;
+                fixture.filter.maskBits = -1;
+                fixture.shape = shapes[ii];
+                geoms[ii] = body.createFixture(fixture);
+            }
         }
         markDirty(false);
     }
@@ -369,7 +383,7 @@ public class Wall extends GameObject {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        if (region != null) {
+        if (region != null&&!invisible) {
             canvas.draw(region,Color.WHITE,0,0,(getX()-anchor.x)*drawScale.x,(getY()-anchor.y)*drawScale.y,getAngle(),1,1);
         }
 

@@ -17,6 +17,7 @@ public class CollisionController {
     public static void pickUp(DiverModel diver, ItemModel item){
         if(diver.getItem() !=  item) {
             diver.addPotentialItem(item);
+
         }
     }
 
@@ -27,7 +28,7 @@ public class CollisionController {
      */
     public static boolean attemptUnlock(DiverModel diver, Door door){
         if(diver.getItem()!=null) {
-            if (diver.getItem() == door.getKey() || diver.getItem().getItemType() == ItemType.DEAD_BODY) {
+            if (diver.getItem().getItemID() == door.getItemID() || diver.getItem().getItemType() == ItemType.DEAD_BODY) {
                 return true;
             }
         }

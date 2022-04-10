@@ -149,6 +149,46 @@
         }, 
         {
          "id":5,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":1,
+                     "name":"",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":-0.727272727272727
+                            }, 
+                            {
+                             "x":100.181818181818,
+                             "y":-0.363636363636364
+                            }, 
+                            {
+                             "x":100.363636363636,
+                             "y":99.6363636363636
+                            }, 
+                            {
+                             "x":-0.181818181818182,
+                             "y":99.0909090909091
+                            }],
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":0,
+                     "y":0.545454545454545
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
          "properties":[
                 {
                  "name":"model_type",
@@ -322,6 +362,46 @@
         }, 
         {
          "id":14,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":1,
+                     "name":"",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":49.6068,
+                             "y":-0.30523
+                            }, 
+                            {
+                             "x":49.9093,
+                             "y":100.421
+                            }, 
+                            {
+                             "x":-0.907441,
+                             "y":100.421
+                            }],
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":25,
+                     "y":-0.18181818181818
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
          "properties":[
                 {
                  "name":"model_type",

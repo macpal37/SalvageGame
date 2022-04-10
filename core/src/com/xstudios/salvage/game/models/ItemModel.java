@@ -42,9 +42,9 @@ public class ItemModel extends DiverObjectModel {
     private Light light;
 
 
-    public ItemModel(JsonValue data, float width, float height, ItemType item_type, int id){
+    public ItemModel(float x, float y, JsonValue data, ItemType item_type, int id){
 
-        super(data);
+        super(x,y,data);
 
         this.item_type = item_type;
         this.item_ID = id;
@@ -73,8 +73,8 @@ public class ItemModel extends DiverObjectModel {
 
         releaseFixtures();
         // Create the fixture
-        fixture.filter.categoryBits = 0x002;
-        fixture.filter.groupIndex = 0x004;
+//        fixture.filter.categoryBits = 0x002;
+//        fixture.filter.groupIndex = 0x004;
         fixture.filter.maskBits = -1;
         fixture.shape = shape;
 
