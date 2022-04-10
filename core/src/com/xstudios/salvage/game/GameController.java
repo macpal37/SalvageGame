@@ -3,7 +3,6 @@ package com.xstudios.salvage.game;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -120,6 +119,16 @@ public class GameController implements Screen, ContactListener {
 
     private boolean reach_target = false;
 
+    private enum state {
+        PLAYING,
+        WIN_GAME,
+        LOSE_GAME,
+        RESTART,
+        PAUSE,
+        QUIT
+    }
+    // TODO: when we add other screens we can actually implement code to support pausing and quitting
+    private state game_state;
 
 //    private LightController lightController;
 
@@ -202,7 +211,7 @@ public class GameController implements Screen, ContactListener {
         collisionController = new CollisionController();
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
-
+        game_state = state.PLAYING;
     }
 
     /**
@@ -337,6 +346,7 @@ public class GameController implements Screen, ContactListener {
     }
 
     public void reset() {
+        game_state = state.PLAYING;
         Vector2 gravity = new Vector2(world.getGravity() );
         for(GameObject obj : objects) {
             obj.deactivatePhysics(world);
@@ -471,8 +481,51 @@ public class GameController implements Screen, ContactListener {
 
     }
 
+    private void updateGameState() {
+        if(diver.getOxygenLevel() <= 0) {
+            game_state = state.LOSE_GAME;
+        }
+    }
 
+    private void updatePlayingState() {
+        // apply movement
+        InputController input = InputController.getInstance();
+        diver.setHorizontalMovement(input.getHorizontal() * diver.getForce());
+        diver.setVerticalMovement(input.getVertical() * diver.getForce());
 
+        // do the ping
+        diver.setPing(input.didPing());
+        diver.setPingDirection(dead_body.getPosition());
+
+        // manage items/dead body
+        diver.setPickUpOrDrop(input.getOrDropObject());
+        diver.setItem();
+        dead_body.setCarried(diver.hasBody());
+
+        // decrease oxygen from movement
+        if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
+            diver.changeOxygenLevel(activeOxygenRate);
+        } else {
+            diver.changeOxygenLevel(passiveOxygenRate);
+        }
+        diver.setDriftMovement(physicsController.getCurrentVector(diver.getPosition()).x,
+                physicsController.getCurrentVector(diver.getPosition()).y);
+        diver.applyForce();
+        audioController.update(diver.getOxygenLevel());
+
+        if (diver.getBody() != null) {
+            cameraController.setCameraPosition(
+                    diver.getX() * diver.getDrawScale().x, diver.getY() * diver.getDrawScale().y);
+            //
+            light.setPosition(
+                    (diver.getX() * diver.getDrawScale().x) / 40f,
+                    (diver.getY() * diver.getDrawScale().y) / 40f);
+        }
+
+        // TODO: why wasnt this in marco's code?
+
+        cameraController.render();
+    }
     /**
      * Returns whether to process the update loop
      *
@@ -497,9 +550,8 @@ public class GameController implements Screen, ContactListener {
         }
 
         // Handle resets
-        if (input.didReset() || reach_target) {
+        if (input.didReset() || game_state == state.RESTART) {
             reset();
-            reach_target = false;
         }
         return true;
 
@@ -522,45 +574,21 @@ public class GameController implements Screen, ContactListener {
         }
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
-        // apply movement
-        InputController input = InputController.getInstance();
 
-        diver.setHorizontalMovement(input.getHorizontal() *diver.getForce());
-        diver.setVerticalMovement(input.getVertical() *diver.getForce());
-        diver.setDriftMovement(physicsController.getCurrentVector(diver.getPosition()).x,
-                physicsController.getCurrentVector(diver.getPosition()).y);
-        diver.applyForce();
-
-        // do the ping
-        diver.setPing(input.didPing());
-        diver.setPingDirection(dead_body.getPosition());
-
-        diver.setPickUpOrDrop(input.getOrDropObject());
-        diver.setItem();
-        diver.setCarryingBody(input.getOrDropBody());
-        dead_body.setCarried(diver.hasBody());
-
-        // decrease oxygen from movement
-        if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
-            diver.changeOxygenLevel(activeOxygenRate);
-        } else {
-            diver.changeOxygenLevel(passiveOxygenRate);
+        switch (game_state) {
+            case PLAYING:
+                updatePlayingState();
+            break;
+            // could be useful later but currently just has updates for PLAYING state
+//            case WIN_GAME:
+//
+//            break;
+//            case LOSE_GAME:
+//
+//            break;
         }
 
-        audioController.update(diver.getOxygenLevel());
-
-        if (diver.getBody() != null) {
-            cameraController.setCameraPosition(
-                diver.getX() * diver.getDrawScale().x, diver.getY() * diver.getDrawScale().y);
-              //
-            light.setPosition(
-                (diver.getX() * diver.getDrawScale().x) / 40f,
-                (diver.getY() * diver.getDrawScale().y) / 40f);
-        }
-
-        // TODO: why wasnt this in marco's code?
-
-        cameraController.render();
+        updateGameState();
     }
 
     /**
@@ -633,16 +661,37 @@ public class GameController implements Screen, ContactListener {
         for(GameObject obj : aboveObjects) {
             obj.draw(canvas);
         }
+
         if(!debug)
-    rayHandler.updateAndRender();
+            rayHandler.updateAndRender();
         canvas.end();
         canvas.begin();
-        canvas.drawText(
+        switch (game_state) {
+            case PLAYING:
+                canvas.drawText(
 
-                "Oxygen Level: " + (int) diver.getOxygenLevel(),
-                displayFont,
-                cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + 50,
-                cameraController.getCameraPosition2D().y - canvas.getHeight()/2f + 50);
+                        "Oxygen Level: " + (int) diver.getOxygenLevel(),
+                        displayFont,
+                        cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + 50,
+                        cameraController.getCameraPosition2D().y - canvas.getHeight()/2f + 50);
+            break;
+            case WIN_GAME:
+                System.out.println( "TEXT POS" +
+                        cameraController.getCameraPosition2D().x + " " +
+                        cameraController.getCameraPosition2D().y );
+//                canvas.drawText("you win! Press R to restart",
+//                        displayFont,
+//                        cameraController.getCameraPosition2D().x - 100,
+//                        cameraController.getCameraPosition2D().y );
+            break;
+//            case LOSE_GAME:
+//                canvas.drawText("you lose :( Press R to restart",
+//                        displayFont,
+//                        cameraController.getCameraPosition2D().x - 100,
+//                        cameraController.getCameraPosition2D().y );
+//            break;
+
+        }
 
         for(GameObject o: objects) {
             if(o instanceof DiverObjectModel && ((DiverObjectModel)o).isCarried()) {
@@ -696,6 +745,11 @@ public class GameController implements Screen, ContactListener {
                 postUpdate(delta);
             }
             draw(delta);
+            if(game_state == state.WIN_GAME) {
+                listener.exitScreen(this, 0);
+            } else if (game_state == state.LOSE_GAME) {
+                listener.exitScreen(this, 1);
+            }
         }
     }
 
@@ -819,14 +873,16 @@ public class GameController implements Screen, ContactListener {
             if(body2.getUserData() instanceof GoalDoor){
                 if(CollisionController.winGame(diver, (GoalDoor) body2.getUserData())
                         && listener!=null) {
-                    reach_target = true;//listener.exitScreen(this, 0);
+                   // reach_target = true;//listener.exitScreen(this, 0);
+                    game_state = state.WIN_GAME;
                 }
             }
         } else if(body2.getUserData() instanceof DiverModel){
             if(body1.getUserData() instanceof GoalDoor){
                 if(CollisionController.winGame(diver, (GoalDoor) body1.getUserData())
                         && listener!=null) {
-                    reach_target = true;//listener.exitScreen(this, 0);
+                    //reach_target = true;//listener.exitScreen(this, 0);
+                    game_state = state.WIN_GAME;
                 }
             }
         }
@@ -884,19 +940,21 @@ public class GameController implements Screen, ContactListener {
                 CollisionController.putDown(diver,
                     (ItemModel) body2.getUserData());
                 ((ItemModel) body2.getUserData()).setTouched(false);
-            }  else if(body2.getUserData() instanceof DeadBodyModel){
-                System.out.println("end contact with body");
-                ((DiverModel) body1.getUserData()).setBodyContact(false);
             }
+//            else if(body2.getUserData() instanceof DeadBodyModel){
+//                System.out.println("end contact with body");
+//                ((DiverModel) body1.getUserData()).setBodyContact(false);
+//            }
         } else if (body2.getUserData() instanceof DiverModel) {
             if (body1.getUserData() instanceof ItemModel) {
                 CollisionController.putDown(diver,
                     (ItemModel) body1.getUserData());
                 ((ItemModel) body1.getUserData()).setTouched(false);
-            } else if(body2.getUserData() instanceof DeadBodyModel){
-                System.out.println("end contact with body");
-                ((DiverModel) body2.getUserData()).setBodyContact(true);
             }
+//            else if(body2.getUserData() instanceof DeadBodyModel){
+//                System.out.println("end contact with body");
+//                ((DiverModel) body2.getUserData()).setBodyContact(true);
+//            }
         }
 
        } catch (Exception e) {
@@ -913,4 +971,8 @@ public class GameController implements Screen, ContactListener {
 
     /** Unused ContactListener method */
     public void postSolve(Contact contact, ContactImpulse impulse) {}
+
+    public Rectangle getWorldBounds() {
+        return bounds;
+    }
 }

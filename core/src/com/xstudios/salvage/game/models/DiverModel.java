@@ -65,7 +65,7 @@ public class DiverModel extends GameObject {
 
     /** Store oxygen level */
     private float oxygenLevel;
-    private float MAX_OXYGEN = 150;
+    private int MAX_OXYGEN = 150;
 
     /** Diver Sensor Used to pick up items and open doors*/
 
@@ -142,7 +142,7 @@ public class DiverModel extends GameObject {
         ping = false;
         movement = new Vector2();
         drift_movement = new Vector2();
-        oxygenLevel = MAX_OXYGEN;
+        oxygenLevel = data.getInt("max_oxygen", MAX_OXYGEN);
         pingDirection = new Vector2();
         ping_cooldown = 0;
 
@@ -220,13 +220,8 @@ public class DiverModel extends GameObject {
             dead_body.setY(getY());
         }
     }
-    public void setCarryingBody(boolean carryingPressed) {
-        if(carryingPressed && contact_body) {
-            carrying_body = true;
-        } else if (carryingPressed) {
-            carrying_body = false;
-            updateDeadBodyPos();
-        }
+    public void setCarryingBody() {
+        carrying_body = contact_body;
     }
     /**
      * Sets the object texture for drawing purposes.
@@ -535,6 +530,9 @@ public class DiverModel extends GameObject {
 
     public void setBodyContact(boolean b) {
         contact_body = b;
+        if(b) {
+            carrying_body = true;
+        }
     }
 
     public boolean isBodyContact() {

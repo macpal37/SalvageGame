@@ -219,7 +219,7 @@ public class InputController {
         carryingObject = (secondary && carryingObject) ||Gdx.input.isKeyPressed(Input.Keys.Q);
 
         carryingBody = (secondary && carryingBody) ||Gdx.input.isKeyPressed(Input.Keys.A);
-
+        //TODO: don't need carrying body button anymore
         pingPressed =(secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.E);
 
         // Directional controls

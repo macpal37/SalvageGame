@@ -15,6 +15,8 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** List of all WorldControllers */
 	private GameController controller;
 
+	private GameOverController game_over_controller;
+
 	private CameraController cameraController;
 
 	/**
@@ -30,9 +32,11 @@ public class GDXRoot extends Game implements ScreenListener {
 		loading = new LoadingMode("assets.json", canvas, 1);
 		// Initialize the three game worlds
 		controller = new GameController();
+		game_over_controller = new GameOverController(controller.getWorldBounds());
 		controller.setCameraController(cameraController);
 		loading.setScreenListener(this);
 		controller.setScreenListener(this);
+		game_over_controller.setScreenListener(this);
 		setScreen(loading);
 	}
 
@@ -89,11 +93,21 @@ public class GDXRoot extends Game implements ScreenListener {
 			loading.dispose();
 			loading = null;
 		} else if(screen == controller){
-			System.out.println("EXIT CONTROLLER");
-			System.out.println("IS SCREEN NULL: " + controller == null);
-//			controller.setCanvas(canvas);
-//			controller.reset();
-//			setScreen(controller);
+			game_over_controller.create();
+			if(directory == null) {
+				System.out.println("DIRECTORY IS NULL!");
+			}
+			game_over_controller.gatherAssets(directory);
+			game_over_controller.setCanvas(canvas);
+			game_over_controller.setTextPos(
+					cameraController.getCameraPosition2D().x,
+					cameraController.getCameraPosition2D().y);
+			game_over_controller.setWin(exitCode == 0);
+			setScreen(game_over_controller);
+		} else if(screen == game_over_controller){
+			controller.setCanvas(canvas);
+			controller.reset();
+			setScreen(controller);
 		}
 	}
 }
