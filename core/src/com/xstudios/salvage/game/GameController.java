@@ -414,7 +414,7 @@ public class GameController implements Screen, ContactListener {
                 key.setName("key"+keyCounter++);
                 key.setGravityScale(0f);
                 key.setSensor(true);
-
+                key.initLight(rayHandler);
                 addObject(key);
 
             }

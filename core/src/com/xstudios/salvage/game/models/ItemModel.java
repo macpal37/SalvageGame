@@ -1,6 +1,7 @@
 package com.xstudios.salvage.game.models;
 
 import box2dLight.Light;
+import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
@@ -24,10 +25,9 @@ public class ItemModel extends DiverObjectModel {
     /** The current horizontal movement of the item */
     private Vector2 movement;
 
-//    private RayHandler
     private Light light;
 
-    private static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
+    public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
     Color item_color;
 
 
@@ -46,6 +46,19 @@ public class ItemModel extends DiverObjectModel {
         setName(item_type + "" + item_ID);
         movement = new Vector2();
     }
+
+    public void initLight(RayHandler rayHandler){
+
+            light =  new PointLight(rayHandler,100, new Color(1f,0.5f,0.5f,0.5f),2,getX(),getY());
+        Filter f = new Filter();
+        f.categoryBits = 0x0002;
+        f.maskBits =0x0004;
+        f.groupIndex = 1;
+        light.setContactFilter(f);
+        light.setSoft(true);
+        light.setActive(false);
+    }
+
 
     public Color getColor() {
         return item_color;
@@ -68,9 +81,6 @@ public class ItemModel extends DiverObjectModel {
         }
 
         releaseFixtures();
-        // Create the fixture
-//        fixture.filter.categoryBits = 0x002;
-//        fixture.filter.groupIndex = 0x004;
         fixture.filter.maskBits = -1;
         fixture.shape = shape;
 
@@ -108,9 +118,15 @@ public class ItemModel extends DiverObjectModel {
             if(!carried){
                 canvas.draw(texture, item_color, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
             }
-            if(!carried&&isTouched)
-            canvas.drawText("Press q",GameController.displayFont,(getX()-getWidth()*1.25f) * drawScale.x, (getY()+getHeight()*1.5f)  * drawScale.y);
-        }
+            if(!carried&&isTouched){
+                canvas.drawText("Press q",GameController.displayFont,(getX()-getWidth()*1.25f) * drawScale.x, (getY()+getHeight()*1.5f)  * drawScale.y);
+                light.setPosition(getX(),getY());
+                light.setActive(true);
+            }else{
+                light.setActive(false);
+            }
+
+          }
     }
 
 

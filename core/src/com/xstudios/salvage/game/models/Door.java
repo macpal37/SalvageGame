@@ -1,5 +1,6 @@
 package com.xstudios.salvage.game.models;
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,8 +14,11 @@ public class Door extends Wall {
     private TextureRegion closedDoor;
     private boolean toUnlock;
 
+
+
     public Door(float[] points, int itemID) {
         this(points, 0, 0, itemID);
+
     }
 
     public Door(float[] points, float x, float y, int itemID) {
@@ -56,9 +60,9 @@ public class Door extends Wall {
                 float x = vertices[0]+1;
                 float y = vertices[1]-2.5f;
                 if (isActive()) {
-                    canvas.draw(closedDoor, key.getColor(), origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
+                    canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[itemID], origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
                 } else {
-                    canvas.draw(openDoor, key.getColor(), origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
+                    canvas.draw(openDoor, ItemModel.COLOR_OPTIONS[itemID], origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
                 }
             }
         }
