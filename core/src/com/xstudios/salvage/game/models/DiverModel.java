@@ -24,8 +24,10 @@ public class DiverModel extends GameObject {
     private Fixture geometry;
     /** Cache of the polygon vertices (for resizing) */
     private float[] vertices;
-    /** The current horizontal movement of the character */
-    private Vector2   movement;
+    /** The movement of the character */
+    private Vector2 movement;
+    /** The movement of the character from currents */
+    private Vector2 drift_movement;
 
     /** The factor to multiply by the input */
     private final float force;
@@ -33,12 +35,22 @@ public class DiverModel extends GameObject {
     private float damping;
     /** The maximum character speed */
     private final float swimMaxSpeed;
+    private final float maxspeed;
+    /** The maximum character speed when drifting*/
+    private final float drift_maxspeed;
+
     /** Which direction is the character facing */
     private boolean faceRight;
     /** Cache for internal force calculations */
     private final Vector2 forceCache = new Vector2();
     /** item that diver is currently carrying */
     private ItemModel current_item;
+
+    /** dead body that is the target for the level*/
+    private DeadBodyModel dead_body;
+
+    private boolean carrying_body;
+    private boolean contact_body;
 
     /** All the itemModels diver is in contact with */
     protected ArrayList<ItemModel> potential_items  = new ArrayList<ItemModel>();
@@ -55,7 +67,7 @@ public class DiverModel extends GameObject {
 
     /** Store oxygen level */
     private float oxygenLevel;
-    private float MAX_OXYGEN = 150;
+    private int MAX_OXYGEN = 150;
 
     /** Diver Sensor Used to pick up items and open doors*/
 
@@ -82,8 +94,6 @@ public class DiverModel extends GameObject {
     private Vector2 dimension;
     /** A cache value for when the user wants to access the dimensions */
     private Vector2 sizeCache;
-
-    private Vector2 directionCache;
 
 
     private boolean isTouchingObstacle;
@@ -118,15 +128,20 @@ public class DiverModel extends GameObject {
 
         setDensity(data.getFloat("density", 0));
         setFriction(data.getFloat("friction", 0));  /// HE WILL STICK TO WALLS IF YOU FORGET
+        setLinearDamping(data.getFloat("damping", 0));
         setMass(1);
         setFixedRotation(true);
+
         swimMaxSpeed = data.getFloat("maxspeed", 0);
+
+        maxspeed = data.getFloat("maxspeed", 0);
+        drift_maxspeed = data.getFloat("drift_maxspeed", 0);
+
         damping = data.getFloat("damping", 0);
         force = data.getFloat("force", 0);
 
         dimension = new Vector2();
         sizeCache = new Vector2();
-
 
         sensorNameRight = "DiverSensorRight";
         sensorNameLeft = "DiverSensorLeft";
@@ -135,7 +150,6 @@ public class DiverModel extends GameObject {
         // Initialize
         faceRight = true;
         setDimension(1,1);
-        directionCache  = new Vector2( (getWidth()),0);
         setMass(1);
         resetMass();
         setName("diver");
@@ -144,9 +158,11 @@ public class DiverModel extends GameObject {
         current_item = null;
         ping = false;
         movement = new Vector2();
-        oxygenLevel = MAX_OXYGEN;
+        drift_movement = new Vector2();
+        oxygenLevel = data.getInt("max_oxygen", MAX_OXYGEN);
         pingDirection = new Vector2();
         ping_cooldown = 0;
+
 
         // TODO: Put this in the constants JSON
         boostedMaxSpeed = swimMaxSpeed*3;
@@ -154,12 +170,14 @@ public class DiverModel extends GameObject {
         swimDamping = damping;
         boostDamping = damping/100;
 
+        carrying_body = false;
+        dead_body = null;
     }
 
     /**
      * Reset the polygon vertices in the shape to match the dimension.
      */
-    private void resize(float width, float height) {
+    protected void resize(float width, float height) {
         // Make the box with the center in the center
         vertices[0] = -width/2.0f;
         vertices[1] = -height/2.0f;
@@ -186,13 +204,13 @@ public class DiverModel extends GameObject {
         } else if (movement.x > 0) {
             faceRight = true;
         }
-//        if (switchDir == faceRight) {
-//            if (faceRight)
-//            System.out.println("Right!!");
-//            else
-//                System.out.println("Left!!");
-//
-//        }
+    }
+
+    public void setDriftMovement(float x_val, float y_val) {
+        if(movement.isZero()) {
+            drift_movement.x = x_val;
+            drift_movement.y = y_val;
+        }
     }
     /**
      * Sets the object texture for drawing purposes.
@@ -208,6 +226,24 @@ public class DiverModel extends GameObject {
     }
     public boolean hasItem(){
         return potential_items.size()>0;
+    }
+
+    public void setDeadBody(DeadBodyModel b) {
+        dead_body = b;
+    }
+
+    public boolean hasBody() {
+        return carrying_body;
+    }
+
+    public void updateDeadBodyPos() {
+        if(dead_body!=null){
+            dead_body.setX(getX());
+            dead_body.setY(getY());
+        }
+    }
+    public void setCarryingBody() {
+        carrying_body = contact_body;
     }
     /**
      * Sets the object texture for drawing purposes.
@@ -410,49 +446,86 @@ public class DiverModel extends GameObject {
         maxSpeed = speed;
     }
 
+//    public float getMaxSpeed(boolean drift_movement) {
+//        if(drift_movement) {
+//            return drift_maxspeed;
+//        } else {
+//            return maxspeed;
+//        }
+//    }
+
+    public boolean isSwimming(){
+        return !boosting && movement.len() != 0;
+    }
+    public boolean isIdling(){
+        return movement.isZero();
+    }
 
     public void applyForce() {
 
-        // TODO: Make sure forceCache is correct and doesn't apply multiple times
         if (!isActive()) {
             return;
         }
 
-        // swimming vs boosting have different max speeds and damping
-        if (isBoosting()) {
+        float desired_xvel = 0;
+        float desired_yvel = 0;
+        float max_impulse = 15f;
+        float max_impulse_drift = 2f;
+
+        // possible states: swimming, idling/drifting, latching, boosting
+        if (isSwimming()) { // player is actively using the arrow keys
+            // set custom max speed and damping values
+            setMaxSpeed(swimMaxSpeed);
+            setLinearDamping(swimDamping);
+
+            // compute desired velocity, capping it if it exceeds the maximum speed
+            // TODO: Do we only want to be able to swim in 4 directions?
+            desired_xvel = getVX() + Math.signum(getHorizontalMovement())*max_impulse;
+            desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
+            desired_yvel = getVY() + Math.signum(getVerticalMovement())*max_impulse;
+            desired_yvel = Math.max(Math.min(desired_yvel, getMaxSpeed()), -getMaxSpeed());
+
+            float xvel_change = desired_xvel - getVX();
+            float yvel_change = desired_yvel - getVY();
+
+            float x_impulse = body.getMass()*xvel_change;
+            float y_impulse = body.getMass()*yvel_change;
+
+            body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x,
+                    body.getWorldCenter().y, true);
+        } else if (isIdling()) { // player is not using the arrow keys
+            setMaxSpeed(swimMaxSpeed);
+            setLinearDamping(swimDamping);
+
+            desired_xvel = getVX() + Math.signum(getHorizontalMovement())*max_impulse_drift;
+            desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
+            desired_yvel = getVY() + Math.signum(getVerticalMovement())*max_impulse_drift;
+            desired_yvel = Math.max(Math.min(desired_yvel, getMaxSpeed()), -getMaxSpeed());
+
+            float xvel_change = desired_xvel - getVX();
+            float yvel_change = desired_yvel - getVY();
+
+            float x_impulse = body.getMass()*xvel_change;
+            float y_impulse = body.getMass()*yvel_change;
+
+            body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x,
+                    body.getWorldCenter().y, true);
+        } else if (isLatching()) { // player is latched onto a wall
+            body.setLinearVelocity(0, 0);
+        }
+        else if (isBoosting()) { // player has kicked off a wall and may or may not be steering
             setMaxSpeed(boostedMaxSpeed);
             setLinearDamping(boostDamping);
-        } else {
-           setMaxSpeed(swimMaxSpeed);
-           setLinearDamping(swimDamping);
-        }
 
-        forceCache.setZero();
-        // if not actively moving, slow down the velocity over time
-        if (isBoosting() || getHorizontalMovement() == 0f) {
-            forceCache.x = -getDamping()*getVX();
+            // TODO: Currently doesn't take movement input. Will need steering in specific dirs only?
+            if (Math.abs(getVX()) >= getMaxSpeed()) {
+                setVX(Math.signum(getVX())*getMaxSpeed());
+            }
+            if (Math.abs(getVY()) >= getMaxSpeed()) {
+                setVY(Math.signum(getVY())*getMaxSpeed());
+            }
+//            body.applyForce(forceCache,getPosition(),true);
         }
-        if (isBoosting() || getVerticalMovement() == 0f) {
-            forceCache.y = -getDamping()*getVY();
-        }
-        body.applyForce(forceCache,getPosition(),true);
-
-
-        forceCache.setZero();
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
-            setVX(Math.signum(getVX())*getMaxSpeed());
-        } else {
-            forceCache.x = getHorizontalMovement();
-        }
-        if (Math.abs(getVY()) >= getMaxSpeed() /*&&
-                Math.signum(getVY()) == Math.signum(getVerticalMovement())*/) {
-            setVY(Math.signum(getVY())*getMaxSpeed());
-        } else {
-            forceCache.y = getVerticalMovement();
-        }
-        body.applyForce(forceCache,getPosition(),true);
-
 
         if (current_item != null) {
             current_item.setVX(getVX());
@@ -467,7 +540,6 @@ public class DiverModel extends GameObject {
             System.out.println("DIVER X POS: " + getX());
             System.out.println("DIVER Y POS: " + getY());
         }
-
     }
 
     @Override
@@ -483,15 +555,24 @@ public class DiverModel extends GameObject {
     public void setItem() {
 //        System.out.println("SIZE OF POTENTIAL OBJECTS" + potential_items.size());
         if(pickUpOrDrop) {
-            if(potential_items.size() > 0) {
-                current_item = potential_items.get(0);
+            if(current_item!=null){
+                System.out.println("SUPPOSED TO DROP OBJECT");
+                current_item.setGravityScale(0f);
                 current_item.setX(getX());
                 current_item.setY(getY());
-                current_item.setGravityScale(1);
-            } else if(current_item != null){
-                current_item.setGravityScale(.1f);
-                current_item = null;
-                potential_items.clear();
+                current_item.setVerticalMovement(0);
+                current_item.setVX(0);
+                current_item.setVY(0);
+                dropItem();
+            }
+            else if(potential_items.size() > 0) {
+//                System.out.println("SUPPOSED TO PICK UP OBJECT");
+                current_item = potential_items.get(0);
+//                System.out.println("Current Item: "+current_item);
+                current_item.setX(getX());
+                current_item.setY(getY());
+                //current_item.setGravityScale(1);
+                current_item.setCarried(true);
             }
         }
     }
@@ -525,6 +606,17 @@ public class DiverModel extends GameObject {
     public boolean containsPotentialItem(ItemModel i) {
         return potential_items.contains(i);
     }
+
+    public void setBodyContact(boolean b) {
+        contact_body = b;
+        if(b) {
+            carrying_body = true;
+        }
+    }
+
+    public boolean isBodyContact() {
+        return contact_body;
+    }
     /**
      * @return the current oxygen level of the diver
      */
@@ -552,15 +644,15 @@ public class DiverModel extends GameObject {
      *
      * @return whether the player has latched onto the wall
      */
-    public boolean isLatchedOn() {
+    public boolean isLatching() {
         return latchedOn;
     }
 
     /**
      *
-     * @param latched used to set whether the player has latched onto somethings
+     * @param latched used to set whether the player has latched onto something
      */
-    public void setLatchedOn(boolean latched) {
+    public void setLatching(boolean latched) {
         latchedOn = latched;
     }
 
@@ -571,9 +663,10 @@ public class DiverModel extends GameObject {
     public boolean isBoosting() {
         return boosting;
     }
-    public void boost(Vector2 direction) {
+
+    public void boost() {
         // set impulse in a certain direction
-//        TODO: turns the wrong way for some reason
+//        TODO: need to negate the impulse for some reason
 //        forceCache.x = direction.x * 50;
 //        forceCache.y = direction.y * 50;
 //        setLinearVelocity(forceCache);
@@ -583,14 +676,25 @@ public class DiverModel extends GameObject {
 
 //        body.applyForce(forceCache, body.getPosition(), true);
 
-        forceCache.set(direction.x * -50, direction.y * -50);
+        forceCache.set(movement.nor().x * -50, movement.nor().y * -50);
         System.out.println("X: " + forceCache.x);
         System.out.println("Y: " + forceCache.y);
         body.applyLinearImpulse(forceCache, body.getPosition(), true);
     }
 
     public void dropItem() {
+        current_item.setCarried(false);
+        current_item = null;
         potential_items.clear();
+    }
+
+    public void dropBody() {
+        carrying_body = false;
+    }
+    public void pickUpBody() {
+        if(contact_body) {
+            carrying_body = true;
+        }
     }
 
     /** Player Sensor Stuff*/
@@ -609,7 +713,6 @@ public class DiverModel extends GameObject {
 
     }
 
-
     public boolean isTouching() {
 //        System.out.println("Right: "+touchingRight.size());
 //        System.out.println("Left: "+touchingLeft.size());
@@ -617,69 +720,6 @@ public class DiverModel extends GameObject {
         if (faceRight)
             return touchingRight.size()>0;
             else return  touchingLeft.size()>0;
-    }
-
-
-
-    /**
-     * Sets the dimensions of this box
-     *
-     * This method does not keep a reference to the parameter.
-     *
-     * @param value  the dimensions of this box
-     */
-    public void setDimension(Vector2 value) {
-        setDimension(value.x, value.y);
-    }
-
-    /**
-     * Sets the dimensions of this box
-     *
-     * @param width   The width of this box
-     * @param height  The height of this box
-     */
-    public void setDimension(float width, float height) {
-        dimension.set(width, height);
-        markDirty(true);
-        resize(width, height);
-    }
-
-    /**
-     * Returns the box width
-     *
-     * @return the box width
-     */
-    public float getWidth() {
-        return dimension.x;
-    }
-
-    /**
-     * Sets the box width
-     *
-     * @param value  the box width
-     */
-    public void setWidth(float value) {
-        sizeCache.set(value,dimension.y);
-        setDimension(sizeCache);
-    }
-
-    /**
-     * Returns the box height
-     *
-     * @return the box height
-     */
-    public float getHeight() {
-        return dimension.y;
-    }
-
-    /**
-     * Sets the box height
-     *
-     * @param value  the box height
-     */
-    public void setHeight(float value) {
-        sizeCache.set(dimension.x,value);
-        setDimension(sizeCache);
     }
 
 }

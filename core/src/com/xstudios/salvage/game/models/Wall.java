@@ -246,7 +246,7 @@ public class Wall extends GameObject {
      * @param width The new width
      * @param height The new height
      */
-    private void resize(float width, float height) {
+    public void resize(float width, float height) {
         float scalex = width/dimension.x;
         float scaley = height/dimension.y;
 

@@ -3,6 +3,7 @@
 
     "models:diver": "models/diver.png",
     "background:ocean":"background/ocean.png",
+    "background:game_over":"background/game_over.png",
     "models:key": "models/key.png",
     "models:ping": "models/ping.png",
     "models:dead_body": "models/dead_body.png",

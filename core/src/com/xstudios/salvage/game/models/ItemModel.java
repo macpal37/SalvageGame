@@ -2,70 +2,53 @@ package com.xstudios.salvage.game.models;
 
 import box2dLight.Light;
 import box2dLight.RayHandler;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GameCanvas;
+import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 
-public class ItemModel extends GameObject {
+import static com.xstudios.salvage.game.models.ItemType.DEAD_BODY;
+import static com.xstudios.salvage.game.models.ItemType.KEY;
 
-    /** Shape information for this box */
-    protected PolygonShape shape;
-    /** A cache value for the fixture (for resizing) */
-    private Fixture geometry;
-    /** Cache of the polygon vertices (for resizing) */
-    private float[] vertices;
+public class ItemModel extends DiverObjectModel {
+
     /** Type of item*/
     private ItemType item_type;
     /** unique id of item*/
     private int item_ID;
-    /** The factor to multiply by the input */
-    private final float force;
-    /** Cache for internal force calculations */
-    private final Vector2 forceCache = new Vector2();
-    /** The amount to slow the character down */
-    private final float damping;
-    /** The maximum character speed */
-    private final float maxspeed;
     /** The current horizontal movement of the item */
     private Vector2 movement;
-    /** If item is being carried */
-    private boolean carried;
 
 //    private RayHandler
     private Light light;
 
+    private static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
+    Color item_color;
+
 
     public ItemModel(JsonValue data, float width, float height, ItemType item_type, int id){
-        super(data.get("pos").getFloat(0),
-                data.get("pos").getFloat(1));
 
-        shape = new PolygonShape();
-        origin = new Vector2();
-        body = null;
-        vertices = new float[8];
+        super(data);
+
         this.item_type = item_type;
         this.item_ID = id;
-
-        setDensity(data.getFloat("density", 0));
-        setFriction(data.getFloat("friction", 0));  /// HE WILL STICK TO WALLS IF YOU FORGET
-        setMass(1);
-        setFixedRotation(true);
-        maxspeed = data.getFloat("maxspeed", 0);
-        damping = data.getFloat("damping", 0);
-        force = data.getFloat("force", 0);
-
-        // Initialize
-        resize(width/4, height/4);
-        resize(1, 1);
-        setMass(1);
-        resetMass();
+        try {
+            item_color = COLOR_OPTIONS[item_ID];
+        } catch (Exception e){
+            item_color = Color.WHITE;
+        }
+        drawSymbolPos.add(data.getFloat("symbol_dist", 50.0f), 0);
         setName(item_type + "" + item_ID);
-
         movement = new Vector2();
+    }
+
+    public Color getColor() {
+        return item_color;
     }
     /**
      * Release the fixtures for this body, resetting the shape
@@ -78,8 +61,6 @@ public class ItemModel extends GameObject {
             geometry = null;
         }
     }
-
-
 
     protected void createFixtures() {
         if (body == null) {
@@ -124,22 +105,14 @@ public class ItemModel extends GameObject {
     @Override
     public void draw(GameCanvas canvas) {
         if (texture != null) {
-            switch(item_type) {
-                case KEY:
-                    if(!carried) {
-                        canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
-                    }
-                break;
-                case DEAD_BODY:
-                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
-                break;
-                default:
-                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
-                break;
-
+            if(!carried){
+                canvas.draw(texture, item_color, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
             }
+            if(!carried&&isTouched)
+            canvas.drawText("Press q",GameController.displayFont,(getX()-getWidth()*1.25f) * drawScale.x, (getY()+getHeight()*1.5f)  * drawScale.y);
         }
     }
+
 
 
     @Override
@@ -150,7 +123,7 @@ public class ItemModel extends GameObject {
     /**
      * Reset the polygon vertices in the shape to match the dimension.
      */
-    private void resize(float width, float height) {
+    protected void resize(float width, float height) {
         // Make the box with the center in the center
         vertices[0] = -width/2.0f;
         vertices[1] = -height/2.0f;
@@ -232,12 +205,21 @@ public class ItemModel extends GameObject {
         return item_ID;
     }
 
-    public void setCarried(boolean b) {
-        carried = b;
-    }
-
-    public boolean isCarried() {
-        return carried;
-    }
-
+//    public void setCarried(boolean b) {
+//        carried = b;
+//
+//    }
+//
+//    public boolean isCarried() {
+//        return carried;
+//    }
+//
+//
+//    public boolean isTouched() {
+//        return isTouched;
+//    }
+//
+//    public void setTouched(boolean touched) {
+//        isTouched = touched;
+//    }
 }

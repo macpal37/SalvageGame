@@ -11,6 +11,8 @@ public class Door extends Wall {
 
     private TextureRegion openDoor;
     private TextureRegion closedDoor;
+    private boolean toUnlock;
+
     public Door(float[] points, ItemModel key) {
         this(points, 0, 0, key);
     }
@@ -18,6 +20,7 @@ public class Door extends Wall {
     public Door(float[] points, float x, float y, ItemModel key) {
         super(points, x, y);
         this.key = key;
+        toUnlock = false;
     }
 
     public void addTextures(TextureRegion closed, TextureRegion open){
@@ -31,7 +34,15 @@ public class Door extends Wall {
     }
 
     public boolean isActive() {
-        return body.isActive();
+        return body!=null && body.isActive();
+    }
+
+    public void setUnlock(boolean unlock) {
+        toUnlock = unlock;
+    }
+
+    public boolean getUnlock() {
+        return toUnlock && key.isCarried();
     }
 
     public void draw(GameCanvas canvas) {
@@ -41,11 +52,11 @@ public class Door extends Wall {
                 float x = vertices[0]+1;
                 float y = vertices[1]-2.5f;
                 if (isActive()) {
-                    canvas.draw(closedDoor, Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
-                canvas.draw(region, Color.WHITE, 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
+                    canvas.draw(closedDoor, key.getColor(), origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
+                    canvas.draw(region, key.getColor(), 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
                 } else {
-                    canvas.draw(openDoor, Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
-                canvas.draw(region, Color.WHITE, 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
+                    canvas.draw(openDoor, key.getColor(), origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
+                    canvas.draw(region, key.getColor(), 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
 
                 }
             }

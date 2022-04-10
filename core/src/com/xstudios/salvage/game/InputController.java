@@ -36,6 +36,10 @@ public class InputController {
     private boolean carryingObject;
     private boolean carryingObjectPrevious;
 
+    /** Are we carrying the body? */
+    private boolean carryingBody;
+    private boolean carryingBodyPrevious;
+
     /** did we ping the body? */
     private boolean pingPressed;
     private boolean pingPrevious;
@@ -111,6 +115,15 @@ public class InputController {
     public boolean getOrDropObject() {
         return carryingObject && !carryingObjectPrevious;
     }
+
+    /**
+     * Returns whether we are carrying the body
+     *
+     * @return whether we are carrying the body.
+     */
+    public boolean getOrDropBody() {
+        return carryingBody && !carryingBodyPrevious;
+    }
     /**
      * Returns true if the player wants to go toggle the debug mode.
      *
@@ -170,6 +183,7 @@ public class InputController {
         debugPrevious  = debugPressed;
         carryingObjectPrevious = carryingObject;
         pingPrevious = pingPressed;
+        carryingBodyPrevious =carryingBody;
 
         // Check to see if a GamePad is connected
         if (xbox != null && xbox.isConnected()) {
@@ -192,7 +206,7 @@ public class InputController {
      */
     private void readGamepad(Rectangle bounds, Vector2 scale) {
         resetPressed = xbox.getStart();
-        debugPressed  = xbox.getY();
+//        debugPressed  = xbox.getY();
 
         // Increase animation frame, but only if trying to move
         horizontal = xbox.getLeftX();
@@ -211,11 +225,14 @@ public class InputController {
     private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary) {
         // Give priority to gamepad results
         resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
-        debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.D));
-
+        debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.F));
 
         carryingObject = (secondary && carryingObject) ||Gdx.input.isKeyPressed(Input.Keys.Q);
-        pingPressed =(secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.R);
+
+        carryingBody = (secondary && carryingBody) ||Gdx.input.isKeyPressed(Input.Keys.A);
+        //TODO: don't need carrying body button anymore
+        pingPressed =(secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.E);
+
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
@@ -226,12 +243,12 @@ public class InputController {
             horizontal -= 1.0f;
 //            System.out.println("go left"+ horizontal);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            horizontal += 1.0f;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            horizontal -= 1.0f;
-        }
+//        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+//            horizontal += 1.0f;
+//        }
+//        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+//            horizontal -= 1.0f;
+//        }
 
         vertical = (secondary ? vertical : 0.0f);
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
@@ -240,12 +257,12 @@ public class InputController {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             vertical -= 1.0f;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            vertical += 1.0f;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            vertical -= 1.0f;
-        }
+//        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+//            vertical += 1.0f;
+//        }
+//        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+//            vertical -= 1.0f;
+//        }
 
         kickOff = Gdx.input.isKeyPressed(Keys.SPACE);
 
