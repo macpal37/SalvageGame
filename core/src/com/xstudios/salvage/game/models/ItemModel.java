@@ -17,29 +17,18 @@ import static com.xstudios.salvage.game.models.ItemType.KEY;
 
 public class ItemModel extends DiverObjectModel {
 
-//    /** Shape information for this box */
-//    protected PolygonShape shape;
-//    /** A cache value for the fixture (for resizing) */
-//    private Fixture geometry;
-//    /** Cache of the polygon vertices (for resizing) */
-//    private float[] vertices;
     /** Type of item*/
     private ItemType item_type;
     /** unique id of item*/
     private int item_ID;
-    /** The factor to multiply by the input */
-//    private final float force;
-//    /** Cache for internal force calculations */
-//    private final Vector2 forceCache = new Vector2();
-//    /** The amount to slow the character down */
-//    private final float damping;
-//    /** The maximum character speed */
-//    private final float maxspeed;
     /** The current horizontal movement of the item */
     private Vector2 movement;
 
 //    private RayHandler
     private Light light;
+
+    private static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
+    Color item_color;
 
 
     public ItemModel(float x, float y, JsonValue data, ItemType item_type, int id){
@@ -48,9 +37,18 @@ public class ItemModel extends DiverObjectModel {
 
         this.item_type = item_type;
         this.item_ID = id;
+        try {
+            item_color = COLOR_OPTIONS[item_ID];
+        } catch (Exception e){
+            item_color = Color.WHITE;
+        }
         drawSymbolPos.add(data.getFloat("symbol_dist", 50.0f), 0);
         setName(item_type + "" + item_ID);
         movement = new Vector2();
+    }
+
+    public Color getColor() {
+        return item_color;
     }
     /**
      * Release the fixtures for this body, resetting the shape
@@ -63,8 +61,6 @@ public class ItemModel extends DiverObjectModel {
             geometry = null;
         }
     }
-
-
 
     protected void createFixtures() {
         if (body == null) {
@@ -110,7 +106,7 @@ public class ItemModel extends DiverObjectModel {
     public void draw(GameCanvas canvas) {
         if (texture != null) {
             if(!carried){
-                canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
+                canvas.draw(texture, item_color, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
             }
             if(!carried&&isTouched)
             canvas.drawText("Press q",GameController.displayFont,(getX()-getWidth()*1.25f) * drawScale.x, (getY()+getHeight()*1.5f)  * drawScale.y);

@@ -56,12 +56,9 @@ public class Door extends Wall {
                 float x = vertices[0]+1;
                 float y = vertices[1]-2.5f;
                 if (isActive()) {
-                    canvas.draw(closedDoor, Color.WHITE, closedDoor.getRegionWidth()/2.0f,0, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
-//                canvas.draw(region, Color.WHITE, 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
+                    canvas.draw(closedDoor, key.getColor(), origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
                 } else {
-                    canvas.draw(openDoor, Color.WHITE, openDoor.getRegionWidth()/2.0f,0, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
-//                canvas.draw(region, Color.WHITE, 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
-
+                    canvas.draw(openDoor, key.getColor(), origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
                 }
             }
         }

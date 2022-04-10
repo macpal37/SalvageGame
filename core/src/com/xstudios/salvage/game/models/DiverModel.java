@@ -24,8 +24,10 @@ public class DiverModel extends GameObject {
     private Fixture geometry;
     /** Cache of the polygon vertices (for resizing) */
     private float[] vertices;
-    /** The current horizontal movement of the character */
-    private Vector2   movement;
+    /** The movement of the character */
+    private Vector2 movement;
+    /** The movement of the character from currents */
+    private Vector2 drift_movement;
 
     /** The factor to multiply by the input */
     private final float force;
@@ -33,6 +35,8 @@ public class DiverModel extends GameObject {
     private final float damping;
     /** The maximum character speed */
     private final float maxspeed;
+    /** The maximum character speed when drifting*/
+    private final float drift_maxspeed;
     /** Which direction is the character facing */
     private boolean faceRight;
     /** Cache for internal force calculations */
@@ -110,15 +114,16 @@ public class DiverModel extends GameObject {
 
         setDensity(data.getFloat("density", 0));
         setFriction(data.getFloat("friction", 0));  /// HE WILL STICK TO WALLS IF YOU FORGET
+        setLinearDamping(data.getFloat("damping", 0));
         setMass(1);
         setFixedRotation(true);
         maxspeed = data.getFloat("maxspeed", 0);
+        drift_maxspeed = data.getFloat("drift_maxspeed", 0);
         damping = data.getFloat("damping", 0);
         force = data.getFloat("force", 0);
 
         dimension = new Vector2();
         sizeCache = new Vector2();
-
 
         sensorNameRight = "DiverSensorRight";
         sensorNameLeft = "DiverSensorLeft";
@@ -135,6 +140,7 @@ public class DiverModel extends GameObject {
         current_item = null;
         ping = false;
         movement = new Vector2();
+        drift_movement = new Vector2();
         oxygenLevel = MAX_OXYGEN;
         pingDirection = new Vector2();
         ping_cooldown = 0;
@@ -175,13 +181,13 @@ public class DiverModel extends GameObject {
         } else if (movement.x > 0) {
             faceRight = true;
         }
-//        if (switchDir == faceRight) {
-//            if (faceRight)
-//            System.out.println("Right!!");
-//            else
-//                System.out.println("Left!!");
-//
-//        }
+    }
+
+    public void setDriftMovement(float x_val, float y_val) {
+        if(movement.isZero()) {
+            drift_movement.x = x_val;
+            drift_movement.y = y_val;
+        }
     }
     /**
      * Sets the object texture for drawing purposes.
@@ -412,8 +418,12 @@ public class DiverModel extends GameObject {
      *
      * @return the upper limit on dude left-right movement.
      */
-    public float getMaxSpeed() {
-        return maxspeed;
+    public float getMaxSpeed(boolean drift_movement) {
+        if(drift_movement) {
+            return drift_maxspeed;
+        } else {
+            return maxspeed;
+        }
     }
 
 
@@ -421,40 +431,40 @@ public class DiverModel extends GameObject {
         if (!isActive()) {
             return;
         }
-        if (getHorizontalMovement() == 0f) {
-
-            forceCache.x = -getDamping()*getVX();
-            body.applyForce(forceCache,getPosition(),true);
+        float desired_xvel = 0;
+        float desired_yvel = 0;
+        float max_impulse = 15f;
+        float max_impulse_drift = 2f;
+        if(movement.x != 0) {
+            if(faceRight) {
+                desired_xvel = Math.min(getVX() + max_impulse, getMaxSpeed(false));
+            } else {
+                desired_xvel = Math.max(getVX() - max_impulse, -getMaxSpeed(false));
+            }
+        } else if (movement.isZero()){
+            if(faceRight) {
+                desired_xvel = Math.min(getVX() + max_impulse_drift, getMaxSpeed(true));
+            } else {
+                desired_xvel = Math.max(getVX() - max_impulse_drift, -getMaxSpeed(true));
+            }
         }
-
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
-            setVX(Math.signum(getVX())*getMaxSpeed());
-        } else {
-            forceCache.x = getHorizontalMovement();
+        if(movement.y > 0) {
+            desired_yvel = Math.min(getVY() + max_impulse, getMaxSpeed(false));
+        } else if (movement.y < 0) {
+            desired_yvel = Math.max(getVY() - max_impulse, -getMaxSpeed(false));
+        } else if(movement.isZero() && drift_movement.y > 0) {
+            desired_yvel = Math.min(getVY() + max_impulse_drift, getMaxSpeed(true));
+        } else if (movement.isZero() && drift_movement.y < 0) {
+            desired_yvel = Math.max(getVY() - max_impulse_drift, -getMaxSpeed(true));
         }
+        float xvel_change = desired_xvel - getVX();
+        float yvel_change = desired_yvel - getVY();
 
-        if (Math.abs(getVY()) >= getMaxSpeed() &&
-                Math.signum(getVY()) == Math.signum(getVerticalMovement())) {
-            setVY(Math.signum(getVY())*getMaxSpeed());
-        } else {
-            forceCache.y = getVerticalMovement();
-        }
-        body.applyForce(forceCache,getPosition(),true);
-        if (current_item != null) {
-//            current_item.setVX(getVX());
-//            current_item.setVY(getVY());
-//            current_item.setX(getX()+ 2);
-//            current_item.setY(getY()+2);
-//            current_item.setVerticalMovement(getVerticalMovement());
-//            current_item.setHorizontalMovement(getHorizontalMovement());
-//            current_item.applyForce();
-//            System.out.println("X POS: " + current_item.getX());
-//            System.out.println("Y POS: " + current_item.getY());
-//            System.out.println("DIVER X POS: " + getX());
-//            System.out.println("DIVER Y POS: " + getY());
-        }
+        float x_impulse = body.getMass()*xvel_change;
+        float y_impulse = body.getMass()*yvel_change;
 
+        body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x,
+                body.getWorldCenter().y, true);
     }
 
     @Override
