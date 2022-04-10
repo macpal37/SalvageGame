@@ -112,8 +112,8 @@ public class DiverModel extends GameObject {
                 data.get("pos").getFloat(1));
 
         shape = new PolygonShape();
-        origin = new Vector2();
-        body = null;
+//        origin = new Vector2();
+//        body = null;
         vertices = new float[8];
 
         setDensity(data.getFloat("density", 0));
@@ -177,8 +177,6 @@ public class DiverModel extends GameObject {
     }
 
     private boolean switchDir = false;
-
-
 
     public void setHorizontalMovement(float value) {
         movement.x = value;
@@ -293,7 +291,6 @@ public class DiverModel extends GameObject {
         sensorFixture.setUserData(getSensorNameRight());
 
 
-
         FixtureDef sensorDef2 = new FixtureDef();
         sensorDef2.density = data.getFloat("density",0);
         sensorDef2.isSensor = true;
@@ -340,10 +337,13 @@ public class DiverModel extends GameObject {
 
         float effect = faceRight ? 1.0f : -1.0f;
 
+        // darw the diver
         if (texture != null) {
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
 
         }
+
+        // draw the ping
         if(ping || ping_cooldown > 0) {
             canvas.draw(pingTexture, Color.WHITE,origin.x + pingDirection.x,
             origin.y + pingDirection.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),0.25f,0.25f);
@@ -413,6 +413,7 @@ public class DiverModel extends GameObject {
 
     public void applyForce() {
 
+        // TODO: Make sure forceCache is correct and doesn't apply multiple times
         if (!isActive()) {
             return;
         }
@@ -426,30 +427,31 @@ public class DiverModel extends GameObject {
            setLinearDamping(swimDamping);
         }
 
+        forceCache.setZero();
         // if not actively moving, slow down the velocity over time
         if (isBoosting() || getHorizontalMovement() == 0f) {
             forceCache.x = -getDamping()*getVX();
-            body.applyForce(forceCache,getPosition(),true);
         }
         if (isBoosting() || getVerticalMovement() == 0f) {
             forceCache.y = -getDamping()*getVY();
-            body.applyForce(forceCache,getPosition(),true);
         }
+        body.applyForce(forceCache,getPosition(),true);
 
+
+        forceCache.setZero();
         // Velocity too high, clamp it
         if (Math.abs(getVX()) >= getMaxSpeed()) {
             setVX(Math.signum(getVX())*getMaxSpeed());
         } else {
             forceCache.x = getHorizontalMovement();
-            body.applyForce(forceCache,getPosition(),true);
         }
-        if (Math.abs(getVY()) >= getMaxSpeed() &&
-                Math.signum(getVY()) == Math.signum(getVerticalMovement())) {
+        if (Math.abs(getVY()) >= getMaxSpeed() /*&&
+                Math.signum(getVY()) == Math.signum(getVerticalMovement())*/) {
             setVY(Math.signum(getVY())*getMaxSpeed());
         } else {
             forceCache.y = getVerticalMovement();
-            body.applyForce(forceCache,getPosition(),true);
         }
+        body.applyForce(forceCache,getPosition(),true);
 
 
         if (current_item != null) {
@@ -571,19 +573,20 @@ public class DiverModel extends GameObject {
     }
     public void boost(Vector2 direction) {
         // set impulse in a certain direction
+//        TODO: turns the wrong way for some reason
+//        forceCache.x = direction.x * 50;
+//        forceCache.y = direction.y * 50;
+//        setLinearVelocity(forceCache);
 
-        forceCache.x = direction.x * 10;
-        forceCache.y = direction.y * 10;
-        setLinearVelocity(forceCache);
+//        forceCache.x = direction.x * 100;
+//        forceCache.y = direction.y * 100;
 
-        forceCache.x = direction.x * 10;
-        forceCache.y = direction.y * 10;
+//        body.applyForce(forceCache, body.getPosition(), true);
+
+        forceCache.set(direction.x * -50, direction.y * -50);
         System.out.println("X: " + forceCache.x);
         System.out.println("Y: " + forceCache.y);
-        body.applyForce(forceCache, body.getPosition(), true);
-//        forceCache.x = direction.x * 5;
-//        forceCache.y = direction.y * 5;
-//        body.applyLinearImpulse(forceCache, body.getPosition(), true);
+        body.applyLinearImpulse(forceCache, body.getPosition(), true);
     }
 
     public void dropItem() {
@@ -607,10 +610,9 @@ public class DiverModel extends GameObject {
     }
 
 
-
     public boolean isTouching() {
-        System.out.println("Right: "+touchingRight.size());
-        System.out.println("Left: "+touchingLeft.size());
+//        System.out.println("Right: "+touchingRight.size());
+//        System.out.println("Left: "+touchingLeft.size());
 
         if (faceRight)
             return touchingRight.size()>0;

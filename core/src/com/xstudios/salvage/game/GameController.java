@@ -115,6 +115,8 @@ public class GameController implements Screen, ContactListener {
     private AudioController audioController;
 
 //    private LightController lightController;
+    private PointLight light ;
+    private RayHandler rayHandler;
 
 
     //sample wall to get rid of later
@@ -150,10 +152,6 @@ public class GameController implements Screen, ContactListener {
     protected GameController(float width, float height, float gravity) {
         this(new Rectangle(0,0,width,height), new Vector2(0,gravity));
     }
-
-
-    private PointLight light ;
-    private RayHandler rayHandler;
 
     /**
      * Creates a new game world
@@ -488,15 +486,16 @@ public class GameController implements Screen, ContactListener {
         InputController input = InputController.getInstance();
 
         // if velocity falls below some threshold, stop boosting
+        System.out.println("LinVelLen: " + diver.getLinearVelocity().len());
         if (diver.getLinearVelocity().len() < 15 && diver.isBoosting()) {
             diver.setBoosting(false);
         }
 
         forceCache.x = input.getHorizontal() *diver.getForce();
         forceCache.y = input.getVertical() *diver.getForce();
-//        System.out.println("Horizontal: " + input.getHorizontal());
-//        System.out.println("Vertical: " + input.getVertical());
-//        System.out.println("Force: " + diver.getForce());
+        System.out.println("Horizontal: " + input.getHorizontal());
+        System.out.println("Vertical: " + input.getVertical());
+        System.out.println("Force: " + forceCache.x + ", " + forceCache.y);
 
         // kicking off of an obstacle
 //        System.out.println("Kicked: " + input.didKickOff());
