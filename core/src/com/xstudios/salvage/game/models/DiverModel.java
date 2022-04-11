@@ -35,7 +35,6 @@ public class DiverModel extends GameObject {
     private float damping;
     /** The maximum character speed */
     private final float swimMaxSpeed;
-    private final float maxspeed;
     /** The maximum character speed when drifting*/
     private final float drift_maxspeed;
 
@@ -133,8 +132,6 @@ public class DiverModel extends GameObject {
         setFixedRotation(true);
 
         swimMaxSpeed = data.getFloat("maxspeed", 0);
-
-        maxspeed = data.getFloat("maxspeed", 0);
         drift_maxspeed = data.getFloat("drift_maxspeed", 0);
 
         damping = data.getFloat("damping", 0);
@@ -168,7 +165,7 @@ public class DiverModel extends GameObject {
         boostedMaxSpeed = swimMaxSpeed*3;
         maxSpeed = swimMaxSpeed;
         swimDamping = damping;
-        boostDamping = damping/100;
+        boostDamping = damping/10;
 
         carrying_body = false;
         dead_body = null;
@@ -676,18 +673,8 @@ public class DiverModel extends GameObject {
     }
 
     public void boost() {
-        // set impulse in a certain direction
-//        TODO: need to negate the impulse for some reason
-//        forceCache.x = direction.x * 50;
-//        forceCache.y = direction.y * 50;
-//        setLinearVelocity(forceCache);
-
-//        forceCache.x = direction.x * 100;
-//        forceCache.y = direction.y * 100;
-
-//        body.applyForce(forceCache, body.getPosition(), true);
-
-        forceCache.set(movement.nor().x * 8, movement.nor().y * 8);
+        // set impulse in direction of key input
+        forceCache.set(movement.nor().x * 10, movement.nor().y * 10);
         System.out.println("X: " + forceCache.x);
         System.out.println("Y: " + forceCache.y);
         body.applyLinearImpulse(forceCache, body.getPosition(), true);
