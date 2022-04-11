@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -492,9 +493,9 @@ audioController.reset();
         } else {
             diver.setLatching(false);
         }
-        System.out.println("isTouchingObstacle?: " + diver.isTouchingObstacle());
-        System.out.println("Latching: " + diver.isLatching());
-        System.out.println("Boosting? " + diver.isBoosting());
+//        System.out.println("isTouchingObstacle?: " + diver.isTouchingObstacle());
+//        System.out.println("Latching: " + diver.isLatching());
+//        System.out.println("Boosting? " + diver.isBoosting());
 
         // set forces from ocean currents
         diver.setDriftMovement(physicsController.getCurrentVector(diver.getPosition()).x,

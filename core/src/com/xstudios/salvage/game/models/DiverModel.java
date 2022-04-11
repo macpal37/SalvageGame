@@ -690,7 +690,7 @@ public class DiverModel extends GameObject {
 
     public void boost() {
         // set impulse in direction of key input
-        forceCache.set(movement.nor().x * 10, movement.nor().y * 10);
+        forceCache.set(movement.nor().x * 20, movement.nor().y * 20);
         System.out.println("X: " + forceCache.x);
         System.out.println("Y: " + forceCache.y);
         body.applyLinearImpulse(forceCache, body.getPosition(), true);
