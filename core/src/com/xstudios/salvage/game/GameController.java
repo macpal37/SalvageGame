@@ -588,6 +588,9 @@ public class GameController implements Screen, ContactListener {
             diver.setLatching(false);
         }
 
+        System.out.println("Touching Obstacle:" + diver.isTouchingObstacle());
+        System.out.println("Latching:" + diver.isLatching());
+
         // set forces from ocean currents
         diver.setDriftMovement(physicsController.getCurrentVector(diver.getPosition()).x,
                 physicsController.getCurrentVector(diver.getPosition()).y);
@@ -958,6 +961,8 @@ public class GameController implements Screen, ContactListener {
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
 
+        collisionController.startDiverToObstacle(body1,body2);
+
         try {
             GObject bd1 = (GObject) body1.getUserData();
             GObject bd2 = (GObject) body2.getUserData();
@@ -1085,10 +1090,11 @@ public class GameController implements Screen, ContactListener {
 //        System.out.println("END CONTACT");
         Body body1 = fix1.getBody();
         Body body2 = fix2.getBody();
-//        collisionController.endContact(body1, body2);
 
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
+
+        collisionController.endContact(body1, body2);
 
         try {
             GObject bd1 = (GObject) body1.getUserData();
