@@ -50,6 +50,7 @@ public class ItemModel extends DiverObjectModel {
     @Override
     public void setID(int id) {
         super.setID(id);
+        item_color = COLOR_OPTIONS[getID()];
         setName(item_type + "" + id);
     }
 
@@ -67,7 +68,7 @@ public class ItemModel extends DiverObjectModel {
 
 
     public Color getColor() {
-        return item_color;
+        return ItemModel.COLOR_OPTIONS[getID()];
     }
     /**
      * Release the fixtures for this body, resetting the shape

@@ -204,7 +204,7 @@ public class GameController implements Screen, ContactListener {
         wallShine = new PointLight(rayHandler,100, Color.BLUE,8,0,0);
         wallShine.setSoft(true);
 
-        wallShine.setColor(18f/255f,120f/255f,82/255f,0.45f);
+        wallShine.setColor(18f/255f,120f/255f,82f/255f,0.45f);
         Filter f2 = new Filter();
         f2.categoryBits = 0x0004;
         f2.maskBits =0x0002;
@@ -368,7 +368,7 @@ public class GameController implements Screen, ContactListener {
 
         objects.clear();
         addQueue.clear();
-
+audioController.reset();
         populateLevel();
     }
     /**
@@ -529,6 +529,9 @@ public class GameController implements Screen, ContactListener {
             light.setPosition(
                     (diver.getX() * diver.getDrawScale().x) / 40f,
                     (diver.getY() * diver.getDrawScale().y) / 40f);
+            wallShine.setPosition(
+                    (diver.getX() * diver.getDrawScale().x) / 40f,
+                    (diver.getY() * diver.getDrawScale().y) / 40f);
         }
 
         // TODO: why wasnt this in marco's code?
@@ -580,6 +583,7 @@ public class GameController implements Screen, ContactListener {
      */
     public void update(float dt) {
         for (Door door: doors){
+
             door.setActive(!door.getUnlock(diver.getItem()));
         }
 
@@ -859,8 +863,6 @@ public class GameController implements Screen, ContactListener {
         }
 
 
-        // Call CollisionController to handle collisions
-//        System.out.println("BEGIN CONTACT");
         collisionController.startContact(body1, body2);
 
         if(body1.getUserData() instanceof DiverModel){

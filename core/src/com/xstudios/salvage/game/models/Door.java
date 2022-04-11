@@ -45,7 +45,7 @@ public class Door extends Wall {
             return false;
         }
 
-        return toUnlock && key.isCarried();
+        return toUnlock && key.isCarried() && key.getID() == getID();
     }
 
     public void draw(GameCanvas canvas) {
