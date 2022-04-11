@@ -135,4 +135,14 @@ public class CollisionController {
         return diver.hasBody();//diver.getItem() != null
 //                && diver.getItem().getItemType() == ItemType.DEAD_BODY;
     }
+
+    public static float staticHazardCollision(DiverModel diver, HazardModel hazard){
+        System.out.println("Hazard Contact");
+        if (!diver.getStunned()) {
+            diver.setStunned(true);
+            diver.setStunCooldown(hazard.getStunDuration());
+        }
+        return hazard.getOxygenDrain();
+
+    }
 }

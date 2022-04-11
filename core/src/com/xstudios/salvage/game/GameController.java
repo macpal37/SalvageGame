@@ -52,6 +52,9 @@ public class GameController implements Screen, ContactListener {
     /** The font for giving messages to the player */
     public static BitmapFont displayFont;
 
+    /** how much the object that's stunning the diver is draining their oxygen by*/
+    float hostileOxygenDrain=0.0f;
+
 
     // Models to be updated
     protected DiverModel diver;
@@ -506,6 +509,7 @@ audioController.reset();
         diver.setPing(input.didPing());
         diver.setPingDirection(dead_body.getPosition());
 
+
         // manage items/dead body
         diver.setPickUpOrDrop(input.getOrDropObject());
         diver.setItem();
@@ -521,6 +525,21 @@ audioController.reset();
 
         // update audio according to oxygen level
         audioController.update(diver.getOxygenLevel());
+
+        float[] staticHazardVerts={12f, -4.0f, 12f, -9.0f, 12.5f, -4.0f, 12.5f, -9.0f};
+        HazardModel hazard=new HazardModel(staticHazardVerts, -0.02f, 180);
+        hazard.setBodyType(BodyDef.BodyType.StaticBody);
+        hazard.setDensity(0);
+        hazard.setFriction(0.4f);
+        hazard.setRestitution(0.1f);
+        hazard.setTexture(doorCloseTexture);
+        hazard.setDrawScale(scale);
+        hazard.setName("hazard");
+        addObject(hazard);
+        hazard.setUserData(hazard);
+        hazard.setActive(true);
+
+
 
         if (diver.getBody() != null) {
             cameraController.setCameraPosition(
@@ -589,6 +608,7 @@ audioController.reset();
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
 
+
         switch (game_state) {
             case PLAYING:
                 updatePlayingState();
@@ -602,11 +622,41 @@ audioController.reset();
 //            break;
         }
 
+        // apply movement
+        InputController input = InputController.getInstance();
+
+        if(!diver.getStunned()) {
+            diver.setHorizontalMovement(input.getHorizontal() * diver.getForce());
+            diver.setVerticalMovement(input.getVertical() * diver.getForce());
+            diver.applyForce();
+        }
+
+        // do the ping
+        diver.setPing(input.didPing());
+        diver.setPingDirection(dead_body.getPosition());
+
+
+
+        // decrease oxygen from movement
+        if ((!diver.getStunned()) && (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0)) {
+            diver.changeOxygenLevel(activeOxygenRate);
+        } else {
+            diver.changeOxygenLevel(passiveOxygenRate);
+        }
 
 
 
 
         updateGameState();
+
+        //deal with hazard stun
+        System.out.println(diver.getStunCooldown());
+        diver.setStunCooldown(diver.getStunCooldown()-1);
+        if(diver.getStunCooldown()<=0){
+            diver.setStunned(false);
+            hostileOxygenDrain=0.0f;
+        }
+        diver.changeOxygenLevel(hostileOxygenDrain);
 
     }
 
@@ -866,7 +916,13 @@ audioController.reset();
         collisionController.startContact(body1, body2);
 
         if(body1.getUserData() instanceof DiverModel){
-            if(body2.getUserData() instanceof ItemModel){
+            if(body2.getUserData() instanceof GoalDoor){
+                if(CollisionController.winGame(diver, (GoalDoor) body2.getUserData())
+                        && listener!=null) {
+                    reach_target = true;//listener.exitScreen(this, 0);
+                }
+            }
+            else if(body2.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
                ((ItemModel) body2.getUserData()).setTouched(true);
             } else if(body2.getUserData() instanceof Door){
@@ -875,12 +931,21 @@ audioController.reset();
                 ((Door)body2.getUserData()).setUnlock(CollisionController.attemptUnlock(diver, (Door)body2.getUserData()));
             }  else if(body2.getUserData() instanceof DeadBodyModel){
                 ((DiverModel) body1.getUserData()).setBodyContact(true);
+            }  else if (body2.getUserData() instanceof HazardModel){
+                hostileOxygenDrain = CollisionController.staticHazardCollision(diver, (HazardModel)body2.getUserData());
             }
+
 
 
         }
         else if (body2.getUserData() instanceof DiverModel){
-            if (body1.getUserData() instanceof ItemModel){
+            if(body1.getUserData() instanceof GoalDoor){
+                if(CollisionController.winGame(diver, (GoalDoor) body1.getUserData())
+                        && listener!=null) {
+                    reach_target = true;//listener.exitScreen(this, 0);
+                }
+            }
+            else if (body1.getUserData() instanceof ItemModel){
                 CollisionController.pickUp(diver, (ItemModel)body1.getUserData());
                 ((ItemModel) body1.getUserData()).setTouched(true);
             } else if(body1.getUserData() instanceof Door){
@@ -890,6 +955,9 @@ audioController.reset();
 
             } else if(body1.getUserData() instanceof DeadBodyModel){
                 ((DiverModel) body2.getUserData()).setBodyContact(true);
+            }
+            else if (body2.getUserData() instanceof HazardModel){
+                hostileOxygenDrain=CollisionController.staticHazardCollision(diver, (HazardModel)body1.getUserData());
             }
 
         }
@@ -911,6 +979,17 @@ audioController.reset();
                 }
             }
         }
+
+        // ================= CONTACT LISTENER METHODS =============================
+
+
+
+
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
     }
 
     /**
