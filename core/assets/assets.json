@@ -15,6 +15,11 @@
       "wrapU":"repeated",
       "wrapV": "repeated"
     },
+     "hazard": {
+          "file":"background/hazard_texture.png",
+          "wrapU":"repeated",
+          "wrapV": "repeated"
+        },
     "door": {
       "file": "models/door.png",
       "wrapU": "repeated",
