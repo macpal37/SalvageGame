@@ -18,6 +18,7 @@ import com.xstudios.salvage.game.levels.LevelBuilder;
 import com.xstudios.salvage.game.models.DiverModel;
 import com.xstudios.salvage.game.models.Wall;
 import com.xstudios.salvage.game.models.*;
+import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 
@@ -55,7 +56,9 @@ public class GameController implements Screen, ContactListener {
      */
     protected TextureRegion doorOpenTexture;
     protected TextureRegion doorCloseTexture;
-
+    protected Texture swimmingAnimation;
+    protected Texture dustAnimation;
+    protected Texture plantAnimation;
     protected TextureRegion tileset;
     JsonValue constants;
 
@@ -266,10 +269,10 @@ public class GameController implements Screen, ContactListener {
 
 
         light = new PointLight(rayHandler, 100, Color.BLACK, 12, 0, 0);
-        wallShine = new PointLight(rayHandler, 100, Color.BLUE, 8, 0, 0);
+        wallShine = new PointLight(rayHandler, 100, Color.BLUE, 6, 0, 0);
         wallShine.setSoft(true);
 
-        wallShine.setColor(18f / 255f, 120f / 255f, 82f / 255f, 0.45f);
+        wallShine.setColor(18f / 255f, 180f / 255f, 82f / 255f, 0.85f);
         Filter f2 = new Filter();
         f2.categoryBits = 0x0004;
         f2.maskBits = 0x0002;
@@ -369,6 +372,10 @@ public class GameController implements Screen, ContactListener {
         levelBuilder.setDirectory(directory);
         tileset = new TextureRegion(directory.getEntry("levels:tilesets:old_ship_tileset", Texture.class));
         diverTexture = new TextureRegion(directory.getEntry("models:diver", Texture.class));
+        swimmingAnimation = directory.getEntry("models:diver_swimming", Texture.class);
+        System.out.println("Swimm: " + swimmingAnimation);
+        dustAnimation = directory.getEntry("models:dust", Texture.class);
+        System.out.println("DUST: " + dustAnimation);
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
         itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         constants = directory.getEntry("models:constants", JsonValue.class);
@@ -491,6 +498,7 @@ public class GameController implements Screen, ContactListener {
                 diver.setStunned(false);
 
                 diver.setTexture(diverTexture);
+                diver.setFilmStrip(new FilmStrip(swimmingAnimation, 1, 12, 12));
                 diver.setPingTexture(pingTexture);
                 diver.setDrawScale(scale);
                 diver.setName("diver");
@@ -531,6 +539,14 @@ public class GameController implements Screen, ContactListener {
                 goalArea.add(goal_door);
                 addObject(goal_door);
 
+            } else if (go instanceof Dust) {
+                Dust dust = (Dust) go;
+                dust.setFilmStrip(new FilmStrip(dustAnimation, 1, 8, 8));
+                dust.setName("dust");
+                dust.setBodyType(BodyDef.BodyType.StaticBody);
+                dust.setSensor(true);
+                dust.setDrawScale(scale);
+                addObject(dust);
             }
 
 

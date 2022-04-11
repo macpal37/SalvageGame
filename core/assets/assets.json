@@ -2,6 +2,8 @@
   "textures": {
 
     "models:diver": "models/diver.png",
+"models:diver_swimming": "models/diver_swimming.png",
+        "models:dust": "models/dust.png",
     "background:ocean":"background/background1.png",
     "background:game_over":"background/game_over.png",
     "models:key": "models/key.png",

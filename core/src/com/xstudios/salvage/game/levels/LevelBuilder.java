@@ -248,6 +248,9 @@ public class LevelBuilder {
                             gameObjects.add(hazard);
 
                         case Empty:
+                            if (layer.getString("name").equals("walls"))
+                                gameObjects.add(new Dust(sx, sy));
+                            break;
                     }
                 } else {
                     if (id != 0) {

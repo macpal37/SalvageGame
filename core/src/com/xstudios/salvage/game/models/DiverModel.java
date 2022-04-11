@@ -1,14 +1,19 @@
 package com.xstudios.salvage.game.models;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
+import com.xstudios.salvage.assets.GifDecoder;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
+import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
 import sun.security.x509.OtherName;
 
@@ -37,6 +42,24 @@ public class DiverModel extends GameObject {
      * The texture for the shape.
      */
     protected TextureRegion pingTexture;
+
+
+    private FilmStrip diverSprite;
+
+    private int current_frame = 0;
+
+    public int getFrame() {
+        return diverSprite.getFrame();
+
+    }
+
+    private final int DIVER_IMG_FLAT = 6;
+
+    public void setFilmStrip(FilmStrip value) {
+        diverSprite = value;
+        diverSprite.setFrame(DIVER_IMG_FLAT);
+    }
+
 
     /**
      * A cache value for the fixture (for resizing)
@@ -207,6 +230,11 @@ public class DiverModel extends GameObject {
     public DiverModel(float x, float y, JsonValue data) {
         super(x, y);
 
+//        batch = new SpriteBatch();
+//
+//        animation = GifDecoder.loadGIFAnimation(Animation.PlayMode.LOOP, Gdx.files.internal("models/diver_swimming.gif").read());
+
+
         shape = new PolygonShape();
 //        origin = new Vector2();
 //        body = null;
@@ -261,7 +289,7 @@ public class DiverModel extends GameObject {
         maxSpeed = swimMaxSpeed;
         swimDamping = damping;
 
-        boostDamping = damping / 10;
+        boostDamping = damping / 100;
 
 
         carrying_body = false;
@@ -383,6 +411,12 @@ public class DiverModel extends GameObject {
      * set stunned
      */
     public void setStunned(boolean stun) {
+
+//        if (stun){
+//
+//        }
+
+
         stunned = stun;
     }
 
@@ -536,11 +570,15 @@ public class DiverModel extends GameObject {
         if (texture != null) {
 
 
-            if (stunCooldown % 20 > 5) {
-                canvas.draw(texture, Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+            if (stunned) {
+                if (stunCooldown % 20 > 5) {
 
+                    canvas.draw(diverSprite, Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+                } else {
+                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+                }
             } else {
-                canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+                canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
             }
         }
 
@@ -651,6 +689,9 @@ public class DiverModel extends GameObject {
         return !isLatching() && !isBoosting() && movement.isZero();
     }
 
+    int tick = 0;
+    boolean stroke = false;
+
     public void applyForce() {
 
         if (!isActive()) {
@@ -661,13 +702,21 @@ public class DiverModel extends GameObject {
         float desired_yvel = 0;
         float max_impulse = 15f;
         float max_impulse_drift = 2f;
-
+        tick++;
         // possible states: swimming, idling/drifting, latching, boosting
         if (isSwimming()) { // player is actively using the arrow keys
+
             // set custom max speed and damping values
             setMaxSpeed(swimMaxSpeed);
             setLinearDamping(swimDamping);
 
+            int frame = diverSprite.getFrame();
+            if (tick % 5 == 0) {
+                frame++;
+                if (frame >= diverSprite.getSize())
+                    frame = 0;
+                diverSprite.setFrame(frame);
+            }
             // compute desired velocity, capping it if it exceeds the maximum speed
             // TODO: Do we only want to be able to swim in 4 directions?
             desired_xvel = getVX() + Math.signum(getHorizontalMovement()) * max_impulse;
@@ -687,6 +736,21 @@ public class DiverModel extends GameObject {
             setMaxSpeed(drift_maxspeed);
             setLinearDamping(swimDamping);
 
+            if (tick % 10 == 0) {
+                int frame = diverSprite.getFrame();
+
+                if (frame > 8) {
+                    frame = 7;
+                    stroke = true;
+                }
+                frame += (stroke) ? -1 : 1;
+                if (frame < 6) {
+                    frame = 7;
+                    stroke = false;
+                }
+
+                diverSprite.setFrame(frame);
+            }
 
             desired_xvel = getVX() + Math.signum(getHorizontalDriftMovement()) * max_impulse_drift;
             desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
