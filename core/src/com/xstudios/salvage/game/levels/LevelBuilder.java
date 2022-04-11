@@ -181,101 +181,102 @@ public class LevelBuilder {
 
         int idCount = 0;
         for (JsonValue layer : map.get("layers")) {
+            if (layer.get("data") != null) {
+                for (int n = 0; n < width * height; n++) {
+                    int id = Integer.parseInt(layer.get("data").get(n).toString());
+                    if (!layer.getString("name").equals("ids")) {
+                        id = (id == 0) ? 51 : id - start;
 
-            for (int n = 0; n < width * height; n++) {
-                int id = Integer.parseInt(layer.get("data").get(n).toString());
-                if (!layer.getString("name").equals("ids")) {
-                    id = (id == 0) ? 51 : id - start;
+                        Tile tile = tiles[id];
+                        float sy = (tileSize / div) * jj;
+                        float sx = (tileSize / div) * ii;
+                        switch (tile.tileType) {
+                            case Wall:
+                                float[] newVertices = new float[tile.vertices.length];
+                                int index = 0;
+                                for (Float f : tile.vertices)
+                                    newVertices[index++] = (index % 2 == 0) ? f + sy : f + sx;
+                                gameObjects.add(new Wall(newVertices, 0, 0));
+                                break;
+                            case Diver:
+                                System.out.println("Diver Made!");
+                                System.out.println("X: " + sx + " Y: " + sy);
+                                gameObjects.add(new DiverModel(sx, sy, constants.get("diver")));
+                                break;
+                            case DeadBody:
+                                System.out.println("Pass: Body");
+                                gameObjects.add(new DeadBodyModel(sx, sy, constants.get("dead_body")));
+                                break;
+                            case Item:
+                                ItemModel item = new ItemModel(sx, sy, constants.get("key"), ItemType.KEY);
+                                gameObjects.add(item);
+                                idItems.add(item);
+                                break;
+                            case Door:
+                                float[] doorVerticies = new float[tile.vertices.length];
+                                index = 0;
+                                for (Float f : tile.vertices)
+                                    doorVerticies[index++] = (index % 2 == 0) ? f + sy : f + sx;
+                                Door door = new Door(doorVerticies, 0, 0);
+                                gameObjects.add(door);
+                                idItems.add(door);
+                                break;
 
-                    Tile tile = tiles[id];
-                    float sy = (tileSize / div) * jj;
-                    float sx = (tileSize / div) * ii;
-                    switch (tile.tileType) {
-                        case Wall:
-                            float[] newVertices = new float[tile.vertices.length];
-                            int index = 0;
-                            for (Float f : tile.vertices)
-                                newVertices[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                            gameObjects.add(new Wall(newVertices, 0, 0));
-                            break;
-                        case Diver:
-                            System.out.println("Diver Made!");
-                            System.out.println("X: " + sx + " Y: " + sy);
-                            gameObjects.add(new DiverModel(sx, sy, constants.get("diver")));
-                            break;
-                        case DeadBody:
-                            System.out.println("Pass: Body");
-                            gameObjects.add(new DeadBodyModel(sx, sy, constants.get("dead_body")));
-                            break;
-                        case Item:
-                            ItemModel item = new ItemModel(sx, sy, constants.get("key"), ItemType.KEY);
-                            gameObjects.add(item);
-                            idItems.add(item);
-                            break;
-                        case Door:
-                            float[] doorVerticies = new float[tile.vertices.length];
-                            index = 0;
-                            for (Float f : tile.vertices)
-                                doorVerticies[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                            Door door = new Door(doorVerticies, 0, 0);
-                            gameObjects.add(door);
-                            idItems.add(door);
-                            break;
+                            case Obstacle:
+                                break;
 
-                        case Obstacle:
-                            break;
+                            case Goal:
 
-                        case Goal:
+                                gameObjects.add(new GoalDoor(sx, sy, tileSize / div, tileSize / div));
+                                break;
+                            case Block:
+                                float[] blockVertices = new float[tile.vertices.length];
+                                index = 0;
+                                for (Float f : tile.vertices)
+                                    blockVertices[index++] = (index % 2 == 0) ? f + sy : f + sx;
+                                Wall block = new Wall(blockVertices, 0, 0);
+                                block.setInvisible(true);
+                                gameObjects.add(block);
+                                break;
+                            case Hazard:
 
-                            gameObjects.add(new GoalDoor(sx, sy, tileSize / div, tileSize / div));
-                            break;
-                        case Block:
-                            float[] blockVertices = new float[tile.vertices.length];
-                            index = 0;
-                            for (Float f : tile.vertices)
-                                blockVertices[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                            Wall block = new Wall(blockVertices, 0, 0);
-                            block.setInvisible(true);
-                            gameObjects.add(block);
-                            break;
-                        case Hazard:
+                                float[] hazardVerticies = new float[tile.vertices.length];
+                                index = 0;
+                                for (Float f : tile.vertices)
+                                    hazardVerticies[index++] = (index % 2 == 0) ? f + sy : f + sx;
+                                HazardModel hazard = new HazardModel(hazardVerticies, 0, 0);
+                                gameObjects.add(hazard);
 
-                            float[] hazardVerticies = new float[tile.vertices.length];
-                            index = 0;
-                            for (Float f : tile.vertices)
-                                hazardVerticies[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                            HazardModel hazard = new HazardModel(hazardVerticies, 0, 0);
-                            gameObjects.add(hazard);
+                            case Empty:
+                                if (layer.getString("name").equals("walls"))
+                                    gameObjects.add(new Dust(sx, sy));
+                                break;
+                        }
+                    } else {
+                        if (id != 0) {
 
-                        case Empty:
-                            if (layer.getString("name").equals("walls"))
-                                gameObjects.add(new Dust(sx, sy));
-                            break;
+                            id = id - 101;
+                            System.out.println("ID: " + id);
+                            System.out.println("OBJECT: " + idItems.get(idCount).toString());
+                            idItems.get(idCount).setID(id);
+                            idCount++;
+                        }
+
                     }
-                } else {
-                    if (id != 0) {
 
-                        id = id - 101;
-                        System.out.println("ID: " + id);
-                        System.out.println("OBJECT: " + idItems.get(idCount).toString());
-                        idItems.get(idCount).setID(id);
-                        idCount++;
+
+                    ii++;
+                    if (ii == width) {
+                        ii = 0;
+                        jj--;
+
                     }
-
                 }
+                ii = 0;
+                jj = height - 1;
 
 
-                ii++;
-                if (ii == width) {
-                    ii = 0;
-                    jj--;
-
-                }
             }
-            ii = 0;
-            jj = height - 1;
-
-
         }
 
         System.out.println("ALL PASS!");
