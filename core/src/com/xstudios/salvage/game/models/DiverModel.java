@@ -35,7 +35,6 @@ public class DiverModel extends GameObject {
     private float damping;
     /** The maximum character speed */
     private final float swimMaxSpeed;
-    private final float maxspeed;
     /** The maximum character speed when drifting*/
     private final float drift_maxspeed;
 
@@ -74,9 +73,11 @@ public class DiverModel extends GameObject {
     /** Identifier to allow us to track the sensor in ContactListener */
     private final String sensorNameRight;
     private final String sensorNameLeft;
+    private final String hitboxSensorName;
     /** The physics shape of this object */
     private PolygonShape sensorShapeRight;
     private PolygonShape sensorShapeLeft;
+    private PolygonShape hitboxShape;
 
     /** Whether you are touching another GameObject */
     private ArrayList<GObject> touchingRight;
@@ -113,8 +114,6 @@ public class DiverModel extends GameObject {
     /**
      *
      * @param data
-     * @param width
-     * @param height
      */
 
     public DiverModel(float x, float y, JsonValue data){
@@ -132,8 +131,6 @@ public class DiverModel extends GameObject {
         setFixedRotation(true);
 
         swimMaxSpeed = data.getFloat("maxspeed", 0);
-
-        maxspeed = data.getFloat("maxspeed", 0);
         drift_maxspeed = data.getFloat("drift_maxspeed", 0);
 
         damping = data.getFloat("damping", 0);
@@ -144,6 +141,7 @@ public class DiverModel extends GameObject {
 
         sensorNameRight = "DiverSensorRight";
         sensorNameLeft = "DiverSensorLeft";
+        hitboxSensorName = "HitboxSensor";
         touchingRight = new ArrayList<>();
         touchingLeft = new ArrayList<>();
         // Initialize
@@ -167,7 +165,7 @@ public class DiverModel extends GameObject {
         boostedMaxSpeed = swimMaxSpeed*3;
         maxSpeed = swimMaxSpeed;
         swimDamping = damping;
-        boostDamping = damping/100;
+        boostDamping = damping/10;
 
         carrying_body = false;
         dead_body = null;
@@ -338,6 +336,21 @@ public class DiverModel extends GameObject {
         // Ground sensor to represent our feet
         Fixture sensorFixture2 = body.createFixture( sensorDef2 );
         sensorFixture2.setUserData(getSensorNameLeft());
+
+
+        // create a sensor to detect wall collisions
+        FixtureDef hitboxDef = new FixtureDef();
+        hitboxDef.density = data.getFloat("density",0);
+        hitboxDef.isSensor = true;
+        // we don't want this fixture to collide, just act as a sensor
+        hitboxDef.filter.groupIndex = -1;
+        hitboxShape = new PolygonShape();
+        hitboxShape.setAsBox(getWidth()*1.2f,getHeight()*1.2f,
+                new Vector2(0,0), 0.0f);
+        hitboxDef.shape = hitboxShape;
+        Fixture hitboxFixture = body.createFixture(hitboxDef);
+        hitboxFixture.setUserData(hitboxSensorName);
+
         return true;
     }
     /**
@@ -407,6 +420,29 @@ public class DiverModel extends GameObject {
      */
     public float getVerticalMovement() {
         return movement.y;
+    }
+
+
+    /**
+     * Returns left/right movement of this character.
+     *
+     * This is the result of input times dude force.
+     *
+     * @return left/right movement of this character.
+     */
+    public float getHorizontalDriftMovement() {
+        return drift_movement.x;
+    }
+
+    /**
+     * Returns up/down movement of this character.
+     *
+     * This is the result of input times dude force.
+     *
+     * @return left/right movement of this character.
+     */
+    public float getVerticalDriftMovement() {
+        return drift_movement.y;
     }
 
 
@@ -494,12 +530,12 @@ public class DiverModel extends GameObject {
             body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x,
                     body.getWorldCenter().y, true);
         } else if (isIdling()) { // player is not using the arrow keys
-            setMaxSpeed(swimMaxSpeed);
+            setMaxSpeed(drift_maxspeed);
             setLinearDamping(swimDamping);
 
-            desired_xvel = getVX() + Math.signum(getHorizontalMovement())*max_impulse_drift;
+            desired_xvel = getVX() + Math.signum(getHorizontalDriftMovement())*max_impulse_drift;
             desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
-            desired_yvel = getVY() + Math.signum(getVerticalMovement())*max_impulse_drift;
+            desired_yvel = getVY() + Math.signum(getVerticalDriftMovement())*max_impulse_drift;
             desired_yvel = Math.max(Math.min(desired_yvel, getMaxSpeed()), -getMaxSpeed());
 
             float xvel_change = desired_xvel - getVX();
@@ -534,6 +570,7 @@ public class DiverModel extends GameObject {
         canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
         canvas.drawPhysics(sensorShapeRight,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
         canvas.drawPhysics(sensorShapeLeft,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        canvas.drawPhysics(hitboxShape, Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
 
     /**
@@ -652,18 +689,8 @@ public class DiverModel extends GameObject {
     }
 
     public void boost() {
-        // set impulse in a certain direction
-//        TODO: need to negate the impulse for some reason
-//        forceCache.x = direction.x * 50;
-//        forceCache.y = direction.y * 50;
-//        setLinearVelocity(forceCache);
-
-//        forceCache.x = direction.x * 100;
-//        forceCache.y = direction.y * 100;
-
-//        body.applyForce(forceCache, body.getPosition(), true);
-
-        forceCache.set(movement.nor().x * 8, movement.nor().y * 8);
+        // set impulse in direction of key input
+        forceCache.set(movement.nor().x * 20, movement.nor().y * 20);
         System.out.println("X: " + forceCache.x);
         System.out.println("Y: " + forceCache.y);
         body.applyLinearImpulse(forceCache, body.getPosition(), true);
