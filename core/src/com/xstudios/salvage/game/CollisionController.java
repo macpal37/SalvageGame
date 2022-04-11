@@ -99,11 +99,11 @@ public class CollisionController {
      * @param b2
      */
     public void startDiverToObstacle(Body b1, Body b2) {
-        if (b1.getUserData().getClass() == DiverModel.class && b2.getUserData().getClass() == Wall.class) {
+        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
 //            System.out.println("body collided");
             ((DiverModel) b1.getUserData()).setTouchingObstacle(true);
         }
-        if (b2.getUserData() == DiverModel.class && b1.getUserData().getClass() == Wall.class) {
+        if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
 //            System.out.println("body collided");
             ((DiverModel) b2.getUserData()).setTouchingObstacle(true);
         }
@@ -117,10 +117,10 @@ public class CollisionController {
      * @param b2
      */
     public void endDiverToObstacle(Body b1, Body b2) {
-        if (b1.getUserData().getClass() == DiverModel.class && b2.getUserData().getClass() == Wall.class) {
+        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
             ((DiverModel) b1.getUserData()).setTouchingObstacle(false);
         }
-        if (b2.getUserData() == DiverModel.class && b1.getUserData().getClass() == Wall.class) {
+        if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
             ((DiverModel) b2.getUserData()).setTouchingObstacle(false);
         }
     }
