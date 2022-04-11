@@ -454,11 +454,12 @@ public class DiverModel extends GameObject {
 //        }
 //    }
 
-    public boolean isSwimming(){
-        return !boosting && movement.len() != 0;
+    // TODO: Having a state machine would probably be helpful
+    public boolean isSwimming() {
+        return !isLatching() && !isBoosting() && movement.len() != 0;
     }
     public boolean isIdling(){
-        return movement.isZero();
+        return !isLatching() && !isBoosting() && movement.isZero();
     }
 
     public void applyForce() {
@@ -527,19 +528,6 @@ public class DiverModel extends GameObject {
 //            body.applyForce(forceCache,getPosition(),true);
         }
 
-        if (current_item != null) {
-            current_item.setVX(getVX());
-            current_item.setVY(getVY());
-//            current_item.setX(getX()+ 2);
-//            current_item.setY(getY()+2);
-//            current_item.setVerticalMovement(getVerticalMovement());
-//            current_item.setHorizontalMovement(getHorizontalMovement());
-//            current_item.applyForce();
-            System.out.println("X POS: " + current_item.getX());
-            System.out.println("Y POS: " + current_item.getY());
-            System.out.println("DIVER X POS: " + getX());
-            System.out.println("DIVER Y POS: " + getY());
-        }
     }
 
     @Override
@@ -676,7 +664,7 @@ public class DiverModel extends GameObject {
 
 //        body.applyForce(forceCache, body.getPosition(), true);
 
-        forceCache.set(movement.nor().x * -50, movement.nor().y * -50);
+        forceCache.set(movement.nor().x * 8, movement.nor().y * 8);
         System.out.println("X: " + forceCache.x);
         System.out.println("Y: " + forceCache.y);
         body.applyLinearImpulse(forceCache, body.getPosition(), true);

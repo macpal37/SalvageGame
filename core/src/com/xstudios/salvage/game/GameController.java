@@ -507,11 +507,14 @@ public class GameController implements Screen, ContactListener {
             diver.setLatching(true);
         } else if (!input.didKickOff() && diver.isLatching()) {
             diver.setLatching(false);
-            diver.boost(); // boost according to the current user input
             diver.setBoosting(true);
+            diver.boost(); // boost according to the current user input
         } else {
             diver.setLatching(false);
         }
+        System.out.println("isTouchingObstacle?: " + diver.isTouchingObstacle());
+        System.out.println("Latching: " + diver.isLatching());
+        System.out.println("Boosting? " + diver.isBoosting());
 
         // set forces from ocean currents
         diver.setDriftMovement(physicsController.getCurrentVector(diver.getPosition()).x,
@@ -531,6 +534,7 @@ public class GameController implements Screen, ContactListener {
         // decrease oxygen from movement
         if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
             diver.changeOxygenLevel(activeOxygenRate);
+            // TODO: faster oxygen drain while carrying the body
         } else {
             diver.changeOxygenLevel(passiveOxygenRate);
         }
