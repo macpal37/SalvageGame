@@ -114,6 +114,7 @@ public class GameController implements Screen, ContactListener {
     /** Whether or not debug mode is active */
     private boolean debug;
 
+    private Vector2 forceCache;
     private AudioController audioController;
     private PhysicsController physicsController;
 
@@ -131,6 +132,8 @@ public class GameController implements Screen, ContactListener {
     private state game_state;
 
 //    private LightController lightController;
+    private PointLight light ;
+    private RayHandler rayHandler;
 
 
     //sample wall to get rid of later
@@ -167,10 +170,6 @@ public class GameController implements Screen, ContactListener {
         this(new Rectangle(0,0,width,height), new Vector2(0,gravity));
     }
 
-
-    private PointLight light ;
-    private RayHandler rayHandler;
-
     /**
      * Creates a new game world
      *
@@ -191,6 +190,8 @@ public class GameController implements Screen, ContactListener {
         // TODO: oxygen rate should be a parameter loaded from a json
         passiveOxygenRate = -.01f;
         activeOxygenRate = -.02f;
+
+        forceCache = new Vector2(0, 0);
         rayHandler = new RayHandler(world);
         rayHandler.setAmbientLight(.01f);
 
@@ -493,6 +494,34 @@ public class GameController implements Screen, ContactListener {
         diver.setHorizontalMovement(input.getHorizontal() * diver.getForce());
         diver.setVerticalMovement(input.getVertical() * diver.getForce());
 
+        // stop boosting when player has slowed down enough
+        if (diver.getLinearVelocity().len() < 15 && diver.isBoosting()) {
+            diver.setBoosting(false);
+        }
+        // set latching and boosting attributes
+        // latch onto obstacle when key pressed and close to an obstacle
+        // stop latching and boost when key is let go
+        // TODO: or when it is pressed again? Have had some issues with key presses being missed
+        // otherwise, stop latching
+        if (input.didKickOff() && diver.isTouchingObstacle()) {
+            diver.setLatching(true);
+        } else if (!input.didKickOff() && diver.isLatching()) {
+            diver.setLatching(false);
+            diver.setBoosting(true);
+            diver.boost(); // boost according to the current user input
+        } else {
+            diver.setLatching(false);
+        }
+        System.out.println("isTouchingObstacle?: " + diver.isTouchingObstacle());
+        System.out.println("Latching: " + diver.isLatching());
+        System.out.println("Boosting? " + diver.isBoosting());
+
+        // set forces from ocean currents
+        diver.setDriftMovement(physicsController.getCurrentVector(diver.getPosition()).x,
+                physicsController.getCurrentVector(diver.getPosition()).y);
+        // apply forces for movement
+        diver.applyForce();
+
         // do the ping
         diver.setPing(input.didPing());
         diver.setPingDirection(dead_body.getPosition());
@@ -505,12 +534,12 @@ public class GameController implements Screen, ContactListener {
         // decrease oxygen from movement
         if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
             diver.changeOxygenLevel(activeOxygenRate);
+            // TODO: faster oxygen drain while carrying the body
         } else {
             diver.changeOxygenLevel(passiveOxygenRate);
         }
-        diver.setDriftMovement(physicsController.getCurrentVector(diver.getPosition()).x,
-                physicsController.getCurrentVector(diver.getPosition()).y);
-        diver.applyForce();
+
+        // update audio according to oxygen level
         audioController.update(diver.getOxygenLevel());
 
         if (diver.getBody() != null) {
@@ -834,10 +863,17 @@ public class GameController implements Screen, ContactListener {
 
             }
 
-
             if(bd1 instanceof DiverModel && !diver.getSensorNameRight().equals(fd1) && !diver.getSensorNameLeft().equals(fd1)  && bd2 instanceof Wall){
                 audioController.wall_collision(diver.getForce());
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        // Call CollisionController to handle collisions
+//        System.out.println("BEGIN CONTACT");
+        collisionController.startContact(body1, body2);
 
         if(body1.getUserData() instanceof DiverModel){
             if(body2.getUserData() instanceof ItemModel){
@@ -868,7 +904,6 @@ public class GameController implements Screen, ContactListener {
 
         }
 
-
         if(body1.getUserData() instanceof DiverModel){
             if(body2.getUserData() instanceof GoalDoor){
                 if(CollisionController.winGame(diver, (GoalDoor) body2.getUserData())
@@ -886,15 +921,6 @@ public class GameController implements Screen, ContactListener {
                 }
             }
         }
-        // ================= CONTACT LISTENER METHODS =============================
-
-
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     /**
@@ -906,8 +932,11 @@ public class GameController implements Screen, ContactListener {
         Fixture fix1 = contact.getFixtureA();
         Fixture fix2 = contact.getFixtureB();
 
+        // Call CollisionController to handle collisions
+//        System.out.println("END CONTACT");
         Body body1 = fix1.getBody();
         Body body2 = fix2.getBody();
+        collisionController.endContact(body1, body2);
 
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
@@ -934,6 +963,10 @@ public class GameController implements Screen, ContactListener {
                    diver.removeTouching(diver.getSensorNameRight(),bd2);
 
            }
+       } catch (Exception e) {
+           e.printStackTrace();
+       }
+
         if (body1.getUserData() instanceof DiverModel) {
 
             if ( body2.getUserData() instanceof ItemModel) {
@@ -956,10 +989,6 @@ public class GameController implements Screen, ContactListener {
 //                ((DiverModel) body2.getUserData()).setBodyContact(true);
 //            }
         }
-
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
     }
     /**
      * Handles any modifications necessary before collision resolution
