@@ -245,18 +245,18 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
         canvas.draw(background, 0, 0);
         if (playButton == null) {
             drawProgress(canvas);
-        } else {
-            Color tint = (pressState == 1 ? Color.GRAY : Color.WHITE);
-            canvas.draw(
-                    playButton,
-                    tint,
-                    playButton.getWidth() / 2,
-                    playButton.getHeight() / 2,
-                    centerX,
-                    centerY,
-                    0,
-                    BUTTON_SCALE * scale,
-                    BUTTON_SCALE * scale);
+//        } else {
+//            Color tint = (pressState == 1 ? Color.GRAY : Color.WHITE);
+//            canvas.draw(
+//                    playButton,
+//                    tint,
+//                    playButton.getWidth() / 2,
+//                    playButton.getHeight() / 2,
+//                    centerX,
+//                    centerY,
+//                    0,
+//                    BUTTON_SCALE * scale,
+//                    BUTTON_SCALE * scale);
         }
         canvas.end();
     }
@@ -270,62 +270,62 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * @param canvas The drawing context
      */
     private void drawProgress(GameCanvas canvas) {
+//        canvas.draw(
+//                statusBkgLeft,
+//                Color.WHITE,
+//                centerX - width / 2,
+//                centerY,
+//                scale * statusBkgLeft.getRegionWidth(),
+//                scale * statusBkgLeft.getRegionHeight());
+//        canvas.draw(
+//                statusBkgRight,
+//                Color.WHITE,
+//                centerX + width / 2 - scale * statusBkgRight.getRegionWidth(),
+//                centerY,
+//                scale * statusBkgRight.getRegionWidth(),
+//                scale * statusBkgRight.getRegionHeight());
+//        canvas.draw(
+//                statusBkgMiddle,
+//                Color.WHITE,
+//                centerX - width / 2 + scale * statusBkgLeft.getRegionWidth(),
+//                centerY,
+//                width - scale * (statusBkgRight.getRegionWidth() + statusBkgLeft.getRegionWidth()),
+//                scale * statusBkgMiddle.getRegionHeight());
+
         canvas.draw(
                 statusBkgLeft,
                 Color.WHITE,
-                centerX - width / 2,
-                centerY,
+                0,
+                0,
                 scale * statusBkgLeft.getRegionWidth(),
                 scale * statusBkgLeft.getRegionHeight());
-        canvas.draw(
-                statusBkgRight,
-                Color.WHITE,
-                centerX + width / 2 - scale * statusBkgRight.getRegionWidth(),
-                centerY,
-                scale * statusBkgRight.getRegionWidth(),
-                scale * statusBkgRight.getRegionHeight());
-        canvas.draw(
-                statusBkgMiddle,
-                Color.WHITE,
-                centerX - width / 2 + scale * statusBkgLeft.getRegionWidth(),
-                centerY,
-                width - scale * (statusBkgRight.getRegionWidth() + statusBkgLeft.getRegionWidth()),
-                scale * statusBkgMiddle.getRegionHeight());
-
-        canvas.draw(
-                statusFrgLeft,
-                Color.WHITE,
-                centerX - width / 2,
-                centerY,
-                scale * statusFrgLeft.getRegionWidth(),
-                scale * statusFrgLeft.getRegionHeight());
         if (progress > 0) {
             float span =
                     progress
-                            * (width - scale * (statusFrgLeft.getRegionWidth() + statusFrgRight.getRegionWidth()))
+                            * (width - scale * (statusBkgLeft.getRegionWidth() + statusBkgRight.getRegionWidth()))
                             / 2.0f;
             canvas.draw(
-                    statusFrgRight,
+                    statusBkgRight,
                     Color.WHITE,
-                    centerX - width / 2 + scale * statusFrgLeft.getRegionWidth() + span,
-                    centerY,
-                    scale * statusFrgRight.getRegionWidth(),
-                    scale * statusFrgRight.getRegionHeight());
+                    0 + scale * statusBkgLeft.getRegionWidth() + span,
+                    0,
+                    scale * statusBkgRight.getRegionWidth(),
+                    scale * statusBkgRight.getRegionHeight());
             canvas.draw(
-                    statusFrgMiddle,
+                    statusBkgMiddle,
                     Color.WHITE,
-                    centerX - width / 2 + scale * statusFrgLeft.getRegionWidth(),
-                    centerY,
+                    0 + scale * statusBkgLeft.getRegionWidth(),
+                    0,
                     span,
-                    scale * statusFrgMiddle.getRegionHeight());
+                    scale * statusBkgMiddle.getRegionHeight());
         } else {
             canvas.draw(
-                    statusFrgRight,
+                    statusBkgRight,
                     Color.WHITE,
-                    centerX - width / 2 + scale * statusFrgLeft.getRegionWidth(),
-                    centerY,
-                    scale * statusFrgRight.getRegionWidth(),
-                    scale * statusFrgRight.getRegionHeight());
+                    0 + scale * statusBkgLeft.getRegionWidth(),
+                    0,
+                    scale * statusBkgRight.getRegionWidth(),
+                    scale * statusBkgRight.getRegionHeight());
         }
     }
 
@@ -343,8 +343,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
             update(delta);
             draw();
 
-            // We are are ready, notify our listener
-            if (isReady() && listener != null) {
+            // We are  ready, notify our listener
+            if (playButton != null  && listener != null) {
                 listener.exitScreen(this, 0);
             }
         }
@@ -444,6 +444,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
         }
         return false;
     }
+
+
 
     /**
      * Called when a finger was lifted or a mouse button was released.

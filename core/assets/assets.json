@@ -1,9 +1,23 @@
 {
   "textures": {
 
+    "title": "ui/salvage.png",
+    "quit": "ui/quit.png",
+    "select_level": "ui/select_level.png",
+    "main_menu": "ui/main_menu.png",
+    "level": "ui/level.png",
+    "line": "ui/line.png",
+    "hud" : "ui/hud.png",
+    "oxygen" : "ui/oxygen.png",
+    "keys" : "models/key.png",
+    "level_editor": "ui/level_editor.png",
     "models:diver": "models/diver.png",
+"models:diver_swimming": "models/diver_swimming.png",
+        "models:dust": "models/dust.png",
     "background:ocean":"background/background1.png",
     "background:game_over":"background/game_over.png",
+    "background:menu":"background/menu_background.png",
+    "background:level_select":"background/level_select_background.png",
     "models:key": "models/key.png",
     "models:ping": "models/ping.png",
     "models:dead_body": "models/dead_body.png",
@@ -15,6 +29,11 @@
       "wrapU":"repeated",
       "wrapV": "repeated"
     },
+     "hazard": {
+          "file":"background/hazard_texture.png",
+          "wrapU":"repeated",
+          "wrapV": "repeated"
+        },
     "door": {
       "file": "models/door.png",
       "wrapU": "repeated",

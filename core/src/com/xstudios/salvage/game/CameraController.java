@@ -108,8 +108,8 @@ public class CameraController {
 
 
     public void translate(float x, float y){
-        if(cameraPosition.x+x<bounds.width&&cameraPosition.x+x>bounds.x
-        &&cameraPosition.y+y<bounds.height&&cameraPosition.y+y>bounds.y){
+        if(cameraPosition.x+x<bounds.width && cameraPosition.x+x>bounds.x
+        && cameraPosition.y+y<bounds.height && cameraPosition.y+y>bounds.y){
             updatePosition(x,y);
         }
 
@@ -123,5 +123,12 @@ public class CameraController {
     }
     public float getSmoothSpeed() {
         return smoothSpeed;
+    }
+
+    public float getCameraWidth() {
+        return viewport.getScreenWidth();
+    }
+    public float getCameraHeight() {
+        return viewport.getScreenHeight();
     }
 }
