@@ -73,9 +73,11 @@ public class DiverModel extends GameObject {
     /** Identifier to allow us to track the sensor in ContactListener */
     private final String sensorNameRight;
     private final String sensorNameLeft;
+    private final String hitboxSensorName;
     /** The physics shape of this object */
     private PolygonShape sensorShapeRight;
     private PolygonShape sensorShapeLeft;
+    private PolygonShape hitboxShape;
 
     /** Whether you are touching another GameObject */
     private ArrayList<GObject> touchingRight;
@@ -112,8 +114,6 @@ public class DiverModel extends GameObject {
     /**
      *
      * @param data
-     * @param width
-     * @param height
      */
 
     public DiverModel(float x, float y, JsonValue data){
@@ -141,6 +141,7 @@ public class DiverModel extends GameObject {
 
         sensorNameRight = "DiverSensorRight";
         sensorNameLeft = "DiverSensorLeft";
+        hitboxSensorName = "HitboxSensor";
         touchingRight = new ArrayList<>();
         touchingLeft = new ArrayList<>();
         // Initialize
@@ -335,6 +336,21 @@ public class DiverModel extends GameObject {
         // Ground sensor to represent our feet
         Fixture sensorFixture2 = body.createFixture( sensorDef2 );
         sensorFixture2.setUserData(getSensorNameLeft());
+
+
+        // create a sensor to detect wall collisions
+        FixtureDef hitboxDef = new FixtureDef();
+        hitboxDef.density = data.getFloat("density",0);
+        hitboxDef.isSensor = true;
+        // we don't want this fixture to collide, just act as a sensor
+        hitboxDef.filter.groupIndex = -1;
+        hitboxShape = new PolygonShape();
+        hitboxShape.setAsBox(getWidth()*1.2f,getHeight()*1.2f,
+                new Vector2(0,0), 0.0f);
+        hitboxDef.shape = hitboxShape;
+        Fixture hitboxFixture = body.createFixture(hitboxDef);
+        hitboxFixture.setUserData(hitboxSensorName);
+
         return true;
     }
     /**
@@ -554,6 +570,7 @@ public class DiverModel extends GameObject {
         canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
         canvas.drawPhysics(sensorShapeRight,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
         canvas.drawPhysics(sensorShapeLeft,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        canvas.drawPhysics(hitboxShape, Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
 
     /**
