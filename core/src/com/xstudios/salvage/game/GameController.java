@@ -440,7 +440,7 @@ public class GameController implements Screen, ContactListener {
      * Lays out the game geography.
      */
     private void populateLevel() {
-        ArrayList<GObject> objects = levelBuilder.createLevel("small_ship", "old_ship_tileset", tileset);
+        ArrayList<GObject> objects = levelBuilder.createLevel("level1", "old_ship_tileset", tileset);
 
         int wallCounter = 0;
         int keyCounter = 0;
@@ -449,9 +449,6 @@ public class GameController implements Screen, ContactListener {
         int hazardCounter = 0;
         for (GObject go : objects) {
             if (go instanceof HazardModel) {
-
-//                float[] staticHazardVerts = {12f, -4.0f, 12f, -9.0f, 12.5f, -4.0f, 12.5f, -9.0f};
-//                new HazardModel(staticHazardVerts, -0.02f, 180);
                 HazardModel hazard = (HazardModel) go;
                 hazard.setOxygenDrain(-0.1f);
                 hazard.setStunDuration(60);
@@ -464,7 +461,7 @@ public class GameController implements Screen, ContactListener {
                 hazard.setName("hazard" + hazardCounter++);
 
                 addObject(hazard);
-                hazard.setUserData(hazard);
+//                hazard.setUserData(hazard);
                 hazard.setActive(true);
             } else if (go instanceof Door) {
                 Door door = (Door) go;
@@ -609,7 +606,7 @@ public class GameController implements Screen, ContactListener {
         if (diver.getBody() != null) {
             cameraController.setCameraPosition(
                     diver.getX() * diver.getDrawScale().x, diver.getY() * diver.getDrawScale().y);
-            //
+
             light.setPosition(
                     (diver.getX() * diver.getDrawScale().x) / 40f,
                     (diver.getY() * diver.getDrawScale().y) / 40f);
@@ -784,21 +781,20 @@ public class GameController implements Screen, ContactListener {
     public void draw(float dt) {
         canvas.clear();
 
+
         canvas.begin();
+
+
         // draw game objects
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0, 4, 4);
         for (GameObject obj : objects) {
-//            if (!(obj instanceof  DiverModel))
             obj.draw(canvas);
         }
-        if (!debug) {
-            rayHandler.updateAndRender();
 
-        }
 
+        canvas.end();
         if (!debug)
             rayHandler.updateAndRender();
-        canvas.end();
         canvas.begin();
         switch (game_state) {
             case PLAYING:

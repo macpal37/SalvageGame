@@ -33,6 +33,7 @@ public class HazardModel extends Wall {
         this.stunDuration = stunDuration;
     }
 
+    @Override
     protected void createFixtures() {
         if (body == null) {
             return;

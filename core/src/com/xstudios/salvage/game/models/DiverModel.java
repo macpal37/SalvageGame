@@ -2,6 +2,7 @@ package com.xstudios.salvage.game.models;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
@@ -25,6 +26,12 @@ public class DiverModel extends GameObject {
      * Shape information for the end cap
      */
     protected CircleShape end2;
+
+    private Fixture cap1;
+    /**
+     * A cache value for the second end cap fixture (for resizing)
+     */
+    private Fixture cap2;
 
     /**
      * The texture for the shape.
@@ -158,6 +165,13 @@ public class DiverModel extends GameObject {
      * The width and height of the box
      */
     private Vector2 dimension;
+
+
+    /**
+     * Rectangle representation of capsule core for fast computation
+     */
+    protected Rectangle center;
+
     /**
      * A cache value for when the user wants to access the dimensions
      */
@@ -231,8 +245,15 @@ public class DiverModel extends GameObject {
         oxygenLevel = data.getInt("max_oxygen", MAX_OXYGEN);
         pingDirection = new Vector2();
         ping_cooldown = 0;
-
-
+        center = new Rectangle();
+        center.x = -dimension.x / 2.0f;
+        center.y = -dimension.y / 2.0f;
+        center.width = dimension.x;
+        center.height = dimension.y;
+        end1 = new CircleShape();
+        end2 = new CircleShape();
+        cap1 = null;
+        cap2 = null;
         // TODO: Put this in the constants JSON
         boostedMaxSpeed = swimMaxSpeed * 3;
         maxSpeed = swimMaxSpeed;
@@ -401,6 +422,8 @@ public class DiverModel extends GameObject {
 
     }
 
+    private Vector2 posCache = new Vector2();
+
     public String getSensorNameRight() {
         return sensorNameRight;
     }
@@ -415,6 +438,15 @@ public class DiverModel extends GameObject {
             return false;
         }
         body.setUserData(this);
+//        posCache.set(0, 0);
+//        posCache.y = center.y + center.height;
+//        end1.setPosition(posCache);
+//        fixture.shape = end1;
+//        cap1 = body.createFixture(fixture);
+//        posCache.y = center.y;
+//        end2.setPosition(posCache);
+//        fixture.shape = end2;
+//        cap2 = body.createFixture(fixture);
 
 
         JsonValue sensorjv = data.get("sensor");
@@ -427,10 +459,8 @@ public class DiverModel extends GameObject {
         sensorShapeRight.setAsBox(sensorjv.getFloat("width", 0), sensorjv.getFloat("shrink", 0) * getWidth() / 2.0f,
                 new Vector2(getWidth() + getWidth() / 2, 0), 0.0f);
         sensorDef.shape = sensorShapeRight;
-//        sensorDef.filter.groupIndex=-1;
-//        sensorDef.filter.maskBits =  0x0004;
-//        sensorDef.filter.categoryBits =  0x0002;
-        // Ground sensor to represent our feet
+
+
         Fixture sensorFixture = body.createFixture(sensorDef);
         sensorFixture.setUserData(getSensorNameRight());
 
@@ -649,6 +679,8 @@ public class DiverModel extends GameObject {
     @Override
     public void drawDebug(GameCanvas canvas) {
         canvas.drawPhysics(shape, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+        canvas.drawPhysics(end1, Color.YELLOW, getX() * drawScale.x, getY() * drawScale.y);
+        canvas.drawPhysics(end2, Color.YELLOW, getX() * drawScale.x, getY() * drawScale.y);
         canvas.drawPhysics(sensorShapeRight, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
         canvas.drawPhysics(sensorShapeLeft, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
     }
