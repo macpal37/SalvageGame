@@ -17,22 +17,6 @@ import static com.xstudios.salvage.game.models.ItemType.KEY;
 
 public class DeadBodyModel extends DiverObjectModel {
 
-//    /** Shape information for this box */
-//    protected PolygonShape shape;
-//    /** A cache value for the fixture (for resizing) */
-//    private Fixture geometry;
-//    /** Cache of the polygon vertices (for resizing) */
-//    private float[] vertices;
-//    /** The factor to multiply by the input */
-//    private final float force;
-//    /** Cache for internal force calculations */
-//    private final Vector2 forceCache = new Vector2();
-//    /** The amount to slow the character down */
-//    private final float damping;
-//    /** The maximum character speed */
-//    private final float maxspeed;
-//
-//    private boolean isTouched;
 
 
     public DeadBodyModel(float x, float y,JsonValue data){

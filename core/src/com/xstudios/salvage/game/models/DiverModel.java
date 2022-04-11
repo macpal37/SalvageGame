@@ -32,11 +32,13 @@ public class DiverModel extends GameObject {
     /** The factor to multiply by the input */
     private final float force;
     /** The amount to slow the character down */
-    private final float damping;
+    private float damping;
     /** The maximum character speed */
+    private final float swimMaxSpeed;
     private final float maxspeed;
     /** The maximum character speed when drifting*/
     private final float drift_maxspeed;
+
     /** Which direction is the character facing */
     private boolean faceRight;
     /** Cache for internal force calculations */
@@ -65,7 +67,7 @@ public class DiverModel extends GameObject {
 
     /** Store oxygen level */
     private float oxygenLevel;
-    private float MAX_OXYGEN = 150;
+    private int MAX_OXYGEN = 150;
 
     /** Diver Sensor Used to pick up items and open doors*/
 
@@ -94,7 +96,18 @@ public class DiverModel extends GameObject {
     private Vector2 sizeCache;
 
 
+    private boolean isTouchingObstacle;
+    /** if the player is currently latched onto a wall */
+    private boolean latchedOn;
 
+    /** the max speed given that there is a speed boost which exceeds the
+     * normal max speed*/
+    private final float boostedMaxSpeed;
+    private float maxSpeed;
+    private boolean boosting;
+
+    private final float swimDamping;
+    private final float boostDamping;
 
     // ======================== CONSTRUCTORS ================================
     /**
@@ -108,8 +121,8 @@ public class DiverModel extends GameObject {
         super(x,y);
 
         shape = new PolygonShape();
-        origin = new Vector2();
-        body = null;
+//        origin = new Vector2();
+//        body = null;
         vertices = new float[8];
 
         setDensity(data.getFloat("density", 0));
@@ -117,8 +130,12 @@ public class DiverModel extends GameObject {
         setLinearDamping(data.getFloat("damping", 0));
         setMass(1);
         setFixedRotation(true);
+
+        swimMaxSpeed = data.getFloat("maxspeed", 0);
+
         maxspeed = data.getFloat("maxspeed", 0);
         drift_maxspeed = data.getFloat("drift_maxspeed", 0);
+
         damping = data.getFloat("damping", 0);
         force = data.getFloat("force", 0);
 
@@ -141,9 +158,16 @@ public class DiverModel extends GameObject {
         ping = false;
         movement = new Vector2();
         drift_movement = new Vector2();
-        oxygenLevel = MAX_OXYGEN;
+        oxygenLevel = data.getInt("max_oxygen", MAX_OXYGEN);
         pingDirection = new Vector2();
         ping_cooldown = 0;
+
+
+        // TODO: Put this in the constants JSON
+        boostedMaxSpeed = swimMaxSpeed*3;
+        maxSpeed = swimMaxSpeed;
+        swimDamping = damping;
+        boostDamping = damping/100;
 
         carrying_body = false;
         dead_body = null;
@@ -170,8 +194,6 @@ public class DiverModel extends GameObject {
     }
 
     private boolean switchDir = false;
-
-
 
     public void setHorizontalMovement(float value) {
         movement.x = value;
@@ -219,13 +241,8 @@ public class DiverModel extends GameObject {
             dead_body.setY(getY());
         }
     }
-    public void setCarryingBody(boolean carryingPressed) {
-        if(carryingPressed && contact_body) {
-            carrying_body = true;
-        } else if (carryingPressed) {
-            carrying_body = false;
-            updateDeadBodyPos();
-        }
+    public void setCarryingBody() {
+        carrying_body = contact_body;
     }
     /**
      * Sets the object texture for drawing purposes.
@@ -309,7 +326,6 @@ public class DiverModel extends GameObject {
         sensorFixture.setUserData(getSensorNameRight());
 
 
-
         FixtureDef sensorDef2 = new FixtureDef();
         sensorDef2.density = data.getFloat("density",0);
         sensorDef2.isSensor = true;
@@ -356,10 +372,13 @@ public class DiverModel extends GameObject {
 
         float effect = faceRight ? 1.0f : -1.0f;
 
+        // darw the diver
         if (texture != null) {
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect*0.25f,0.25f);
 
         }
+
+        // draw the ping
         if(ping || ping_cooldown > 0) {
             canvas.draw(pingTexture, Color.WHITE,origin.x + pingDirection.x,
             origin.y + pingDirection.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),0.25f,0.25f);
@@ -418,53 +437,96 @@ public class DiverModel extends GameObject {
      *
      * @return the upper limit on dude left-right movement.
      */
-    public float getMaxSpeed(boolean drift_movement) {
-        if(drift_movement) {
-            return drift_maxspeed;
-        } else {
-            return maxspeed;
-        }
+    public float getMaxSpeed() {
+        return maxSpeed;
     }
 
+    public void setMaxSpeed(float speed) {
+        maxSpeed = speed;
+    }
+
+//    public float getMaxSpeed(boolean drift_movement) {
+//        if(drift_movement) {
+//            return drift_maxspeed;
+//        } else {
+//            return maxspeed;
+//        }
+//    }
+
+    // TODO: Having a state machine would probably be helpful
+    public boolean isSwimming() {
+        return !isLatching() && !isBoosting() && movement.len() != 0;
+    }
+    public boolean isIdling(){
+        return !isLatching() && !isBoosting() && movement.isZero();
+    }
 
     public void applyForce() {
+
         if (!isActive()) {
             return;
         }
+
         float desired_xvel = 0;
         float desired_yvel = 0;
         float max_impulse = 15f;
         float max_impulse_drift = 2f;
-        if(movement.x != 0) {
-            if(faceRight) {
-                desired_xvel = Math.min(getVX() + max_impulse, getMaxSpeed(false));
-            } else {
-                desired_xvel = Math.max(getVX() - max_impulse, -getMaxSpeed(false));
-            }
-        } else if (movement.isZero()){
-            if(faceRight) {
-                desired_xvel = Math.min(getVX() + max_impulse_drift, getMaxSpeed(true));
-            } else {
-                desired_xvel = Math.max(getVX() - max_impulse_drift, -getMaxSpeed(true));
-            }
-        }
-        if(movement.y > 0) {
-            desired_yvel = Math.min(getVY() + max_impulse, getMaxSpeed(false));
-        } else if (movement.y < 0) {
-            desired_yvel = Math.max(getVY() - max_impulse, -getMaxSpeed(false));
-        } else if(movement.isZero() && drift_movement.y > 0) {
-            desired_yvel = Math.min(getVY() + max_impulse_drift, getMaxSpeed(true));
-        } else if (movement.isZero() && drift_movement.y < 0) {
-            desired_yvel = Math.max(getVY() - max_impulse_drift, -getMaxSpeed(true));
-        }
-        float xvel_change = desired_xvel - getVX();
-        float yvel_change = desired_yvel - getVY();
 
-        float x_impulse = body.getMass()*xvel_change;
-        float y_impulse = body.getMass()*yvel_change;
+        // possible states: swimming, idling/drifting, latching, boosting
+        if (isSwimming()) { // player is actively using the arrow keys
+            // set custom max speed and damping values
+            setMaxSpeed(swimMaxSpeed);
+            setLinearDamping(swimDamping);
 
-        body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x,
-                body.getWorldCenter().y, true);
+            // compute desired velocity, capping it if it exceeds the maximum speed
+            // TODO: Do we only want to be able to swim in 4 directions?
+            desired_xvel = getVX() + Math.signum(getHorizontalMovement())*max_impulse;
+            desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
+            desired_yvel = getVY() + Math.signum(getVerticalMovement())*max_impulse;
+            desired_yvel = Math.max(Math.min(desired_yvel, getMaxSpeed()), -getMaxSpeed());
+
+            float xvel_change = desired_xvel - getVX();
+            float yvel_change = desired_yvel - getVY();
+
+            float x_impulse = body.getMass()*xvel_change;
+            float y_impulse = body.getMass()*yvel_change;
+
+            body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x,
+                    body.getWorldCenter().y, true);
+        } else if (isIdling()) { // player is not using the arrow keys
+            setMaxSpeed(swimMaxSpeed);
+            setLinearDamping(swimDamping);
+
+            desired_xvel = getVX() + Math.signum(getHorizontalMovement())*max_impulse_drift;
+            desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
+            desired_yvel = getVY() + Math.signum(getVerticalMovement())*max_impulse_drift;
+            desired_yvel = Math.max(Math.min(desired_yvel, getMaxSpeed()), -getMaxSpeed());
+
+            float xvel_change = desired_xvel - getVX();
+            float yvel_change = desired_yvel - getVY();
+
+            float x_impulse = body.getMass()*xvel_change;
+            float y_impulse = body.getMass()*yvel_change;
+
+            body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x,
+                    body.getWorldCenter().y, true);
+        } else if (isLatching()) { // player is latched onto a wall
+            body.setLinearVelocity(0, 0);
+        }
+        else if (isBoosting()) { // player has kicked off a wall and may or may not be steering
+            setMaxSpeed(boostedMaxSpeed);
+            setLinearDamping(boostDamping);
+
+            // TODO: Currently doesn't take movement input. Will need steering in specific dirs only?
+            if (Math.abs(getVX()) >= getMaxSpeed()) {
+                setVX(Math.signum(getVX())*getMaxSpeed());
+            }
+            if (Math.abs(getVY()) >= getMaxSpeed()) {
+                setVY(Math.signum(getVY())*getMaxSpeed());
+            }
+//            body.applyForce(forceCache,getPosition(),true);
+        }
+
     }
 
     @Override
@@ -534,6 +596,9 @@ public class DiverModel extends GameObject {
 
     public void setBodyContact(boolean b) {
         contact_body = b;
+        if(b) {
+            carrying_body = true;
+        }
     }
 
     public boolean isBodyContact() {
@@ -555,6 +620,54 @@ public class DiverModel extends GameObject {
         oxygenLevel = Math.max(Math.min(updatedOxygen, MAX_OXYGEN), 0);
     }
 
+    public boolean isTouchingObstacle() {
+        return isTouchingObstacle;
+    }
+
+    public void setTouchingObstacle(boolean isTouching) {
+        isTouchingObstacle = isTouching;
+    }
+    /**
+     *
+     * @return whether the player has latched onto the wall
+     */
+    public boolean isLatching() {
+        return latchedOn;
+    }
+
+    /**
+     *
+     * @param latched used to set whether the player has latched onto something
+     */
+    public void setLatching(boolean latched) {
+        latchedOn = latched;
+    }
+
+    public void setBoosting(boolean boost) {
+        boosting = boost;
+    }
+
+    public boolean isBoosting() {
+        return boosting;
+    }
+
+    public void boost() {
+        // set impulse in a certain direction
+//        TODO: need to negate the impulse for some reason
+//        forceCache.x = direction.x * 50;
+//        forceCache.y = direction.y * 50;
+//        setLinearVelocity(forceCache);
+
+//        forceCache.x = direction.x * 100;
+//        forceCache.y = direction.y * 100;
+
+//        body.applyForce(forceCache, body.getPosition(), true);
+
+        forceCache.set(movement.nor().x * 8, movement.nor().y * 8);
+        System.out.println("X: " + forceCache.x);
+        System.out.println("Y: " + forceCache.y);
+        body.applyLinearImpulse(forceCache, body.getPosition(), true);
+    }
 
     public void dropItem() {
         current_item.setCarried(false);
@@ -587,18 +700,13 @@ public class DiverModel extends GameObject {
 
     }
 
-
-
     public boolean isTouching() {
-        System.out.println("Right: "+touchingRight.size());
-        System.out.println("Left: "+touchingLeft.size());
+//        System.out.println("Right: "+touchingRight.size());
+//        System.out.println("Left: "+touchingLeft.size());
 
         if (faceRight)
             return touchingRight.size()>0;
             else return  touchingLeft.size()>0;
     }
-
-
-
 
 }
