@@ -48,6 +48,8 @@ public class InputController {
     /** do we want to grab onto the wall? */
     private boolean kickOff;
 
+    private boolean pause;
+
     /**
      * Return the singleton instance of the input controller
      *
@@ -148,6 +150,9 @@ public class InputController {
      */
     public boolean didKickOff() {
         return kickOff;
+    }
+    public boolean isPause(){
+        return pause;
     }
 
 
@@ -270,6 +275,7 @@ public class InputController {
 //        }
 
         kickOff = Gdx.input.isKeyPressed(Keys.SPACE);
+        pause = Gdx.input.isKeyPressed(Keys.P);
 
     }
 

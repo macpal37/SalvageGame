@@ -68,9 +68,13 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion hazardTexture;
     protected TextureRegion wallBackTexture;
 
-    /**
-     * The font for giving messages to the player
-     */
+
+    protected TextureRegion hud;
+    protected TextureRegion oxygen;
+    protected TextureRegion keys;
+
+    /** The font for giving messages to the player */
+
     public static BitmapFont displayFont;
 
     /**
@@ -388,7 +392,12 @@ public class GameController implements Screen, ContactListener {
         doorOpenTexture = new TextureRegion(directory.getEntry("models:door_open", Texture.class));
         doorCloseTexture = new TextureRegion(directory.getEntry("models:door_closed", Texture.class));
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
-        deadBodyTexture = new TextureRegion(directory.getEntry("models:dead_body", Texture.class));
+
+        deadBodyTexture = new TextureRegion(directory.getEntry( "models:dead_body", Texture.class ));
+        hud = new TextureRegion(directory.getEntry( "hud", Texture.class ));
+        oxygen = new TextureRegion(directory.getEntry( "oxygen", Texture.class ));
+        keys = new TextureRegion(directory.getEntry( "keys", Texture.class ));
+
     }
 
     /**
@@ -567,6 +576,7 @@ public class GameController implements Screen, ContactListener {
     private void updatePlayingState() {
         // apply movement
         InputController input = InputController.getInstance();
+        if(input.isPause()) pause();
         diver.setHorizontalMovement(input.getHorizontal() * diver.getForce());
         diver.setVerticalMovement(input.getVertical() * diver.getForce());
 
@@ -820,6 +830,20 @@ public class GameController implements Screen, ContactListener {
         canvas.begin();
         switch (game_state) {
             case PLAYING:
+                canvas.draw(hud, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
+                        cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/20f);
+                canvas.draw(oxygen, cameraController.getCameraPosition2D().x - canvas.getWidth()/4f - canvas.getWidth()/75f,
+                        cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/17f);
+
+                if(diver.carryingItem()){
+                    canvas.draw(keys, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + canvas.getWidth()/75f,
+                            cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
+                }
+                if(diver.hasBody()){
+                    canvas.draw(deadBodyTexture, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
+                            cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
+                }
+
                 canvas.drawText(
 
                         "Oxygen Level: " + (int) diver.getOxygenLevel(),
