@@ -1,9 +1,18 @@
 {
   "textures": {
 
+    "title": "ui/salvage.png",
+    "quit": "ui/quit.png",
+    "select_level": "ui/select_level.png",
+    "main_menu": "ui/main_menu.png",
+    "level": "ui/level.png",
+    "line": "ui/line.png",
+    "level_editor": "ui/level_editor.png",
     "models:diver": "models/diver.png",
     "background:ocean":"background/background1.png",
     "background:game_over":"background/game_over.png",
+    "background:menu":"background/menu_background.png",
+    "background:level_select":"background/level_select_background.png",
     "models:key": "models/key.png",
     "models:ping": "models/ping.png",
     "models:dead_body": "models/dead_body.png",

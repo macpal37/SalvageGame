@@ -368,7 +368,7 @@ public class GameController implements Screen, ContactListener {
 
         objects.clear();
         addQueue.clear();
-audioController.reset();
+        audioController.reset();
         populateLevel();
     }
     /**
