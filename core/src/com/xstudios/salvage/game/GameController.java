@@ -478,6 +478,7 @@ public class GameController implements Screen, ContactListener {
     private void updatePlayingState() {
         // apply movement
         InputController input = InputController.getInstance();
+        if(input.isPause()) pause();
         diver.setHorizontalMovement(input.getHorizontal() * diver.getForce());
         diver.setVerticalMovement(input.getVertical() * diver.getForce());
 
