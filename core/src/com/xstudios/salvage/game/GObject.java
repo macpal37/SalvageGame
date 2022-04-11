@@ -36,6 +36,9 @@ public abstract class GObject {
     /** Drawing scale to convert physics units to pixels */
     protected Vector2 drawScale;
 
+
+
+
     /// Track garbage collection status
     /** Whether the object should be removed from the world on next pass */
     private boolean toRemove;
@@ -51,6 +54,16 @@ public abstract class GObject {
     protected Vector2 centroidCache = new Vector2();
     /** A cache value for when the user wants to access the drawing scale */
     protected Vector2 scaleCache = new Vector2();
+
+
+    protected int objectID = 0;
+
+    public int getID(){
+        return objectID;
+    }
+    public void setID(int id){
+        ;objectID = id;
+    }
 
 
     /// BodyDef Methods

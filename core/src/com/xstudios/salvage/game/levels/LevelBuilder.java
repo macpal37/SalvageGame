@@ -64,9 +64,6 @@ public class LevelBuilder {
         public float x,y,width,height;
         public float[] vertices;
         public TileType tileType;
-
-
-
         public Tile(){
             vertices = new float[0];
             tileType = TileType.Empty;
@@ -124,8 +121,6 @@ public class LevelBuilder {
         int width = map.getInt("width");
         int height = map.getInt("height");
 
-        System.out.println("W: "+width);
-        System.out.println("H: "+height);
 
         int tileSize =  map.getInt("tileheight");
 
@@ -134,11 +129,9 @@ public class LevelBuilder {
         Tile empty = new Tile();
 
        Tile[] tiles =  new Tile[tileset.getInt("tilecount")];
-
         ArrayList<Float> verticies = new ArrayList<>();
         int tt = 0;
         for (JsonValue tileJson : tileset.get("tiles") ){
-
            int id =tileJson.getInt("id");
            TileType tileType = TileType.Empty;
 
@@ -149,9 +142,6 @@ public class LevelBuilder {
                     }
                 }
             }
-
-
-
            if (tileJson.get("objectgroup") != null) {
                float x = 0;
                float y = 0;
@@ -188,80 +178,96 @@ public class LevelBuilder {
            }
         int ii =0, jj = height-1;
         System.out.println("Num Tieles: "+ tiles.length);
-       ArrayList<Integer> banList = new ArrayList<>();
+//       ArrayList<Integer> banList = new ArrayList<>();
+        ArrayList<GObject> idItems = new ArrayList<>();
 
-        for (JsonValue layer : map.get("layers") ){
-//            for (JsonValue tileId: layer.get("data")){
-            for(int n = 0; n<width*height;n++){
-               int id = Integer.parseInt(layer.get("data").get(n).toString());
-                id = (id==0)? 51 : id-start;
+int idCount = 0;
+        for (JsonValue layer : map.get("layers") ) {
 
-               Tile tile = tiles[id];
+            for (int n = 0; n < width * height; n++) {
+                int id = Integer.parseInt(layer.get("data").get(n).toString());
+                if (!layer.getString("name").equals("ids") ) {
+                    id = (id == 0) ? 51 : id - start;
 
-                float sy = (tileSize / div) * jj;
-                float sx = (tileSize / div) * ii;
+                    Tile tile = tiles[id];
+                    float sy = (tileSize / div) * jj;
+                    float sx = (tileSize / div) * ii;
+                    switch (tile.tileType) {
+                        case Wall:
+                            float[] newVertices = new float[tile.vertices.length];
+                            int index = 0;
+                            for (Float f : tile.vertices)
+                                newVertices[index++] = (index % 2 == 0) ? f + sy : f + sx;
+                            gameObjects.add(new Wall(newVertices, 0, 0));
+                            break;
+                        case Diver:
+                            System.out.println("Diver Made!");
+                            System.out.println("X: " + sx + " Y: " + sy);
+                            gameObjects.add(new DiverModel(sx, sy, constants.get("diver")));
+                            break;
+                        case DeadBody:
+                            System.out.println("Pass: Body");
+                            gameObjects.add(new DeadBodyModel(sx, sy, constants.get("dead_body")));
+                            break;
+                        case Item:
+                            ItemModel item = new ItemModel(sx, sy, constants.get("key"), ItemType.KEY);
+                            gameObjects.add(item);
+                            idItems.add(item);
+                            break;
+                        case Door:
+                            float[] doorVerticies = new float[tile.vertices.length];
+                            index = 0;
+                            for (Float f : tile.vertices)
+                                doorVerticies[index++] = (index % 2 == 0) ? f + sy : f + sx;
+                            Door door = new Door(doorVerticies, 0, 0);
+                            gameObjects.add(door);
+                            idItems.add(door);
+                            break;
+
+                        case Obstacle:
+                            break;
+
+                        case Goal:
+
+                            gameObjects.add(new GoalDoor(sx, sy, tileSize / div, tileSize / div));
+                            break;
+                        case Block:
+
+                            float[] blockVertices = new float[tile.vertices.length];
+                            index = 0;
+                            for (Float f : tile.vertices)
+                                blockVertices[index++] = (index % 2 == 0) ? f + sy : f + sx;
+                            Wall block = new Wall(blockVertices, 0, 0);
+                            block.setInvisible(true);
+                            gameObjects.add(block);
+                            break;
+                        case Empty:
+                    }
+                }else{
+                    if (id !=0){
+
+                        id = id -101;
+                        System.out.println("ID: "+id);
+                        System.out.println("OBJECT: "+idItems.get(idCount).toString());
+                        idItems.get(idCount).setID(id);
+                        idCount++;
+                    }
+
+                }
 
 
-               switch(tile.tileType) {
-                   case Wall:
-                       float[] newVertices = new float[tile.vertices.length];
-                       int index = 0;
-                       for (Float f : tile.vertices)
-                           newVertices[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                       gameObjects.add(new Wall(newVertices, 0, 0));
-                       break;
-                   case Diver:
-                       System.out.println("Diver Made!");
-                       System.out.println("X: "+sx+" Y: "+sy);
-                       gameObjects.add(new DiverModel(sx,sy,constants.get("diver")));
-                       break;
-                   case DeadBody:
-                       System.out.println("Pass: Body");
-                       gameObjects.add(new DeadBodyModel(sx,sy,constants.get("dead_body")));
-                       break;
-                   case Item:
-                       System.out.println("Pass: Item");
-                       gameObjects.add(new ItemModel(sx,sy,constants.get("key"), ItemType.KEY, 0));
-                       break;
-                   case Door:
-                       System.out.println("Pass: Door");
-                       float[] doorVerticies = new float[tile.vertices.length];
-                       index = 0;
-                       for (Float f : tile.vertices)
-                           doorVerticies[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                       gameObjects.add(new Door(doorVerticies, 0,0, 0));
-                       break;
 
-                   case Obstacle:
-                       break;
-
-                   case Goal:
-                       System.out.println("Pass: Goal");
-
-                       gameObjects.add( new GoalDoor(sx,sy,tileSize/div,tileSize/div));
-                       break;
-                   case Block:
-
-                       float[] blockVertices = new float[tile.vertices.length];
-                       index = 0;
-                       for (Float f : tile.vertices)
-                           blockVertices[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                       Wall block = new Wall(blockVertices, 0, 0);
-                       block.setInvisible(true);
-                       gameObjects.add(block);
-                       break;
-                   case Empty:
-               }
 
                 ii++;
-                if (ii==width) {
-                    ii=0;
+                if (ii == width) {
+                    ii = 0;
                     jj--;
-//                    System.out.println();
+
                 }
             }
-            ii =0;
-            jj = height-1;
+                ii = 0;
+                jj = height - 1;
+
 
         }
 

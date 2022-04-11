@@ -188,10 +188,11 @@ public class GameController implements Screen, ContactListener {
 
 
 
-        light = new PointLight(rayHandler,100, Color.BLACK,10,0,0);
+        light = new PointLight(rayHandler,100, Color.BLACK,12,0,0);
         wallShine = new PointLight(rayHandler,100, Color.BLUE,8,0,0);
         wallShine.setSoft(true);
-        wallShine.setColor(0,0,0.5f,0.85f);
+
+        wallShine.setColor(18f/255f,120f/255f,82/255f,0.45f);
         Filter f2 = new Filter();
         f2.categoryBits = 0x0004;
         f2.maskBits =0x0002;

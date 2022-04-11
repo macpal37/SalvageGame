@@ -20,8 +20,7 @@ public class ItemModel extends DiverObjectModel {
 
     /** Type of item*/
     private ItemType item_type;
-    /** unique id of item*/
-    private int item_ID;
+
     /** The current horizontal movement of the item */
     private Vector2 movement;
 
@@ -31,20 +30,27 @@ public class ItemModel extends DiverObjectModel {
     Color item_color;
 
 
-    public ItemModel(float x, float y, JsonValue data, ItemType item_type, int id){
+    public ItemModel(float x, float y, JsonValue data, ItemType item_type){
 
         super(x,y,data);
 
         this.item_type = item_type;
-        this.item_ID = id;
+
         try {
-            item_color = COLOR_OPTIONS[item_ID];
+            item_color = COLOR_OPTIONS[getID()];
         } catch (Exception e){
             item_color = Color.WHITE;
         }
         drawSymbolPos.add(data.getFloat("symbol_dist", 50.0f), 0);
-        setName(item_type + "" + item_ID);
+        setName(item_type + "" + getID());
         movement = new Vector2();
+    }
+
+
+    @Override
+    public void setID(int id) {
+        super.setID(id);
+        setName(item_type + "" + id);
     }
 
     public void initLight(RayHandler rayHandler){
@@ -116,7 +122,7 @@ public class ItemModel extends DiverObjectModel {
     public void draw(GameCanvas canvas) {
         if (texture != null) {
             if(!carried){
-                canvas.draw(texture, item_color, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
+                canvas.draw(texture, ItemModel.COLOR_OPTIONS[getID()], origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
             }
             if(!carried&&isTouched){
                 canvas.drawText("Press q",GameController.displayFont,(getX()-getWidth()*1.25f) * drawScale.x, (getY()+getHeight()*1.5f)  * drawScale.y);
@@ -217,9 +223,6 @@ public class ItemModel extends DiverObjectModel {
         return item_type;
     }
 
-    public int getItemID() {
-        return item_ID;
-    }
 
 //    public void setCarried(boolean b) {
 //        carried = b;
