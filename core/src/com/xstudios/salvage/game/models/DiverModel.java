@@ -412,6 +412,29 @@ public class DiverModel extends GameObject {
 
 
     /**
+     * Returns left/right movement of this character.
+     *
+     * This is the result of input times dude force.
+     *
+     * @return left/right movement of this character.
+     */
+    public float getHorizontalDriftMovement() {
+        return drift_movement.x;
+    }
+
+    /**
+     * Returns up/down movement of this character.
+     *
+     * This is the result of input times dude force.
+     *
+     * @return left/right movement of this character.
+     */
+    public float getVerticalDriftMovement() {
+        return drift_movement.y;
+    }
+
+
+    /**
      * Returns how much force to apply to get the dude moving
      *
      * Multiply this by the input to get the movement value.
@@ -495,12 +518,12 @@ public class DiverModel extends GameObject {
             body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x,
                     body.getWorldCenter().y, true);
         } else if (isIdling()) { // player is not using the arrow keys
-            setMaxSpeed(swimMaxSpeed);
+            setMaxSpeed(drift_maxspeed);
             setLinearDamping(swimDamping);
 
-            desired_xvel = getVX() + Math.signum(getHorizontalMovement())*max_impulse_drift;
+            desired_xvel = getVX() + Math.signum(getHorizontalDriftMovement())*max_impulse_drift;
             desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
-            desired_yvel = getVY() + Math.signum(getVerticalMovement())*max_impulse_drift;
+            desired_yvel = getVY() + Math.signum(getVerticalDriftMovement())*max_impulse_drift;
             desired_yvel = Math.max(Math.min(desired_yvel, getMaxSpeed()), -getMaxSpeed());
 
             float xvel_change = desired_xvel - getVX();
