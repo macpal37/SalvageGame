@@ -2,13 +2,14 @@
   "textures": {
 
     "models:diver": "models/diver.png",
-    "background:ocean":"background/ocean.png",
+    "background:ocean":"background/background1.png",
     "background:game_over":"background/game_over.png",
     "models:key": "models/key.png",
     "models:ping": "models/ping.png",
     "models:dead_body": "models/dead_body.png",
     "models:door_open": "models/door_open.png",
     "models:door_closed": "models/door_closed.png",
+    "levels:tilesets:old_ship_tileset":"levels/tilesets/old_ship_tileset.png",
     "wall": {
       "file":"background/wooden_bg.png",
       "wrapU":"repeated",

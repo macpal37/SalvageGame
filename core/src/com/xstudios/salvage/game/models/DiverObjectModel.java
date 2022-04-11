@@ -44,10 +44,10 @@ public abstract class DiverObjectModel extends GameObject {
      *
      * @param data Json values
      */
-    protected DiverObjectModel(JsonValue data) {
+    protected DiverObjectModel(float x,float y, JsonValue data) {
        // super (x,y);
-        super(data.get("pos").getFloat(0),
-                data.get("pos").getFloat(1));
+        super(x,
+                y);
 
         shape = new PolygonShape();
         origin = new Vector2();
@@ -69,6 +69,20 @@ public abstract class DiverObjectModel extends GameObject {
         drawSymbolPos = new Vector2(data.get("symbol_pos").getFloat(0),
                 data.get("symbol_pos").getFloat(1));
         drawSymbolScale = new Vector2(1,1);
+    }
+
+
+    protected void createFixtures() {
+        if (body == null) {
+            return;
+        }
+
+        releaseFixtures();
+        fixture.filter.maskBits = -1;
+        fixture.shape = shape;
+
+        geometry = body.createFixture(fixture);
+        markDirty(false);
     }
 
     /**

@@ -44,6 +44,7 @@ public class InputController {
     private boolean pingPressed;
     private boolean pingPrevious;
 
+
     /** do we want to grab onto the wall? */
     private boolean kickOff;
 
@@ -185,6 +186,7 @@ public class InputController {
         pingPrevious = pingPressed;
         carryingBodyPrevious =carryingBody;
 
+
         // Check to see if a GamePad is connected
         if (xbox != null && xbox.isConnected()) {
             readGamepad(bounds, scale);
@@ -232,6 +234,9 @@ public class InputController {
         carryingBody = (secondary && carryingBody) ||Gdx.input.isKeyPressed(Input.Keys.A);
         //TODO: don't need carrying body button anymore
         pingPressed =(secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.E);
+
+
+
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);

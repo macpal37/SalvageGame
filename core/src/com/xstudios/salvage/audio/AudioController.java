@@ -62,12 +62,17 @@ public class AudioController {
             float oxygen_volume = 0.4f + ((25.0f - oxygen)/50.0f);
             oxygen_alarm.setVolume(oxygen_volume);
             oxygen_alarm.play();
+
         }
     }
 
     public void wall_collision(float force){
         //float volume = (force)/20.f;
         audio.play(wall_collision, 0.5f);
+    }
+
+    public void reset(){
+        oxygen_alarm.stop();
     }
 
     public void dispose(){

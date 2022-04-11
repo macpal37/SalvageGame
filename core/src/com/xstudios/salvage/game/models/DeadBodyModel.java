@@ -17,8 +17,10 @@ import static com.xstudios.salvage.game.models.ItemType.KEY;
 
 public class DeadBodyModel extends DiverObjectModel {
 
-    public DeadBodyModel(JsonValue data, float width, float height){
-        super(data);
+
+
+    public DeadBodyModel(float x, float y,JsonValue data){
+        super(x,y,data);
     }
     /**
      * Release the fixtures for this body, resetting the shape
@@ -40,9 +42,6 @@ public class DeadBodyModel extends DiverObjectModel {
         }
 
         releaseFixtures();
-        // Create the fixture
-        fixture.filter.categoryBits = 0x002;
-        fixture.filter.groupIndex = 0x004;
         fixture.filter.maskBits = -1;
         fixture.shape = shape;
 

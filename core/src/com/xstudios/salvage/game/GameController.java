@@ -14,12 +14,14 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.audio.AudioController;
+import com.xstudios.salvage.game.levels.LevelBuilder;
 import com.xstudios.salvage.game.models.DiverModel;
 import com.xstudios.salvage.game.models.Wall;
 import com.xstudios.salvage.game.models.*;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class GameController implements Screen, ContactListener {
@@ -40,6 +42,7 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion doorOpenTexture;
     protected TextureRegion doorCloseTexture;
 
+    protected TextureRegion tileset;
     JsonValue constants;
 
     // Models to be updated
@@ -56,7 +59,7 @@ public class GameController implements Screen, ContactListener {
     protected ItemModel key;
 //    protected ItemModel dead_body;
     protected DeadBodyModel dead_body;
-    protected GoalDoor goal_door;
+    protected ArrayList<GoalDoor> goalArea = new ArrayList<>();
 
     private Array<Door> doors=new Array<Door>();
 
@@ -131,16 +134,10 @@ public class GameController implements Screen, ContactListener {
     // TODO: when we add other screens we can actually implement code to support pausing and quitting
     private state game_state;
 
-//    private LightController lightController;
-    private PointLight light ;
-    private RayHandler rayHandler;
+
+    private LevelBuilder levelBuilder;
 
 
-    //sample wall to get rid of later
-    public float[][] wall_indices={{16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-            1.0f,  0.0f,  0.0f,  0.0f,  0.0f, 18.0f},
-            {32.0f, 18.0f, 32.0f,  0.0f, 31.0f,  0.0f,
-            31.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f}};
     // ======================= CONSTRUCTORS =================================
     /**
      * Creates a new game world with the default values.
@@ -170,6 +167,12 @@ public class GameController implements Screen, ContactListener {
         this(new Rectangle(0,0,width,height), new Vector2(0,gravity));
     }
 
+
+    private PointLight light ;
+    private RayHandler rayHandler;
+
+    private PointLight wallShine ;
+
     /**
      * Creates a new game world
      *
@@ -193,26 +196,37 @@ public class GameController implements Screen, ContactListener {
 
         forceCache = new Vector2(0, 0);
         rayHandler = new RayHandler(world);
-        rayHandler.setAmbientLight(.01f);
+        rayHandler.setAmbientLight(.015f);
 
 
-        light = new PointLight(rayHandler,100, Color.BLACK,10,0,0);
-//        light.setContactFilter((short)1,(short)1,(short)1);
+
+        light = new PointLight(rayHandler,100, Color.BLACK,12,0,0);
+        wallShine = new PointLight(rayHandler,100, Color.BLUE,8,0,0);
+        wallShine.setSoft(true);
+
+        wallShine.setColor(18f/255f,120f/255f,82f/255f,0.45f);
+        Filter f2 = new Filter();
+        f2.categoryBits = 0x0004;
+        f2.maskBits =0x0002;
+        f2.groupIndex = -1;
 
         Filter f = new Filter();
         f.categoryBits = 0x0002;
         f.maskBits =0x0004;
         f.groupIndex = 1;
 
-
+        wallShine.setContactFilter(f2);
         light.setContactFilter(f);
-        System.out.println("BG: "+background);
         audioController = new AudioController(100.0f);
         audioController.intialize();
         collisionController = new CollisionController();
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
+
+        levelBuilder = new LevelBuilder();
+
         game_state = state.PLAYING;
+
     }
 
     /**
@@ -261,16 +275,13 @@ public class GameController implements Screen, ContactListener {
         for(GameObject obj : objects) {
             obj.deactivatePhysics(world);
         }
-        for(GameObject obj : aboveObjects) {
-            obj.deactivatePhysics(world);
 
-
-        }
         aboveObjects.clear();
         objects.clear();
         addQueue.clear();
         world.dispose();
         rayHandler.dispose();
+
         objects = null;
         addQueue = null;
         bounds = null;
@@ -290,6 +301,8 @@ public class GameController implements Screen, ContactListener {
      */
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the tiles
+        levelBuilder.setDirectory(directory);
+        tileset =  new TextureRegion(directory.getEntry( "levels:tilesets:old_ship_tileset", Texture.class ));
         diverTexture = new TextureRegion(directory.getEntry( "models:diver", Texture.class ));
         background = new TextureRegion(directory.getEntry( "background:ocean", Texture.class ));
         itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
@@ -355,130 +368,97 @@ public class GameController implements Screen, ContactListener {
 
         objects.clear();
         addQueue.clear();
-//        world.dispose();
-
-//        world = new World(gravity,false);
-//        world.setContactListener(this);
+audioController.reset();
         populateLevel();
     }
     /**
      * Lays out the game geography.
      */
     private void populateLevel() {
+        ArrayList<GObject> objects =  levelBuilder.createLevel("small_ship","old_ship_tileset",tileset);
 
-        diver = new DiverModel(constants.get("diver"),diverTexture.getRegionWidth(),
-            diverTexture.getRegionHeight());
+        int wallCounter = 0;
+        int keyCounter = 0;
+        int doorCounter = 0;
+        int goalDoorCounter = 0;
+        for(GObject go:objects){
 
-        diver.setTexture(diverTexture);
-        diver.setPingTexture(pingTexture);
-        diver.setDrawScale(scale);
-        diver.setName("diver");
+             if(go instanceof Door){
+                Door door = (Door)go;
+                door.setBodyType(BodyDef.BodyType.StaticBody);
+                door.setTexture(doorTexture);
+                door.addTextures(doorCloseTexture,doorOpenTexture);
+                door.setDrawScale(scale);
+                door.setName("door"+doorCounter++);
+                door.setActive(true);
+                doors.add(door);
+                 addObject(door);
+            }else
+            if(go instanceof Wall){
 
-        addObject(diver);
+                Wall obj = (Wall) go;
+                obj.setBodyType(BodyDef.BodyType.StaticBody);
+                obj.setDensity(0);
+                obj.setFriction(0.4f);
+                obj.setRestitution(0.1f);
+                obj.setDrawScale(scale);
+                obj.setTexture(wallTexture);
+                obj.setDrawScale(scale);
+                obj.setName("wall "+wallCounter++);
+                addObject(obj);
 
-        light.setPosition((diver.getX()*diver.getDrawScale().x)/32f,(diver.getY()*diver.getDrawScale().y)/32f);
+            }else if (go instanceof  DiverModel){
+                diver = (DiverModel) go;
+                diver.setTexture(diverTexture);
+                diver.setPingTexture(pingTexture);
+                diver.setDrawScale(scale);
+                diver.setName("diver");
+                addObject(diver);
+            }else if (go instanceof DeadBodyModel){
+                dead_body = (DeadBodyModel)go;
+                dead_body.setTexture(deadBodyTexture);
+                dead_body.setDrawScale(scale);
+                dead_body.setDrawSymbolScale(symbol_scale);
+                dead_body.setName("dead_body");
+                dead_body.setGravityScale(0f);
+                dead_body.setSensor(true);
+                addObject(dead_body);
+            }else if (go instanceof  ItemModel){
+                key = (ItemModel)go;
+                key.setTexture(itemTexture);
+                key.setBodyType(BodyDef.BodyType.StaticBody);
+                key.setDrawScale(scale);
+                key.setDrawSymbolScale(symbol_scale);
+                key.setName("key"+keyCounter++);
+                key.setGravityScale(0f);
+                key.setSensor(true);
+                key.initLight(rayHandler);
+                addObject(key);
 
-        key = new ItemModel(constants.get("key"),itemTexture.getRegionWidth(),
-                itemTexture.getRegionHeight(), ItemType.KEY, 0);
-        key.setTexture(itemTexture);
-        key.setBodyType(BodyDef.BodyType.StaticBody);
-        key.setDrawScale(scale);
-        key.setDrawSymbolScale(symbol_scale);
-        key.setName("key");
-        key.setGravityScale(0f);
-        key.setSensor(true);
+            }
+            else if(go instanceof GoalDoor){
+                JsonValue goal = constants.get("goal");
 
-        addObject(key);
+                GoalDoor goal_door = (GoalDoor)go;
+                goal_door.setBodyType(BodyDef.BodyType.StaticBody);
+                goal_door.setDensity(goal.getFloat("density", 0));
+                goal_door.setFriction(goal.getFloat("friction", 0));
+                goal_door.setRestitution(goal.getFloat("restitution", 0));
+                goal_door.setSensor(true);
+                goal_door.setDrawScale(scale);
+                goal_door.setTexture(doorOpenTexture);
+                goal_door.setName("goal"+goalDoorCounter++);
+                goalArea.add(goal_door);
+                addObject(goal_door);
 
-//        dead_body = new ItemModel(constants.get("dead_body"),deadBodyTexture.getRegionWidth(),
-//                deadBodyTexture.getRegionHeight(), ItemType.DEAD_BODY, 0);
-
-        dead_body = new DeadBodyModel(constants.get("dead_body"),deadBodyTexture.getRegionWidth(),
-                deadBodyTexture.getRegionHeight());
-
-        dead_body.setTexture(deadBodyTexture);
-        dead_body.setDrawScale(scale);
-        dead_body.setDrawSymbolScale(symbol_scale);
-        dead_body.setName("dead_body");
-        dead_body.setGravityScale(0f);
-        dead_body.setSensor(true);
-        diver.setDeadBody(dead_body);
-
-        addObject(dead_body);
-
-        JsonValue goal = constants.get("goal");
-        goal_door = new GoalDoor(diver.getX(),diver.getY(),
-                goal.getFloat("width"),goal.getFloat("height"));
-        goal_door.setBodyType(BodyDef.BodyType.StaticBody);
-        goal_door.setDensity(goal.getFloat("density", 0));
-        goal_door.setFriction(goal.getFloat("friction", 0));
-        goal_door.setRestitution(goal.getFloat("restitution", 0));
-        goal_door.setSensor(true);
-        goal_door.setDrawScale(scale);
-        goal_door.setTexture(doorOpenTexture);
-        goal_door.setName("goal");
-        addObject(goal_door);
+            }
 
 
-        float[][] wallVerts={
-
-                //walls
-            {-50.0f, 18.0f, -40.0f, 0.0f, -39.5f,  0.0f, -49.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f,},
-            { 46.0f, 18.0f,  32.0f, -9.0f,  31.0f,  -10.0f,  45.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f},
-                //first floor
-            { -35.0f, -9.0f, -35.0f, -10.0f ,  32.0f, -10.0f,  32.0f, -9.0f},
-
-            { -40.5f, 0.0f, -40.0f, -1.0f,  -13.0f, -1.0f,  -13.0f, 0.0f},
-            { -3.0f, 0.0f, -3.0f, -9.0f, -2.0f, -9.0f, -2.0f, -1.0f,  6.0f, -1.0f, 6.0f, 0.0f},
-            { 14.0f, 0.0f, 14.0f, -4.0f, 15.0f, -4.0f, 15.0f, -1.0f, 28.0f, -1.0f, 28.0f, 0.0f},
-
-                //second floor
-            { -33.0f, 9.0f, -33.0f, 8.0f , 32.0f, 8.0f, 32.0f, 9.0f},
-            { 22.0f, 8.0f, 22.0f, 0.0f , 23.0f, 0.0f, 23.0f, 8.0f},
-                //third floor
-            {-10.0f, 17.0f, -10.0f, 9.0f , -9.0f, 9.0f, -9.0f, 17.0f},
-            {20.0f, 17.0f, 20.0f, 13.0f , 21f, 13.0f, 21f, 17.0f}
-        };
-
-        for (int ii = 0; ii < wallVerts.length; ii++) {
-            Wall obj;
-            obj = new Wall(wallVerts[ii], 0, 0);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(0);
-            obj.setFriction(0.4f);
-            obj.setRestitution(0.1f);
-            obj.setDrawScale(scale);
-            obj.setTexture(wallTexture);
-            obj.setDrawScale(scale);
-            obj.setName("wall "+ii);
-            addObject(obj);
         }
 
+        diver.setDeadBody(dead_body);
 
-        float[] doorverts= {14f, -4.0f, 14f, -9.0f, 14.5f, -4.0f, 14.5f, -9.0f};
-        Door door=new Door(doorverts, 0,0, key);
-        door.setBodyType(BodyDef.BodyType.StaticBody);
-        door.setTexture(doorTexture);
-        door.addTextures(doorCloseTexture,doorOpenTexture);
-        door.setDrawScale(scale);
-        door.setName("door");
-        addObject(door);
-        door.setUserData(door);
-        door.setActive(true);
-        doors.add(door);
 
-        float[] doorverts1= { 20.0f, 13.0f, 20.0f, 9.0f , 20.5f, 9.0f, 20.5f, 13.0f};
-        Door door1=new Door(doorverts1, 0,0, key);
-        door1.setBodyType(BodyDef.BodyType.StaticBody);
-        door1.setTexture(doorTexture);
-        door.addTextures(doorCloseTexture,doorOpenTexture);
-        door1.setDrawScale(scale);
-        door1.setName("door1");
-        addObject(door1);
-        door1.setUserData(door1);
-
-        door1.setActive(true);
-        doors.add(door1);
 
     }
 
@@ -549,6 +529,9 @@ public class GameController implements Screen, ContactListener {
             light.setPosition(
                     (diver.getX() * diver.getDrawScale().x) / 40f,
                     (diver.getY() * diver.getDrawScale().y) / 40f);
+            wallShine.setPosition(
+                    (diver.getX() * diver.getDrawScale().x) / 40f,
+                    (diver.getY() * diver.getDrawScale().y) / 40f);
         }
 
         // TODO: why wasnt this in marco's code?
@@ -576,6 +559,7 @@ public class GameController implements Screen, ContactListener {
         // Toggle debug
         if (input.didDebug()) {
             debug = !debug;
+            System.out.println("Debug: "+debug);
         }
 
         // Handle resets
@@ -599,7 +583,8 @@ public class GameController implements Screen, ContactListener {
      */
     public void update(float dt) {
         for (Door door: doors){
-            door.setActive(!door.getUnlock());
+
+            door.setActive(!door.getUnlock(diver.getItem()));
         }
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
@@ -617,7 +602,12 @@ public class GameController implements Screen, ContactListener {
 //            break;
         }
 
+
+
+
+
         updateGameState();
+
     }
 
     /**
@@ -682,13 +672,14 @@ public class GameController implements Screen, ContactListener {
 
         canvas.begin();
         // draw game objects
-        canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE,background.getRegionWidth()/2f,background.getRegionHeight()/2f,0,0,0,4,4);
+        canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE,0,0,-500,-250,0,4,4);
         for(GameObject obj : objects) {
+//            if (!(obj instanceof  DiverModel))
             obj.draw(canvas);
         }
+        if(!debug){
+            rayHandler.updateAndRender();
 
-        for(GameObject obj : aboveObjects) {
-            obj.draw(canvas);
         }
 
         if(!debug)
@@ -720,6 +711,7 @@ public class GameController implements Screen, ContactListener {
 //                        cameraController.getCameraPosition2D().y );
 //            break;
 
+
         }
 
         for(GameObject o: objects) {
@@ -737,9 +729,9 @@ public class GameController implements Screen, ContactListener {
         if(debug) {
             canvas.beginDebug();
             for (GameObject obj : objects) {
-                if (!(obj instanceof Wall)) {
+//                if (!(obj instanceof Wall)) {
                     obj.drawDebug(canvas);
-                }
+//                }
             }
             canvas.endDebug();
         }
@@ -871,8 +863,6 @@ public class GameController implements Screen, ContactListener {
         }
 
 
-        // Call CollisionController to handle collisions
-//        System.out.println("BEGIN CONTACT");
         collisionController.startContact(body1, body2);
 
         if(body1.getUserData() instanceof DiverModel){

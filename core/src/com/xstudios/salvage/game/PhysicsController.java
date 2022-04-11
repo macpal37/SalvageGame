@@ -32,7 +32,6 @@ public class PhysicsController {
             to_return = CURRENTS[(int) ypos / height + height/2][(int) xpos / width + width/2];
         } catch (Exception e) {
             to_return = CURRENTS[0][0];
-            System.out.println("OOPS");
         }
         return to_return;
     }

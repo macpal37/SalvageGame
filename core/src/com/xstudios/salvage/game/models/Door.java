@@ -1,5 +1,6 @@
 package com.xstudios.salvage.game.models;
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -7,19 +8,21 @@ import com.badlogic.gdx.utils.Array;
 import com.xstudios.salvage.game.GameCanvas;
 
 public class Door extends Wall {
-    private ItemModel key;
+
 
     private TextureRegion openDoor;
     private TextureRegion closedDoor;
     private boolean toUnlock;
 
-    public Door(float[] points, ItemModel key) {
-        this(points, 0, 0, key);
+
+
+    public Door(float[] points) {
+        this(points, 0, 0);
+
     }
 
-    public Door(float[] points, float x, float y, ItemModel key) {
+    public Door(float[] points, float x, float y) {
         super(points, x, y);
-        this.key = key;
         toUnlock = false;
     }
 
@@ -27,10 +30,6 @@ public class Door extends Wall {
         openDoor = open;
         closedDoor = closed;
         origin.set(open.getRegionWidth()/2.0f, open.getRegionHeight()/2.0f);
-    }
-
-    public ItemModel getKey() {
-        return key;
     }
 
     public boolean isActive() {
@@ -41,8 +40,12 @@ public class Door extends Wall {
         toUnlock = unlock;
     }
 
-    public boolean getUnlock() {
-        return toUnlock && key.isCarried();
+    public boolean getUnlock(ItemModel key) {
+        if (key == null) {
+            return false;
+        }
+
+        return toUnlock && key.isCarried() && key.getID() == getID();
     }
 
     public void draw(GameCanvas canvas) {
@@ -52,12 +55,9 @@ public class Door extends Wall {
                 float x = vertices[0]+1;
                 float y = vertices[1]-2.5f;
                 if (isActive()) {
-                    canvas.draw(closedDoor, key.getColor(), origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
-                    canvas.draw(region, key.getColor(), 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
+                    canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], origin.x, 0, x * drawScale.x, (y) * drawScale.y+closedDoor.getRegionHeight()/2f, getAngle(), 0.8f, 0.8f);
                 } else {
-                    canvas.draw(openDoor, key.getColor(), origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 0.8f, 0.8f);
-                    canvas.draw(region, key.getColor(), 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
-
+                    canvas.draw(openDoor, ItemModel.COLOR_OPTIONS[getID()], origin.x, 0, x * drawScale.x, (y) * drawScale.y+closedDoor.getRegionHeight()/2f, getAngle(), 0.8f, 0.8f);
                 }
             }
         }

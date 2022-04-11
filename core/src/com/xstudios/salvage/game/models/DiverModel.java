@@ -116,9 +116,8 @@ public class DiverModel extends GameObject {
      * @param height
      */
 
-    public DiverModel(JsonValue data, float width, float height){
-        super(data.get("pos").getFloat(0),
-                data.get("pos").getFloat(1));
+    public DiverModel(float x, float y, JsonValue data){
+        super(x,y);
 
         shape = new PolygonShape();
 //        origin = new Vector2();
