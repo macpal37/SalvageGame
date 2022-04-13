@@ -71,6 +71,10 @@ public class GameController implements Screen, ContactListener {
 
     protected TextureRegion hud;
     protected TextureRegion oxygen;
+    protected TextureRegion depletedOxygen;
+    protected TextureRegion oxygenText;
+    protected TextureRegion bodyHud;
+    protected TextureRegion keyHud;
     protected TextureRegion keys;
 
     /** The font for giving messages to the player */
@@ -395,6 +399,10 @@ public class GameController implements Screen, ContactListener {
 
         deadBodyTexture = new TextureRegion(directory.getEntry( "models:dead_body", Texture.class ));
         hud = new TextureRegion(directory.getEntry( "hud", Texture.class ));
+        depletedOxygen = new TextureRegion(directory.getEntry( "oxygen_depleted", Texture.class ));
+        oxygenText = new TextureRegion (directory.getEntry("oxygen_text", Texture.class));
+        bodyHud = new TextureRegion(directory.getEntry("body_hud", Texture.class));
+        keyHud = new TextureRegion(directory.getEntry("key_hud", Texture.class));
         oxygen = new TextureRegion(directory.getEntry( "oxygen", Texture.class ));
         keys = new TextureRegion(directory.getEntry( "keys", Texture.class ));
 
@@ -800,6 +808,8 @@ public class GameController implements Screen, ContactListener {
         }
     }
 
+
+
     /**
      * Draw the physics objects to the canvas
      * <p>
@@ -830,26 +840,47 @@ public class GameController implements Screen, ContactListener {
         canvas.begin();
         switch (game_state) {
             case PLAYING:
-                canvas.draw(hud, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
-                        cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/20f);
-                canvas.draw(oxygen, cameraController.getCameraPosition2D().x - canvas.getWidth()/4f - canvas.getWidth()/75f,
-                        cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/17f);
+                //draw hud background
+                canvas.draw(hud, Color.WHITE, hud.getRegionWidth()/2,hud.getRegionHeight()/2,
+                        cameraController.getCameraPosition2D().x,
+                        cameraController.getCameraPosition2D().y + cameraController.getCameraHeight()/2 - hud.getRegionHeight()/2,
+                        0,(float)canvas.getWidth()/(float)hud.getRegionWidth(), 1f);
+
+
+                //draw remaining oxygen
+                canvas.draw(oxygen, Color.WHITE, 0, (float)oxygen.getRegionHeight()/2,
+                        (float)(cameraController.getCameraPosition2D().x- 0.22f*cameraController.getCameraWidth()),
+                        (float)(cameraController.getCameraPosition2D().y + cameraController.getCameraHeight()/2 -60),
+                        0.0f,
+                        (diver.getOxygenLevel()/(float)diver.getMaxOxygen() * (0.54f*canvas.getWidth()/oxygen.getRegionWidth())),
+                        1f
+                        );
+
+                //draw oxygen text
+                canvas.draw(oxygenText, Color.WHITE, oxygenText.getRegionWidth()/2, oxygenText.getRegionHeight()/2,
+                        cameraController.getCameraPosition2D().x, cameraController.getCameraPosition2D().y+ cameraController.getCameraHeight()/2-60,
+                        0,1f, 1f
+                        );
 
                 if(diver.carryingItem()){
-                    canvas.draw(keys, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + canvas.getWidth()/75f,
-                            cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
+                    canvas.draw(keyHud, Color.WHITE, (float)keyHud.getRegionWidth()/2, (float)keyHud.getRegionHeight()/2,
+                            (float)cameraController.getCameraPosition2D().x - (0.22f * cameraController.getCameraWidth()) - 0.3f*keyHud.getRegionWidth(),
+                            (float)cameraController.getCameraPosition2D().y+ cameraController.getCameraHeight()/2 - 60,
+                    0.0f, 0.5f, 0.5f);
                 }
                 if(diver.hasBody()){
-                    canvas.draw(deadBodyTexture, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
-                            cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
+                    canvas.draw(bodyHud, Color.WHITE, (float)bodyHud.getRegionWidth()/2, (float)bodyHud.getRegionHeight()/2,
+                            (float)cameraController.getCameraPosition2D().x - (0.22f * cameraController.getCameraWidth()) + 0.3f*bodyHud.getRegionWidth(),
+                            (float)cameraController.getCameraPosition2D().y+ cameraController.getCameraHeight()/2 - 60,
+                            0.0f, 0.5f, 0.5f);
                 }
 
-                canvas.drawText(
-
-                        "Oxygen Level: " + (int) diver.getOxygenLevel(),
-                        displayFont,
-                        cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + 50,
-                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f + 50);
+//                canvas.drawText(
+//
+//                        "Oxygen Level: " + (int) diver.getOxygenLevel(),
+//                        displayFont,
+//                        cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + 50,
+//                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f + 50);
                 break;
             case WIN_GAME:
                 System.out.println("TEXT POS" +
