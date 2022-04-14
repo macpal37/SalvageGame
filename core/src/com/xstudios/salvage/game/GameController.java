@@ -29,7 +29,7 @@ import java.util.Iterator;
 
 public class GameController implements Screen, ContactListener {
 
-    public int Level = 0;
+    public int Level = 1;
 
 
     // Assets
@@ -858,11 +858,11 @@ public class GameController implements Screen, ContactListener {
             if (!(obj instanceof DiverModel))
                 obj.draw(canvas);
         }
-        if (!debug)
-            rayHandler.updateAndRender();
 
 
         canvas.end();
+        if (!debug)
+            rayHandler.updateAndRender();
 
         canvas.begin();
         diver.draw(canvas);
