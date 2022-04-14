@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
@@ -76,6 +77,8 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion bodyHud;
     protected TextureRegion keyHud;
     protected TextureRegion keys;
+    private Vector3 tempProjectedHud;
+    private Vector3 tempProjectedOxygen;
 
     /** The font for giving messages to the player */
 
@@ -262,6 +265,8 @@ public class GameController implements Screen, ContactListener {
      * @param gravity The gravitational force on this Box2d world
      */
     protected GameController(Rectangle bounds, Vector2 gravity) {
+        this.tempProjectedHud=new Vector3(0,0,0);
+        this.tempProjectedOxygen=new Vector3(0,0,0);
         world = new World(gravity.scl(1), false);
         this.bounds = new Rectangle(bounds);
         this.scale = new Vector2(1, 1);
@@ -840,39 +845,70 @@ public class GameController implements Screen, ContactListener {
         canvas.begin();
         switch (game_state) {
             case PLAYING:
+                tempProjectedHud.x=(float)canvas.getWidth()/2;
+                tempProjectedHud.y=0f;
+                tempProjectedHud=cameraController.getCamera().unproject(tempProjectedHud);
+
+
                 //draw hud background
-                canvas.draw(hud, Color.WHITE, hud.getRegionWidth()/2,hud.getRegionHeight()/2,
-                        cameraController.getCameraPosition2D().x,
-                        cameraController.getCameraPosition2D().y + cameraController.getCameraHeight()/2 - hud.getRegionHeight()/2,
-                        0,(float)canvas.getWidth()/(float)hud.getRegionWidth(), 1f);
+
+
+
+
+
+                canvas.draw(hud, Color.WHITE, hud.getRegionWidth()/2, hud.getRegionHeight(),
+                        tempProjectedHud.x, tempProjectedHud.y,
+                        0.0f, 1, 0.5f);
+
+//                canvas.draw(hud, Color.WHITE, hud.getRegionWidth()/2,hud.getRegionHeight()/2,
+//                        cameraController.getCameraPosition2D().x,
+//                        cameraController.getCameraPosition2D().y + cameraController.getCameraHeight()/2 - hud.getRegionHeight()/2,
+//                        0,(float)canvas.getWidth()/(float)hud.getRegionWidth(), 1f);
 
 
                 //draw remaining oxygen
+                tempProjectedOxygen.x=(float)canvas.getWidth()/5.5f;
+                tempProjectedOxygen.y=(45*canvas.getHeight())/1080;
+                tempProjectedOxygen=cameraController.getCamera().unproject(tempProjectedOxygen);
+
                 canvas.draw(oxygen, Color.WHITE, 0, (float)oxygen.getRegionHeight()/2,
-                        (float)(cameraController.getCameraPosition2D().x- 0.22f*cameraController.getCameraWidth()),
-                        (float)(cameraController.getCameraPosition2D().y + cameraController.getCameraHeight()/2 -60),
+                        (float)tempProjectedOxygen.x,
+                        tempProjectedOxygen.y,
                         0.0f,
-                        (diver.getOxygenLevel()/(float)diver.getMaxOxygen() * (0.54f*canvas.getWidth()/oxygen.getRegionWidth())),
-                        1f
+                        1.2f*(diver.getOxygenLevel()/(float)diver.getMaxOxygen()),
+                        0.5f
                         );
 
                 //draw oxygen text
-                canvas.draw(oxygenText, Color.WHITE, oxygenText.getRegionWidth()/2, oxygenText.getRegionHeight()/2,
-                        cameraController.getCameraPosition2D().x, cameraController.getCameraPosition2D().y+ cameraController.getCameraHeight()/2-60,
-                        0,1f, 1f
-                        );
+                canvas.draw(oxygenText, Color.WHITE, (float)oxygenText.getRegionWidth()/2, (float) oxygenText.getRegionHeight()/2,
+                        tempProjectedHud.x, tempProjectedOxygen.y,
+                        0.0f, 0.5f, 0.5f);
 
+                //draw inventory indicator
                 if(diver.carryingItem()){
-                    canvas.draw(keyHud, Color.WHITE, (float)keyHud.getRegionWidth()/2, (float)keyHud.getRegionHeight()/2,
-                            (float)cameraController.getCameraPosition2D().x - (0.22f * cameraController.getCameraWidth()) - 0.3f*keyHud.getRegionWidth(),
-                            (float)cameraController.getCameraPosition2D().y+ cameraController.getCameraHeight()/2 - 60,
-                    0.0f, 0.5f, 0.5f);
+
+                    canvas.draw(keyHud, Color.WHITE, (float)keyHud.getRegionWidth(), (float)keyHud.getRegionHeight()/2,
+                            tempProjectedOxygen.x-50,
+                            tempProjectedOxygen.y,
+                            0.0f, 0.35f, 0.35f);
+
+//                    canvas.draw(keyHud, Color.WHITE, (float)keyHud.getRegionWidth()/2, (float)keyHud.getRegionHeight()/2,
+//                            (float)cameraController.getCameraPosition2D().x - (0.22f * cameraController.getCameraWidth()) - 0.3f*keyHud.getRegionWidth(),
+//                            (float)cameraController.getCameraPosition2D().y+ cameraController.getCameraHeight()/2 - 60,
+//                    0.0f, 0.5f, 0.5f);
                 }
+
+                //draw body indicator
                 if(diver.hasBody()){
-                    canvas.draw(bodyHud, Color.WHITE, (float)bodyHud.getRegionWidth()/2, (float)bodyHud.getRegionHeight()/2,
-                            (float)cameraController.getCameraPosition2D().x - (0.22f * cameraController.getCameraWidth()) + 0.3f*bodyHud.getRegionWidth(),
-                            (float)cameraController.getCameraPosition2D().y+ cameraController.getCameraHeight()/2 - 60,
-                            0.0f, 0.5f, 0.5f);
+
+                    canvas.draw(bodyHud, Color.WHITE, 0, (float)bodyHud.getRegionHeight()/2,
+                            tempProjectedHud.x + 50+(cameraController.getCameraPosition2D().x - tempProjectedOxygen.x),
+                            tempProjectedOxygen.y,
+                            0.0f, 0.35f, 0.35f);
+//                    canvas.draw(bodyHud, Color.WHITE, (float)bodyHud.getRegionWidth()/2, (float)bodyHud.getRegionHeight()/2,
+//                            (float)cameraController.getCameraPosition2D().x - (0.22f * cameraController.getCameraWidth()) + 0.3f*bodyHud.getRegionWidth(),
+//                            (float)cameraController.getCameraPosition2D().y+ cameraController.getCameraHeight()/2 - 60,
+//                            0.0f, 0.5f, 0.5f);
                 }
 
 //                canvas.drawText(
