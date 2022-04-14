@@ -23,29 +23,39 @@ import com.xstudios.salvage.util.*;
 
 /**
  * Class for reading player input.
- *
+ * <p>
  * This supports both a keyboard and X-Box controller. In previous solutions, we only
  * detected the X-Box controller on start-up.  This class allows us to hot-swap in
  * a controller via the new XBox360Controller class.
  */
 public class InputController {
-    /** The singleton instance of the input controller */
+    /**
+     * The singleton instance of the input controller
+     */
     private static InputController theController = null;
 
-    /** Are we carrying an object? */
+    /**
+     * Are we carrying an object?
+     */
     private boolean carryingObject;
     private boolean carryingObjectPrevious;
 
-    /** Are we carrying the body? */
+    /**
+     * Are we carrying the body?
+     */
     private boolean carryingBody;
     private boolean carryingBodyPrevious;
 
-    /** did we ping the body? */
+    /**
+     * did we ping the body?
+     */
     private boolean pingPressed;
     private boolean pingPrevious;
 
 
-    /** do we want to grab onto the wall? */
+    /**
+     * do we want to grab onto the wall?
+     */
     private boolean kickOff;
 
     private boolean pause;
@@ -63,24 +73,34 @@ public class InputController {
     }
 
     // Fields to manage buttons
-    /** Whether the reset button was pressed. */
+    /**
+     * Whether the reset button was pressed.
+     */
     private boolean resetPressed;
     private boolean resetPrevious;
-    /** Whether the debug toggle was pressed. */
+    /**
+     * Whether the debug toggle was pressed.
+     */
     private boolean debugPressed;
     private boolean debugPrevious;
 
-    /** How much did we move horizontally? */
+    /**
+     * How much did we move horizontally?
+     */
     private float horizontal;
-    /** How much did we move vertically? */
+    /**
+     * How much did we move vertically?
+     */
     private float vertical;
 
-    /** An X-Box controller (if it is connected) */
+    /**
+     * An X-Box controller (if it is connected)
+     */
     XBoxController xbox;
 
     /**
      * Returns the amount of sideways movement.
-     *
+     * <p>
      * -1 = left, 1 = right, 0 = still
      *
      * @return the amount of sideways movement.
@@ -91,7 +111,7 @@ public class InputController {
 
     /**
      * Returns the amount of vertical movement.
-     *
+     * <p>
      * -1 = down, 1 = up, 0 = still
      *
      * @return the amount of vertical movement.
@@ -127,6 +147,7 @@ public class InputController {
     public boolean getOrDropBody() {
         return carryingBody && !carryingBodyPrevious;
     }
+
     /**
      * Returns true if the player wants to go toggle the debug mode.
      *
@@ -151,14 +172,15 @@ public class InputController {
     public boolean didKickOff() {
         return kickOff;
     }
-    public boolean isPause(){
+
+    public boolean isPause() {
         return pause;
     }
 
 
     /**
      * Creates a new input controller
-     *
+     * <p>
      * The input controller attempts to connect to the X-Box controller at device 0,
      * if it exists.  Otherwise, it falls back to the keyboard control.
      */
@@ -166,7 +188,7 @@ public class InputController {
         // If we have a game-pad for id, then use it.
         Array<XBoxController> controllers = Controllers.get().getXBoxControllers();
         if (controllers.size > 0) {
-            xbox = controllers.get( 0 );
+            xbox = controllers.get(0);
         } else {
             xbox = null;
         }
@@ -174,7 +196,7 @@ public class InputController {
 
     /**
      * Reads the input for the player and converts the result into game logic.
-     *
+     * <p>
      * The method provides both the input bounds and the drawing scale.  It needs
      * the drawing scale to convert screen coordinates to world coordinates.  The
      * bounds are for the crosshair.  They cannot go outside of this zone.
@@ -185,11 +207,11 @@ public class InputController {
     public void readInput(Rectangle bounds, Vector2 scale) {
         // Copy state from last animation frame
         // Helps us ignore buttons that are held down
-        resetPrevious  = resetPressed;
-        debugPrevious  = debugPressed;
+        resetPrevious = resetPressed;
+        debugPrevious = debugPressed;
         carryingObjectPrevious = carryingObject;
         pingPrevious = pingPressed;
-        carryingBodyPrevious =carryingBody;
+        carryingBodyPrevious = carryingBody;
 
 
         // Check to see if a GamePad is connected
@@ -203,7 +225,7 @@ public class InputController {
 
     /**
      * Reads input from an X-Box controller connected to this computer.
-     *
+     * <p>
      * The method provides both the input bounds and the drawing scale.  It needs
      * the drawing scale to convert screen coordinates to world coordinates.  The
      * bounds are for the crosshair.  They cannot go outside of this zone.
@@ -217,12 +239,12 @@ public class InputController {
 
         // Increase animation frame, but only if trying to move
         horizontal = xbox.getLeftX();
-        vertical   = xbox.getLeftY();
+        vertical = xbox.getLeftY();
     }
 
     /**
      * Reads input from the keyboard.
-     *
+     * <p>
      * This controller reads from the keyboard regardless of whether or not an X-Box
      * controller is connected.  However, if a controller is connected, this method
      * gives priority to the X-Box controller.
@@ -231,16 +253,14 @@ public class InputController {
      */
     private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary) {
         // Give priority to gamepad results
-        resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
-        debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.F));
+//        resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
+//        debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.F));
 
-        carryingObject = (secondary && carryingObject) ||Gdx.input.isKeyPressed(Input.Keys.Q);
+        carryingObject = (secondary && carryingObject) || Gdx.input.isKeyPressed(Input.Keys.Q);
 
-        carryingBody = (secondary && carryingBody) ||Gdx.input.isKeyPressed(Input.Keys.A);
+        carryingBody = (secondary && carryingBody) || Gdx.input.isKeyPressed(Input.Keys.A);
         //TODO: don't need carrying body button anymore
-        pingPressed =(secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.E);
-
-
+        pingPressed = (secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.E);
 
 
         // Directional controls
