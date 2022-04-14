@@ -486,7 +486,7 @@ public class GameController implements Screen, ContactListener {
         if (diver.getLinearVelocity().len() < 15 && diver.isBoosting()) {
             diver.setBoosting(false);
         }
-        // set latching and boosting attributes
+        // set latching and boosting attributesf
         // latch onto obstacle when key pressed and close to an obstacle
         // stop latching and boost when key is let go
         // TODO: or when it is pressed again? Have had some issues with key presses being missed
