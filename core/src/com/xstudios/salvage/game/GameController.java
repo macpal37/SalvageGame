@@ -288,7 +288,9 @@ public class GameController implements Screen, ContactListener {
         wallShine = new PointLight(rayHandler, 100, Color.BLUE, 6, 0, 0);
         wallShine.setSoft(true);
 
-        wallShine.setColor(18f / 255f, 180f / 255f, 82f / 255f, 0.85f);
+        int r = 225, g = 103, b = 30;
+
+        wallShine.setColor(78f / 255f, 180f / 255f, 82f / 255f, 0.85f);
         Filter f2 = new Filter();
         f2.categoryBits = 0x0004;
         f2.maskBits = 0x0002;
@@ -849,14 +851,17 @@ public class GameController implements Screen, ContactListener {
         // draw game objects
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0, 4, 4);
         for (GameObject obj : objects) {
-            obj.draw(canvas);
+            if (!(obj instanceof DiverModel))
+                obj.draw(canvas);
         }
+        if (!debug)
+            rayHandler.updateAndRender();
 
 
         canvas.end();
-        if (!debug)
-            rayHandler.updateAndRender();
+
         canvas.begin();
+        diver.draw(canvas);
         switch (game_state) {
             case PLAYING:
 
