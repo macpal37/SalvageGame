@@ -29,7 +29,7 @@ import java.util.Iterator;
 
 public class GameController implements Screen, ContactListener {
 
-    public int Level = 1;
+    public int Level = 0;
 
 
     // Assets
