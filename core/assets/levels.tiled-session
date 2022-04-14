@@ -1,0 +1,165 @@
+{
+    "fileStates": {
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokeAssets/TiledStuff/map1.tmj": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 139,
+                "y": 220
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokeAssets/TiledStuff/tileset_outside.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/test_map.json": {
+            "scale": 2.14,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 161.44859813084113,
+                "y": 140.65420560747663
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/id_tiles.json": {
+            "scaleInDock": 5.5,
+            "scaleInEditor": 8
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/small_outside_tileset.json": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/OfficialTiled/old_ship_tileset.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/TiledStuff/SunkenShip.json": {
+            "scale": 0.3424523809523809,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 943.1968295904891,
+                "y": 592.783146770493
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/TiledStuff/SunkenShip.json#wooden_floor": {
+            "scaleInDock": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/TiledStuff/SunkenShip.tmj": {
+            "scale": 0.12,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1970.8333333333335,
+                "y": 704.1666666666665
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/TiledStuff/map1.json": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -42.666666666666686,
+                "y": -70.66666666666663
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/TiledStuff/map1.tmj": {
+            "scale": 3,
+            "selectedLayer": -1,
+            "viewCenter": {
+                "x": 14,
+                "y": -11.333333333333314
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/TiledStuff/player.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/TiledStuff/sunken_ship_tileset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/TiledStuff/tileset1.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 8
+        },
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/TiledStuff/wooden_bg.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/TiledStuff/wooden_floor.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "level1.json": {
+            "scale": 0.33,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 860.6060606060605,
+                "y": 839.3939393939394
+            }
+        },
+        "level2.json": {
+            "scale": 0.25,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1998,
+                "y": 1496
+            }
+        },
+        "levels/level1.json": {
+            "scale": 0.75,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 250.66666666666669,
+                "y": 1113.3333333333335
+            }
+        },
+        "levels/level2.json": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2000,
+                "y": 1500
+            }
+        },
+        "levels/small_ship.json": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 436,
+                "y": 2474
+            }
+        },
+        "levels/tilesets/id_tiles.json": {
+            "scaleInEditor": 1
+        },
+        "small_ship.json": {
+            "scale": 0.25,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1998,
+                "y": 1500
+            }
+        },
+        "tilesets/id_tiles.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilesets/old_ship_tileset.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 0.75
+        }
+    },
+    "recentFiles": [
+        "levels/level1.json",
+        "levels/level2.json",
+        "levels/small_ship.json",
+        "levels/tilesets/id_tiles.json",
+        "level1.json",
+        "tilesets/old_ship_tileset.json",
+        "level2.json",
+        "tilesets/id_tiles.json",
+        "small_ship.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/test_map.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/small_outside_tileset.json",
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/OfficialTiled/old_ship_tileset.json"
+    ]
+}
