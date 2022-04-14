@@ -73,7 +73,9 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion oxygen;
     protected TextureRegion keys;
 
-    /** The font for giving messages to the player */
+    /**
+     * The font for giving messages to the player
+     */
 
     public static BitmapFont displayFont;
 
@@ -393,10 +395,10 @@ public class GameController implements Screen, ContactListener {
         doorCloseTexture = new TextureRegion(directory.getEntry("models:door_closed", Texture.class));
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
 
-        deadBodyTexture = new TextureRegion(directory.getEntry( "models:dead_body", Texture.class ));
-        hud = new TextureRegion(directory.getEntry( "hud", Texture.class ));
-        oxygen = new TextureRegion(directory.getEntry( "oxygen", Texture.class ));
-        keys = new TextureRegion(directory.getEntry( "keys", Texture.class ));
+        deadBodyTexture = new TextureRegion(directory.getEntry("models:dead_body", Texture.class));
+        hud = new TextureRegion(directory.getEntry("hud", Texture.class));
+        oxygen = new TextureRegion(directory.getEntry("oxygen", Texture.class));
+        keys = new TextureRegion(directory.getEntry("keys", Texture.class));
 
     }
 
@@ -453,11 +455,12 @@ public class GameController implements Screen, ContactListener {
         populateLevel();
     }
 
+
     /**
      * Lays out the game geography.
      */
     private void populateLevel() {
-        ArrayList<GObject> objects = levelBuilder.createLevel("level1", "old_ship_tileset", tileset);
+        ArrayList<GObject> objects = levelBuilder.createLevel("level1", "old_ship_tileset");
 
         int wallCounter = 0;
         int keyCounter = 0;
@@ -508,7 +511,7 @@ public class GameController implements Screen, ContactListener {
                 diver.setStunned(false);
 
                 diver.setTexture(diverTexture);
-                diver.setFilmStrip(new FilmStrip(swimmingAnimation, 1, 12, 12));
+                diver.setFilmStrip(new FilmStrip(swimmingAnimation, 2, 12, 24));
                 diver.setPingTexture(pingTexture);
                 diver.setDrawScale(scale);
                 diver.setName("diver");
@@ -576,7 +579,7 @@ public class GameController implements Screen, ContactListener {
     private void updatePlayingState() {
         // apply movement
         InputController input = InputController.getInstance();
-        if(input.isPause()) pause();
+        if (input.isPause()) pause();
         diver.setHorizontalMovement(input.getHorizontal() * diver.getForce());
         diver.setVerticalMovement(input.getVertical() * diver.getForce());
 
@@ -830,18 +833,18 @@ public class GameController implements Screen, ContactListener {
         canvas.begin();
         switch (game_state) {
             case PLAYING:
-                canvas.draw(hud, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
-                        cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/20f);
-                canvas.draw(oxygen, cameraController.getCameraPosition2D().x - canvas.getWidth()/4f - canvas.getWidth()/75f,
-                        cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/17f);
+                canvas.draw(hud, cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f,
+                        cameraController.getCameraPosition2D().y + canvas.getHeight() / 3f + canvas.getHeight() / 20f);
+                canvas.draw(oxygen, cameraController.getCameraPosition2D().x - canvas.getWidth() / 4f - canvas.getWidth() / 75f,
+                        cameraController.getCameraPosition2D().y + canvas.getHeight() / 3f + canvas.getHeight() / 17f);
 
-                if(diver.carryingItem()){
-                    canvas.draw(keys, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + canvas.getWidth()/75f,
-                            cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
+                if (diver.carryingItem()) {
+                    canvas.draw(keys, cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + canvas.getWidth() / 75f,
+                            cameraController.getCameraPosition2D().y + canvas.getHeight() / 3f + canvas.getHeight() / 50f);
                 }
-                if(diver.hasBody()){
-                    canvas.draw(deadBodyTexture, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
-                            cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
+                if (diver.hasBody()) {
+                    canvas.draw(deadBodyTexture, cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f,
+                            cameraController.getCameraPosition2D().y + canvas.getHeight() / 3f + canvas.getHeight() / 50f);
                 }
 
                 canvas.drawText(
@@ -988,7 +991,7 @@ public class GameController implements Screen, ContactListener {
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
 
-        collisionController.startDiverToObstacle(body1,body2);
+        collisionController.startDiverToObstacle(body1, body2);
 
         try {
             GObject bd1 = (GObject) body1.getUserData();
@@ -1001,7 +1004,7 @@ public class GameController implements Screen, ContactListener {
                     diver.addTouching(diver.getSensorNameLeft(), bd1);
                 else
                     diver.addTouching(diver.getSensorNameLeft(), bd2);
-                System.out.println("YEAH");
+
             }
             if ((diver.getSensorNameRight().equals(fd2) && diver != bd1) ||
                     (diver.getSensorNameRight().equals(fd1) && diver != bd2)) {
@@ -1010,17 +1013,17 @@ public class GameController implements Screen, ContactListener {
                     diver.addTouching(diver.getSensorNameRight(), bd1);
                 else
                     diver.addTouching(diver.getSensorNameRight(), bd2);
-                System.out.println("NOOO!!!");
+
             }
 
             if (bd1 instanceof DiverModel && !diver.getSensorNameRight().equals(fd1) && !diver.getSensorNameLeft().equals(fd1) && bd2 instanceof Wall) {
                 audioController.wall_collision(diver.getForce());
             }
             if (body1.getUserData() instanceof HazardModel) {
-//                System.out.println("YEAH");
+
             }
             if (body2.getUserData() instanceof HazardModel) {
-//                System.out.println("NOOO!!!");
+
             }
 
 //            boolean sensorTouching1 =  diver.getSensorNameLeft().equals(fd2) ||
@@ -1032,20 +1035,20 @@ public class GameController implements Screen, ContactListener {
                         reach_target = true;//listener.exitScreen(this, 0);
                     }
                 } else if (body2.getUserData() instanceof ItemModel) {
-                    System.out.println("ITEM!!");
+
                     CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
                     ((ItemModel) body2.getUserData()).setTouched(true);
                 } else if (body2.getUserData() instanceof Door) {
 
-                    System.out.println("Attempt Unlock");
+
 //                toUnlock=CollisionController.attemptUnlock(diver, (Door)body2.getUserData());
                     ((Door) body2.getUserData()).setUnlock(CollisionController.attemptUnlock(diver, (Door) body2.getUserData()));
                 } else if (body2.getUserData() instanceof DeadBodyModel) {
-                    System.out.println("Body!!");
+
                     ((DiverModel) body1.getUserData()).setBodyContact(true);
                 } else if (!diver.getSensorNameRight().equals(fd1) && !diver.getSensorNameLeft().equals(fd1) &&
                         body2.getUserData() instanceof HazardModel) {
-                    System.out.println("OUCH!!");
+
                     hostileOxygenDrain = CollisionController.staticHazardCollision(diver, (HazardModel) body2.getUserData());
                 }
 
