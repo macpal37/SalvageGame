@@ -33,7 +33,7 @@
          "name":"ids",
          "opacity":1,
          "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":40,
          "x":0,
          "y":0
@@ -41,12 +41,6 @@
  "nextlayerid":4,
  "nextobjectid":1,
  "orientation":"orthogonal",
- "properties":[
-        {
-         "name":"Starting Oxygen",
-         "type":"int",
-         "value":200
-        }],
  "renderorder":"right-down",
  "tiledversion":"1.8.2",
  "tileheight":100,
