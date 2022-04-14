@@ -1,8 +1,4 @@
 {
-    "Map/SizeTest": {
-        "height": 4300,
-        "width": 2
-    },
     "activeFile": "",
     "expandedProjectPaths": [
         "tilesets",
@@ -118,16 +114,16 @@
             "scale": 0.467875,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 780.1228960726692,
-                "y": 297.0878974084959
+                "x": 346.24632647608877,
+                "y": 468.0737376436015
             }
         },
         "levels/level1.json": {
             "scale": 0.33,
-            "selectedLayer": 4,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 1187.878787878788,
-                "y": 1227.272727272727
+                "x": 1499.9999999999998,
+                "y": 1000
             }
         },
         "levels/level2.json": {
@@ -166,11 +162,6 @@
             "scaleInEditor": 0.75
         }
     },
-    "map.height": 10,
-    "map.lastUsedFormat": "json",
-    "map.tileHeight": 100,
-    "map.tileWidth": 100,
-    "map.width": 15,
     "openFiles": [
     ],
     "project": "levels.tiled-project",
