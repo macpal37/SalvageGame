@@ -30,7 +30,7 @@ public class LevelBuilder {
     }
 
     enum TileType {
-        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard
+        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Plant
     }
 
     TileType tileTypeFromString(String type) {
@@ -52,10 +52,13 @@ public class LevelBuilder {
             return TileType.Goal;
         } else if (type.equals("Hazard")) {
             return TileType.Hazard;
+        } else if (type.equals("Plant")) {
+            return TileType.Plant;
         }
 
         return TileType.Empty;
     }
+
 
     class Tile {
 
@@ -89,6 +92,10 @@ public class LevelBuilder {
 
     }
 
+    class TObject extends Tile {
+        ArrayList<Integer> propInt = new ArrayList<>();
+    }
+
     float round(float num) {
         float result = Math.abs(num);
         boolean isNegative = num < 0;
@@ -110,24 +117,9 @@ public class LevelBuilder {
     }
 
 
-    public ArrayList<GObject> createLevel(String levelFileName, String tilesetFileName, TextureRegion tilesetImage) {
-        System.out.println("Creating Level");
-        ArrayList<GObject> gameObjects = new ArrayList<GObject>();
-
-        JsonValue map = jsonReader.parse(Gdx.files.internal("levels/" + levelFileName + ".json"));
-        JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/" + tilesetFileName + ".json"));
-        JsonValue constants = directory.getEntry("models:constants", JsonValue.class);
-        int width = map.getInt("width");
-        int height = map.getInt("height");
-
-
-        int tileSize = map.getInt("tileheight");
-
-        int start = 1;
-        float div = 25f;
-        Tile empty = new Tile();
-
+    private Tile[] createTiles(JsonValue tileset, float div, float tileSize) {
         Tile[] tiles = new Tile[tileset.getInt("tilecount")];
+
         ArrayList<Float> verticies = new ArrayList<>();
         int tt = 0;
         for (JsonValue tileJson : tileset.get("tiles")) {
@@ -155,8 +147,6 @@ public class LevelBuilder {
                         verticies.add(vx);
                         verticies.add(vy);
                     }
-
-
                 }
 
                 float[] verts = new float[verticies.size()];
@@ -174,17 +164,48 @@ public class LevelBuilder {
             }
             tt++;
         }
+        return tiles;
+    }
+
+
+    private float[] createVerticies(Tile tile, float x, float y, float xs, float ys) {
+        int index = 0;
+        float[] newVerts = new float[tile.vertices.length];
+        for (Float f : tile.vertices)
+            newVerts[index++] = (index % 2 == 0) ? (f * ys + y) : (f * xs + x);
+        return newVerts;
+    }
+
+    public ArrayList<GObject> createLevel(String levelFileName) {
+        System.out.println("Creating Level");
+        ArrayList<GObject> gameObjects = new ArrayList<GObject>();
+
+        JsonValue map = jsonReader.parse(Gdx.files.internal("levels/" + levelFileName + ".json"));
+
+        String tileSetFileName = map.get("tilesets").get(0).getString("source");
+        System.out.println("FILENAME: " + tileSetFileName);
+
+        JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/" + tileSetFileName));
+        JsonValue constants = directory.getEntry("models:constants", JsonValue.class);
+        int width = map.getInt("width");
+        int height = map.getInt("height");
+
+
+        int tileSize = map.getInt("tileheight");
+        float div = 25f;
+        int start = 1;
+
+
+        Tile[] tiles = createTiles(tileset, div, tileSize);
+
+
         int ii = 0, jj = height - 1;
-        System.out.println("Num Tieles: " + tiles.length);
-//       ArrayList<Integer> banList = new ArrayList<>();
-        ArrayList<GObject> idItems = new ArrayList<>();
-
-        int idCount = 0;
+        ArrayList<TObject> tileObjects = new ArrayList<>();
         for (JsonValue layer : map.get("layers")) {
+            if (layer.get("data") != null) {
+                for (int n = 0; n < width * height; n++) {
+                    int id = Integer.parseInt(layer.get("data").get(n).toString());
 
-            for (int n = 0; n < width * height; n++) {
-                int id = Integer.parseInt(layer.get("data").get(n).toString());
-                if (!layer.getString("name").equals("ids")) {
                     id = (id == 0) ? 51 : id - start;
 
                     Tile tile = tiles[id];
@@ -199,18 +220,17 @@ public class LevelBuilder {
                             gameObjects.add(new Wall(newVertices, 0, 0));
                             break;
                         case Diver:
-                            System.out.println("Diver Made!");
-                            System.out.println("X: " + sx + " Y: " + sy);
+
                             gameObjects.add(new DiverModel(sx, sy, constants.get("diver")));
                             break;
                         case DeadBody:
-                            System.out.println("Pass: Body");
+
                             gameObjects.add(new DeadBodyModel(sx, sy, constants.get("dead_body")));
                             break;
                         case Item:
                             ItemModel item = new ItemModel(sx, sy, constants.get("key"), ItemType.KEY);
                             gameObjects.add(item);
-                            idItems.add(item);
+//                                idItems.add(item);
                             break;
                         case Door:
                             float[] doorVerticies = new float[tile.vertices.length];
@@ -219,7 +239,7 @@ public class LevelBuilder {
                                 doorVerticies[index++] = (index % 2 == 0) ? f + sy : f + sx;
                             Door door = new Door(doorVerticies, 0, 0);
                             gameObjects.add(door);
-                            idItems.add(door);
+//                                idItems.add(door);
                             break;
 
                         case Obstacle:
@@ -240,11 +260,7 @@ public class LevelBuilder {
                             break;
                         case Hazard:
 
-                            float[] hazardVerticies = new float[tile.vertices.length];
-                            index = 0;
-                            for (Float f : tile.vertices)
-                                hazardVerticies[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                            HazardModel hazard = new HazardModel(hazardVerticies, 0, 0);
+                            HazardModel hazard = new HazardModel(createVerticies(tile, sx, sy, 1, 1), 0, 0);
                             gameObjects.add(hazard);
 
                         case Empty:
@@ -252,30 +268,92 @@ public class LevelBuilder {
                                 gameObjects.add(new Dust(sx, sy));
                             break;
                     }
-                } else {
-                    if (id != 0) {
+                    ii++;
+                    if (ii == width) {
+                        ii = 0;
+                        jj--;
 
-                        id = id - 101;
-                        System.out.println("ID: " + id);
-                        System.out.println("OBJECT: " + idItems.get(idCount).toString());
-                        idItems.get(idCount).setID(id);
-                        idCount++;
+                    }
+                }
+                ii = 0;
+                jj = height - 1;
+
+
+            } else {
+                for (JsonValue obj : layer.get("objects")) {
+                    Tile tile = tiles[obj.getInt("gid") - 1];
+
+                    float sx = obj.getFloat("x") / div;
+                    float sy = (height * tileSize - obj.getFloat("y")) / div;
+                    float objectWidth = obj.getFloat("width") / div;
+                    float objectHeight = obj.getFloat("height") / div;
+                    float widthScale = (objectWidth * div) / tileSize;
+                    float heightScale = (objectHeight * div) / tileSize;
+
+                    int index = 0;
+                    switch (tile.tileType) {
+                        case Wall:
+
+                            gameObjects.add(new Wall(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0));
+                            break;
+                        case Diver:
+                            System.out.println("Diver Made!");
+                            System.out.println("X: " + sx + " Y: " + sy);
+                            gameObjects.add(new DiverModel(sx, sy, constants.get("diver")));
+                            break;
+                        case DeadBody:
+                            System.out.println("Pass: Body");
+                            gameObjects.add(new DeadBodyModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("dead_body")));
+                            break;
+                        case Item:
+                            ItemModel item = new ItemModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("key"), ItemType.KEY);
+                            for (JsonValue prop : obj.get("properties")) {
+                                if (prop.getString("name").equals("id"))
+                                    item.setID(prop.getInt("value"));
+                            }
+                            gameObjects.add(item);
+//
+                            break;
+                        case Door:
+
+                            Door door = new Door(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
+
+                            door.setDoorScale(obj.getFloat("width"), obj.getFloat("height"));
+                            if (obj.get("properties") != null)
+                                for (JsonValue prop : obj.get("properties")) {
+                                    if (prop.getString("name").equals("id"))
+                                        door.setID(prop.getInt("value"));
+                                }
+                            else
+                                door.setID(0);
+                            gameObjects.add(door);
+//
+                            break;
+
+                        case Obstacle:
+                            break;
+
+                        case Goal:
+
+                            gameObjects.add(new GoalDoor(sx, sy + objectHeight / 2, objectWidth, objectHeight));
+                            break;
+                        case Block:
+                            Wall block = new Wall(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
+                            block.setInvisible(true);
+                            gameObjects.add(block);
+                            break;
+                        case Hazard:
+                            HazardModel hazard = new HazardModel(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
+                            gameObjects.add(hazard);
+                            break;
+                        case Plant:
+                            gameObjects.add(new Plant(sx, sy));
                     }
 
-                }
-
-
-                ii++;
-                if (ii == width) {
-                    ii = 0;
-                    jj--;
 
                 }
+
             }
-            ii = 0;
-            jj = height - 1;
-
-
         }
 
         System.out.println("ALL PASS!");

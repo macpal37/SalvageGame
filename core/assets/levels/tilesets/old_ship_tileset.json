@@ -129,11 +129,21 @@
                  "name":"model_type",
                  "type":"string",
                  "value":"Diver"
+                }, 
+                {
+                 "name":"starting_oxygen",
+                 "type":"int",
+                 "value":150
                 }]
         }, 
         {
          "id":4,
          "properties":[
+                {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
                 {
                  "name":"item_type",
                  "type":"string",
@@ -399,6 +409,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Door"
@@ -613,7 +628,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -711,6 +725,16 @@
                  "name":"model_type",
                  "type":"string",
                  "value":"Hazard"
+                }, 
+                {
+                 "name":"oxygen_drain",
+                 "type":"float",
+                 "value":-0.1
+                }, 
+                {
+                 "name":"stun_duration",
+                 "type":"int",
+                 "value":60
                 }]
         }, 
         {
@@ -908,7 +932,7 @@
                 {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Plant"
                 }]
         }, 
         {
@@ -916,7 +940,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {

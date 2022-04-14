@@ -62,6 +62,9 @@ public class GameCanvas {
     /** Camera for the underlying SpriteBatch */
     private OrthographicCamera camera;
 
+    /** Camera Controller*/
+    private CameraController cameraController;
+
     /** Value to cache window width (if we are currently full screen) */
     int width;
     /** Value to cache window height (if we are currently full screen) */
@@ -90,6 +93,7 @@ public class GameCanvas {
 
         // Set the projection matrix (for proper scaling)
         camera = cameraController.getCamera();
+        this.cameraController=cameraController;
         camera.setToOrtho(false);
         spriteBatch.setProjectionMatrix(camera.combined);
         debugRender.setProjectionMatrix(camera.combined);
@@ -253,7 +257,12 @@ public class GameCanvas {
      */
     public void resize() {
         // Resizing screws up the spriteBatch projection matrix
+
         spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, getWidth(), getHeight());
+        cameraController.resize(getWidth(), getHeight());
+
+
+
     }
 
     /**

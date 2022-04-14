@@ -66,6 +66,7 @@ public class CameraController {
         return cameraSpeed;
     }
     public void resize (int width, int height){
+
         viewport.update(width,height);
         setCameraPosition((float)width/2,(float)height/2);
 
