@@ -151,7 +151,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      */
     private void draw() {
         canvas.begin();
-        canvas.draw(background, 0, 0);
+        canvas.draw(background, Color.WHITE, 0, 0, canvas.getWidth(), canvas.getHeight());
         canvas.draw(
                 title,
                 Color.WHITE,

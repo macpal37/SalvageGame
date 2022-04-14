@@ -12,6 +12,10 @@ import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.Controllers;
 import com.xstudios.salvage.util.ScreenListener;
 import com.xstudios.salvage.util.XBoxController;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 /**
  * Class that provides a loading screen for the state of the game.
@@ -28,9 +32,11 @@ import com.xstudios.salvage.util.XBoxController;
  */
 public class LevelSelectController implements Screen, InputProcessor, ControllerListener {
     // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
-    /** Background texture for start-up */
-    /** Play button to display when done */
-    /** Texture atlas to support a progress bar */
+    private Stage stage;
+    private Table table;
+    private TextureAtlas atlas;
+    private Skin skin;
+
 
     /** Default budget for asset loader (do nothing but load 60 fps) */
     private static int DEFAULT_BUDGET = 15;
@@ -143,7 +149,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      */
     private void draw() {
         canvas.begin();
-        canvas.draw(background, 0, 0);
+        canvas.draw(background, Color.WHITE, 0, 0, canvas.getWidth(), canvas.getHeight());
         Color tint = (pointer(centerX - centerX/2 - centerX/5, 3 * centerY + centerY/2 + centerY/5, main_menu.getWidth() / 2,
                 main_menu.getHeight() / 2) ? Color.GRAY : Color.WHITE);
         canvas.draw(
