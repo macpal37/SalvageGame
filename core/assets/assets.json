@@ -12,6 +12,8 @@
     "keys" : "models/key.png",
     "level_editor": "ui/level_editor.png",
     "models:diver": "models/diver.png",
+"models:diver_swimming": "models/diver_swimming.png",
+        "models:dust": "models/dust.png",
     "background:ocean":"background/background1.png",
     "background:game_over":"background/game_over.png",
     "background:menu":"background/menu_background.png",
@@ -27,6 +29,11 @@
       "wrapU":"repeated",
       "wrapV": "repeated"
     },
+     "hazard": {
+          "file":"background/hazard_texture.png",
+          "wrapU":"repeated",
+          "wrapV": "repeated"
+        },
     "door": {
       "file": "models/door.png",
       "wrapU": "repeated",

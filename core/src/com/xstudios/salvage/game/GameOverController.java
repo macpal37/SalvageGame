@@ -94,7 +94,7 @@ public class GameOverController implements Screen, ApplicationListener {
             if (restart_game && listener != null) {
                 listener.exitScreen(this, 0);
             }
-            // can do this with different exit codes to indicate which screen to switch to?
+            // can do this with different exit codes to indicate which screen to switch to
         }
     }
 
@@ -154,24 +154,19 @@ public class GameOverController implements Screen, ApplicationListener {
     public void draw(float dt) {
         canvas.clear();
 
-
-        canvas.begin();
-        // draw game objects
-         if(display_win) {
-            displayFont.setColor(Color.WHITE);
-            canvas.drawText(
-                    "you win",
-                    displayFont, bounds.width/2,0);//bounds.height/5);//canvas.getWidth()/2f + 50, canvas.getHeight()/2f + 50);
-        } else {
-            canvas.drawText(
-                    "you lose",
-                    displayFont, canvas.getWidth()/2f + 50, canvas.getHeight()/2f + 50);
-
-        }
-        canvas.end();
         canvas.begin();
         canvas.draw(background, Color.DARK_GRAY,background.getRegionWidth()/2f,background.getRegionHeight()/2f,0,0,0,4,4);
 
+        // draw game objects
+         if(display_win) {
+             canvas.drawText(
+                     "you win",
+                     displayFont, x_pos_text-50,y_pos_text+150);
+         } else {
+            canvas.drawText(
+                    "you lose",
+                    displayFont, x_pos_text-50,y_pos_text+150);
+        }
         canvas.end();
     }
 
