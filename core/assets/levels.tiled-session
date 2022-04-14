@@ -1,4 +1,8 @@
 {
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
     "activeFile": "",
     "expandedProjectPaths": [
         "tilesets",
@@ -110,20 +114,28 @@
                 "y": 1496
             }
         },
-        "levels/level1.json": {
-            "scale": 0.75,
-            "selectedLayer": 3,
+        "levels/level0.json": {
+            "scale": 0.467875,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 1500,
-                "y": 1000
+                "x": 780.1228960726692,
+                "y": 297.0878974084959
+            }
+        },
+        "levels/level1.json": {
+            "scale": 0.33,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 1187.878787878788,
+                "y": 1227.272727272727
             }
         },
         "levels/level2.json": {
-            "scale": 0.5,
-            "selectedLayer": 0,
+            "scale": 0.33,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 2000,
-                "y": 1500
+                "x": 796.969696969697,
+                "y": 2142.4242424242425
             }
         },
         "levels/small_ship.json": {
@@ -154,7 +166,26 @@
             "scaleInEditor": 0.75
         }
     },
+    "map.height": 10,
+    "map.lastUsedFormat": "json",
+    "map.tileHeight": 100,
+    "map.tileWidth": 100,
+    "map.width": 15,
     "openFiles": [
     ],
-    "project": "levels.tiled-project"
+    "project": "levels.tiled-project",
+    "recentFiles": [
+        "levels/level1.json",
+        "levels/level2.json",
+        "levels/small_ship.json",
+        "levels/tilesets/id_tiles.json",
+        "level1.json",
+        "tilesets/old_ship_tileset.json",
+        "level2.json",
+        "tilesets/id_tiles.json",
+        "small_ship.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/test_map.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/small_outside_tileset.json",
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/OfficialTiled/old_ship_tileset.json"
+    ]
 }
