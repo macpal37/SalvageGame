@@ -194,6 +194,8 @@ public class GameController implements Screen, ContactListener {
     private PhysicsController physicsController;
 
     private boolean reach_target = false;
+    private String[] levels = {"level1", "small_ship"};
+    private int level;
 
     private enum state {
         PLAYING,
@@ -223,7 +225,7 @@ public class GameController implements Screen, ContactListener {
     protected GameController() {
         this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
                 new Vector2(0, DEFAULT_GRAVITY));
-
+        level = 0;
     }
 
     /**
@@ -272,7 +274,6 @@ public class GameController implements Screen, ContactListener {
         rayHandler = new RayHandler(world);
         rayHandler.setAmbientLight(.015f);
 
-
         light = new PointLight(rayHandler, 100, Color.BLACK, 12, 0, 0);
         wallShine = new PointLight(rayHandler, 100, Color.BLUE, 6, 0, 0);
         wallShine.setSoft(true);
@@ -309,6 +310,10 @@ public class GameController implements Screen, ContactListener {
      */
     public boolean isActive() {
         return active;
+    }
+
+    public void setLevel(int l) {
+        level = l;
     }
 
     /**
@@ -457,7 +462,7 @@ public class GameController implements Screen, ContactListener {
      * Lays out the game geography.
      */
     private void populateLevel() {
-        ArrayList<GObject> objects = levelBuilder.createLevel("level1", "old_ship_tileset", tileset);
+        ArrayList<GObject> objects = levelBuilder.createLevel(levels[level], "old_ship_tileset", tileset);
 
         int wallCounter = 0;
         int keyCounter = 0;

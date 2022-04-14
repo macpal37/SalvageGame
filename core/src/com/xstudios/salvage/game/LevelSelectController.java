@@ -240,9 +240,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
             if (pressState == 5 && listener != null) {
                 listener.exitScreen(this, 1);
             }
-//            if (pressState == 6 && listener != null) {
-//                listener.exitScreen(this, 2);
-//            }
+            if (pressState == 6 && listener != null) {
+                listener.exitScreen(this, 2);
+            }
         }
     }
 
@@ -348,6 +348,13 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                         (screenY - 2 * centerY) * (screenY - 2 * centerY);
         if (dist < widthR * heightR) {
             pressState = 2;
+        }
+        widthR = BUTTON_SCALE * scale * level.getWidth() / 2.0f;
+        heightR = BUTTON_SCALE * scale * level.getHeight() / 2.0f;
+        dist = (screenX - centerX) * (screenX - centerX) +
+                (screenY - centerY) * (screenY - centerY);
+        if (dist < widthR * heightR) {
+            pressState = 3;
         }
 
         return false;
