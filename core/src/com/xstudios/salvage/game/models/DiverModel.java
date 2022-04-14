@@ -48,6 +48,9 @@ public class DiverModel extends GameObject {
 
     private int current_frame = 0;
 
+    private float targetAngle;
+    private float currentAngle;
+
     public int getFrame() {
         return diverSprite.getFrame();
 
@@ -291,6 +294,8 @@ public class DiverModel extends GameObject {
 
         boostDamping = damping / 100;
 
+        targetAngle = 0;
+        currentAngle = 0;
 
         carrying_body = false;
         dead_body = null;
@@ -568,11 +573,8 @@ public class DiverModel extends GameObject {
 
         // darw the diver
         if (texture != null) {
-
-
             if (stunned) {
                 if (stunCooldown % 20 > 5) {
-
                     canvas.draw(diverSprite, Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
                 } else {
                     canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
@@ -955,6 +957,38 @@ public class DiverModel extends GameObject {
         if (faceRight)
             return touchingRight.size() > 0;
         else return touchingLeft.size() > 0;
+    }
+
+
+    public boolean atAngle() {
+        return currentAngle == targetAngle;
+    }
+    /**
+     * Returns the angle corresponding to the direction of diver's movement
+     *
+     * The value returned is in radians
+     *
+     * @return the angle of rotation for this body
+     */
+    public float getAngle() {
+
+        if(!faceRight && !movement.isZero()){
+            targetAngle = movement.angleRad() - (float)(Math.PI);
+        } else if(!movement.isZero()){
+            targetAngle = movement.angleRad();
+        }
+//        System.out.println("TARGET ANGLE " + targetAngle + "CURR " + currentAngle);
+//        currentAngle = targetAngle;
+        if(currentAngle > targetAngle + .1) {
+            float tmp = targetAngle  - currentAngle;
+            currentAngle -= .1;
+            System.out.println("TARGET - CURR ANGLE " + tmp);
+        } else if(currentAngle < targetAngle - .1) {
+            currentAngle += .1;
+            float tmp = targetAngle  - currentAngle;
+            System.out.println("TARGET - CURR ANGLE " + tmp);
+        }
+        return currentAngle;
     }
 
 }
