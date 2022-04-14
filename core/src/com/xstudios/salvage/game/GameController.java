@@ -28,6 +28,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class GameController implements Screen, ContactListener {
+
+    public int Level = 0;
+
+
     // Assets
     /**
      * The texture for diver
@@ -477,7 +481,7 @@ public class GameController implements Screen, ContactListener {
      * Lays out the game geography.
      */
     private void populateLevel() {
-        ArrayList<GObject> objects = levelBuilder.createLevel("level0");
+        ArrayList<GObject> objects = levelBuilder.createLevel("level" + Level);
 
         int wallCounter = 0;
         int keyCounter = 0;
