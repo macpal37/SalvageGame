@@ -1009,7 +1009,7 @@ public class DiverModel extends GameObject {
             float tmp = targetAngle  - currentAngle;
             System.out.println("TARGET - CURR ANGLE " + tmp);
         }
-        return currentAngle;
+        return targetAngle;
     }
 
 }
