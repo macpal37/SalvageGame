@@ -14,6 +14,7 @@
     "models:diver": "models/diver.png",
 "models:diver_swimming": "models/diver_swimming.png",
         "models:dust": "models/dust.png",
+        "models:plant": "models/plant.png",
     "background:ocean":"background/background1.png",
     "background:game_over":"background/game_over.png",
     "background:menu":"background/menu_background.png",
@@ -21,8 +22,8 @@
     "models:key": "models/key.png",
     "models:ping": "models/ping.png",
     "models:dead_body": "models/dead_body.png",
-    "models:door_open": "models/door_open.png",
-    "models:door_closed": "models/door_closed.png",
+    "models:door_open": "models/door_opened.png",
+    "models:door_closed": "models/door_locked.png",
     "levels:tilesets:old_ship_tileset":"levels/tilesets/old_ship_tileset.png",
     "wall": {
       "file":"background/wooden_bg.png",

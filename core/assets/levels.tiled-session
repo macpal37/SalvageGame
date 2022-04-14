@@ -9,7 +9,6 @@
         ".",
         "levels"
     ],
-    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokeAssets/TiledStuff/map1.tmj": {
             "scale": 1,
@@ -115,20 +114,28 @@
                 "y": 1496
             }
         },
-        "levels/level1.json": {
-            "scale": 0.75,
-            "selectedLayer": 3,
+        "levels/level0.json": {
+            "scale": 0.467875,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 249.33333333333337,
-                "y": 1113.3333333333335
+                "x": 780.1228960726692,
+                "y": 297.0878974084959
+            }
+        },
+        "levels/level1.json": {
+            "scale": 0.33,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 1187.878787878788,
+                "y": 1227.272727272727
             }
         },
         "levels/level2.json": {
-            "scale": 0.5,
-            "selectedLayer": 0,
+            "scale": 0.33,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 1404,
-                "y": 2068
+                "x": 796.969696969697,
+                "y": 2142.4242424242425
             }
         },
         "levels/small_ship.json": {
@@ -159,27 +166,17 @@
             "scaleInEditor": 0.75
         }
     },
-    "last.exportedFilePath": "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokeAssets/TiledStuff",
-    "last.imagePath": "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels/tilesets",
-    "last.objectTemplatePath": "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels/objects",
-    "last.objectTypesPath": "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels/objects/diver.json",
-    "last.worldFilePath": "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels",
-    "loadedWorlds": [
-        "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels/world.world"
-    ],
-    "map.fixedSize": true,
-    "map.height": 20,
-    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.height": 10,
     "map.lastUsedFormat": "json",
     "map.tileHeight": 100,
     "map.tileWidth": 100,
-    "map.width": 30,
+    "map.width": 15,
     "openFiles": [
     ],
     "project": "levels.tiled-project",
-    "property.type": "int",
     "recentFiles": [
         "levels/level1.json",
+        "levels/level2.json",
         "levels/small_ship.json",
         "levels/tilesets/id_tiles.json",
         "level1.json",
@@ -189,12 +186,6 @@
         "small_ship.json",
         "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/test_map.json",
         "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/small_outside_tileset.json",
-        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/OfficialTiled/old_ship_tileset.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/id_tiles.json"
-    ],
-    "tileset.lastUsedFormat": "json",
-    "tileset.tileSize": {
-        "height": 100,
-        "width": 100
-    }
+        "/Users/marcopalomino/Documents/Spring2022/SalvageGame1/OfficialTiled/old_ship_tileset.json"
+    ]
 }

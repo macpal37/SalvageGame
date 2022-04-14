@@ -382,6 +382,8 @@ public class GameController implements Screen, ContactListener {
         swimmingAnimation = directory.getEntry("models:diver_swimming", Texture.class);
         System.out.println("Swimm: " + swimmingAnimation);
         dustAnimation = directory.getEntry("models:dust", Texture.class);
+
+        plantAnimation = directory.getEntry("models:plant", Texture.class);
         System.out.println("DUST: " + dustAnimation);
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
         itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
@@ -460,7 +462,7 @@ public class GameController implements Screen, ContactListener {
      * Lays out the game geography.
      */
     private void populateLevel() {
-        ArrayList<GObject> objects = levelBuilder.createLevel("level1", "old_ship_tileset");
+        ArrayList<GObject> objects = levelBuilder.createLevel("level0");
 
         int wallCounter = 0;
         int keyCounter = 0;
@@ -556,6 +558,14 @@ public class GameController implements Screen, ContactListener {
                 Dust dust = (Dust) go;
                 dust.setFilmStrip(new FilmStrip(dustAnimation, 1, 8, 8));
                 dust.setName("dust");
+                dust.setBodyType(BodyDef.BodyType.StaticBody);
+                dust.setSensor(true);
+                dust.setDrawScale(scale);
+                addObject(dust);
+            } else if (go instanceof Plant) {
+                Plant dust = (Plant) go;
+                dust.setFilmStrip(new FilmStrip(plantAnimation, 1, 6, 6));
+                dust.setName("plant");
                 dust.setBodyType(BodyDef.BodyType.StaticBody);
                 dust.setSensor(true);
                 dust.setDrawScale(scale);

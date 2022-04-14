@@ -30,7 +30,7 @@ public class LevelBuilder {
     }
 
     enum TileType {
-        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard
+        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Plant
     }
 
     TileType tileTypeFromString(String type) {
@@ -52,6 +52,8 @@ public class LevelBuilder {
             return TileType.Goal;
         } else if (type.equals("Hazard")) {
             return TileType.Hazard;
+        } else if (type.equals("Plant")) {
+            return TileType.Plant;
         }
 
         return TileType.Empty;
@@ -174,12 +176,16 @@ public class LevelBuilder {
         return newVerts;
     }
 
-    public ArrayList<GObject> createLevel(String levelFileName, String tilesetFileName) {
+    public ArrayList<GObject> createLevel(String levelFileName) {
         System.out.println("Creating Level");
         ArrayList<GObject> gameObjects = new ArrayList<GObject>();
 
         JsonValue map = jsonReader.parse(Gdx.files.internal("levels/" + levelFileName + ".json"));
-        JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/" + tilesetFileName + ".json"));
+
+        String tileSetFileName = map.get("tilesets").get(0).getString("source");
+        System.out.println("FILENAME: " + tileSetFileName);
+
+        JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/" + tileSetFileName));
         JsonValue constants = directory.getEntry("models:constants", JsonValue.class);
         int width = map.getInt("width");
         int height = map.getInt("height");
@@ -297,10 +303,10 @@ public class LevelBuilder {
                             break;
                         case DeadBody:
                             System.out.println("Pass: Body");
-                            gameObjects.add(new DeadBodyModel(sx, sy, constants.get("dead_body")));
+                            gameObjects.add(new DeadBodyModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("dead_body")));
                             break;
                         case Item:
-                            ItemModel item = new ItemModel(sx, sy, constants.get("key"), ItemType.KEY);
+                            ItemModel item = new ItemModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("key"), ItemType.KEY);
                             for (JsonValue prop : obj.get("properties")) {
                                 if (prop.getString("name").equals("id"))
                                     item.setID(prop.getInt("value"));
@@ -311,10 +317,15 @@ public class LevelBuilder {
                         case Door:
 
                             Door door = new Door(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
-                            for (JsonValue prop : obj.get("properties")) {
-                                if (prop.getString("name").equals("id"))
-                                    door.setID(prop.getInt("value"));
-                            }
+
+                            door.setDoorScale(obj.getFloat("width"), obj.getFloat("height"));
+                            if (obj.get("properties") != null)
+                                for (JsonValue prop : obj.get("properties")) {
+                                    if (prop.getString("name").equals("id"))
+                                        door.setID(prop.getInt("value"));
+                                }
+                            else
+                                door.setID(0);
                             gameObjects.add(door);
 //
                             break;
@@ -334,6 +345,9 @@ public class LevelBuilder {
                         case Hazard:
                             HazardModel hazard = new HazardModel(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
                             gameObjects.add(hazard);
+                            break;
+                        case Plant:
+                            gameObjects.add(new Plant(sx, sy));
                     }
 
 
