@@ -221,6 +221,8 @@ public class DiverModel extends GameObject {
     private final float swimDamping;
     private final float boostDamping;
 
+    public float getMaxOxygen(){return MAX_OXYGEN;}
+
     // ======================== CONSTRUCTORS ================================
 
     /**
