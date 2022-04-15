@@ -137,7 +137,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     public void setCameraController(CameraController cameraController, int w, int h) {
         this.camera = cameraController;
-        cameraController.setBounds(1000, 0, 0, 0);
     }
 
 
@@ -298,6 +297,8 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
             // We are ready, notify our listener
             if (pressState == 4 && listener != null) {
+                camera.setCameraPosition(640, 360);
+                camera.render();
                 listener.exitScreen(this, 0);
             }
             if (pressState == 5 && listener != null) {
