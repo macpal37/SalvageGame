@@ -124,6 +124,30 @@
         }, 
         {
          "id":3,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "ellipse":true,
+                     "height":0,
+                     "id":4,
+                     "name":"",
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":255,
+                     "y":200
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
          "properties":[
                 {
                  "name":"model_type",

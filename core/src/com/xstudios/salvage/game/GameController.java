@@ -753,24 +753,6 @@ public class GameController implements Screen, ContactListener {
         // apply movement
         InputController input = InputController.getInstance();
 
-//        if (!diver.getStunned()) {
-//            diver.setHorizontalMovement(input.getHorizontal() * diver.getForce());
-//            diver.setVerticalMovement(input.getVertical() * diver.getForce());
-//            diver.applyForce();
-//        }
-//
-//        // do the ping
-//        diver.setPing(input.didPing());
-//        diver.setPingDirection(dead_body.getPosition());
-//
-//
-//        // decrease oxygen from movement
-//        if ((!diver.getStunned()) && (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0)) {
-//            diver.changeOxygenLevel(activeOxygenRate);
-//        } else {
-//            diver.changeOxygenLevel(passiveOxygenRate);
-//        }
-
 
         updateGameState();
 
@@ -851,14 +833,12 @@ public class GameController implements Screen, ContactListener {
 
         canvas.begin();
 
-
         // draw game objects
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0, 4, 4);
         for (GameObject obj : objects) {
             if (!(obj instanceof DiverModel))
                 obj.draw(canvas);
         }
-
 
         canvas.end();
         if (!debug)
@@ -913,10 +893,6 @@ public class GameController implements Screen, ContactListener {
                             tempProjectedOxygen.y,
                             0.0f, 0.35f, 0.35f);
 
-//                    canvas.draw(keyHud, Color.WHITE, (float)keyHud.getRegionWidth()/2, (float)keyHud.getRegionHeight()/2,
-//                            (float)cameraController.getCameraPosition2D().x - (0.22f * cameraController.getCameraWidth()) - 0.3f*keyHud.getRegionWidth(),
-//                            (float)cameraController.getCameraPosition2D().y+ cameraController.getCameraHeight()/2 - 60,
-//                    0.0f, 0.5f, 0.5f);
                 }
 
                 //draw body indicator
@@ -926,18 +902,8 @@ public class GameController implements Screen, ContactListener {
                             tempProjectedHud.x + 50 + (cameraController.getCameraPosition2D().x - tempProjectedOxygen.x),
                             tempProjectedOxygen.y,
                             0.0f, 0.35f, 0.35f);
-//                    canvas.draw(bodyHud, Color.WHITE, (float)bodyHud.getRegionWidth()/2, (float)bodyHud.getRegionHeight()/2,
-//                            (float)cameraController.getCameraPosition2D().x - (0.22f * cameraController.getCameraWidth()) + 0.3f*bodyHud.getRegionWidth(),
-//                            (float)cameraController.getCameraPosition2D().y+ cameraController.getCameraHeight()/2 - 60,
-//                            0.0f, 0.5f, 0.5f);
                 }
 
-//                canvas.drawText(
-//
-//                        "Oxygen Level: " + (int) diver.getOxygenLevel(),
-//                        displayFont,
-//                        cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + 50,
-//                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f + 50);
                 break;
             case WIN_GAME:
                 System.out.println("TEXT POS" +
