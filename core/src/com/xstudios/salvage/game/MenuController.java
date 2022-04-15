@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.Controllers;
 import com.xstudios.salvage.util.ScreenListener;
@@ -32,6 +34,9 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
     /** Background texture for start-up */
     private Texture background;
+
+    private ScrollPane scroll;
+    private Actor widget;
 
     /** Default budget for asset loader (do nothing but load 60 fps) */
     private static int DEFAULT_BUDGET = 15;
@@ -127,17 +132,35 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         select_level = null;
     }
 
-    public boolean pointer(int x, int y, int width, int height){
+//    public boolean pointer(int x, int y, int width, int height){
+//        int pX = Gdx.input.getX();
+//        int pY = Gdx.input.getY();
+//        // Flip to match graphics coordinates
+//        pY = canvas.getHeight() - pY;
+//
+//        float widthR = BUTTON_SCALE * scale * width/ 2.0f;
+//        float heightR = BUTTON_SCALE * scale * height/ 2.0f;
+//        float dist =
+//                (pX - x) * (pX - x) + (pY - y) * (pY - y);
+//        if (dist < widthR * heightR) {
+//            return true;
+//        }
+//        return false;
+//    }
+
+    public boolean pointer1(int x, int y, int width, int height, float scale) {
         int pX = Gdx.input.getX();
         int pY = Gdx.input.getY();
         // Flip to match graphics coordinates
-        pY = canvas.getHeight() - pY;
+        y = canvas.getHeight() - y;
+        float w = scale * width;
+        float h = scale * height;
 
-        float widthR = BUTTON_SCALE * scale * width/ 2.0f;
-        float heightR = BUTTON_SCALE * scale * height/ 2.0f;
-        float dist =
-                (pX - x) * (pX - x) + (pY - y) * (pY - y);
-        if (dist < widthR * heightR) {
+        if((x + w > pX && x - w < pX) && (y + h > pY && y - h < pY)){
+            System.out.println("pX: " + pX + " pY: " + pY);
+            System.out.println("x: " + x + " y: "+ y);
+            System.out.println("w: " + w + " h: " + h);
+            System.out.println("y1: " + y);
             return true;
         }
         return false;
@@ -162,8 +185,8 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
                 0,
                 BUTTON_SCALE * scale,
                 BUTTON_SCALE * scale);
-        Color tint = (pointer(centerX, centerY + centerY, select_level.getWidth() / 2,
-                select_level.getHeight() / 2) ? Color.GRAY : Color.WHITE);
+        Color tint = (pointer1(centerX, centerY + centerY, select_level.getWidth() / 2,
+                select_level.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 select_level,
                 tint,
@@ -174,9 +197,9 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
                 0,
                 BUTTON_SCALE * scale,
                 BUTTON_SCALE * scale);
-        tint = (pointer(centerX,
+        tint = (pointer1(centerX,
                 centerY + centerY/2, level_editor.getWidth() / 2,
-                level_editor.getHeight() / 2) ? Color.GRAY : Color.WHITE);
+                level_editor.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level_editor,
                 tint,
@@ -187,9 +210,9 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
                 0,
                 BUTTON_SCALE * scale,
                 BUTTON_SCALE * scale);
-        tint = (pointer(centerX,
+        tint = (pointer1(centerX,
                 centerY,quit.getWidth() / 2,
-                quit.getHeight() / 2) ? Color.GRAY : Color.WHITE);
+                quit.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 quit,
                 tint,
