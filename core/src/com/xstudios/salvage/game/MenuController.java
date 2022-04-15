@@ -344,26 +344,21 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         screenY = heightY - screenY;
 
         // TODO: Fix scaling
-        float widthR = BUTTON_SCALE * scale * select_level.getWidth() / 2.0f;
-        float heightR = BUTTON_SCALE * scale * select_level.getHeight() / 2.0f;
-        float dist =
-                (screenX - centerX) * (screenX - centerX) + (screenY - (2 * centerY)) * (screenY - (2 * centerY));
-        if (dist < widthR * heightR) {
+        if (pointer1(centerX, centerY + centerY, select_level.getWidth() / 2,
+                select_level.getHeight() / 2, BUTTON_SCALE * scale)) {
             pressState = 1;
         }
-        widthR = BUTTON_SCALE * scale * level_editor.getWidth() / 2.0f;
-        heightR = BUTTON_SCALE * scale * level_editor.getHeight() / 2.0f;
-        dist =
-                (screenX - centerX) * (screenX - centerX) + (screenY - (centerY + centerY/2)) * (screenY - (centerY + centerY/2));
-        if (dist < widthR * heightR) {
+
+        if (pointer1(centerX,
+                centerY + centerY/2, level_editor.getWidth() / 2,
+                level_editor.getHeight() / 2, BUTTON_SCALE * scale)) {
             pressState = 2;
             return false;
         }
-        widthR = BUTTON_SCALE * scale * quit.getWidth() / 2.0f;
-        heightR = BUTTON_SCALE * scale * quit.getHeight() / 2.0f;
-        dist =
-                (screenX - centerX) * (screenX - centerX) + (screenY - centerY) * (screenY - centerY);
-        if (dist < widthR * heightR) {
+
+        if (pointer1(centerX,
+                centerY,quit.getWidth() / 2,
+                quit.getHeight() / 2, BUTTON_SCALE * scale)) {
             pressState = 3;
             return false;
         }
