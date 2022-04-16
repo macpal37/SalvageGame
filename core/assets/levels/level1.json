@@ -500,10 +500,6 @@
         {
          "firstgid":1,
          "source":"tilesets\/old_ship_tileset.json"
-        }, 
-        {
-         "firstgid":101,
-         "source":"tilesets\/id_tiles.json"
         }],
  "tilewidth":100,
  "type":"map",
