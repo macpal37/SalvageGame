@@ -207,6 +207,8 @@ public class GameController implements Screen, ContactListener {
     private PhysicsController physicsController;
 
     private boolean reach_target = false;
+    private String[] levels = {"level1", "small_ship"};
+    private int level;
 
     private enum state {
         PLAYING,
@@ -236,7 +238,7 @@ public class GameController implements Screen, ContactListener {
     protected GameController() {
         this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
                 new Vector2(0, DEFAULT_GRAVITY));
-
+        level = 0;
     }
 
     /**
@@ -287,7 +289,6 @@ public class GameController implements Screen, ContactListener {
         rayHandler = new RayHandler(world);
         rayHandler.setAmbientLight(.015f);
 
-
         light = new PointLight(rayHandler, 100, Color.BLACK, 12, 0, 0);
         wallShine = new PointLight(rayHandler, 100, Color.BLUE, 6, 0, 0);
         wallShine.setSoft(true);
@@ -326,6 +327,10 @@ public class GameController implements Screen, ContactListener {
      */
     public boolean isActive() {
         return active;
+    }
+
+    public void setLevel(int l) {
+        level = l;
     }
 
     /**
@@ -483,8 +488,9 @@ public class GameController implements Screen, ContactListener {
      * Lays out the game geography.
      */
     private void populateLevel() {
-        ArrayList<GObject> objects = levelBuilder.createLevel("level" + Level);
 
+        ArrayList<GObject> objects = levelBuilder.createLevel(levels[level]);
+        
         int wallCounter = 0;
         int keyCounter = 0;
         int doorCounter = 0;
@@ -618,7 +624,7 @@ public class GameController implements Screen, ContactListener {
         if (diver.getLinearVelocity().len() < 15 && diver.isBoosting()) {
             diver.setBoosting(false);
         }
-        // set latching and boosting attributes
+        // set latching and boosting attributesf
         // latch onto obstacle when key pressed and close to an obstacle
         // stop latching and boost when key is let go
         // TODO: or when it is pressed again? Have had some issues with key presses being missed

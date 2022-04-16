@@ -7,11 +7,16 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.Controllers;
 import com.xstudios.salvage.util.ScreenListener;
 import com.xstudios.salvage.util.XBoxController;
+
+import java.awt.*;
 
 /**
  * Class that provides a loading screen for the state of the game.
@@ -28,52 +33,81 @@ import com.xstudios.salvage.util.XBoxController;
  */
 public class LevelSelectController implements Screen, InputProcessor, ControllerListener {
     // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
-    /** Background texture for start-up */
-    /** Play button to display when done */
-    /** Texture atlas to support a progress bar */
 
-    /** Default budget for asset loader (do nothing but load 60 fps) */
+    /**
+     * Default budget for asset loader (do nothing but load 60 fps)
+     */
     private static int DEFAULT_BUDGET = 15;
-    /** Standard window size (for scaling) */
-    private static int STANDARD_WIDTH  = 800;
-    /** Standard window height (for scaling) */
+    /**
+     * Standard window size (for scaling)
+     */
+    private static int STANDARD_WIDTH = 800;
+    /**
+     * Standard window height (for scaling)
+     */
     private static int STANDARD_HEIGHT = 700;
-    /** Ratio of the bar width to the screen */
-    private static float BAR_WIDTH_RATIO  = 0.66f;
-    /** Ration of the bar height to the screen */
+    /**
+     * Ratio of the bar width to the screen
+     */
+    private static float BAR_WIDTH_RATIO = 0.66f;
+    /**
+     * Ration of the bar height to the screen
+     */
     private static float BAR_HEIGHT_RATIO = 0.25f;
-    /** Height of the progress bar */
-    private static float BUTTON_SCALE  = 0.75f;
+    /**
+     * Height of the progress bar
+     */
+    private static float BUTTON_SCALE = 0.75f;
 
-    /** Reference to GameCanvas created by the root */
+    /**
+     * Reference to GameCanvas created by the root
+     */
     private GameCanvas canvas;
-    /** Listener that will update the player mode when we are done */
+    /**
+     * Listener that will update the player mode when we are done
+     */
     private ScreenListener listener;
 
-    /** Background Texture */
+    /**
+     * Background Texture
+     */
     private Texture main_menu;
     private Texture background;
     private Texture level;
     private Texture line;
 
-    /** The width of the progress bar */
+    /**
+     * The width of the progress bar
+     */
     private int width;
-    /** The y-coordinate of the center of the progress bar */
+    /**
+     * The y-coordinate of the center of the progress bar
+     */
     private int centerY;
-    /** The x-coordinate of the center of the progress bar */
+    /**
+     * The x-coordinate of the center of the progress bar
+     */
     private int centerX;
-    /** The height of the canvas window (necessary since sprite origin != screen origin) */
+    /**
+     * The height of the canvas window (necessary since sprite origin != screen origin)
+     */
     private int heightY;
-    /** Scaling factor for when the student changes the resolution. */
+    /**
+     * Scaling factor for when the student changes the resolution.
+     */
     private float scale;
 
-    /** The current state of the play button */
+    /**
+     * The current state of the play button
+     */
     private int pressState;
 
-
-    /** Whether or not this player mode is still active */
+    /**
+     * Whether or not this player mode is still active
+     */
     private boolean active;
-
+    private ShapeRenderer shape;
+    private CameraController camera;
     /**
      * Returns true if all assets are loaded and the player is ready to go.
      *
@@ -84,25 +118,30 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         // Load the next two images immediately.
 
         pressState = 0;
-
         Gdx.input.setInputProcessor(this);
-
         // Let ANY connected controller start the game.
         for (XBoxController controller : Controllers.get().getXBoxControllers()) {
-            controller.addListener( this );
+            controller.addListener(this);
         }
+        shape = new ShapeRenderer();
     }
 
-    public void setActive(){
+    public void setActive() {
         active = true;
     }
 
-    public void setCanvas(GameCanvas canvas){
+    public void setCanvas(GameCanvas canvas) {
         this.canvas = canvas;
     }
 
+
+    public void setCameraController(CameraController cameraController, int w, int h) {
+        this.camera = cameraController;
+    }
+
+
     public void gatherAssets(AssetDirectory directory) {
-        background =  directory.getEntry( "background:level_select", Texture.class );
+        background = directory.getEntry("background:level_select", Texture.class);
         main_menu = directory.getEntry("main_menu", Texture.class);
         level = directory.getEntry("level", Texture.class);
         line = directory.getEntry("line", Texture.class);
@@ -119,21 +158,41 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         line = null;
     }
 
-    public boolean pointer(int x, int y, int width, int height){
+//    public boolean pointer(int x, int y, int width, int height) {
+//        int pX = Gdx.input.getX();
+//        int pY = Gdx.input.getY();
+//        // Flip to match graphics coordinates
+//        pY = canvas.getHeight() - pY;
+//
+//        float widthR = BUTTON_SCALE * scale * width / 2.0f;
+//        float heightR = BUTTON_SCALE * scale * height / 2.0f;
+//        float dist =
+//                (pX - x) * (pX - x) + (pY - y) * (pY - y);
+//        if (dist < widthR * heightR) {
+//            return true;
+//        }
+//        return false;
+//    }
+
+    public boolean pointer1(int x, int y, int width, int height, float scale) {
         int pX = Gdx.input.getX();
         int pY = Gdx.input.getY();
         // Flip to match graphics coordinates
-        pY = canvas.getHeight() - pY;
+        y = canvas.getHeight() - y;
+        float y1 = (float)y - (int)(360 - camera.getCameraPosition2D().y);
+        float w = scale * width;
+        float h = scale * height;
 
-        float widthR = BUTTON_SCALE * scale * width/ 2.0f;
-        float heightR = BUTTON_SCALE * scale * height/ 2.0f;
-        float dist =
-                (pX - x) * (pX - x) + (pY - y) * (pY - y);
-        if (dist < widthR * heightR) {
+        if((x + w > pX && x - w < pX) && (y1 + h > pY && y1 - h < pY)){
+            System.out.println("pX: " + pX + " pY: " + pY);
+            System.out.println("x: " + x + " y: "+ y);
+            System.out.println("w: " + w + " h: " + h);
+            System.out.println("y1: " + y1);
             return true;
         }
         return false;
     }
+
     /**
      * Draw the status of this player mode.
      *
@@ -142,20 +201,22 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * prefer this in lecture.
      */
     private void draw() {
+        canvas.clear();
         canvas.begin();
-        canvas.draw(background, 0, 0);
-        Color tint = (pointer(centerX - centerX/2 - centerX/5, 3 * centerY + centerY/2 + centerY/5, main_menu.getWidth() / 2,
-                main_menu.getHeight() / 2) ? Color.GRAY : Color.WHITE);
+        canvas.draw(background, Color.WHITE, 0, -1 * (background.getWidth()/2 + background.getWidth()/5), canvas.getWidth(), background.getWidth());
+
+        Color tint = (pointer1(15,canvas.getHeight() * 7/8, main_menu.getWidth(),
+                main_menu.getHeight(), 0.7f) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 main_menu,
                 tint,
-                main_menu.getWidth() / 2,
-                main_menu.getHeight() / 2,
-                centerX - centerX/2 - centerX/5,
-                3 * centerY + centerY/2 + centerY/5,
                 0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
+                0,
+                15,
+                canvas.getHeight() * 7/8,
+                0,
+                0.7f,
+                0.7f);
         canvas.draw(
                 line,
                 Color.WHITE,
@@ -176,9 +237,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 0,
                 -1,
                 1);
-        tint = (pointer(centerX/3,
-                2 * centerY, level.getWidth() / 2,
-                level.getHeight() / 2) ? Color.GRAY : Color.WHITE);
+        //testing
+        tint = (pointer1(centerX/3, 2 * centerY, level.getWidth() / 2,
+                level.getHeight() / 2, 1) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level,
                 tint,
@@ -189,9 +250,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 0,
                 1,
                 1);
-        tint = (pointer(centerX,
+        tint = (pointer1(centerX,
                 centerY, level.getWidth() / 2,
-                level.getHeight() / 2) ? Color.GRAY : Color.WHITE);
+                level.getHeight() / 2, 1) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level,
                 tint,
@@ -202,9 +263,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 0,
                 1,
                 1);
-        tint = (pointer(centerX + centerX/2 + centerX/6,
+        tint = (pointer1(centerX + centerX/2 + centerX/6,
                 2 * centerY + centerY/2, level.getWidth() / 2,
-                level.getHeight() / 2) ? Color.GRAY : Color.WHITE);
+                level.getHeight() / 2, 1) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level,
                 tint,
@@ -232,17 +293,20 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     public void render(float delta) {
         if (active) {
             draw();
+            camera.render();
 
-            // We are are ready, notify our listener
+            // We are ready, notify our listener
             if (pressState == 4 && listener != null) {
+                camera.setCameraPosition(640, 360);
+                camera.render();
                 listener.exitScreen(this, 0);
             }
             if (pressState == 5 && listener != null) {
                 listener.exitScreen(this, 1);
             }
-//            if (pressState == 6 && listener != null) {
-//                listener.exitScreen(this, 2);
-//            }
+            if (pressState == 6 && listener != null) {
+                listener.exitScreen(this, 2);
+            }
         }
     }
 
@@ -328,26 +392,22 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        System.out.println("clicked " + screenX + " " + screenY);
         if (pressState >= 4) {
             return true;
         }
-        // Flip to match graphics coordinates
-        screenY = heightY - screenY;
-
-        float widthR = BUTTON_SCALE * scale * main_menu.getWidth() / 2.0f;
-        float heightR = BUTTON_SCALE * scale * main_menu.getHeight() / 2.0f;
-        float dist =
-                (screenX - (centerX - centerX/2 - centerX/5)) * (screenX - (centerX - centerX/2 - centerX/5)) +
-                        (screenY - (3 * centerY + centerY/2 + centerY/5)) * (screenY - (3 * centerY + centerY/2 + centerY/5));
-        if (dist < widthR * heightR) {
+        if (pointer1(15,canvas.getHeight() * 7/8, main_menu.getWidth(),
+                main_menu.getHeight(), 0.7f)) {
             pressState = 1;
         }
-        widthR = BUTTON_SCALE * scale * level.getWidth() / 2.0f;
-        heightR = BUTTON_SCALE * scale * level.getHeight() / 2.0f;
-        dist = (screenX - centerX/3) * (screenX - centerX/3) +
-                        (screenY - 2 * centerY) * (screenY - 2 * centerY);
-        if (dist < widthR * heightR) {
+        if (pointer1(centerX/3, 2 * centerY, level.getWidth() / 2,
+                level.getHeight() / 2, 1)) {
             pressState = 2;
+        }
+        if (pointer1(centerX,
+                centerY, level.getWidth() / 2,
+                level.getHeight() / 2, 1)) {
+            pressState = 3;
         }
 
         return false;
@@ -468,6 +528,14 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @return whether to hand the event to other listeners.
      */
     public boolean scrolled(float dx, float dy) {
+        float y = camera.getCameraPosition2D().y;
+        if((y + dy * 40.0f  > canvas.getHeight()/2  && dy > 0) || (y + dy * 40.0f < (-1 * (background.getHeight()/(2.8)))  && dy < 0)) {
+            camera.setCameraPosition(640, camera.getCameraPosition2D().y);
+        }
+        else
+        camera.setCameraPosition(640, camera.getCameraPosition2D().y + dy * 40.0f);
+        System.out.println(camera.getCameraPosition2D().x + " " + camera.getCameraPosition2D().y);
+        System.out.println("scroll");
         return true;
     }
 

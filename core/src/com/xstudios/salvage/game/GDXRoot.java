@@ -22,6 +22,8 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	private CameraController cameraController;
 
+	private CameraController levelController;
+
 	private LevelSelectController level_select_controller;
 
 	/**
@@ -41,7 +43,10 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		game_over_controller = new GameOverController(controller.getWorldBounds());
 		menu_controller = new MenuController();
+
+		levelController = new CameraController(100, 50);
 		level_select_controller = new LevelSelectController();
+		level_select_controller.setCameraController(cameraController, canvas.getWidth(), canvas.getHeight());
 
 		loading.setScreenListener(this);
 		controller.setScreenListener(this);
@@ -150,11 +155,11 @@ public class GDXRoot extends Game implements ScreenListener {
 				menu_controller.setActive();
 				setScreen(menu_controller);
 			}
-			if(exitCode == 1){
+			else{
+				controller.setLevel(exitCode - 1);
 				controller.gatherAssets(directory);
 				controller.setCanvas(canvas);
 				controller.reset();
-
 				setScreen(controller);
 			}
 		}
