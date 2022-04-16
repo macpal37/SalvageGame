@@ -529,11 +529,11 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      */
     public boolean scrolled(float dx, float dy) {
         float y = camera.getCameraPosition2D().y;
-        if((y + dy * 50.0f  > canvas.getHeight()/2  && dy > 0) || (y + dy * 50.0f < (-1 * (background.getHeight()/(2.8)))  && dy < 0)) {
+        if((y + dy * 40.0f  > canvas.getHeight()/2  && dy > 0) || (y + dy * 40.0f < (-1 * (background.getHeight()/(2.8)))  && dy < 0)) {
             camera.setCameraPosition(640, camera.getCameraPosition2D().y);
         }
         else
-        camera.setCameraPosition(640, camera.getCameraPosition2D().y + dy * 50.0f);
+        camera.setCameraPosition(640, camera.getCameraPosition2D().y + dy * 40.0f);
         System.out.println(camera.getCameraPosition2D().x + " " + camera.getCameraPosition2D().y);
         System.out.println("scroll");
         return true;
