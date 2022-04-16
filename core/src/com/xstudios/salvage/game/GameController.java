@@ -207,7 +207,10 @@ public class GameController implements Screen, ContactListener {
     private PhysicsController physicsController;
 
     private boolean reach_target = false;
-    private String[] levels = {"level1", "small_ship"};
+    /**
+     * ================================LEVELS=================================
+     */
+    private String[] levels = {"level0", "level1", "level2"};
     private int level;
 
     private enum state {
@@ -490,7 +493,7 @@ public class GameController implements Screen, ContactListener {
     private void populateLevel() {
 
         ArrayList<GObject> objects = levelBuilder.createLevel(levels[level]);
-        
+        pause = false;
         int wallCounter = 0;
         int keyCounter = 0;
         int doorCounter = 0;
@@ -675,7 +678,7 @@ public class GameController implements Screen, ContactListener {
         audioController.update(diver.getOxygenLevel());
 
 
-        if (diver.getBody() != null) {
+        if (diver.getBody() != null && !pause) {
             cameraController.setCameraPosition(
                     diver.getX() * diver.getDrawScale().x, diver.getY() * diver.getDrawScale().y);
 
@@ -691,6 +694,12 @@ public class GameController implements Screen, ContactListener {
 
         cameraController.render();
     }
+
+    public void setPause(boolean pause) {
+        this.pause = pause;
+    }
+
+    public boolean pause;
 
     /**
      * Returns whether to process the update loop
@@ -713,6 +722,12 @@ public class GameController implements Screen, ContactListener {
         if (input.didDebug()) {
             debug = !debug;
             System.out.println("Debug: " + debug);
+        }
+        if (input.didMenu()) {
+            cameraController.setCameraPosition(640.0f, 360.0f);
+            listener.exitScreen(this, 2);
+            pause = true;
+            System.out.println("MENU OPEN!: " + debug);
         }
 
         // Handle resets

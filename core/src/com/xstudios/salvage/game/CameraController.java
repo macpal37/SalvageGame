@@ -59,6 +59,7 @@ public class CameraController {
 
     public void setBounds(int x, int y, int width, int height) {
         bounds = new Rectangle(x - width / 2, y - height / 2, width / 2, height / 2);
+        setCameraPosition(0, 0);
     }
 
     public void setCameraSpeed(float speed) {
@@ -84,17 +85,6 @@ public class CameraController {
 
     public void render() {
         camera.update();
-        InputController input = InputController.getInstance();
-
-//           if(input.getHorizontal()!=0)
-//        {
-//
-//            translate(input.getHorizontal()*cameraSpeed,0);
-//        }
-//            if(input.getVertical()!=0)
-//            {
-//                translate(0,input.getVertical()*cameraSpeed);
-//            }
     }
 
     public void setCameraPosition(Vector2 newPos) {

@@ -140,12 +140,14 @@ public class LevelBuilder {
                     x = round(o.getFloat("x")) / div;
                     y = round(o.getFloat("y")) / div;
                     verticies.clear();
-                    for (JsonValue point : o.get("polygon")) {
-                        float vx = (round(point.getFloat("x")) / div) + x;
-                        float vy = tileSize / div - ((round(point.getFloat("y")) / div) + y);
+                    if (o.get("polygon") != null) {
+                        for (JsonValue point : o.get("polygon")) {
+                            float vx = (round(point.getFloat("x")) / div) + x;
+                            float vy = tileSize / div - ((round(point.getFloat("y")) / div) + y);
 
-                        verticies.add(vx);
-                        verticies.add(vy);
+                            verticies.add(vx);
+                            verticies.add(vy);
+                        }
                     }
                 }
 

@@ -20,12 +20,12 @@ import java.awt.*;
 
 /**
  * Class that provides a loading screen for the state of the game.
- *
+ * <p>
  * You still DO NOT need to understand this class for this lab.  We will talk about this
  * class much later in the course.  This class provides a basic template for a loading
  * screen to be used at the start of the game or between levels.  Feel free to adopt
  * this to your needs.
- *
+ * <p>
  * You will note that this mode has some textures that are not loaded by the AssetManager.
  * You are never required to load through the AssetManager.  But doing this will block
  * the application.  That is why we try to have as few resources as possible for this
@@ -108,6 +108,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     private boolean active;
     private ShapeRenderer shape;
     private CameraController camera;
+
     /**
      * Returns true if all assets are loaded and the player is ready to go.
      *
@@ -137,6 +138,11 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     public void setCameraController(CameraController cameraController, int w, int h) {
         this.camera = cameraController;
+        cameraController.setBounds(0, 0, 5400 * 2 / 5, 3035 * 2 / 5);
+    }
+
+    public void readjustCamera() {
+        camera.setCameraPosition(640.0f, 360.0f);
     }
 
 
@@ -179,15 +185,15 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         int pY = Gdx.input.getY();
         // Flip to match graphics coordinates
         y = canvas.getHeight() - y;
-        float y1 = (float)y - (int)(360 - camera.getCameraPosition2D().y);
+        float y1 = (float) y - (int) (360 - camera.getCameraPosition2D().y);
         float w = scale * width;
         float h = scale * height;
 
-        if((x + w > pX && x - w < pX) && (y1 + h > pY && y1 - h < pY)){
-            System.out.println("pX: " + pX + " pY: " + pY);
-            System.out.println("x: " + x + " y: "+ y);
-            System.out.println("w: " + w + " h: " + h);
-            System.out.println("y1: " + y1);
+        if ((x + w > pX && x - w < pX) && (y1 + h > pY && y1 - h < pY)) {
+//            System.out.println("pX: " + pX + " pY: " + pY);
+//            System.out.println("x: " + x + " y: "+ y);
+//            System.out.println("w: " + w + " h: " + h);
+//            System.out.println("y1: " + y1);
             return true;
         }
         return false;
@@ -195,7 +201,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     /**
      * Draw the status of this player mode.
-     *
+     * <p>
      * We prefer to separate update and draw from one another as separate methods, instead
      * of using the single render() method that LibGDX does.  We will talk about why we
      * prefer this in lecture.
@@ -203,9 +209,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     private void draw() {
         canvas.clear();
         canvas.begin();
-        canvas.draw(background, Color.WHITE, 0, -1 * (background.getWidth()/2 + background.getWidth()/5), canvas.getWidth(), background.getWidth());
+        canvas.draw(background, Color.WHITE, 0, -1 * (background.getWidth() / 2 + background.getWidth() / 5), canvas.getWidth(), background.getWidth());
 
-        Color tint = (pointer1(15,canvas.getHeight() * 7/8, main_menu.getWidth(),
+        Color tint = (pointer1(15, canvas.getHeight() * 7 / 8, main_menu.getWidth(),
                 main_menu.getHeight(), 0.7f) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 main_menu,
@@ -213,7 +219,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 0,
                 0,
                 15,
-                canvas.getHeight() * 7/8,
+                canvas.getHeight() * 7 / 8,
                 0,
                 0.7f,
                 0.7f);
@@ -222,7 +228,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 Color.WHITE,
                 level.getWidth() / 2,
                 level.getHeight() / 2,
-                centerX/3 + centerX/4,
+                centerX / 3 + centerX / 4,
                 2 * centerY,
                 0,
                 1,
@@ -232,20 +238,20 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 Color.WHITE,
                 level.getWidth() / 2,
                 level.getHeight() / 2,
-                centerX + centerX/2,
-                2 * centerY + centerY/3,
+                centerX + centerX / 2,
+                2 * centerY + centerY / 3,
                 0,
                 -1,
                 1);
         //testing
-        tint = (pointer1(centerX/3, 2 * centerY, level.getWidth() / 2,
+        tint = (pointer1(centerX / 3, 2 * centerY, level.getWidth() / 2,
                 level.getHeight() / 2, 1) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level,
                 tint,
                 level.getWidth() / 2,
                 level.getHeight() / 2,
-                centerX/3,
+                centerX / 3,
                 2 * centerY,
                 0,
                 1,
@@ -263,16 +269,16 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 0,
                 1,
                 1);
-        tint = (pointer1(centerX + centerX/2 + centerX/6,
-                2 * centerY + centerY/2, level.getWidth() / 2,
+        tint = (pointer1(centerX + centerX / 2 + centerX / 6,
+                2 * centerY + centerY / 2, level.getWidth() / 2,
                 level.getHeight() / 2, 1) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level,
                 tint,
                 level.getWidth() / 2,
                 level.getHeight() / 2,
-                centerX + centerX/2 + centerX/6,
-                2 * centerY + centerY/2,
+                centerX + centerX / 2 + centerX / 6,
+                2 * centerY + centerY / 2,
                 0,
                 1,
                 1);
@@ -282,37 +288,42 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
 
     // ADDITIONAL SCREEN METHODS
+
     /**
      * Called when the Screen should render itself.
-     *
+     * <p>
      * We defer to the other methods update() and draw().  However, it is VERY important
      * that we only quit AFTER a draw.
      *
      * @param delta Number of seconds since last animation frame
      */
     public void render(float delta) {
+
         if (active) {
             draw();
             camera.render();
 
             // We are ready, notify our listener
-            if (pressState == 4 && listener != null) {
+            if (pressState == 101 && listener != null) {
                 camera.setCameraPosition(640, 360);
                 camera.render();
                 listener.exitScreen(this, 0);
             }
-            if (pressState == 5 && listener != null) {
+            if (pressState == 102 && listener != null) {
                 listener.exitScreen(this, 1);
             }
-            if (pressState == 6 && listener != null) {
+            if (pressState == 103 && listener != null) {
                 listener.exitScreen(this, 2);
+            }
+            if (pressState == 104 && listener != null) {
+                listener.exitScreen(this, 3);
             }
         }
     }
 
     /**
      * Called when the Screen is resized.
-     *
+     * <p>
      * This can happen at any point during a non-paused state but will never happen
      * before a call to show().
      *
@@ -321,19 +332,19 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      */
     public void resize(int width, int height) {
         // Compute the drawing scale
-        float sx = ((float)width)/STANDARD_WIDTH;
-        float sy = ((float)height)/STANDARD_HEIGHT;
+        float sx = ((float) width) / STANDARD_WIDTH;
+        float sy = ((float) height) / STANDARD_HEIGHT;
         scale = (sx < sy ? sx : sy);
 
-        this.width = (int)(BAR_WIDTH_RATIO*width);
-        centerY = (int)(BAR_HEIGHT_RATIO*height);
-        centerX = width/2;
+        this.width = (int) (BAR_WIDTH_RATIO * width);
+        centerY = (int) (BAR_HEIGHT_RATIO * height);
+        centerX = width / 2;
         heightY = height;
     }
 
     /**
      * Called when the Screen is paused.
-     *
+     * <p>
      * This is usually when it's not active or visible on screen. An Application is
      * also paused before it is destroyed.
      */
@@ -344,7 +355,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     /**
      * Called when the Screen is resumed from a paused state.
-     *
+     * <p>
      * This is usually when it regains focus.
      */
     public void resume() {
@@ -371,7 +382,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     /**
      * Sets the ScreenListener for this mode
-     *
+     * <p>
      * The ScreenListener will respond to requests to quit.
      */
     public void setScreenListener(ScreenListener listener) {
@@ -379,9 +390,10 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     }
 
     // PROCESSING PLAYER INPUT
+
     /**
      * Called when the screen was touched or a mouse button was pressed.
-     *
+     * <p>
      * This method checks to see if the play button is available and if the click
      * is in the bounds of the play button.  If so, it signals the that the button
      * has been pressed and is currently down. Any mouse button is accepted.
@@ -393,14 +405,14 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         System.out.println("clicked " + screenX + " " + screenY);
-        if (pressState >= 4) {
+        if (pressState >= 5) {
             return true;
         }
-        if (pointer1(15,canvas.getHeight() * 7/8, main_menu.getWidth(),
+        if (pointer1(15, canvas.getHeight() * 7 / 8, main_menu.getWidth(),
                 main_menu.getHeight(), 0.7f)) {
             pressState = 1;
         }
-        if (pointer1(centerX/3, 2 * centerY, level.getWidth() / 2,
+        if (pointer1(centerX / 3, 2 * centerY, level.getWidth() / 2,
                 level.getHeight() / 2, 1)) {
             pressState = 2;
         }
@@ -409,6 +421,10 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 level.getHeight() / 2, 1)) {
             pressState = 3;
         }
+        if (pointer1(935, 378, level.getWidth() / 2,
+                level.getHeight() / 2, 1)) {
+            pressState = 4;
+        }
 
         return false;
     }
@@ -416,7 +432,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     /**
      * Called when a finger was lifted or a mouse button was released.
-     *
+     * <p>
      * This method checks to see if the play button is currently pressed down. If so,
      * it signals the that the player is ready to go.
      *
@@ -427,7 +443,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (pressState >= 1) {
-            pressState = pressState + 3;
+            pressState = pressState + 100;
             return false;
         }
         return true;
@@ -435,7 +451,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     /**
      * Called when a button on the Controller was pressed.
-     *
+     * <p>
      * The buttonCode is controller specific. This listener only supports the start
      * button on an X-Box controller.  This outcome of this method is identical to
      * pressing (but not releasing) the play button.
@@ -444,10 +460,10 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
-    public boolean buttonDown (Controller controller, int buttonCode) {
+    public boolean buttonDown(Controller controller, int buttonCode) {
         if (pressState == 0) {
             ControllerMapping mapping = controller.getMapping();
-            if (mapping != null && buttonCode == mapping.buttonStart ) {
+            if (mapping != null && buttonCode == mapping.buttonStart) {
                 pressState = 1;
                 return false;
             }
@@ -457,7 +473,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     /**
      * Called when a button on the Controller was released.
-     *
+     * <p>
      * The buttonCode is controller specific. This listener only supports the start
      * button on an X-Box controller.  This outcome of this method is identical to
      * releasing the the play button after pressing it.
@@ -466,10 +482,10 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
-    public boolean buttonUp (Controller controller, int buttonCode) {
+    public boolean buttonUp(Controller controller, int buttonCode) {
         if (pressState == 1) {
             ControllerMapping mapping = controller.getMapping();
-            if (mapping != null && buttonCode == mapping.buttonStart ) {
+            if (mapping != null && buttonCode == mapping.buttonStart) {
                 pressState = 2;
                 return false;
             }
@@ -524,16 +540,14 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      *
      * @param dx the amount of horizontal scroll
      * @param dy the amount of vertical scroll
-     *
      * @return whether to hand the event to other listeners.
      */
     public boolean scrolled(float dx, float dy) {
         float y = camera.getCameraPosition2D().y;
-        if((y + dy * 40.0f  > canvas.getHeight()/2  && dy > 0) || (y + dy * 40.0f < (-1 * (background.getHeight()/(2.8)))  && dy < 0)) {
+        if ((y + dy * 40.0f > canvas.getHeight() / 2 && dy > 0) || (y + dy * 40.0f < (-1 * (background.getHeight() / (2.8))) && dy < 0)) {
             camera.setCameraPosition(640, camera.getCameraPosition2D().y);
-        }
-        else
-        camera.setCameraPosition(640, camera.getCameraPosition2D().y + dy * 40.0f);
+        } else
+            camera.setCameraPosition(640, camera.getCameraPosition2D().y + dy * 40.0f);
         System.out.println(camera.getCameraPosition2D().x + " " + camera.getCameraPosition2D().y);
         System.out.println("scroll");
         return true;
@@ -558,26 +572,28 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      *
      * @param controller The game controller
      */
-    public void connected (Controller controller) {}
+    public void connected(Controller controller) {
+    }
 
     /**
      * Called when a controller is disconnected. (UNSUPPORTED)
      *
      * @param controller The game controller
      */
-    public void disconnected (Controller controller) {}
+    public void disconnected(Controller controller) {
+    }
 
     /**
      * Called when an axis on the Controller moved. (UNSUPPORTED)
-     *
+     * <p>
      * The axisCode is controller specific. The axis value is in the range [-1, 1].
      *
      * @param controller The game controller
-     * @param axisCode 	The axis moved
-     * @param value 	The axis value, -1 to 1
+     * @param axisCode   The axis moved
+     * @param value      The axis value, -1 to 1
      * @return whether to hand the event to other listeners.
      */
-    public boolean axisMoved (Controller controller, int axisCode, float value) {
+    public boolean axisMoved(Controller controller, int axisCode, float value) {
         return true;
     }
 

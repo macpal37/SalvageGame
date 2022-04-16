@@ -84,6 +84,14 @@ public class InputController {
     private boolean debugPressed;
     private boolean debugPrevious;
 
+
+    /**
+     * Whether the debug toggle was pressed.
+     */
+    private boolean menuPressed;
+    private boolean menuPrevious;
+
+
     /**
      * How much did we move horizontally?
      */
@@ -158,6 +166,15 @@ public class InputController {
     }
 
     /**
+     * Returns true if the player wants to switch to menu.
+     *
+     * @return true if the player wants to switch to menu.
+     */
+    public boolean didMenu() {
+        return menuPressed && !menuPrevious;
+    }
+
+    /**
      * Returns true if the player wants to ping the body.
      *
      * @return true if the player wants to ping the body.
@@ -209,6 +226,7 @@ public class InputController {
         // Helps us ignore buttons that are held down
         resetPrevious = resetPressed;
         debugPrevious = debugPressed;
+        menuPrevious = menuPressed;
         carryingObjectPrevious = carryingObject;
         pingPrevious = pingPressed;
         carryingBodyPrevious = carryingBody;
@@ -255,6 +273,7 @@ public class InputController {
         // Give priority to gamepad results
         resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.O));
         debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
+        menuPressed = (secondary && menuPressed) || (Gdx.input.isKeyPressed(Keys.ESCAPE));
 
         carryingObject = (secondary && carryingObject) || Gdx.input.isKeyPressed(Input.Keys.Q);
 
