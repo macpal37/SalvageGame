@@ -266,7 +266,7 @@ public class DiverModel extends GameObject {
         touchingLeft = new ArrayList<>();
         // Initialize
         faceRight = true;
-        setDimension(1, 1);
+        setDimension(1.2f, 0.5f);
         setMass(1);
         resetMass();
         setName("diver");
