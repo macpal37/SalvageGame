@@ -26,11 +26,9 @@ public class Plant extends GameObject {
 
     }
 
-    private final int DIVER_IMG_FLAT = 6;
-
     public void setFilmStrip(FilmStrip value) {
         dustSprite = value;
-        dustSprite.setFrame(DIVER_IMG_FLAT);
+        dustSprite.setFrame(0);
     }
 
     @Override

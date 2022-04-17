@@ -140,12 +140,14 @@ public class LevelBuilder {
                     x = round(o.getFloat("x")) / div;
                     y = round(o.getFloat("y")) / div;
                     verticies.clear();
-                    for (JsonValue point : o.get("polygon")) {
-                        float vx = (round(point.getFloat("x")) / div) + x;
-                        float vy = tileSize / div - ((round(point.getFloat("y")) / div) + y);
+                    if (o.get("polygon") != null) {
+                        for (JsonValue point : o.get("polygon")) {
+                            float vx = (round(point.getFloat("x")) / div) + x;
+                            float vy = tileSize / div - ((round(point.getFloat("y")) / div) + y);
 
-                        verticies.add(vx);
-                        verticies.add(vy);
+                            verticies.add(vx);
+                            verticies.add(vy);
+                        }
                     }
                 }
 
@@ -153,7 +155,6 @@ public class LevelBuilder {
                 int index = 0;
                 for (int i = 0; i < verticies.size(); i++)
                     verts[index++] = verticies.get(i);
-                System.out.println(Arrays.toString(verts));
                 tiles[tt] = (new Tile(x, y, tileSize / div,
                         tileSize / div, verts, tileType
                 ));
@@ -177,13 +178,13 @@ public class LevelBuilder {
     }
 
     public ArrayList<GObject> createLevel(String levelFileName) {
-        System.out.println("Creating Level");
+
         ArrayList<GObject> gameObjects = new ArrayList<GObject>();
 
         JsonValue map = jsonReader.parse(Gdx.files.internal("levels/" + levelFileName + ".json"));
 
         String tileSetFileName = map.get("tilesets").get(0).getString("source");
-        System.out.println("FILENAME: " + tileSetFileName);
+
 
         JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/" + tileSetFileName));
         JsonValue constants = directory.getEntry("models:constants", JsonValue.class);
@@ -285,10 +286,12 @@ public class LevelBuilder {
 
                     float sx = obj.getFloat("x") / div;
                     float sy = (height * tileSize - obj.getFloat("y")) / div;
-                    float objectWidth = obj.getFloat("width") / div;
-                    float objectHeight = obj.getFloat("height") / div;
-                    float widthScale = (objectWidth * div) / tileSize;
-                    float heightScale = (objectHeight * div) / tileSize;
+
+                    float objectWidth = obj.getFloat("width");
+                    float objectHeight = obj.getFloat("height");
+
+                    float widthScale = (objectWidth) / tileSize;
+                    float heightScale = (objectHeight) / tileSize;
 
                     int index = 0;
                     switch (tile.tileType) {
@@ -297,12 +300,11 @@ public class LevelBuilder {
                             gameObjects.add(new Wall(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0));
                             break;
                         case Diver:
-                            System.out.println("Diver Made!");
-                            System.out.println("X: " + sx + " Y: " + sy);
+
                             gameObjects.add(new DiverModel(sx, sy, constants.get("diver")));
                             break;
                         case DeadBody:
-                            System.out.println("Pass: Body");
+
                             gameObjects.add(new DeadBodyModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("dead_body")));
                             break;
                         case Item:
@@ -318,7 +320,8 @@ public class LevelBuilder {
 
                             Door door = new Door(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
 
-                            door.setDoorScale(obj.getFloat("width"), obj.getFloat("height"));
+
+                            door.setDoorScale((40f / div) * (widthScale / 2), (40f / div) * (heightScale / 4f));
                             if (obj.get("properties") != null)
                                 for (JsonValue prop : obj.get("properties")) {
                                     if (prop.getString("name").equals("id"))
@@ -335,7 +338,7 @@ public class LevelBuilder {
 
                         case Goal:
 
-                            gameObjects.add(new GoalDoor(sx, sy + objectHeight / 2, objectWidth, objectHeight));
+                            gameObjects.add(new GoalDoor(sx, sy + objectHeight / (div * 2), objectWidth / div, objectHeight / div));
                             break;
                         case Block:
                             Wall block = new Wall(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
@@ -356,7 +359,7 @@ public class LevelBuilder {
             }
         }
 
-        System.out.println("ALL PASS!");
+
         return gameObjects;
     }
 

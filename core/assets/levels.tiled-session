@@ -114,18 +114,18 @@
         },
         "levels/level0.json": {
             "scale": 0.467875,
-            "selectedLayer": 2,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 1045.1509484370827,
-                "y": 483.0349986641731
+                "x": 447.76916911568264,
+                "y": 406.0913705583757
             }
         },
         "levels/level1.json": {
             "scale": 0.33,
-            "selectedLayer": 0,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 1230.3030303030303,
-                "y": 996.969696969697
+                "x": 437.87878787878793,
+                "y": 1093.939393939394
             }
         },
         "levels/level2.json": {

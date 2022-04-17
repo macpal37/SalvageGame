@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.Controllers;
 import com.xstudios.salvage.util.ScreenListener;
@@ -17,12 +19,12 @@ import com.xstudios.salvage.util.XBoxController;
 
 /**
  * Class that provides a loading screen for the state of the game.
- *
+ * <p>
  * You still DO NOT need to understand this class for this lab.  We will talk about this
  * class much later in the course.  This class provides a basic template for a loading
  * screen to be used at the start of the game or between levels.  Feel free to adopt
  * this to your needs.
- *
+ * <p>
  * You will note that this mode has some textures that are not loaded by the AssetManager.
  * You are never required to load through the AssetManager.  But doing this will block
  * the application.  That is why we try to have as few resources as possible for this
@@ -30,49 +32,86 @@ import com.xstudios.salvage.util.XBoxController;
  */
 public class MenuController implements Screen, InputProcessor, ControllerListener {
     // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
-    /** Background texture for start-up */
+    /**
+     * Background texture for start-up
+     */
     private Texture background;
 
-    /** Default budget for asset loader (do nothing but load 60 fps) */
-    private static int DEFAULT_BUDGET = 15;
-    /** Standard window size (for scaling) */
-    private static int STANDARD_WIDTH  = 800;
-    /** Standard window height (for scaling) */
-    private static int STANDARD_HEIGHT = 700;
-    /** Ratio of the bar width to the screen */
-    private static float BAR_WIDTH_RATIO  = 0.66f;
-    /** Ration of the bar height to the screen */
-    private static float BAR_HEIGHT_RATIO = 0.25f;
-    /** Height of the progress bar */
-    private static float BUTTON_SCALE  = 0.75f;
+    private ScrollPane scroll;
+    private Actor widget;
 
-    /** Reference to GameCanvas created by the root */
+    /**
+     * Default budget for asset loader (do nothing but load 60 fps)
+     */
+    private static int DEFAULT_BUDGET = 15;
+    /**
+     * Standard window size (for scaling)
+     */
+    private static int STANDARD_WIDTH = 800;
+    /**
+     * Standard window height (for scaling)
+     */
+    private static int STANDARD_HEIGHT = 700;
+    /**
+     * Ratio of the bar width to the screen
+     */
+    private static float BAR_WIDTH_RATIO = 0.66f;
+    /**
+     * Ration of the bar height to the screen
+     */
+    private static float BAR_HEIGHT_RATIO = 0.25f;
+    /**
+     * Height of the progress bar
+     */
+    private static float BUTTON_SCALE = 0.75f;
+
+    /**
+     * Reference to GameCanvas created by the root
+     */
     private GameCanvas canvas;
-    /** Listener that will update the player mode when we are done */
+    /**
+     * Listener that will update the player mode when we are done
+     */
     private ScreenListener listener;
 
-    /** Background Texture */
+    /**
+     * Background Texture
+     */
     protected Texture title;
     protected Texture quit;
     protected Texture select_level;
     protected Texture level_editor;
 
-    /** The width of the progress bar */
+    /**
+     * The width of the progress bar
+     */
     private int width;
-    /** The y-coordinate of the center of the progress bar */
+    /**
+     * The y-coordinate of the center of the progress bar
+     */
     private int centerY;
-    /** The x-coordinate of the center of the progress bar */
+    /**
+     * The x-coordinate of the center of the progress bar
+     */
     private int centerX;
-    /** The height of the canvas window (necessary since sprite origin != screen origin) */
+    /**
+     * The height of the canvas window (necessary since sprite origin != screen origin)
+     */
     private int heightY;
-    /** Scaling factor for when the student changes the resolution. */
+    /**
+     * Scaling factor for when the student changes the resolution.
+     */
     private float scale;
 
-    /** The current state of the play button */
+    /**
+     * The current state of the play button
+     */
     private int pressState;
 
 
-    /** Whether or not this player mode is still active */
+    /**
+     * Whether or not this player mode is still active
+     */
     private boolean active;
 
     /**
@@ -89,24 +128,24 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
         pressState = 0;
 
-        Gdx.input.setInputProcessor( this );
+        Gdx.input.setInputProcessor(this);
 
         // Let ANY connected controller start the game.
         for (XBoxController controller : Controllers.get().getXBoxControllers()) {
-            controller.addListener( this );
+            controller.addListener(this);
         }
     }
 
-    public void setActive(){
+    public void setActive() {
         active = true;
     }
 
-    public void setCanvas(GameCanvas canvas){
+    public void setCanvas(GameCanvas canvas) {
         this.canvas = canvas;
     }
 
     public void gatherAssets(AssetDirectory directory) {
-        background =  directory.getEntry( "background:menu", Texture.class );
+        background = directory.getEntry("background:menu", Texture.class);
         title = directory.getEntry("title", Texture.class);
         quit = directory.getEntry("quit", Texture.class);
         level_editor = directory.getEntry("level_editor", Texture.class);
@@ -117,7 +156,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     /**
      * Called when this screen should release all resources.
      */
-    public void dispose(){
+    public void dispose() {
         pressState = 0;
         background = null;
         active = false;
@@ -127,31 +166,50 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         select_level = null;
     }
 
-    public boolean pointer(int x, int y, int width, int height){
+//    public boolean pointer(int x, int y, int width, int height){
+//        int pX = Gdx.input.getX();
+//        int pY = Gdx.input.getY();
+//        // Flip to match graphics coordinates
+//        pY = canvas.getHeight() - pY;
+//
+//        float widthR = BUTTON_SCALE * scale * width/ 2.0f;
+//        float heightR = BUTTON_SCALE * scale * height/ 2.0f;
+//        float dist =
+//                (pX - x) * (pX - x) + (pY - y) * (pY - y);
+//        if (dist < widthR * heightR) {
+//            return true;
+//        }
+//        return false;
+//    }
+
+    public boolean pointer1(int x, int y, int width, int height, float scale) {
         int pX = Gdx.input.getX();
         int pY = Gdx.input.getY();
         // Flip to match graphics coordinates
-        pY = canvas.getHeight() - pY;
+        y = canvas.getHeight() - y;
+        float w = scale * width;
+        float h = scale * height;
 
-        float widthR = BUTTON_SCALE * scale * width/ 2.0f;
-        float heightR = BUTTON_SCALE * scale * height/ 2.0f;
-        float dist =
-                (pX - x) * (pX - x) + (pY - y) * (pY - y);
-        if (dist < widthR * heightR) {
+        if ((x + w > pX && x - w < pX) && (y + h > pY && y - h < pY)) {
+//            System.out.println("pX: " + pX + " pY: " + pY);
+//            System.out.println("x: " + x + " y: "+ y);
+//            System.out.println("w: " + w + " h: " + h);
+//            System.out.println("y1: " + y);
             return true;
         }
         return false;
     }
+
     /**
      * Draw the status of this player mode.
-     *
+     * <p>
      * We prefer to separate update and draw from one another as separate methods, instead
      * of using the single render() method that LibGDX does.  We will talk about why we
      * prefer this in lecture.
      */
     private void draw() {
         canvas.begin();
-        canvas.draw(background, 0, 0);
+        canvas.draw(background, Color.WHITE, 0, 0, canvas.getWidth(), canvas.getHeight());
         canvas.draw(
                 title,
                 Color.WHITE,
@@ -162,8 +220,8 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
                 0,
                 BUTTON_SCALE * scale,
                 BUTTON_SCALE * scale);
-        Color tint = (pointer(centerX, centerY + centerY, select_level.getWidth() / 2,
-                select_level.getHeight() / 2) ? Color.GRAY : Color.WHITE);
+        Color tint = (pointer1(centerX, centerY + centerY, select_level.getWidth() / 2,
+                select_level.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 select_level,
                 tint,
@@ -174,22 +232,22 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
                 0,
                 BUTTON_SCALE * scale,
                 BUTTON_SCALE * scale);
-        tint = (pointer(centerX,
-                centerY + centerY/2, level_editor.getWidth() / 2,
-                level_editor.getHeight() / 2) ? Color.GRAY : Color.WHITE);
+        tint = (pointer1(centerX,
+                centerY + centerY / 2, level_editor.getWidth() / 2,
+                level_editor.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level_editor,
                 tint,
                 level_editor.getWidth() / 2,
                 level_editor.getHeight() / 2,
                 centerX,
-                centerY + centerY/2,
+                centerY + centerY / 2,
                 0,
                 BUTTON_SCALE * scale,
                 BUTTON_SCALE * scale);
-        tint = (pointer(centerX,
-                centerY,quit.getWidth() / 2,
-                quit.getHeight() / 2) ? Color.GRAY : Color.WHITE);
+        tint = (pointer1(centerX,
+                centerY, quit.getWidth() / 2,
+                quit.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 quit,
                 tint,
@@ -206,9 +264,10 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
 
     // ADDITIONAL SCREEN METHODS
+
     /**
      * Called when the Screen should render itself.
-     *
+     * <p>
      * We defer to the other methods update() and draw().  However, it is VERY important
      * that we only quit AFTER a draw.
      *
@@ -233,7 +292,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
     /**
      * Called when the Screen is resized.
-     *
+     * <p>
      * This can happen at any point during a non-paused state but will never happen
      * before a call to show().
      *
@@ -242,19 +301,19 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      */
     public void resize(int width, int height) {
         // Compute the drawing scale
-        float sx = ((float)width)/STANDARD_WIDTH;
-        float sy = ((float)height)/STANDARD_HEIGHT;
+        float sx = ((float) width) / STANDARD_WIDTH;
+        float sy = ((float) height) / STANDARD_HEIGHT;
         scale = (sx < sy ? sx : sy);
 
-        this.width = (int)(BAR_WIDTH_RATIO*width);
-        centerY = (int)(BAR_HEIGHT_RATIO*height);
-        centerX = width/2;
+        this.width = (int) (BAR_WIDTH_RATIO * width);
+        centerY = (int) (BAR_HEIGHT_RATIO * height);
+        centerX = width / 2;
         heightY = height;
     }
 
     /**
      * Called when the Screen is paused.
-     *
+     * <p>
      * This is usually when it's not active or visible on screen. An Application is
      * also paused before it is destroyed.
      */
@@ -265,7 +324,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
     /**
      * Called when the Screen is resumed from a paused state.
-     *
+     * <p>
      * This is usually when it regains focus.
      */
     public void resume() {
@@ -292,7 +351,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
     /**
      * Sets the ScreenListener for this mode
-     *
+     * <p>
      * The ScreenListener will respond to requests to quit.
      */
     public void setScreenListener(ScreenListener listener) {
@@ -300,9 +359,10 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     }
 
     // PROCESSING PLAYER INPUT
+
     /**
      * Called when the screen was touched or a mouse button was pressed.
-     *
+     * <p>
      * This method checks to see if the play button is available and if the click
      * is in the bounds of the play button.  If so, it signals the that the button
      * has been pressed and is currently down. Any mouse button is accepted.
@@ -321,26 +381,21 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         screenY = heightY - screenY;
 
         // TODO: Fix scaling
-        float widthR = BUTTON_SCALE * scale * select_level.getWidth() / 2.0f;
-        float heightR = BUTTON_SCALE * scale * select_level.getHeight() / 2.0f;
-        float dist =
-                (screenX - centerX) * (screenX - centerX) + (screenY - (2 * centerY)) * (screenY - (2 * centerY));
-        if (dist < widthR * heightR) {
+        if (pointer1(centerX, centerY + centerY, select_level.getWidth() / 2,
+                select_level.getHeight() / 2, BUTTON_SCALE * scale)) {
             pressState = 1;
         }
-        widthR = BUTTON_SCALE * scale * level_editor.getWidth() / 2.0f;
-        heightR = BUTTON_SCALE * scale * level_editor.getHeight() / 2.0f;
-        dist =
-                (screenX - centerX) * (screenX - centerX) + (screenY - (centerY + centerY/2)) * (screenY - (centerY + centerY/2));
-        if (dist < widthR * heightR) {
+
+        if (pointer1(centerX,
+                centerY + centerY / 2, level_editor.getWidth() / 2,
+                level_editor.getHeight() / 2, BUTTON_SCALE * scale)) {
             pressState = 2;
             return false;
         }
-        widthR = BUTTON_SCALE * scale * quit.getWidth() / 2.0f;
-        heightR = BUTTON_SCALE * scale * quit.getHeight() / 2.0f;
-        dist =
-                (screenX - centerX) * (screenX - centerX) + (screenY - centerY) * (screenY - centerY);
-        if (dist < widthR * heightR) {
+
+        if (pointer1(centerX,
+                centerY, quit.getWidth() / 2,
+                quit.getHeight() / 2, BUTTON_SCALE * scale)) {
             pressState = 3;
             return false;
         }
@@ -350,7 +405,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
     /**
      * Called when a finger was lifted or a mouse button was released.
-     *
+     * <p>
      * This method checks to see if the play button is currently pressed down. If so,
      * it signals the that the player is ready to go.
      *
@@ -369,7 +424,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
     /**
      * Called when a button on the Controller was pressed.
-     *
+     * <p>
      * The buttonCode is controller specific. This listener only supports the start
      * button on an X-Box controller.  This outcome of this method is identical to
      * pressing (but not releasing) the play button.
@@ -378,10 +433,10 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
-    public boolean buttonDown (Controller controller, int buttonCode) {
+    public boolean buttonDown(Controller controller, int buttonCode) {
         if (pressState == 0) {
             ControllerMapping mapping = controller.getMapping();
-            if (mapping != null && buttonCode == mapping.buttonStart ) {
+            if (mapping != null && buttonCode == mapping.buttonStart) {
                 pressState = 1;
                 return false;
             }
@@ -391,7 +446,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
     /**
      * Called when a button on the Controller was released.
-     *
+     * <p>
      * The buttonCode is controller specific. This listener only supports the start
      * button on an X-Box controller.  This outcome of this method is identical to
      * releasing the the play button after pressing it.
@@ -400,10 +455,10 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
-    public boolean buttonUp (Controller controller, int buttonCode) {
+    public boolean buttonUp(Controller controller, int buttonCode) {
         if (pressState == 1) {
             ControllerMapping mapping = controller.getMapping();
-            if (mapping != null && buttonCode == mapping.buttonStart ) {
+            if (mapping != null && buttonCode == mapping.buttonStart) {
                 pressState = 2;
                 return false;
             }
@@ -458,7 +513,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      *
      * @param dx the amount of horizontal scroll
      * @param dy the amount of vertical scroll
-     *
      * @return whether to hand the event to other listeners.
      */
     public boolean scrolled(float dx, float dy) {
@@ -484,26 +538,28 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      *
      * @param controller The game controller
      */
-    public void connected (Controller controller) {}
+    public void connected(Controller controller) {
+    }
 
     /**
      * Called when a controller is disconnected. (UNSUPPORTED)
      *
      * @param controller The game controller
      */
-    public void disconnected (Controller controller) {}
+    public void disconnected(Controller controller) {
+    }
 
     /**
      * Called when an axis on the Controller moved. (UNSUPPORTED)
-     *
+     * <p>
      * The axisCode is controller specific. The axis value is in the range [-1, 1].
      *
      * @param controller The game controller
-     * @param axisCode 	The axis moved
-     * @param value 	The axis value, -1 to 1
+     * @param axisCode   The axis moved
+     * @param value      The axis value, -1 to 1
      * @return whether to hand the event to other listeners.
      */
-    public boolean axisMoved (Controller controller, int axisCode, float value) {
+    public boolean axisMoved(Controller controller, int axisCode, float value) {
         return true;
     }
 

@@ -24,7 +24,6 @@ public class CameraController {
 
     private final float DEFAULT_CAMERA_SPEED = 10f;
 
-
     private float smoothSpeed = 0.125f;
 
 
@@ -32,8 +31,11 @@ public class CameraController {
 
     private float aspectRatio;
 
+
     public CameraController(float width, float height) {
         aspectRatio = width / height;
+
+
         camera = new OrthographicCamera();
         viewport = new ScreenViewport();
         viewport.apply();
@@ -54,8 +56,10 @@ public class CameraController {
         camera.position.scl(cameraPosition);
     }
 
+
     public void setBounds(int x, int y, int width, int height) {
         bounds = new Rectangle(x - width / 2, y - height / 2, width / 2, height / 2);
+        setCameraPosition(0, 0);
     }
 
     public void setCameraSpeed(float speed) {
@@ -73,23 +77,14 @@ public class CameraController {
 
     }
 
+
     public OrthographicCamera getCamera() {
+
         return camera;
     }
 
     public void render() {
         camera.update();
-        InputController input = InputController.getInstance();
-
-//           if(input.getHorizontal()!=0)
-//        {
-//
-//            translate(input.getHorizontal()*cameraSpeed,0);
-//        }
-//            if(input.getVertical()!=0)
-//            {
-//                translate(0,input.getVertical()*cameraSpeed);
-//            }
     }
 
     public void setCameraPosition(Vector2 newPos) {
