@@ -5,6 +5,16 @@ left is to bring them home. Armed with an oxygen tank and a sonar pinger, search
 remains, avoiding obstacles and terrors all the while. Kick off walls, swim, navigate with sonar pings, but hurry…you’re
 running out of air!
 
+# IMPORTANT
+
+If you are using a mac, run the game using command line typing:
+
+```
+java -XstartOnFirstThread -jar SalvageGame.jar
+```
+
+Otherwise it will not run.
+
 ## CONTROLS
 
 movement (arrow key):

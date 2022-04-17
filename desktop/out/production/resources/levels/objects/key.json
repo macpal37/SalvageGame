@@ -1,0 +1,18 @@
+{ "object":
+    {
+     "gid":5,
+     "height":100,
+     "id":10,
+     "name":"",
+     "rotation":0,
+     "type":"",
+     "visible":true,
+     "width":100
+    },
+ "tileset":
+    {
+     "firstgid":1,
+     "source":"..\/tilesets\/old_ship_tileset.json"
+    },
+ "type":"template"
+}
