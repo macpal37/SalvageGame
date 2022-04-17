@@ -221,6 +221,8 @@ public class DiverModel extends GameObject {
     private final float swimDamping;
     private final float boostDamping;
 
+    public float getMaxOxygen(){return MAX_OXYGEN;}
+
     // ======================== CONSTRUCTORS ================================
 
     /**
@@ -289,7 +291,7 @@ public class DiverModel extends GameObject {
         maxSpeed = swimMaxSpeed;
         swimDamping = damping;
 
-        boostDamping = damping / 100;
+        boostDamping = damping / 10;
 
 
         carrying_body = false;
@@ -320,14 +322,23 @@ public class DiverModel extends GameObject {
     private boolean switchDir = false;
 
 
+    int turnFrames = 0;
+
+
     public void setHorizontalMovement(float value) {
         movement.x = value;
-        // Change facing if appropriate
-        if (movement.x < 0) {
+        if (movement.x < 0 && faceRight) {
+            System.out.println("TURNLEFT ");
+            turnFrames = 4;
             faceRight = false;
-        } else if (movement.x > 0) {
+        } else if (movement.x > 0 && !faceRight) {
+            System.out.println("TurnRIght ");
+            turnFrames = 4;
             faceRight = true;
         }
+        // Change facing if appropriate
+
+
     }
 
     public void setDriftMovement(float x_val, float y_val) {
@@ -563,13 +574,13 @@ public class DiverModel extends GameObject {
 
     @Override
     public void draw(GameCanvas canvas) {
-
+        tick++;
         float effect = faceRight ? 1.0f : -1.0f;
 
         // darw the diver
         if (texture != null) {
 
-
+//            diverSprite.setFrame(5);
             if (stunned) {
                 if (stunCooldown % 20 > 5) {
 
@@ -578,7 +589,17 @@ public class DiverModel extends GameObject {
                     canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
                 }
             } else {
-                canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+
+                if (turnFrames > 0 && turnFrames < 5) {
+                    if (tick % 4 == 0) {
+                        turnFrames--;
+                    }
+                    diverSprite.setFrame(turnFrames + 12);
+                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+                } else {
+                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+                }
+
             }
         }
 
@@ -702,7 +723,7 @@ public class DiverModel extends GameObject {
         float desired_yvel = 0;
         float max_impulse = 15f;
         float max_impulse_drift = 2f;
-        tick++;
+//        tick++;
         // possible states: swimming, idling/drifting, latching, boosting
         if (isSwimming()) { // player is actively using the arrow keys
 
@@ -713,7 +734,7 @@ public class DiverModel extends GameObject {
             int frame = diverSprite.getFrame();
             if (tick % 5 == 0) {
                 frame++;
-                if (frame >= diverSprite.getSize())
+                if (frame >= diverSprite.getSize() / 2)
                     frame = 0;
                 diverSprite.setFrame(frame);
             }
