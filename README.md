@@ -1,13 +1,16 @@
 # SalvageGame
 
-It’s too late to save your friends. Far beneath the waves, where things without name dwell in the depths, all that’s left is to bring them home. Armed with an oxygen tank and a sonar pinger, search sunken shipwrecks for your friends' remains, avoiding obstacles and terrors all the while. Kick off walls, swim, navigate with sonar pings, but hurry…you’re running out of air!
+It’s too late to save your friends. Far beneath the waves, where things without name dwell in the depths, all that’s
+left is to bring them home. Armed with an oxygen tank and a sonar pinger, search sunken shipwrecks for your friends'
+remains, avoiding obstacles and terrors all the while. Kick off walls, swim, navigate with sonar pings, but hurry…you’re
+running out of air!
 
 ## CONTROLS
 
 movement (arrow key):
 
-Movement vertical and horizontal. Cannot proceed through obstacles, except for specific ones that
-can be passed through using an item.
+Movement vertical and horizontal. Cannot proceed through obstacles, except for specific ones that can be passed through
+using an item.
 
 pick up (Q):
 
@@ -23,7 +26,11 @@ Player is able to kick off a platform and launch themselves at an angle aimed by
 
 ping (E):
 
-Player releases a ping which shows the direction of the body. 
+Player releases a ping which shows the direction of the body.
+
+reset level (O):
+
+resets the level, and sends the player to the start.
 
 return to level select (ESC):
 
