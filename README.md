@@ -1,5 +1,7 @@
 # SalvageGame
 
+It’s too late to save your friends. Far beneath the waves, where things without name dwell in the depths, all that’s left is to bring them home. Armed with an oxygen tank and a sonar pinger, search sunken shipwrecks for your friends' remains, avoiding obstacles and terrors all the while. Kick off walls, swim, navigate with sonar pings, but hurry…you’re running out of air!
+
 ## CONTROLS
 
 movement (arrow key):
