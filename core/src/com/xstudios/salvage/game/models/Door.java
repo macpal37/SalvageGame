@@ -8,6 +8,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.xstudios.salvage.game.GameCanvas;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public class Door extends Wall {
 
 
@@ -59,12 +62,15 @@ public class Door extends Wall {
 
         if (region != null) {
             if (openDoor != null && closedDoor != null) {
-                float x = vertices[0] + 1;
-                float y = vertices[1] - 2.5f;
+                float x = vertices[0];
+                float y = vertices[1];
+
+
                 if (isActive()) {
-                    canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], origin.x, 0, x * drawScale.x, (y) * drawScale.y + doorScale.y / 2f, getAngle(), doorScale.x / closedDoor.getRegionWidth(), doorScale.y / closedDoor.getRegionHeight() * 2);
+                    canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
+//                    canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], origin.x, 0, x * drawScale.x, (y) * drawScale.y + doorDimension.y / 2f, getAngle(), 1, 1);
                 } else {
-                    canvas.draw(openDoor, ItemModel.COLOR_OPTIONS[getID()], origin.x, 0, x * drawScale.x, (y) * drawScale.y + doorScale.y / 2f, getAngle(), doorScale.x / closedDoor.getRegionWidth(), doorScale.y / closedDoor.getRegionHeight() * 2);
+                    canvas.draw(openDoor, ItemModel.COLOR_OPTIONS[getID()], origin.x, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
                 }
             }
         }

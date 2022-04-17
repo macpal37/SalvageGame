@@ -19,6 +19,9 @@ kick (hold SPACE + arrow key):
 Player is able to kick off a platform and launch themselves at an angle aimed by the arrow key. 
 
 ping (R):
-Player releases a ping which shows the direction of the body. 
+Player releases a ping which shows the direction of the body.
+
+go to level select (esc):
+Switches to the level select screen when playing the game.
 
  
