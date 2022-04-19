@@ -231,7 +231,6 @@ public class LevelBuilder {
                         case Item:
                             ItemModel item = new ItemModel(sx, sy, constants.get("key"), ItemType.KEY);
                             gameObjects.add(item);
-//                                idItems.add(item);
                             break;
                         case Door:
                             float[] doorVerticies = new float[tile.vertices.length];
@@ -240,7 +239,6 @@ public class LevelBuilder {
                                 doorVerticies[index++] = (index % 2 == 0) ? f + sy : f + sx;
                             Door door = new Door(doorVerticies, 0, 0);
                             gameObjects.add(door);
-//                                idItems.add(door);
                             break;
 
                         case Obstacle:
