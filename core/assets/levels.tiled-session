@@ -1,0 +1,53 @@
+{
+    "activeFile": "",
+    "expandedProjectPaths": [
+        "levels/objects",
+        "tilesets",
+        ".",
+        "levels/tilesets",
+        "levels"
+    ],
+    "fileStates": {
+        "levels/level0.json": {
+            "scale": 1.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 775.6666666666666,
+                "y": 283
+            }
+        },
+        "levels/level1.json": {
+            "scale": 0.12191666666666666,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1505.1264524948735,
+                "y": 1004.7846889952154
+            }
+        },
+        "levels/level2.json": {
+            "scale": 0.09143749999999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2006.835269993165,
+                "y": 1503.759398496241
+            }
+        },
+        "levels/small_ship.json": {
+            "scale": 0.09143749999999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2006.835269993165,
+                "y": 1503.7593984962407
+            }
+        },
+        "levels/tilesets/id_tiles.json": {
+            "scaleInDock": 1
+        }
+    },
+    "openFiles": [
+    ],
+    "project": "",
+    "recentFiles": [
+        "levels/small_ship.json"
+    ]
+}
