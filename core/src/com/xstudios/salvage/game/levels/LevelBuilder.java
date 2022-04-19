@@ -1,16 +1,23 @@
 package com.xstudios.salvage.game.levels;
 
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.models.*;
 
+import com.xstudios.salvage.util.FilmStrip;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.FileHandler;
@@ -18,15 +25,88 @@ import java.util.logging.FileHandler;
 public class LevelBuilder {
     private JsonReader jsonReader;
     private AssetDirectory directory;
+//    private LevelModel level;
+
+    // Assets
+    JsonValue constants;
+    protected TextureRegion tileset;
+    /**
+     * The texture for diver
+     */
+    protected TextureRegion diverTexture;
+    /**
+     * The texture for item
+     */
+    protected TextureRegion keyTexture;
+    /**
+     * Ocean Background Texture
+     */
+    protected TextureRegion background;
+    /**
+     * The texture for ping
+     */
+    protected TextureRegion pingTexture;
+    /**
+     * The texture for dead body
+     */
+    protected TextureRegion deadBodyTexture;
+    /**
+     * The texture for dead body
+     */
+    protected TextureRegion doorTexture;
+    /**
+     * Texturs for the door
+     */
+    protected TextureRegion doorOpenTexture;
+    protected TextureRegion doorCloseTexture;
+    protected Texture swimmingAnimation;
+    protected Texture dustAnimation;
+    protected Texture plantAnimation;
+
+    // Models to be updated
+    protected TextureRegion wallTexture;
+    protected TextureRegion hazardTexture;
+    protected TextureRegion wallBackTexture;
+
+    // Models to be updated
+    protected DiverModel diver;
+
+    protected ItemModel key;
+    //    protected ItemModel dead_body;
+    protected DeadBodyModel dead_body;
 
     public LevelBuilder() {
         this.directory = directory;
         jsonReader = new JsonReader();
+//        level = new LevelModel();
 
     }
 
     public void setDirectory(AssetDirectory directory) {
         this.directory = directory;
+    }
+
+    public void gatherAssets(AssetDirectory directory) {
+        tileset = new TextureRegion(directory.getEntry("levels:tilesets:old_ship_tileset", Texture.class));
+        constants = directory.getEntry("models:constants", JsonValue.class);
+
+        diverTexture = new TextureRegion(directory.getEntry("models:diver", Texture.class));
+        swimmingAnimation = directory.getEntry("models:diver_swimming", Texture.class);
+        System.out.println("Swimm: " + swimmingAnimation);
+        dustAnimation = directory.getEntry("models:dust", Texture.class);
+        plantAnimation = directory.getEntry("models:plant", Texture.class);
+        System.out.println("DUST: " + dustAnimation);
+        background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
+        keyTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
+        pingTexture = new TextureRegion(directory.getEntry("models:ping", Texture.class));
+        wallTexture = new TextureRegion(directory.getEntry("wall", Texture.class));
+        hazardTexture = new TextureRegion(directory.getEntry("hazard", Texture.class));
+        doorTexture = new TextureRegion(directory.getEntry("door", Texture.class));
+        //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
+        doorOpenTexture = new TextureRegion(directory.getEntry("models:door_open", Texture.class));
+        doorCloseTexture = new TextureRegion(directory.getEntry("models:door_closed", Texture.class));
+
+        deadBodyTexture = new TextureRegion(directory.getEntry("models:dead_body", Texture.class));
     }
 
     enum TileType {
@@ -177,7 +257,8 @@ public class LevelBuilder {
         return newVerts;
     }
 
-    public ArrayList<GObject> createLevel(String levelFileName) {
+    /** Create level from a json. Objects created will be drawn at scale drawScale, and lights will be created using rayHandler */
+    public void createLevel(String levelFileName, LevelModel level, Vector2 drawScale, Vector2 drawScaleSymbol, RayHandler rayHandler) {
 
         ArrayList<GObject> gameObjects = new ArrayList<GObject>();
 
@@ -359,8 +440,113 @@ public class LevelBuilder {
             }
         }
 
+        // now we parse gameObjects into the level model
 
-        return gameObjects;
+        int wallCounter = 0;
+        int keyCounter = 0;
+        int doorCounter = 0;
+        int goalDoorCounter = 0;
+        int hazardCounter = 0;
+        for (GObject go : gameObjects) {
+            if (go instanceof HazardModel) {
+                HazardModel hazard = (HazardModel) go;
+                hazard.setOxygenDrain(-0.1f);
+                hazard.setStunDuration(60);
+                hazard.setBodyType(BodyDef.BodyType.StaticBody);
+                hazard.setDensity(0);
+                hazard.setFriction(0.4f);
+                hazard.setRestitution(0.1f);
+                hazard.setTexture(hazardTexture);
+                hazard.setDrawScale(drawScale);
+                hazard.setName("hazard" + hazardCounter++);
+                level.addObject(hazard);
+//                hazard.setUserData(hazard);
+                hazard.setActive(true);
+            } else if (go instanceof Door) {
+                Door door = (Door) go;
+                door.setBodyType(BodyDef.BodyType.StaticBody);
+                door.setTexture(doorTexture);
+                door.addTextures(doorCloseTexture, doorOpenTexture);
+                door.setDrawScale(drawScale);
+                door.setName("door" + doorCounter++);
+                door.setActive(true);
+                level.addObject(door);
+            } else if (go instanceof Wall) {
+
+                Wall obj = (Wall) go;
+                obj.setBodyType(BodyDef.BodyType.StaticBody);
+                obj.setDensity(0);
+                obj.setFriction(0.4f);
+                obj.setRestitution(0.1f);
+                obj.setDrawScale(drawScale);
+                obj.setTexture(wallTexture);
+                obj.setName("wall " + wallCounter++);
+                level.addObject(obj);
+
+            } else if (go instanceof DiverModel) {
+                diver = (DiverModel) go;
+                diver.setStunned(false);
+                diver.setTexture(diverTexture);
+                diver.setFilmStrip(new FilmStrip(swimmingAnimation, 2, 12, 24));
+                diver.setPingTexture(pingTexture);
+                diver.setDrawScale(drawScale);
+                diver.setName("diver");
+                level.addObject(diver);
+            } else if (go instanceof DeadBodyModel) {
+                DeadBodyModel dead_body = (DeadBodyModel) go;
+                dead_body.setTexture(deadBodyTexture);
+                dead_body.setDrawScale(drawScale);
+                dead_body.setDrawSymbolScale(drawScaleSymbol);
+                dead_body.setName("dead_body");
+                dead_body.setGravityScale(0f);
+                dead_body.setSensor(true);
+                level.addObject(dead_body);
+            } else if (go instanceof ItemModel) {
+                ItemModel key = (ItemModel) go;
+                key.setTexture(keyTexture);
+                key.setBodyType(BodyDef.BodyType.StaticBody);
+                key.setDrawScale(drawScale);
+                key.setDrawSymbolScale(drawScaleSymbol);
+                key.setName("key" + keyCounter++);
+                key.setGravityScale(0f);
+                key.setSensor(true);
+                key.initLight(rayHandler);
+                level.addObject(key);
+            } else if (go instanceof GoalDoor) {
+                JsonValue goal = constants.get("goal");
+
+                GoalDoor goal_door = (GoalDoor) go;
+                goal_door.setBodyType(BodyDef.BodyType.StaticBody);
+                goal_door.setDensity(goal.getFloat("density", 0));
+                goal_door.setFriction(goal.getFloat("friction", 0));
+                goal_door.setRestitution(goal.getFloat("restitution", 0));
+                goal_door.setSensor(true);
+                goal_door.setDrawScale(drawScale);
+                goal_door.setTexture(doorOpenTexture);
+                goal_door.setName("goal" + goalDoorCounter++);
+                level.addObject(goal_door);
+
+            } else if (go instanceof Dust) {
+                Dust dust = (Dust) go;
+                dust.setFilmStrip(new FilmStrip(dustAnimation, 1, 8, 8));
+                dust.setName("dust");
+                dust.setBodyType(BodyDef.BodyType.StaticBody);
+                dust.setSensor(true);
+                dust.setDrawScale(drawScale);
+                level.addObject(dust);
+            } else if (go instanceof Plant) {
+                Plant dust = (Plant) go;
+                dust.setFilmStrip(new FilmStrip(plantAnimation, 1, 6, 6));
+                dust.setName("plant");
+                dust.setBodyType(BodyDef.BodyType.StaticBody);
+                dust.setSensor(true);
+                dust.setDrawScale(drawScale);
+                level.addObject(dust);
+            }
+        }
+
+        diver.setDeadBody(dead_body);
+//        return level;
     }
 
 
