@@ -30,9 +30,6 @@ public class CollisionController {
                 }
             }
         }
-//        System.out.println("USER DATA: " + b1.getUserData().getClass());
-//        System.out.println("USER DATA: " + b1.getUserData());
-
     }
 
     public void endContact(Body b1, Body b2) {
@@ -100,11 +97,9 @@ public class CollisionController {
      */
     public void startDiverToObstacle(Body b1, Body b2) {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
-//            System.out.println("body collided");
             ((DiverModel) b1.getUserData()).setTouchingObstacle(true);
         }
         if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
-//            System.out.println("body collided");
             ((DiverModel) b2.getUserData()).setTouchingObstacle(true);
         }
     }
@@ -137,7 +132,6 @@ public class CollisionController {
     }
 
     public static float staticHazardCollision(DiverModel diver, HazardModel hazard){
-        System.out.println("Hazard Contact");
         if (!diver.getStunned()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());

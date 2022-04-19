@@ -403,11 +403,9 @@ public class GameController implements Screen, ContactListener {
         tileset = new TextureRegion(directory.getEntry("levels:tilesets:old_ship_tileset", Texture.class));
         diverTexture = new TextureRegion(directory.getEntry("models:diver", Texture.class));
         swimmingAnimation = directory.getEntry("models:diver_swimming", Texture.class);
-        System.out.println("Swimm: " + swimmingAnimation);
         dustAnimation = directory.getEntry("models:dust", Texture.class);
 
         plantAnimation = directory.getEntry("models:plant", Texture.class);
-        System.out.println("DUST: " + dustAnimation);
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
         itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         constants = directory.getEntry("models:constants", JsonValue.class);
@@ -642,11 +640,6 @@ public class GameController implements Screen, ContactListener {
             diver.setLatching(false);
         }
 
-
-        // System.out.println("Touching Obstacle:" + diver.isTouchingObstacle());
-        // System.out.println("Latching:" + diver.isLatching());
-
-
         // set forces from ocean currents
         diver.setDriftMovement(physicsController.getCurrentVector(diver.getPosition()).x,
                 physicsController.getCurrentVector(diver.getPosition()).y);
@@ -721,13 +714,11 @@ public class GameController implements Screen, ContactListener {
         // Toggle debug
         if (input.didDebug()) {
             debug = !debug;
-            System.out.println("Debug: " + debug);
         }
         if (input.didMenu()) {
             cameraController.setCameraPosition(640.0f, 360.0f);
             listener.exitScreen(this, 2);
             pause = true;
-            System.out.println("MENU OPEN!: " + debug);
         }
 
         // Handle resets
@@ -778,7 +769,6 @@ public class GameController implements Screen, ContactListener {
         updateGameState();
 
         //deal with hazard stun
-//        System.out.println("STUN: " + diver.getStunCooldown());
         if (diver.getStunCooldown() > 0) {
             diver.setStunCooldown(diver.getStunCooldown() - 1);
         } else {
@@ -926,23 +916,6 @@ public class GameController implements Screen, ContactListener {
                 }
 
                 break;
-            case WIN_GAME:
-                System.out.println("TEXT POS" +
-                        cameraController.getCameraPosition2D().x + " " +
-                        cameraController.getCameraPosition2D().y);
-//                canvas.drawText("you win! Press R to restart",
-//                        displayFont,
-//                        cameraController.getCameraPosition2D().x - 100,
-//                        cameraController.getCameraPosition2D().y );
-                break;
-//            case LOSE_GAME:
-//                canvas.drawText("you lose :( Press R to restart",
-//                        displayFont,
-//                        cameraController.getCameraPosition2D().x - 100,
-//                        cameraController.getCameraPosition2D().y );
-//            break;
-
-
         }
 
         for (GameObject o : objects) {
@@ -1132,22 +1105,18 @@ public class GameController implements Screen, ContactListener {
                         reach_target = true;//listener.exitScreen(this, 0);
                     }
                 } else if (body1.getUserData() instanceof ItemModel) {
-                    System.out.println("ITEM!!");
                     CollisionController.pickUp(diver, (ItemModel) body1.getUserData());
                     ((ItemModel) body1.getUserData()).setTouched(true);
                 } else if (body1.getUserData() instanceof Door) {
-                    System.out.println("Attempt Unlock");
 //                toUnlock=CollisionController.attemptUnlock(diver, (Door)body1.getUserData());
                     ((Door) body1.getUserData()).setUnlock(CollisionController.attemptUnlock(diver, (Door) body1.getUserData()));
 
                 } else if (body1.getUserData() instanceof DeadBodyModel) {
-                    System.out.println("Body!!");
                     ((DiverModel) body2.getUserData()).setBodyContact(true);
                 } else if (!diver.getSensorNameRight().equals(fd2) && !diver.getSensorNameLeft().equals(fd2) &&
 
                         body1.getUserData() instanceof HazardModel) {
 
-                    System.out.println("OUCH!!");
                     hostileOxygenDrain = CollisionController.staticHazardCollision(diver, (HazardModel) body1.getUserData());
                 }
             }
@@ -1172,7 +1141,6 @@ public class GameController implements Screen, ContactListener {
             // ================= CONTACT LISTENER METHODS =============================
 
         } catch (Exception e) {
-            System.out.println("WEIRD!!");
             e.printStackTrace();
         }
 
@@ -1189,7 +1157,6 @@ public class GameController implements Screen, ContactListener {
         Fixture fix2 = contact.getFixtureB();
 
         // Call CollisionController to handle collisions
-//        System.out.println("END CONTACT");
         Body body1 = fix1.getBody();
         Body body2 = fix2.getBody();
 
@@ -1238,10 +1205,6 @@ public class GameController implements Screen, ContactListener {
                         (ItemModel) body1.getUserData());
                 ((ItemModel) body1.getUserData()).setTouched(false);
             }
-//            else if(body2.getUserData() instanceof DeadBodyModel){
-//                System.out.println("end contact with body");
-//                ((DiverModel) body2.getUserData()).setBodyContact(true);
-//            }
         }
     }
 

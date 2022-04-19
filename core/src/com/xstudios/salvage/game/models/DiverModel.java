@@ -335,11 +335,9 @@ public class DiverModel extends GameObject {
     public void setHorizontalMovement(float value) {
         movement.x = value;
         if (movement.x < 0 && faceRight) {
-            System.out.println("TURNLEFT ");
             turnFrames = 4;
             faceRight = false;
         } else if (movement.x > 0 && !faceRight) {
-            System.out.println("TurnRIght ");
             turnFrames = 4;
             faceRight = true;
         }
@@ -824,10 +822,8 @@ public class DiverModel extends GameObject {
      * Set the current item the diver is carrying
      */
     public void setItem() {
-//        System.out.println("SIZE OF POTENTIAL OBJECTS" + potential_items.size());
         if (pickUpOrDrop) {
             if (current_item != null) {
-                System.out.println("SUPPOSED TO DROP OBJECT");
                 current_item.setGravityScale(0f);
                 current_item.setX(getX());
                 current_item.setY(getY());
@@ -836,9 +832,7 @@ public class DiverModel extends GameObject {
                 current_item.setVY(0);
                 dropItem();
             } else if (potential_items.size() > 0) {
-//                System.out.println("SUPPOSED TO PICK UP OBJECT");
                 current_item = potential_items.get(0);
-//                System.out.println("Current Item: "+current_item);
                 current_item.setX(getX());
                 current_item.setY(getY());
                 //current_item.setGravityScale(1);
@@ -936,8 +930,6 @@ public class DiverModel extends GameObject {
     public void boost() {
         // set impulse in direction of key input
         forceCache.set(movement.nor().x * 20, movement.nor().y * 20);
-        System.out.println("X: " + forceCache.x);
-        System.out.println("Y: " + forceCache.y);
         body.applyLinearImpulse(forceCache, body.getPosition(), true);
     }
 
@@ -1001,16 +993,12 @@ public class DiverModel extends GameObject {
         } else if(!movement.isZero()){
             targetAngle = movement.angleRad();
         }
-//        System.out.println("TARGET ANGLE " + targetAngle + "CURR " + currentAngle);
-//        currentAngle = targetAngle;
         if(currentAngle > targetAngle + .1) {
             float tmp = targetAngle  - currentAngle;
             currentAngle -= .1;
-            System.out.println("TARGET - CURR ANGLE " + tmp);
         } else if(currentAngle < targetAngle - .1) {
             currentAngle += .1;
             float tmp = targetAngle  - currentAngle;
-            System.out.println("TARGET - CURR ANGLE " + tmp);
         }
         return targetAngle;
     }
