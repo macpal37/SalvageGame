@@ -117,3 +117,5 @@ Thumbs.db
 
 #Extra
 /core/assets/levels.tiled-session
+core/assets/levels.tiled-session
+*.tiled-session
