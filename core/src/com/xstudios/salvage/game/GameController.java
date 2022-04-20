@@ -213,7 +213,7 @@ public class GameController implements Screen, ContactListener {
     /**
      * ================================LEVELS=================================
      */
-    private String[] levels = {"level0", "level1", "level2"};
+    private String[] levels = {"test_level", "level1", "level2"};
     private int curr_level;
 
     private enum state {
@@ -481,6 +481,7 @@ public class GameController implements Screen, ContactListener {
      * Lays out the game geography.
      */
     private void populateLevel() {
+        cameraController.setZoom(1.0f);
         levelBuilder.createLevel(levels[curr_level], level, scale, symbol_scale, rayHandler);
         pause = false;
 
@@ -601,6 +602,7 @@ public class GameController implements Screen, ContactListener {
         }
         if (input.didMenu()) {
             cameraController.setCameraPosition(640.0f, 360.0f);
+            cameraController.setZoom(1f);
             listener.exitScreen(this, 2);
             pause = true;
         }
