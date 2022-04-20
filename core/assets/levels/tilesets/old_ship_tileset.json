@@ -409,6 +409,11 @@
          "id":13,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Obstacle"
@@ -671,6 +676,11 @@
         {
          "id":23,
          "properties":[
+                {
+                 "name":"id",
+                 "type":"int",
+                 "value":1
+                }, 
                 {
                  "name":"model_type",
                  "type":"string",
@@ -1004,18 +1014,28 @@
          "id":33,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":1
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
          "id":34,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Plant"
+                 "value":"Decor"
                 }]
         }, 
         {
@@ -1273,18 +1293,28 @@
          "id":43,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":2
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
          "id":44,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":3
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {

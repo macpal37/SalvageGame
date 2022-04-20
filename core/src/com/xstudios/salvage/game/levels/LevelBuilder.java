@@ -32,6 +32,10 @@ public class LevelBuilder {
     JsonValue constants;
     protected Texture tilesheet;
     protected Texture woodenWall;
+    protected Texture woodenChair1;
+    protected Texture woodenChair2;
+    protected Texture woodenTable;
+
     /**
      * The texture for diver
      */
@@ -91,12 +95,22 @@ public class LevelBuilder {
     public void gatherAssets(AssetDirectory directory) {
         tilesheet = directory.getEntry("levels:tilesets:old_ship_tileset", Texture.class);
         woodenWall = directory.getEntry("models:wooden_wall", Texture.class);
+
+        woodenChair1 = directory.getEntry("models:wooden_chair1", Texture.class);
+        woodenChair2 = directory.getEntry("models:wooden_chair2", Texture.class);
+        woodenTable = directory.getEntry("models:wooden_table", Texture.class);
+
+
         constants = directory.getEntry("models:constants", JsonValue.class);
 
         diverTexture = new TextureRegion(directory.getEntry("models:diver", Texture.class));
         swimmingAnimation = directory.getEntry("models:diver_swimming", Texture.class);
         dustAnimation = directory.getEntry("models:dust", Texture.class);
         plantAnimation = directory.getEntry("models:plant", Texture.class);
+        dustAnimation = directory.getEntry("models:dust", Texture.class);
+        plantAnimation = directory.getEntry("models:plant", Texture.class);
+
+
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
         keyTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         pingTexture = new TextureRegion(directory.getEntry("models:ping", Texture.class));
@@ -111,7 +125,7 @@ public class LevelBuilder {
     }
 
     enum TileType {
-        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Plant
+        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Decor
     }
 
     TileType tileTypeFromString(String type) {
@@ -133,8 +147,8 @@ public class LevelBuilder {
             return TileType.Goal;
         } else if (type.equals("Hazard")) {
             return TileType.Hazard;
-        } else if (type.equals("Plant")) {
-            return TileType.Plant;
+        } else if (type.equals("Decor")) {
+            return TileType.Decor;
         }
 
         return TileType.Empty;
@@ -343,8 +357,16 @@ public class LevelBuilder {
                             gameObjects.add(hazard);
 
                         case Empty:
-                            if (layer.getString("name").equals("walls"))
-                                gameObjects.add(new Dust(sx, sy));
+                            if (layer.getString("name").equals("walls")) {
+                                DecorModel dust = new DecorModel(sx, sy);
+                                dust.setFilmStrip(new FilmStrip(dustAnimation, 1, 8, 8));
+                                dust.setName("dust");
+                                dust.setBodyType(BodyDef.BodyType.StaticBody);
+                                dust.setSensor(true);
+                                dust.setDrawScale(drawScale);
+
+                            }
+
                             break;
                     }
                     ii++;
@@ -425,8 +447,34 @@ public class LevelBuilder {
                             HazardModel hazard = new HazardModel(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
                             gameObjects.add(hazard);
                             break;
-                        case Plant:
-                            gameObjects.add(new Plant(sx, sy));
+                        case Decor:
+                            DecorModel dust = new DecorModel(sx, sy);
+                            switch (tile.id) {
+                                case 0:
+                                    dust.setFilmStrip(new FilmStrip(plantAnimation, 1, 6, 6));
+                                    break;
+                                case 1:
+                                    dust.setFilmStrip(new FilmStrip(woodenChair1, 1, 1, 1));
+                                    dust.setScale(1 / 2f, 1 / 2f);
+
+                                    break;
+                                case 2:
+                                    dust.setFilmStrip(new FilmStrip(woodenChair2, 1, 1, 1));
+                                    dust.setScale(1 / 2f, 1 / 2f);
+                                    break;
+                                case 3:
+                                    dust.setFilmStrip(new FilmStrip(woodenTable, 1, 1, 1));
+                                    dust.setScale(1 / 5f, 1 / 5f);
+                                    break;
+                                default:
+                                    System.out.println("Unknown Object?");
+
+                            }
+
+                            dust.setBodyType(BodyDef.BodyType.StaticBody);
+                            dust.setSensor(true);
+                            dust.setDrawScale(drawScale);
+                            gameObjects.add(dust);
                     }
 
 
@@ -539,6 +587,10 @@ public class LevelBuilder {
                 dust.setSensor(true);
                 dust.setDrawScale(drawScale);
                 level.addObject(dust);
+            } else if (go instanceof DecorModel) {
+                DecorModel dm = (DecorModel) go;
+
+                level.addObject(dm);
             }
         }
 

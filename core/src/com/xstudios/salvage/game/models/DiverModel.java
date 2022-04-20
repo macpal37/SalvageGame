@@ -722,8 +722,8 @@ public class DiverModel extends GameObject {
     public void applyForce() {
 
 
-//        System.out.println("Angle: " + getBody().getAngle());
-        System.out.println("Move: " + movement.toString());
+        System.out.println("Angle: " + getBody().getAngle());
+
 
         if (!isActive()) {
             return;
@@ -736,7 +736,7 @@ public class DiverModel extends GameObject {
 //        tick++;
         // possible states: swimming, idling/drifting, latching, boosting
         if (isSwimming()) { // player is actively using the arrow keys
-            float maxAngle = (float) (Math.PI / 4f);
+
 
             // set custom max speed and damping values
             setMaxSpeed(swimMaxSpeed);
@@ -762,8 +762,8 @@ public class DiverModel extends GameObject {
             float x_impulse = body.getMass() * xvel_change;
             float y_impulse = body.getMass() * yvel_change;
 
-
-            float angle = 0.4f;
+            float maxAngle = (float) (Math.PI / 12f);
+            float angle = 0.3f;
             if (!turned) {
                 if (movement.y == 0) {
                     if (getBody().getAngle() > 0) {
@@ -776,18 +776,18 @@ public class DiverModel extends GameObject {
                 }
                 if (movement.y > 0 && movement.x == 0) {
 
-                    if (getBody().getAngle() > (2 * maxAngle)) {
-                        body.setAngularVelocity(-angle * ((faceRight) ? 1 : -1));
-                    } else if (getBody().getAngle() < (2 * maxAngle)) {
-                        body.setAngularVelocity(angle * ((faceRight) ? 1 : -1));
+                    if (getBody().getAngle() > (2 * maxAngle * ((faceRight) ? 1 : -1))) {
+                        body.setAngularVelocity(-angle);
+                    } else if (getBody().getAngle() < (2 * maxAngle * ((faceRight) ? 1 : -1))) {
+                        body.setAngularVelocity(angle);
                     } else {
                         body.setAngularVelocity(0.0f);
                     }
                 } else if (movement.y < 0 && movement.x == 0) {
-                    if (getBody().getAngle() > -(2 * maxAngle)) {
-                        body.setAngularVelocity(-angle * ((faceRight) ? 1 : -1));
-                    } else if (getBody().getAngle() < -(2 * maxAngle)) {
-                        body.setAngularVelocity(angle * ((faceRight) ? 1 : -1));
+                    if (getBody().getAngle() > -(2 * maxAngle * ((faceRight) ? 1 : -1))) {
+                        body.setAngularVelocity(-angle);
+                    } else if (getBody().getAngle() < -(2 * maxAngle * ((faceRight) ? 1 : -1))) {
+                        body.setAngularVelocity(angle);
                     } else {
                         body.setAngularVelocity(0.0f);
                     }
@@ -802,9 +802,9 @@ public class DiverModel extends GameObject {
                     }
                 } else if ((movement.y < 0 && movement.x > 0) || (movement.y > 0 && movement.x < 0)) {
                     if (getBody().getAngle() > -maxAngle) {
-                        body.setAngularVelocity(-angle);
+                        body.setAngularVelocity(-angle * 3);
                     } else if (getBody().getAngle() < -maxAngle) {
-                        body.setAngularVelocity(angle);
+                        body.setAngularVelocity(angle * 3);
                     } else {
                         body.setAngularVelocity(0.0f);
                     }
@@ -831,9 +831,9 @@ public class DiverModel extends GameObject {
 
             if (!turned) {
                 if (getBody().getAngle() > 0) {
-                    body.setAngularVelocity(-0.2f);
+                    body.setAngularVelocity(-0.2f * 3);
                 } else if (getBody().getAngle() < 0) {
-                    body.setAngularVelocity(0.2f);
+                    body.setAngularVelocity(0.2f * 3);
                 } else {
                     body.setAngularVelocity(0.0f);
                 }

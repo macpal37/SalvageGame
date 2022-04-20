@@ -11,7 +11,7 @@ import com.xstudios.salvage.util.FilmStrip;
 public class Dust extends GameObject {
 
 
-    private FilmStrip dustSprite;
+    private FilmStrip spriteSheet;
 
     private int current_frame = 0;
 
@@ -22,15 +22,15 @@ public class Dust extends GameObject {
     }
 
     public int getFrame() {
-        return dustSprite.getFrame();
+        return spriteSheet.getFrame();
 
     }
 
     private final int DIVER_IMG_FLAT = 6;
 
     public void setFilmStrip(FilmStrip value) {
-        dustSprite = value;
-        dustSprite.setFrame(DIVER_IMG_FLAT);
+        spriteSheet = value;
+        spriteSheet.setFrame(DIVER_IMG_FLAT);
     }
 
     @Override
@@ -60,16 +60,16 @@ public class Dust extends GameObject {
         tick++;
 
         if (tick % 5 == 0) {
-            int frame = dustSprite.getFrame();
+            int frame = spriteSheet.getFrame();
 
             frame++;
-            if (frame >= dustSprite.getSize())
+            if (frame >= spriteSheet.getSize())
                 frame = 0;
-            dustSprite.setFrame(frame);
+            spriteSheet.setFrame(frame);
         }
 
 
-        canvas.draw(dustSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1f, 1f);
+        canvas.draw(spriteSheet, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1f, 1f);
 
     }
 

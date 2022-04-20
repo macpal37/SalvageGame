@@ -70,7 +70,7 @@ public class Door extends Wall {
                     canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
 //                    canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], origin.x, 0, x * drawScale.x, (y) * drawScale.y + doorDimension.y / 2f, getAngle(), 1, 1);
                 } else {
-                    canvas.draw(openDoor, ItemModel.COLOR_OPTIONS[getID()], origin.x, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
+                    canvas.draw(openDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
                 }
             }
         }

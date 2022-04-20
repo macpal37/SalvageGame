@@ -404,24 +404,12 @@ public class GameController implements Screen, ContactListener {
         levelBuilder.setDirectory(directory);
 
         levelBuilder.gatherAssets(directory);
-//        tileset = new TextureRegion(directory.getEntry("levels:tilesets:old_ship_tileset", Texture.class));
-//        level.getDiver()Texture = new TextureRegion(directory.getEntry("models:level.getDiver()", Texture.class));
-//        swimmingAnimation = directory.getEntry("models:level.getDiver()_swimming", Texture.class);
-//        System.out.println("Swimm: " + swimmingAnimation);
-//        dustAnimation = directory.getEntry("models:dust", Texture.class);
 //
-//        plantAnimation = directory.getEntry("models:plant", Texture.class);
-//        System.out.println("DUST: " + dustAnimation);
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
 //        itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         constants = directory.getEntry("models:constants", JsonValue.class);
-//        pingTexture = new TextureRegion(directory.getEntry("models:ping", Texture.class));
-//        wallTexture = new TextureRegion(directory.getEntry("wall", Texture.class));
-//        hazardTexture = new TextureRegion(directory.getEntry("hazard", Texture.class));
-//        doorTexture = new TextureRegion(directory.getEntry("door", Texture.class));
-//        //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
-//        doorOpenTexture = new TextureRegion(directory.getEntry("models:door_open", Texture.class));
-//        doorCloseTexture = new TextureRegion(directory.getEntry("models:door_closed", Texture.class));
+//
+//
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
 //
 //
@@ -726,6 +714,7 @@ public class GameController implements Screen, ContactListener {
         }
     }
 
+    int tick = 0;
 
     /**
      * Draw the physics objects to the canvas
@@ -738,15 +727,16 @@ public class GameController implements Screen, ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void draw(float dt) {
+        tick++;
         canvas.clear();
 
         canvas.begin();
 
         // draw game objects
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0, 4, 4);
-//        for (GameObject obj : level.getAllObjects()) {
-        for (int i = level.getAllObjects().size() - 1; i >= 0; i--) {
-            GameObject obj = level.getAllObjects().get(i);
+        for (GameObject obj : level.getAllObjects()) {
+//        for (int i = level.getAllObjects().size() - 1; i >= 0; i--) {
+//            GameObject obj = level.getAllObjects().get(i);
             if (!(obj instanceof DiverModel))
                 obj.draw(canvas);
         }
@@ -781,15 +771,26 @@ public class GameController implements Screen, ContactListener {
                 tempProjectedOxygen.y = (45 * canvas.getHeight()) / 1080;
                 tempProjectedOxygen = cameraController.getCamera().unproject(tempProjectedOxygen);
 
-                canvas.draw(oxygen, Color.WHITE, 0, (float) oxygen.getRegionHeight() / 2,
-                        (float) tempProjectedOxygen.x,
-                        tempProjectedOxygen.y,
-                        0.0f,
-                        1.2f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()),
-                        0.5f
-                );
+                if (level.getDiver().getStunCooldown() % 20 > 5 || (level.getDiver().getOxygenLevel() < 50 && tick % 25 > (level.getDiver().getOxygenLevel() / 2))) {
 
-                //draw oxygen text
+                    canvas.draw(oxygen, Color.RED, 0, (float) oxygen.getRegionHeight() / 2,
+                            (float) tempProjectedOxygen.x,
+                            tempProjectedOxygen.y,
+                            0.0f,
+                            1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()),
+                            0.5f
+                    );
+                } else {
+                    canvas.draw(oxygen, Color.WHITE, 0, (float) oxygen.getRegionHeight() / 2,
+                            (float) tempProjectedOxygen.x,
+                            tempProjectedOxygen.y,
+                            0.0f,
+                            1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()),
+                            0.5f
+                    );
+                }
+
+
                 canvas.draw(oxygenText, Color.WHITE, (float) oxygenText.getRegionWidth() / 2, (float) oxygenText.getRegionHeight() / 2,
                         tempProjectedHud.x, tempProjectedOxygen.y,
                         0.0f, 0.5f, 0.5f);
