@@ -746,7 +746,9 @@ public class GameController implements Screen, ContactListener {
 
         // draw game objects
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0, 4, 4);
-        for (GameObject obj : level.getAllObjects()) {
+//        for (GameObject obj : level.getAllObjects()) {
+        for (int i = level.getAllObjects().size() - 1; i >= 0; i--) {
+            GameObject obj = level.getAllObjects().get(i);
             if (!(obj instanceof DiverModel))
                 obj.draw(canvas);
         }

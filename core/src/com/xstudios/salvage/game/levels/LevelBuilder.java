@@ -18,6 +18,7 @@ import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.models.*;
 
 import com.xstudios.salvage.util.FilmStrip;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.FileHandler;
@@ -29,7 +30,8 @@ public class LevelBuilder {
 
     // Assets
     JsonValue constants;
-    protected TextureRegion tileset;
+    protected Texture tilesheet;
+    protected Texture woodenWall;
     /**
      * The texture for diver
      */
@@ -87,19 +89,18 @@ public class LevelBuilder {
     }
 
     public void gatherAssets(AssetDirectory directory) {
-        tileset = new TextureRegion(directory.getEntry("levels:tilesets:old_ship_tileset", Texture.class));
+        tilesheet = directory.getEntry("levels:tilesets:old_ship_tileset", Texture.class);
+        woodenWall = directory.getEntry("models:wooden_wall", Texture.class);
         constants = directory.getEntry("models:constants", JsonValue.class);
 
         diverTexture = new TextureRegion(directory.getEntry("models:diver", Texture.class));
         swimmingAnimation = directory.getEntry("models:diver_swimming", Texture.class);
-        System.out.println("Swimm: " + swimmingAnimation);
         dustAnimation = directory.getEntry("models:dust", Texture.class);
         plantAnimation = directory.getEntry("models:plant", Texture.class);
-        System.out.println("DUST: " + dustAnimation);
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
         keyTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         pingTexture = new TextureRegion(directory.getEntry("models:ping", Texture.class));
-        wallTexture = new TextureRegion(directory.getEntry("wall", Texture.class));
+        wallTexture = new TextureRegion(directory.getEntry("hazard", Texture.class));
         hazardTexture = new TextureRegion(directory.getEntry("hazard", Texture.class));
         doorTexture = new TextureRegion(directory.getEntry("door", Texture.class));
         //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
@@ -145,6 +146,7 @@ public class LevelBuilder {
         public float x, y, width, height;
         public float[] vertices;
         public TileType tileType;
+        public int id = 0;
 
         public Tile() {
             vertices = new float[0];
@@ -172,10 +174,6 @@ public class LevelBuilder {
 
     }
 
-    class TObject extends Tile {
-        ArrayList<Integer> propInt = new ArrayList<>();
-    }
-
     float round(float num) {
         float result = Math.abs(num);
         boolean isNegative = num < 0;
@@ -190,12 +188,6 @@ public class LevelBuilder {
         return (isNegative) ? -result : result;
     }
 
-    public int getNighbor(int x, int y, int dx, int dy, int width, int height) {
-
-
-        return 0;
-    }
-
 
     private Tile[] createTiles(JsonValue tileset, float div, float tileSize) {
         Tile[] tiles = new Tile[tileset.getInt("tilecount")];
@@ -205,11 +197,14 @@ public class LevelBuilder {
         for (JsonValue tileJson : tileset.get("tiles")) {
             int id = tileJson.getInt("id");
             TileType tileType = TileType.Empty;
-
+            int tileId = 0;
             if (tileJson.get("properties") != null) {
                 for (JsonValue p : tileJson.get("properties")) {
                     if (p.getString("name").equals("model_type")) {
                         tileType = tileTypeFromString(p.getString("value"));
+                    }
+                    if (p.getString("name").equals("id")) {
+                        tileId = p.getInt("value");
                     }
                 }
             }
@@ -224,7 +219,6 @@ public class LevelBuilder {
                         for (JsonValue point : o.get("polygon")) {
                             float vx = (round(point.getFloat("x")) / div) + x;
                             float vy = tileSize / div - ((round(point.getFloat("y")) / div) + y);
-
                             verticies.add(vx);
                             verticies.add(vy);
                         }
@@ -238,10 +232,13 @@ public class LevelBuilder {
                 tiles[tt] = (new Tile(x, y, tileSize / div,
                         tileSize / div, verts, tileType
                 ));
+                tiles[tt].id = tileId;
+
             } else {
                 tiles[tt] = tiles[tt] = (new Tile(0, 0, tileSize / div,
                         tileSize / div, tileType
                 ));
+                tiles[tt].id = tileId;
             }
             tt++;
         }
@@ -257,7 +254,9 @@ public class LevelBuilder {
         return newVerts;
     }
 
-    /** Create level from a json. Objects created will be drawn at scale drawScale, and lights will be created using rayHandler */
+    /**
+     * Create level from a json. Objects created will be drawn at scale drawScale, and lights will be created using rayHandler
+     */
     public void createLevel(String levelFileName, LevelModel level, Vector2 drawScale, Vector2 drawScaleSymbol, RayHandler rayHandler) {
 
         ArrayList<GObject> gameObjects = new ArrayList<GObject>();
@@ -282,7 +281,6 @@ public class LevelBuilder {
 
 
         int ii = 0, jj = height - 1;
-        ArrayList<TObject> tileObjects = new ArrayList<>();
         for (JsonValue layer : map.get("layers")) {
             if (layer.get("data") != null) {
                 for (int n = 0; n < width * height; n++) {
@@ -293,13 +291,14 @@ public class LevelBuilder {
                     Tile tile = tiles[id];
                     float sy = (tileSize / div) * jj;
                     float sx = (tileSize / div) * ii;
+                    int index = 0;
                     switch (tile.tileType) {
                         case Wall:
-                            float[] newVertices = new float[tile.vertices.length];
-                            int index = 0;
-                            for (Float f : tile.vertices)
-                                newVertices[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                            gameObjects.add(new Wall(newVertices, 0, 0));
+                            Wall wall = new Wall(createVerticies(tile, sx, sy, 1, 1), 0, 0);
+
+                            wall.setID(tile.id);
+
+                            gameObjects.add(wall);
                             break;
                         case Diver:
 
@@ -373,8 +372,6 @@ public class LevelBuilder {
 
                     float widthScale = (objectWidth) / tileSize;
                     float heightScale = (objectHeight) / tileSize;
-
-                    int index = 0;
                     switch (tile.tileType) {
                         case Wall:
 
@@ -479,7 +476,8 @@ public class LevelBuilder {
                 obj.setFriction(0.4f);
                 obj.setRestitution(0.1f);
                 obj.setDrawScale(drawScale);
-                obj.setTexture(wallTexture);
+                obj.setFilmStrip(new FilmStrip(woodenWall, 5, 3, 15));
+//                obj.setTexture(wallTexture);
                 obj.setName("wall " + wallCounter++);
                 level.addObject(obj);
 
@@ -520,6 +518,7 @@ public class LevelBuilder {
                 goal_door.setDensity(goal.getFloat("density", 0));
                 goal_door.setFriction(goal.getFloat("friction", 0));
                 goal_door.setRestitution(goal.getFloat("restitution", 0));
+                goal_door.setID(3);
                 goal_door.setSensor(true);
                 goal_door.setDrawScale(drawScale);
                 goal_door.setTexture(doorOpenTexture);
@@ -546,7 +545,7 @@ public class LevelBuilder {
         }
 
         diver.setDeadBody(dead_body);
-//        return level;
+
     }
 
 
