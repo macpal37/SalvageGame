@@ -16,15 +16,15 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 697,
-                "y": 636
+                "x": 695,
+                "y": 634
             }
         },
         "levels/level1.json": {
             "scale": 0.12191666666666666,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1771.7019822282982,
+                "x": 2456.596035543404,
                 "y": 1837.3205741626796
             }
         },
@@ -32,7 +32,7 @@
             "scale": 0.09143749999999999,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2373.205741626795,
+                "x": 3286.397812713603,
                 "y": 2624.7436773752565
             }
         },
@@ -42,6 +42,14 @@
             "viewCenter": {
                 "x": 2006.835269993165,
                 "y": 1503.7593984962407
+            }
+        },
+        "levels/test_level.json": {
+            "scale": 0.75,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 870,
+                "y": 1913.3333333333333
             }
         },
         "levels/tilesets/id_tiles.json": {

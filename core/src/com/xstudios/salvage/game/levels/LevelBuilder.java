@@ -72,6 +72,8 @@ public class LevelBuilder {
     // Models to be updated
     protected TextureRegion wallTexture;
     protected TextureRegion hazardTexture;
+    protected TextureRegion crateTexture;
+    protected TextureRegion barrelTexture;
     protected TextureRegion wallBackTexture;
 
     // Models to be updated
@@ -120,6 +122,9 @@ public class LevelBuilder {
         //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
         doorOpenTexture = new TextureRegion(directory.getEntry("models:door_open", Texture.class));
         doorCloseTexture = new TextureRegion(directory.getEntry("models:door_closed", Texture.class));
+
+        crateTexture = new TextureRegion(directory.getEntry("models:crate", Texture.class));
+        barrelTexture = new TextureRegion(directory.getEntry("models:barrel", Texture.class));
 
         deadBodyTexture = new TextureRegion(directory.getEntry("models:dead_body", Texture.class));
     }
@@ -336,6 +341,8 @@ public class LevelBuilder {
                             break;
 
                         case Obstacle:
+
+
                             break;
 
                         case Goal:
@@ -432,6 +439,29 @@ public class LevelBuilder {
                             break;
 
                         case Obstacle:
+
+                            ObstacleModel obstacle = new ObstacleModel(createVerticies(tile, sx, sy, widthScale, heightScale));
+                            switch (tile.id) {
+                                case 0:
+                                    obstacle.setTexture(barrelTexture);
+                                    break;
+                                case 1:
+                                    obstacle.setTexture(crateTexture);
+                                    break;
+                                default:
+                                    System.out.println("Unknown Object?");
+
+                            }
+                            obstacle.setBodyType(BodyDef.BodyType.DynamicBody);
+                            obstacle.setSensor(false);
+                            obstacle.setFixedRotation(false);
+                            obstacle.setDrawScale(drawScale);
+                            obstacle.setDensity(1);
+                            obstacle.setMass(10f);
+                            obstacle.setFriction(0.4f);
+                            obstacle.setRestitution(0.1f);
+                            obstacle.setName("obstacle");
+                            gameObjects.add(obstacle);
                             break;
 
                         case Goal:
@@ -456,7 +486,6 @@ public class LevelBuilder {
                                 case 1:
                                     dust.setFilmStrip(new FilmStrip(woodenChair1, 1, 1, 1));
                                     dust.setScale(1 / 2f, 1 / 2f);
-
                                     break;
                                 case 2:
                                     dust.setFilmStrip(new FilmStrip(woodenChair2, 1, 1, 1));
@@ -470,7 +499,6 @@ public class LevelBuilder {
                                     System.out.println("Unknown Object?");
 
                             }
-
                             dust.setBodyType(BodyDef.BodyType.StaticBody);
                             dust.setSensor(true);
                             dust.setDrawScale(drawScale);
@@ -503,7 +531,6 @@ public class LevelBuilder {
                 hazard.setDrawScale(drawScale);
                 hazard.setName("hazard" + hazardCounter++);
                 level.addObject(hazard);
-//                hazard.setUserData(hazard);
                 hazard.setActive(true);
             } else if (go instanceof Door) {
                 Door door = (Door) go;
@@ -523,7 +550,6 @@ public class LevelBuilder {
                 obj.setRestitution(0.1f);
                 obj.setDrawScale(drawScale);
                 obj.setFilmStrip(new FilmStrip(woodenWall, 5, 3, 15));
-//                obj.setTexture(wallTexture);
                 obj.setName("wall " + wallCounter++);
                 level.addObject(obj);
 
@@ -571,22 +597,6 @@ public class LevelBuilder {
                 goal_door.setName("goal" + goalDoorCounter++);
                 level.addObject(goal_door);
 
-            } else if (go instanceof Dust) {
-                Dust dust = (Dust) go;
-                dust.setFilmStrip(new FilmStrip(dustAnimation, 1, 8, 8));
-                dust.setName("dust");
-                dust.setBodyType(BodyDef.BodyType.StaticBody);
-                dust.setSensor(true);
-                dust.setDrawScale(drawScale);
-                level.addObject(dust);
-            } else if (go instanceof Plant) {
-                Plant dust = (Plant) go;
-                dust.setFilmStrip(new FilmStrip(plantAnimation, 1, 6, 6));
-                dust.setName("plant");
-                dust.setBodyType(BodyDef.BodyType.StaticBody);
-                dust.setSensor(true);
-                dust.setDrawScale(drawScale);
-                level.addObject(dust);
             } else if (go instanceof DecorModel) {
                 DecorModel dm = (DecorModel) go;
 
