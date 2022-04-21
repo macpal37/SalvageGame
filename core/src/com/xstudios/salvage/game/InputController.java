@@ -43,8 +43,8 @@ public class InputController {
     /**
      * Are we carrying the body?
      */
-    private boolean carryingBody;
-    private boolean carryingBodyPrevious;
+    private boolean dropFlarePressed;
+    private boolean dropFlarePrevious;
 
     /**
      * did we ping the body?
@@ -152,8 +152,8 @@ public class InputController {
      *
      * @return whether we are carrying the body.
      */
-    public boolean getOrDropBody() {
-        return carryingBody && !carryingBodyPrevious;
+    public boolean dropFlare() {
+        return dropFlarePressed && !dropFlarePrevious;
     }
 
     /**
@@ -229,7 +229,7 @@ public class InputController {
         menuPrevious = menuPressed;
         carryingObjectPrevious = carryingObject;
         pingPrevious = pingPressed;
-        carryingBodyPrevious = carryingBody;
+        dropFlarePrevious = dropFlarePressed;
 
 
         // Check to see if a GamePad is connected
@@ -277,8 +277,8 @@ public class InputController {
 
         carryingObject = (secondary && carryingObject) || Gdx.input.isKeyPressed(Input.Keys.Q);
 
-        carryingBody = (secondary && carryingBody) || Gdx.input.isKeyPressed(Input.Keys.A);
-        //TODO: don't need carrying body button anymore
+        dropFlarePressed = (secondary && dropFlarePressed) || Gdx.input.isKeyPressed(Input.Keys.A);
+
         pingPressed = (secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.E);
 
 

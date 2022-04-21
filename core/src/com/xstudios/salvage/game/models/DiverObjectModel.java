@@ -12,8 +12,6 @@ public abstract class DiverObjectModel extends GameObject {
 
     /** Drawing scale for when being carried*/
     protected Vector2 drawSymbolScale;
-    /** position of symbol to be drawn when being carried*/
-    protected Vector2 drawSymbolPos;
     /** If item is being carried */
     protected boolean carried;
 
@@ -66,8 +64,6 @@ public abstract class DiverObjectModel extends GameObject {
         setDimension(1, 1);
         setMass(1);
         resetMass();
-        drawSymbolPos = new Vector2(data.get("symbol_pos").getFloat(0),
-                data.get("symbol_pos").getFloat(1));
         drawSymbolScale = new Vector2(1,1);
     }
 
@@ -119,36 +115,6 @@ public abstract class DiverObjectModel extends GameObject {
     }
 
 
-    /**
-     * Returns the drawing pos for this object when it is being carried
-     *
-     * @return the drawing pos for this object when it is being carried
-     */
-    public Vector2 getDrawSymbolPos() {
-        scaleCache.set(drawSymbolPos);
-        return scaleCache;
-    }
-
-    /**
-     * Sets the drawing pos for this object when it is being carried
-     *
-     * @param value  the drawing pos for this object when it is being carried
-     */
-    public void setDrawSymbolPos(Vector2 value) {
-        setDrawSymbolPos(value.x,value.y);
-    }
-
-    /**
-     * Sets the drawing pos for this object when it is being carried
-     *
-     * @param x  the x pos for this object
-     * @param y  the y pos for this object
-     */
-    public void setDrawSymbolPos(float x, float y) {
-        drawSymbolPos.set(x,y);
-    }
-
-
     public void setCarried(boolean b) {
         carried = b;
 
@@ -164,6 +130,7 @@ public abstract class DiverObjectModel extends GameObject {
     }
 
     public void setTouched(boolean touched) {
+        System.out.println("SETTING TOUCHED "+ touched + "ID number "+ getID());
         isTouched = touched;
     }
 

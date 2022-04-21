@@ -13,7 +13,6 @@ import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 
-import static com.xstudios.salvage.game.models.ItemType.DEAD_BODY;
 import static com.xstudios.salvage.game.models.ItemType.KEY;
 
 public class ItemModel extends DiverObjectModel {
@@ -25,6 +24,10 @@ public class ItemModel extends DiverObjectModel {
     private Vector2 movement;
 
     private Light light;
+
+    private final int HOVER_LIGHT_RADIUS = 2;
+
+    private Color light_color;
 
     public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
     Color item_color;
@@ -41,9 +44,9 @@ public class ItemModel extends DiverObjectModel {
         } catch (Exception e){
             item_color = Color.WHITE;
         }
-        drawSymbolPos.add(data.getFloat("symbol_dist", 50.0f), 0);
         setName(item_type + "" + getID());
         movement = new Vector2();
+        light_color = new Color(1f,0.5f,0.5f,0.5f);
     }
 
 
@@ -56,7 +59,7 @@ public class ItemModel extends DiverObjectModel {
 
     public void initLight(RayHandler rayHandler){
 
-            light =  new PointLight(rayHandler,100, new Color(1f,0.5f,0.5f,0.5f),2,getX(),getY());
+        light =  new PointLight(rayHandler,100, light_color, HOVER_LIGHT_RADIUS,getX(),getY());
         Filter f = new Filter();
         f.categoryBits = 0x0002;
         f.maskBits =0x0004;
@@ -129,7 +132,7 @@ public class ItemModel extends DiverObjectModel {
                 canvas.drawText("Press q",GameController.displayFont,(getX()-getWidth()*1.25f) * drawScale.x, (getY()+getHeight()*1.5f)  * drawScale.y);
                 light.setPosition(getX(),getY());
                 light.setActive(true);
-            }else{
+            } else {
                 light.setActive(false);
             }
 

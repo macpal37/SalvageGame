@@ -25,6 +25,7 @@
     "background:level_select":"background/level_select_background.png",
     "models:key": "models/key.png",
     "models:ping": "models/ping.png",
+    "models:flare": "models/flare_temp.png",
     "models:dead_body": "models/dead_body.png",
     "models:door_open": "models/door_opened.png",
     "models:door_closed": "models/door_locked.png",

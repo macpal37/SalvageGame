@@ -1,5 +1,6 @@
 package com.xstudios.salvage.game.models;
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -159,6 +160,12 @@ public class DiverModel extends GameObject {
     private float oxygenLevel;
     private int MAX_OXYGEN = 150;
 
+    /**
+     * number of flares
+     */
+    private int num_flares;
+    private ArrayList<FlareModel> flares;
+
     /** Diver Sensor Used to pick up items and open doors*/
 
     /**
@@ -280,6 +287,11 @@ public class DiverModel extends GameObject {
         movement = new Vector2();
         drift_movement = new Vector2();
         oxygenLevel = data.getInt("max_oxygen", MAX_OXYGEN);
+        num_flares = data.getInt("num_flares", 5);
+        flares = new ArrayList<>();
+        for(int i = 0; i < num_flares; i++) {
+            flares.add(new FlareModel(data));
+        }
         pingDirection = new Vector2();
         ping_cooldown = 0;
         center = new Rectangle();
@@ -486,6 +498,10 @@ public class DiverModel extends GameObject {
         return sensorNameLeft;
     }
 
+    public String getSensorNameHitBox() {
+        return hitboxSensorName;
+    }
+
     public boolean activatePhysics(World world) {
 
         if (!super.activatePhysics(world)) {
@@ -546,6 +562,9 @@ public class DiverModel extends GameObject {
         Fixture hitboxFixture = body.createFixture(hitboxDef);
         hitboxFixture.setUserData(hitboxSensorName);
 
+//        for (FlareModel f: flares) {
+//            f.activatePhysics(world);
+//        }
         return true;
     }
 
@@ -584,6 +603,7 @@ public class DiverModel extends GameObject {
 
         // darw the diver
         if (texture != null) {
+            System.out.println("DRAWSCALE + "+ drawScale);
             if (stunned) {
                 if (stunCooldown % 20 > 5) {
                     canvas.draw(diverSprite, Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
@@ -605,11 +625,14 @@ public class DiverModel extends GameObject {
             }
         }
 
-
+        // draw the flares
+        for(FlareModel f: flares) {
+            f.draw(canvas);
+        }
         // draw the ping
         if (ping || ping_cooldown > 0) {
             canvas.draw(pingTexture, Color.WHITE, origin.x + pingDirection.x,
-                    origin.y + pingDirection.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+                    origin.y + pingDirection.y, getX() * drawScale.x, getY() * drawScale.y, 0, 0.25f, 0.25f);
             ping_cooldown--;
         }
     }
@@ -823,20 +846,20 @@ public class DiverModel extends GameObject {
      */
     public void setItem() {
         if (pickUpOrDrop) {
-            if (current_item != null) {
-                current_item.setGravityScale(0f);
-                current_item.setX(getX());
-                current_item.setY(getY());
-                current_item.setVerticalMovement(0);
-                current_item.setVX(0);
-                current_item.setVY(0);
+
+            if (current_item != null && potential_items.size() == 0) {
                 dropItem();
-            } else if (potential_items.size() > 0) {
-                current_item = potential_items.get(0);
-                current_item.setX(getX());
-                current_item.setY(getY());
-                //current_item.setGravityScale(1);
-                current_item.setCarried(true);
+            }
+            for(ItemModel i: potential_items) {
+                if(i != current_item) {
+                    dropItem();
+                    current_item = i;
+                    current_item.setX(getX());
+                    current_item.setY(getY());
+                    //current_item.setGravityScale(1);
+                    current_item.setCarried(true);
+                    break;
+                }
             }
         }
     }
@@ -860,7 +883,9 @@ public class DiverModel extends GameObject {
     }
 
     public void addPotentialItem(ItemModel i) {
-        potential_items.add(i);
+        if(potential_items!=null && !potential_items.contains(i)) {
+            potential_items.add(i);
+        }
     }
 
     public void removePotentialItem(ItemModel i) {
@@ -869,6 +894,34 @@ public class DiverModel extends GameObject {
 
     public boolean containsPotentialItem(ItemModel i) {
         return potential_items.contains(i);
+    }
+    public void printPotentialItems() {
+        System.out.println("POTENTIAL ITEMS SIZE" + potential_items.size());
+        for(ItemModel i: potential_items) {
+            System.out.println("ID NUMBER: " + i.getID());
+        }
+    }
+
+    public void setFlareTexture(TextureRegion f) {
+        for(FlareModel flare: flares) {
+            flare.setTexture(f);
+        }
+    }
+    public void initFlares(RayHandler rayHandler){
+        for(FlareModel f: flares) {
+            f.initLight(rayHandler);
+        }
+    }
+    public void dropFlare() {
+        if(num_flares > 0) {
+            FlareModel f = flares.get(num_flares - 1);
+            f.setCarried(false);
+            f.setX(getX());
+            f.setY(getY());
+            f.setVX(0);
+            f.setVY(0);
+            num_flares--;
+        }
     }
 
     public void setBodyContact(boolean b) {
@@ -934,9 +987,16 @@ public class DiverModel extends GameObject {
     }
 
     public void dropItem() {
-        current_item.setCarried(false);
-        current_item = null;
-        potential_items.clear();
+        if(current_item!=null) {
+            current_item.setGravityScale(0f);
+            current_item.setX(getX());
+            current_item.setY(getY());
+            current_item.setVerticalMovement(0);
+            current_item.setVX(0);
+            current_item.setVY(0);
+            current_item.setCarried(false);
+            current_item = null;
+        }
     }
 
     public void dropBody() {
@@ -958,6 +1018,21 @@ public class DiverModel extends GameObject {
             touchingRight.add(obj);
         else if (name.equals(sensorNameLeft) && !touchingLeft.contains(obj))
             touchingLeft.add(obj);
+
+        for(int i = 0; i < touchingRight.size(); i++) {
+            System.out.println("touching right " + touchingRight.get(i).getClass());
+            if(touchingRight.get(i) instanceof ItemModel) {
+                ItemModel tmp = (ItemModel) (touchingRight.get(i));
+                System.out.println("ID " + tmp.getID());
+            }
+        }
+        for(int i = 0; i < touchingLeft.size(); i++) {
+            System.out.println("touching left " + touchingLeft.get(i).getClass());
+            if(touchingLeft.get(i) instanceof ItemModel) {
+                ItemModel tmp = (ItemModel) (touchingLeft.get(i));
+                System.out.println("ID " + tmp.getID());
+            }
+        }
     }
 
     public void removeTouching(String name, GObject obj) {

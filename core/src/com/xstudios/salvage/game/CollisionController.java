@@ -25,9 +25,9 @@ public class CollisionController {
         if (b1.getUserData().getClass() == DiverModel.class) {
             DiverModel d1 = (DiverModel) b1.getUserData();
             if (b2.getUserData().getClass() == ItemModel.class) {
-                if(d1.getItem() !=  b2.getUserData()) {
+//                if(d1.getItem() !=  b2.getUserData()) {
                     d1.addPotentialItem((ItemModel) b2.getUserData());
-                }
+//                }
             }
         }
     }
@@ -36,17 +36,6 @@ public class CollisionController {
 
         // end contact with wall
         endDiverToObstacle(b1, b2);
-
-        if (b1.getUserData().getClass() == DiverModel.class) {
-            DiverModel d1 = (DiverModel) b1.getUserData();
-            if (b2.getUserData().getClass() == ItemModel.class) {
-                if(d1.containsPotentialItem((ItemModel) b2.getUserData())) {
-                    d1.removePotentialItem((ItemModel) b2.getUserData());
-                    ((ItemModel)b2.getUserData()).setVX(0);
-                    ((ItemModel)b2.getUserData()).setVY(0);
-                }
-            }
-        }
     }
 
     /**
@@ -55,10 +44,11 @@ public class CollisionController {
      * @param item item that diver's colliding with
      */
     public static void pickUp(DiverModel diver, ItemModel item){
-        if(diver.getItem() !=  item) {
+        diver.printPotentialItems();
+//        if(diver.getItem() !=  item) {
             diver.addPotentialItem(item);
 
-        }
+//        }
     }
 
     /**
@@ -68,7 +58,7 @@ public class CollisionController {
      */
     public static boolean attemptUnlock(DiverModel diver, Door door){
         if(diver.getItem()!=null) {
-            if (diver.getItem().getID()== door.getID() || diver.getItem().getItemType() == ItemType.DEAD_BODY) {
+            if (diver.getItem().getID()== door.getID()) {
                 return true;
             }
         }
