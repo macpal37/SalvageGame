@@ -130,38 +130,12 @@ public class LevelBuilder {
         Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Decor
     }
 
-    TileType tileTypeFromString(String type) {
-        if (type.equals("Wall")) {
-            return TileType.Wall;
-        } else if (type.equals("Diver")) {
-            return TileType.Diver;
-        } else if (type.equals("DeadBody")) {
-            return TileType.DeadBody;
-        } else if (type.equals("Item")) {
-            return TileType.Item;
-        } else if (type.equals("Door")) {
-            return TileType.Door;
-        } else if (type.equals("Obstacle")) {
-            return TileType.Obstacle;
-        } else if (type.equals("Block")) {
-            return TileType.Block;
-        } else if (type.equals("Goal")) {
-            return TileType.Goal;
-        } else if (type.equals("Hazard")) {
-            return TileType.Hazard;
-        } else if (type.equals("Decor")) {
-            return TileType.Decor;
-        }
-
-        return TileType.Empty;
-    }
-
-
     class Tile {
 
         public float x, y, width, height;
         public float[] vertices;
         public TileType tileType;
+        public String modelType;
         public int id = 0;
 
         public Tile() {
@@ -213,11 +187,12 @@ public class LevelBuilder {
         for (JsonValue tileJson : tileset.get("tiles")) {
             int id = tileJson.getInt("id");
             TileType tileType = TileType.Empty;
+            String modelType = "Empty";
             int tileId = 0;
             if (tileJson.get("properties") != null) {
                 for (JsonValue p : tileJson.get("properties")) {
                     if (p.getString("name").equals("model_type")) {
-                        tileType = tileTypeFromString(p.getString("value"));
+                        tileType = TileType.valueOf(p.getString("value"));
                     }
                     if (p.getString("name").equals("id")) {
                         tileId = p.getInt("value");
@@ -298,6 +273,9 @@ public class LevelBuilder {
 
         int ii = 0, jj = height - 1;
         for (JsonValue layer : map.get("layers")) {
+            /*===============================================
+             * ================* Tile Layers *================
+             * ===============================================*/
             if (layer.get("data") != null) {
                 for (int n = 0; n < width * height; n++) {
                     int id = Integer.parseInt(layer.get("data").get(n).toString());
@@ -310,56 +288,12 @@ public class LevelBuilder {
                     int index = 0;
                     switch (tile.tileType) {
                         case Wall:
-                            Wall wall = new Wall(createVerticies(tile, sx, sy, 1, 1), 0, 0);
+                            Wall wall = new Wall(createVerticies(tile, 0, 0, 1, 1), sx, sy);
 
                             wall.setID(tile.id);
 
                             gameObjects.add(wall);
                             break;
-                        case Diver:
-
-                            gameObjects.add(new DiverModel(sx, sy, constants.get("diver")));
-                            break;
-                        case DeadBody:
-
-                            gameObjects.add(new DeadBodyModel(sx, sy, constants.get("dead_body")));
-                            break;
-                        case Item:
-                            ItemModel item = new ItemModel(sx, sy, constants.get("key"), ItemType.KEY);
-                            gameObjects.add(item);
-                            break;
-                        case Door:
-                            float[] doorVerticies = new float[tile.vertices.length];
-                            index = 0;
-                            for (Float f : tile.vertices)
-                                doorVerticies[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                            Door door = new Door(doorVerticies, 0, 0);
-                            gameObjects.add(door);
-                            break;
-
-                        case Obstacle:
-
-
-                            break;
-
-                        case Goal:
-
-                            gameObjects.add(new GoalDoor(sx, sy, tileSize / div, tileSize / div));
-                            break;
-                        case Block:
-                            float[] blockVertices = new float[tile.vertices.length];
-                            index = 0;
-                            for (Float f : tile.vertices)
-                                blockVertices[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                            Wall block = new Wall(blockVertices, 0, 0);
-                            block.setInvisible(true);
-                            gameObjects.add(block);
-                            break;
-                        case Hazard:
-
-                            HazardModel hazard = new HazardModel(createVerticies(tile, sx, sy, 1, 1), 0, 0);
-                            gameObjects.add(hazard);
-
                         case Empty:
                             if (layer.getString("name").equals("walls")) {
                                 DecorModel dust = new DecorModel(sx, sy);
@@ -368,23 +302,25 @@ public class LevelBuilder {
                                 dust.setBodyType(BodyDef.BodyType.StaticBody);
                                 dust.setSensor(true);
                                 dust.setDrawScale(drawScale);
-
                             }
-
+                            break;
+                        default:
                             break;
                     }
                     ii++;
                     if (ii == width) {
                         ii = 0;
                         jj--;
-
                     }
                 }
                 ii = 0;
                 jj = height - 1;
+            }
 
-
-            } else {
+            /*===============================================
+             * ================* Object Layers *================
+             * ===============================================*/
+            else {
                 for (JsonValue obj : layer.get("objects")) {
                     Tile tile = tiles[obj.getInt("gid") - 1];
 
@@ -398,7 +334,6 @@ public class LevelBuilder {
                     float heightScale = (objectHeight) / tileSize;
                     switch (tile.tileType) {
                         case Wall:
-
                             gameObjects.add(new Wall(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0));
                             break;
                         case Diver:
@@ -416,13 +351,9 @@ public class LevelBuilder {
                                     item.setID(prop.getInt("value"));
                             }
                             gameObjects.add(item);
-//
                             break;
                         case Door:
-
                             Door door = new Door(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
-
-
                             door.setDoorScale((40f / div) * (widthScale / 2), (40f / div) * (heightScale / 4f));
                             if (obj.get("properties") != null)
                                 for (JsonValue prop : obj.get("properties")) {
@@ -432,11 +363,8 @@ public class LevelBuilder {
                             else
                                 door.setID(0);
                             gameObjects.add(door);
-//
                             break;
-
                         case Obstacle:
-
                             ObstacleModel obstacle = new ObstacleModel(createVerticies(tile, 0, 0, widthScale / 2, heightScale / 2), sx, sy);
                             switch (tile.id) {
                                 case 0:
@@ -449,10 +377,7 @@ public class LevelBuilder {
                                     break;
                                 default:
                                     System.out.println("Unknown Object?");
-
                             }
-
-
                             gameObjects.add(obstacle);
                             break;
 
@@ -532,6 +457,7 @@ public class LevelBuilder {
                 door.setDrawScale(drawScale);
                 door.setName("door" + doorCounter++);
                 door.setActive(true);
+                System.out.println("HELLO?");
                 level.addObject(door);
             } else if (go instanceof ObstacleModel) {
                 ObstacleModel obstacle = (ObstacleModel) go;

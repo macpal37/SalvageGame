@@ -16,24 +16,24 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 695,
-                "y": 634
+                "x": 528,
+                "y": 632
             }
         },
         "levels/level1.json": {
-            "scale": 0.12191666666666666,
-            "selectedLayer": 0,
+            "scale": 0.75,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 2456.596035543404,
-                "y": 1837.3205741626796
+                "x": 1333.3333333333333,
+                "y": 1094.6666666666665
             }
         },
         "levels/level2.json": {
-            "scale": 0.09143749999999999,
+            "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 3286.397812713603,
-                "y": 2624.7436773752565
+                "x": 2372.727272727273,
+                "y": 2612.121212121212
             }
         },
         "levels/small_ship.json": {
@@ -48,8 +48,8 @@
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 866,
-                "y": 1674.6666666666665
+                "x": 777.3333333333333,
+                "y": 1656
             }
         },
         "levels/tilesets/id_tiles.json": {

@@ -55,10 +55,6 @@ public class ObstacleModel extends Wall {
         float y = vertices[1];
 
         float scaleZ = 32f;
-        System.out.println("X: " + getX() + "Y: " + getY());
-        System.out.println("Other X: " + x + "Y: " + y);
-        System.out.println("Scale: " + drawScale.toString());
-        System.out.println("Scale: " + drawScale.toString());
         if (texture != null) {
             canvas.draw(texture, Color.WHITE, 0, 0, getX() * drawScale.x, getY() * drawScale.y, getAngle(), scale.x, scale.y);
 

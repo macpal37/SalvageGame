@@ -183,8 +183,6 @@ public class Wall extends GameObject {
                 if (points[i] < minY)
                     minY = points[i];
             }
-
-
         }
         wallPos = new Vector2(minX, minY);
 
@@ -447,8 +445,7 @@ public class Wall extends GameObject {
     public void draw(GameCanvas canvas) {
 
         if (wallTexture != null && !invisible) {
-//        canvas.draw(region, Color.WHITE, 0, 0, (getX() - anchor.x) * drawScale.x, (getY() - anchor.y) * drawScale.y, getAngle(), 1, 1);
-            canvas.draw(wallTexture, Color.WHITE, origin.x, origin.y, wallPos.x * drawScale.x, wallPos.y * drawScale.y, getAngle(), 40f / 25f, 40f / 25f);
+            canvas.draw(wallTexture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 40f / 25f, 40f / 25f);
         }
     }
 

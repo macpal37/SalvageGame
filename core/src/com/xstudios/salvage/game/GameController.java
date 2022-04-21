@@ -982,12 +982,7 @@ public class GameController implements Screen, ContactListener {
             if (bd1 instanceof DiverModel && !level.getDiver().getSensorNameRight().equals(fd1) && !level.getDiver().getSensorNameLeft().equals(fd1) && bd2 instanceof Wall) {
                 audioController.wall_collision(level.getDiver().getForce());
             }
-            if (body1.getUserData() instanceof HazardModel) {
 
-            }
-            if (body2.getUserData() instanceof HazardModel) {
-
-            }
 
 //            boolean sensorTouching1 =  level.getDiver().getSensorNameLeft().equals(fd2) ||
 
@@ -1009,7 +1004,8 @@ public class GameController implements Screen, ContactListener {
                 } else if (body2.getUserData() instanceof DeadBodyModel) {
 
                     ((DiverModel) body1.getUserData()).setBodyContact(true);
-                } else if (!level.getDiver().getSensorNameRight().equals(fd1) && !level.getDiver().getSensorNameLeft().equals(fd1) &&
+                } else if (level.getDiver().getDiverCollisionBox().equals(fd1)
+                        &&
                         body2.getUserData() instanceof HazardModel) {
 
                     hostileOxygenDrain = CollisionController.staticHazardCollision(level.getDiver(), (HazardModel) body2.getUserData());
@@ -1033,7 +1029,7 @@ public class GameController implements Screen, ContactListener {
 
                 } else if (body1.getUserData() instanceof DeadBodyModel) {
                     ((DiverModel) body2.getUserData()).setBodyContact(true);
-                } else if (!level.getDiver().getSensorNameRight().equals(fd2) && !level.getDiver().getSensorNameLeft().equals(fd2) &&
+                } else if (level.getDiver().getDiverCollisionBox().equals(fd2) &&
 
                         body1.getUserData() instanceof HazardModel) {
 

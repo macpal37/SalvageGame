@@ -164,6 +164,7 @@ public class DiverModel extends GameObject {
     private final String sensorNameRight;
     private final String sensorNameLeft;
     private final String hitboxSensorName;
+    private final String diverCollisionBox;
     /**
      * The physics shape of this object
      */
@@ -253,6 +254,7 @@ public class DiverModel extends GameObject {
         sensorNameRight = "DiverSensorRight";
         sensorNameLeft = "DiverSensorLeft";
         hitboxSensorName = "HitboxSensor";
+        diverCollisionBox = "DiverBox";
         touchingRight = new ArrayList<>();
         touchingLeft = new ArrayList<>();
         // Initialize
@@ -429,11 +431,6 @@ public class DiverModel extends GameObject {
      */
     public void setStunned(boolean stun) {
 
-//        if (stun){
-//
-//        }
-
-
         stunned = stun;
     }
 
@@ -507,10 +504,6 @@ public class DiverModel extends GameObject {
         sensorDef.shape = sensorShapeRight;
 
 
-        Fixture sensorFixture = body.createFixture(sensorDef);
-        sensorFixture.setUserData(getSensorNameRight());
-
-
         FixtureDef sensorDef2 = new FixtureDef();
         sensorDef2.density = data.getFloat("density", 0);
         sensorDef2.isSensor = true;
@@ -532,7 +525,7 @@ public class DiverModel extends GameObject {
         // we don't want this fixture to collide, just act as a sensor
         hitboxDef.filter.groupIndex = -1;
         hitboxShape = new PolygonShape();
-        hitboxShape.setAsBox(getWidth() * 1.2f, getHeight() * 1.2f,
+        hitboxShape.setAsBox(getWidth() * 1.6f, getHeight() * 2.4f,
                 new Vector2(0, 0), 0.0f);
         hitboxDef.shape = hitboxShape;
         Fixture hitboxFixture = body.createFixture(hitboxDef);
@@ -540,6 +533,15 @@ public class DiverModel extends GameObject {
 
         return true;
     }
+
+    public String getHitboxSensorName() {
+        return hitboxSensorName;
+    }
+
+    public String getDiverCollisionBox() {
+        return diverCollisionBox;
+    }
+
 
     /**
      * Release the fixtures for this body, reseting the shape
@@ -560,12 +562,14 @@ public class DiverModel extends GameObject {
 
         releaseFixtures();
         // Create the fixture
+
         fixture.shape = shape;
         fixture.filter.categoryBits = 0x002;
         fixture.filter.groupIndex = 0x004;
         fixture.filter.maskBits = -1;
-        geometry = body.createFixture(fixture);
 
+        geometry = body.createFixture(fixture);
+        geometry.setUserData(getDiverCollisionBox());
         markDirty(false);
     }
 
@@ -730,12 +734,13 @@ public class DiverModel extends GameObject {
         targetAngle += (targetAngle < 0) ? 360f : 0f;
         float dist = targetAngle - getDynamicAngle();
         float angle = 0.4f * 3;
-        int buffer = 15;
-        if (Math.abs(dist) >= 90 - buffer) {
-            dist += (dist > 0) ? -180 : 180;
+        int buffer = 5;
+        int flip = 180;
+        if (Math.abs(dist) >= 180 - buffer) {
+            dist += (dist > 0) ? -flip : flip;
             faceRight = !faceRight;
             if (Math.abs(dist) >= 90) {
-                dist += (dist > 0) ? -180 : 180;
+                dist += (dist > 0) ? -flip : flip;
                 faceRight = !faceRight;
             } else {
                 turnFrames = 4;

@@ -25,7 +25,7 @@ public class Door extends Wall {
     }
 
     public Door(float[] points, float x, float y) {
-        super(points, x, y);
+        super(points, 0, 0);
         toUnlock = false;
     }
 
@@ -60,20 +60,18 @@ public class Door extends Wall {
 
     public void draw(GameCanvas canvas) {
 
-        if (region != null) {
-            if (openDoor != null && closedDoor != null) {
-                float x = vertices[0];
-                float y = vertices[1];
 
-
-                if (isActive()) {
-                    canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
+        if (openDoor != null && closedDoor != null) {
+            float x = vertices[0];
+            float y = vertices[1];
+            if (isActive()) {
+                canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
 //                    canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], origin.x, 0, x * drawScale.x, (y) * drawScale.y + doorDimension.y / 2f, getAngle(), 1, 1);
-                } else {
-                    canvas.draw(openDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
-                }
+            } else {
+                canvas.draw(openDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
             }
         }
+
 
     }
 
