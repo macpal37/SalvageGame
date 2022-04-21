@@ -168,7 +168,7 @@ public class Wall extends GameObject {
      * @param y      Initial y position of the polygon center
      */
     public Wall(float[] points, float x, float y) {
-        super(0, 0);
+        super(x, y);
         assert points.length % 2 == 0;
 
         float minX = points[0];

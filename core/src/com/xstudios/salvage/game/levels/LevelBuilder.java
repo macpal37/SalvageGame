@@ -18,6 +18,7 @@ import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.models.*;
 
 import com.xstudios.salvage.util.FilmStrip;
+import jdk.internal.misc.OSEnvironment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -109,8 +110,6 @@ public class LevelBuilder {
         swimmingAnimation = directory.getEntry("models:diver_swimming", Texture.class);
         dustAnimation = directory.getEntry("models:dust", Texture.class);
         plantAnimation = directory.getEntry("models:plant", Texture.class);
-        dustAnimation = directory.getEntry("models:dust", Texture.class);
-        plantAnimation = directory.getEntry("models:plant", Texture.class);
 
 
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
@@ -118,8 +117,6 @@ public class LevelBuilder {
         pingTexture = new TextureRegion(directory.getEntry("models:ping", Texture.class));
         wallTexture = new TextureRegion(directory.getEntry("hazard", Texture.class));
         hazardTexture = new TextureRegion(directory.getEntry("hazard", Texture.class));
-        doorTexture = new TextureRegion(directory.getEntry("door", Texture.class));
-        //wallBackTexture = new TextureRegion(directory.getEntry( "background:wooden_bg", Texture.class ));
         doorOpenTexture = new TextureRegion(directory.getEntry("models:door_open", Texture.class));
         doorCloseTexture = new TextureRegion(directory.getEntry("models:door_closed", Texture.class));
 
@@ -440,27 +437,22 @@ public class LevelBuilder {
 
                         case Obstacle:
 
-                            ObstacleModel obstacle = new ObstacleModel(createVerticies(tile, sx, sy, widthScale, heightScale));
+                            ObstacleModel obstacle = new ObstacleModel(createVerticies(tile, 0, 0, widthScale / 2, heightScale / 2), sx, sy);
                             switch (tile.id) {
                                 case 0:
                                     obstacle.setTexture(barrelTexture);
+                                    obstacle.setScale((40f / div) * (widthScale / 4), (40f / div) * (heightScale / 4f));
                                     break;
                                 case 1:
                                     obstacle.setTexture(crateTexture);
+                                    obstacle.setScale((40f / div) * (widthScale / 4), (40f / div) * (heightScale / 4f));
                                     break;
                                 default:
                                     System.out.println("Unknown Object?");
 
                             }
-                            obstacle.setBodyType(BodyDef.BodyType.DynamicBody);
-                            obstacle.setSensor(false);
-                            obstacle.setFixedRotation(false);
-                            obstacle.setDrawScale(drawScale);
-                            obstacle.setDensity(1);
-                            obstacle.setMass(10f);
-                            obstacle.setFriction(0.4f);
-                            obstacle.setRestitution(0.1f);
-                            obstacle.setName("obstacle");
+
+
                             gameObjects.add(obstacle);
                             break;
 
@@ -541,6 +533,18 @@ public class LevelBuilder {
                 door.setName("door" + doorCounter++);
                 door.setActive(true);
                 level.addObject(door);
+            } else if (go instanceof ObstacleModel) {
+                ObstacleModel obstacle = (ObstacleModel) go;
+                obstacle.setBodyType(BodyDef.BodyType.DynamicBody);
+                obstacle.setSensor(false);
+                obstacle.setFixedRotation(false);
+                obstacle.setDrawScale(drawScale);
+                obstacle.setDensity(1);
+                obstacle.setMass(10f);
+                obstacle.setFriction(0.4f);
+                obstacle.setRestitution(0.1f);
+                obstacle.setName("obstacle");
+                level.addObject(obstacle);
             } else if (go instanceof Wall) {
 
                 Wall obj = (Wall) go;

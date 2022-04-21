@@ -50,13 +50,8 @@
           "file":"models/hazard_texture.png",
           "wrapU":"repeated",
           "wrapV": "repeated"
-        },
+        }
 
-    "door": {
-      "file": "models/door.png",
-      "wrapU": "repeated",
-      "wrapV": "repeated"
-    }
   },
   "jsons"  : {
     "models:constants":  "models/constants.json"
