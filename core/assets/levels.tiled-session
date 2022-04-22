@@ -3,13 +3,13 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "levels/level2.json",
+    "activeFile": "levels/level1.json",
     "expandedProjectPaths": [
-        ".",
-        "levels/tilesets",
         "levels",
+        "tilesets",
+        ".",
         "levels/objects",
-        "tilesets"
+        "levels/tilesets"
     ],
     "fileStates": {
         "levels/level0.json": {
@@ -24,8 +24,8 @@
             "scale": 0.75,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 321.99999999999994,
-                "y": 1065.3333333333335
+                "x": 519.3333333333333,
+                "y": 1030
             }
         },
         "levels/level2.json": {
@@ -65,12 +65,14 @@
     "map.tileWidth": 100,
     "map.width": 20,
     "openFiles": [
-        "levels/level0.json",
-        "levels/level2.json"
+        "levels/test_level.json",
+        "levels/level1.json"
     ],
     "project": "",
     "property.type": "int",
     "recentFiles": [
+        "levels/test_level.json",
+        "levels/level1.json",
         "levels/level2.json",
         "levels/level0.json",
         "levels/small_ship.json"
