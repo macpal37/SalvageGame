@@ -203,7 +203,7 @@ public class GameController implements Screen, ContactListener {
     private boolean debug;
 
     private Vector2 forceCache;
-    private AudioController audioController;
+//    private AudioController audioController;
     private PhysicsController physicsController;
 
     private boolean reach_target = false;
@@ -311,8 +311,8 @@ public class GameController implements Screen, ContactListener {
 
         wallShine.setContactFilter(f2);
         light.setContactFilter(f);
-        audioController = new AudioController(100.0f);
-        audioController.intialize();
+//        audioController = new AudioController(100.0f);
+        AudioController.getInstance().initialize(100.0f);
         collisionController = new CollisionController();
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
@@ -386,7 +386,7 @@ public class GameController implements Screen, ContactListener {
         scale = null;
         world = null;
         canvas = null;
-        audioController.dispose();
+//        audioController.dispose();
     }
 
     /**
@@ -482,7 +482,7 @@ public class GameController implements Screen, ContactListener {
 
         objects.clear();
         addQueue.clear();
-        audioController.reset();
+        AudioController.getInstance().reset();
         populateLevel();
     }
 
@@ -607,12 +607,14 @@ public class GameController implements Screen, ContactListener {
 
         diver.setDeadBody(dead_body);
 
-
     }
 
     private void updateGameState() {
         if (diver.getOxygenLevel() <= 0) {
             game_state = state.LOSE_GAME;
+        }
+        if (reach_target) {
+            game_state = state.WIN_GAME;
         }
     }
 
@@ -675,7 +677,7 @@ public class GameController implements Screen, ContactListener {
         }
 
         // update audio according to oxygen level
-        audioController.update(diver.getOxygenLevel());
+        AudioController.getInstance().update(diver.getOxygenLevel());
 
 
         if (diver.getBody() != null && !pause) {
@@ -1063,120 +1065,15 @@ public class GameController implements Screen, ContactListener {
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
 
-        collisionController.startDiverToObstacle(body1, body2);
-
-        try {
-            GObject bd1 = (GObject) body1.getUserData();
-            GObject bd2 = (GObject) body2.getUserData();
-
-            if ((diver.getSensorNameLeft().equals(fd2) && diver != bd1) ||
-                    (diver.getSensorNameLeft().equals(fd1) && diver != bd2)) {
-
-                if (diver != bd1)
-                    diver.addTouching(diver.getSensorNameLeft(), bd1);
-                else
-                    diver.addTouching(diver.getSensorNameLeft(), bd2);
-
-            }
-            if ((diver.getSensorNameRight().equals(fd2) && diver != bd1) ||
-                    (diver.getSensorNameRight().equals(fd1) && diver != bd2)) {
-
-                if (diver != bd1)
-                    diver.addTouching(diver.getSensorNameRight(), bd1);
-                else
-                    diver.addTouching(diver.getSensorNameRight(), bd2);
-
-            }
-
-            if (bd1 instanceof DiverModel && !diver.getSensorNameRight().equals(fd1) && !diver.getSensorNameLeft().equals(fd1) && bd2 instanceof Wall) {
-                audioController.wall_collision(diver.getForce());
-            }
-            if (body1.getUserData() instanceof HazardModel) {
-
-            }
-            if (body2.getUserData() instanceof HazardModel) {
-
-            }
-
-//            boolean sensorTouching1 =  diver.getSensorNameLeft().equals(fd2) ||
-
-            if (body1.getUserData() instanceof DiverModel) {
-                if (body2.getUserData() instanceof GoalDoor) {
-                    if (CollisionController.winGame(diver, (GoalDoor) body2.getUserData())
-                            && listener != null) {
-                        reach_target = true;//listener.exitScreen(this, 0);
-                    }
-                } else if (body2.getUserData() instanceof ItemModel) {
-
-                    CollisionController.pickUp(diver, (ItemModel) body2.getUserData());
-                    ((ItemModel) body2.getUserData()).setTouched(true);
-                } else if (body2.getUserData() instanceof Door) {
-
-
-//                toUnlock=CollisionController.attemptUnlock(diver, (Door)body2.getUserData());
-                    ((Door) body2.getUserData()).setUnlock(CollisionController.attemptUnlock(diver, (Door) body2.getUserData()));
-                } else if (body2.getUserData() instanceof DeadBodyModel) {
-
-                    ((DiverModel) body1.getUserData()).setBodyContact(true);
-                } else if (!diver.getSensorNameRight().equals(fd1) && !diver.getSensorNameLeft().equals(fd1) &&
-                        body2.getUserData() instanceof HazardModel) {
-
-                    hostileOxygenDrain = CollisionController.staticHazardCollision(diver, (HazardModel) body2.getUserData());
-                }
-
-
-            } else if (body2.getUserData() instanceof DiverModel) {
-                if (body1.getUserData() instanceof GoalDoor) {
-                    if (CollisionController.winGame(diver, (GoalDoor) body1.getUserData())
-                            && listener != null) {
-                        reach_target = true;//listener.exitScreen(this, 0);
-                    }
-                } else if (body1.getUserData() instanceof ItemModel) {
-                    System.out.println("ITEM!!");
-                    CollisionController.pickUp(diver, (ItemModel) body1.getUserData());
-                    ((ItemModel) body1.getUserData()).setTouched(true);
-                } else if (body1.getUserData() instanceof Door) {
-                    System.out.println("Attempt Unlock");
-//                toUnlock=CollisionController.attemptUnlock(diver, (Door)body1.getUserData());
-                    ((Door) body1.getUserData()).setUnlock(CollisionController.attemptUnlock(diver, (Door) body1.getUserData()));
-
-                } else if (body1.getUserData() instanceof DeadBodyModel) {
-                    System.out.println("Body!!");
-                    ((DiverModel) body2.getUserData()).setBodyContact(true);
-                } else if (!diver.getSensorNameRight().equals(fd2) && !diver.getSensorNameLeft().equals(fd2) &&
-
-                        body1.getUserData() instanceof HazardModel) {
-
-                    System.out.println("OUCH!!");
-                    hostileOxygenDrain = CollisionController.staticHazardCollision(diver, (HazardModel) body1.getUserData());
-                }
-            }
-            if (body1.getUserData() instanceof DiverModel) {
-                if (body2.getUserData() instanceof GoalDoor) {
-                    if (CollisionController.winGame(diver, (GoalDoor) body2.getUserData())
-                            && listener != null) {
-                        // reach_target = true;//listener.exitScreen(this, 0);
-                        game_state = state.WIN_GAME;
-                    }
-                }
-            } else if (body2.getUserData() instanceof DiverModel) {
-                if (body1.getUserData() instanceof GoalDoor) {
-                    if (CollisionController.winGame(diver, (GoalDoor) body1.getUserData())
-                            && listener != null) {
-                        //reach_target = true;//listener.exitScreen(this, 0);
-                        game_state = state.WIN_GAME;
-                    }
-                }
-            }
-
-            // ================= CONTACT LISTENER METHODS =============================
-
-        } catch (Exception e) {
-            System.out.println("WEIRD!!");
-            e.printStackTrace();
+        collisionController.startDiverToObstacle(fix1, fix2, diver);
+        if (listener != null) {
+            reach_target = collisionController.getWinState(body1, body2, diver);
         }
-
-
+        collisionController.addDiverSensorTouching(diver, fix1, fix2);
+        collisionController.startDiverItemCollision(body1, body2);
+        collisionController.startDiverDoorCollision(body1, body2);
+        collisionController.startDiverDeadBodyCollision(body1, body2);
+        hostileOxygenDrain = collisionController.startDiverHazardCollision(fix1, fix2, diver);
     }
 
     /**
@@ -1196,53 +1093,11 @@ public class GameController implements Screen, ContactListener {
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
 
-        collisionController.endContact(body1, body2);
+        collisionController.endDiverToObstacle(fix1, fix2, diver);
+        collisionController.endDiverDeadBodyCollision(body1, body2);
+        collisionController.removeDiverSensorTouching(diver, fix1, fix2);
+        collisionController.endDiverItemCollision(body1, body2);
 
-        try {
-            GObject bd1 = (GObject) body1.getUserData();
-            GObject bd2 = (GObject) body2.getUserData();
-
-            if ((diver.getSensorNameLeft().equals(fd2) && diver != bd1) ||
-                    (diver.getSensorNameLeft().equals(fd1) && diver != bd2)) {
-
-                if (diver != bd1)
-                    diver.removeTouching(diver.getSensorNameLeft(), bd1);
-                else
-                    diver.removeTouching(diver.getSensorNameLeft(), bd2);
-
-            }
-            if ((diver.getSensorNameRight().equals(fd2) && diver != bd1) ||
-                    (diver.getSensorNameRight().equals(fd1) && diver != bd2)) {
-
-                if (diver != bd1)
-                    diver.removeTouching(diver.getSensorNameRight(), bd1);
-                else
-                    diver.removeTouching(diver.getSensorNameRight(), bd2);
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (body1.getUserData() instanceof DiverModel) {
-
-            if (body2.getUserData() instanceof ItemModel) {
-                CollisionController.putDown(diver,
-                        (ItemModel) body2.getUserData());
-                ((ItemModel) body2.getUserData()).setTouched(false);
-            }
-
-        } else if (body2.getUserData() instanceof DiverModel) {
-            if (body1.getUserData() instanceof ItemModel) {
-                CollisionController.putDown(diver,
-                        (ItemModel) body1.getUserData());
-                ((ItemModel) body1.getUserData()).setTouched(false);
-            }
-//            else if(body2.getUserData() instanceof DeadBodyModel){
-//                System.out.println("end contact with body");
-//                ((DiverModel) body2.getUserData()).setBodyContact(true);
-//            }
-        }
     }
 
     /**
