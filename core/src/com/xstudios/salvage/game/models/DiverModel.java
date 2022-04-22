@@ -165,6 +165,15 @@ public class DiverModel extends GameObject {
      */
     private int num_flares;
     private ArrayList<FlareModel> flares;
+    /**
+     * flare duration
+     */
+    private int flare_duration;
+    private int MAX_FLARE_DURATION;
+    /**
+     * true if there is currently an active flare
+     */
+    private boolean active_flare;
 
     /** Diver Sensor Used to pick up items and open doors*/
 
@@ -288,7 +297,10 @@ public class DiverModel extends GameObject {
         drift_movement = new Vector2();
         oxygenLevel = data.getInt("max_oxygen", MAX_OXYGEN);
         num_flares = data.getInt("num_flares", 5);
+        MAX_FLARE_DURATION = data.getInt("flare_duration", 100);
+        flare_duration = 0;
         flares = new ArrayList<>();
+        active_flare = false;
         for(int i = 0; i < num_flares; i++) {
             flares.add(new FlareModel(data));
         }
@@ -603,7 +615,13 @@ public class DiverModel extends GameObject {
 
         // darw the diver
         if (texture != null) {
-            System.out.println("DRAWSCALE + "+ drawScale);
+
+            // draw the flares
+            for(FlareModel f: flares) {
+                f.draw(canvas);
+            }
+
+//            System.out.println("DRAWSCALE + "+ drawScale);
             if (stunned) {
                 if (stunCooldown % 20 > 5) {
                     canvas.draw(diverSprite, Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
@@ -625,10 +643,6 @@ public class DiverModel extends GameObject {
             }
         }
 
-        // draw the flares
-        for(FlareModel f: flares) {
-            f.draw(canvas);
-        }
         // draw the ping
         if (ping || ping_cooldown > 0) {
             canvas.draw(pingTexture, Color.WHITE, origin.x + pingDirection.x,
@@ -912,15 +926,30 @@ public class DiverModel extends GameObject {
             f.initLight(rayHandler);
         }
     }
-    public void dropFlare() {
-        if(num_flares > 0) {
+
+    public void dropFlare(boolean d) {
+        active_flare = d;
+    }
+    public void updateFlare() {
+        if(num_flares > 0 && active_flare) {
             FlareModel f = flares.get(num_flares - 1);
-            f.setCarried(false);
-            f.setX(getX());
-            f.setY(getY());
-            f.setVX(0);
-            f.setVY(0);
-            num_flares--;
+            if(flare_duration < MAX_FLARE_DURATION){
+                f.setActivated(true);
+                f.setX(getX());
+                f.setY(getY());
+                flare_duration++;
+                System.out.println("FLARe IS ACTIVE");
+            } else {
+                f.setActive(false);
+                f.setCarried(false);
+                f.setX(getX());
+                f.setY(getY());
+                f.setVX(0);
+                f.setVY(0);
+                num_flares--;
+                System.out.println("FLARe IS DROPPED");
+                active_flare = false;
+            }
         }
     }
 
@@ -1020,17 +1049,17 @@ public class DiverModel extends GameObject {
             touchingLeft.add(obj);
 
         for(int i = 0; i < touchingRight.size(); i++) {
-            System.out.println("touching right " + touchingRight.get(i).getClass());
+//            System.out.println("touching right " + touchingRight.get(i).getClass());
             if(touchingRight.get(i) instanceof ItemModel) {
                 ItemModel tmp = (ItemModel) (touchingRight.get(i));
-                System.out.println("ID " + tmp.getID());
+//                System.out.println("ID " + tmp.getID());
             }
         }
         for(int i = 0; i < touchingLeft.size(); i++) {
-            System.out.println("touching left " + touchingLeft.get(i).getClass());
+//            System.out.println("touching left " + touchingLeft.get(i).getClass());
             if(touchingLeft.get(i) instanceof ItemModel) {
                 ItemModel tmp = (ItemModel) (touchingLeft.get(i));
-                System.out.println("ID " + tmp.getID());
+//                System.out.println("ID " + tmp.getID());
             }
         }
     }

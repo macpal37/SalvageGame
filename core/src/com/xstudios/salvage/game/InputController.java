@@ -277,7 +277,7 @@ public class InputController {
 
         carryingObject = (secondary && carryingObject) || Gdx.input.isKeyPressed(Input.Keys.Q);
 
-        dropFlarePressed = (secondary && dropFlarePressed) || Gdx.input.isKeyPressed(Input.Keys.A);
+        dropFlarePressed = (secondary && dropFlarePressed) || Gdx.input.isKeyPressed(Input.Keys.F);
 
         pingPressed = (secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.E);
 

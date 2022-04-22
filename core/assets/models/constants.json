@@ -23,7 +23,8 @@
 			"shrink" : 0.6,
 			"width" : 1
 		},
-		"num_flares" : 5
+		"num_flares" : 5,
+		"flare_duration": 175
 	},
 	"dead_body" : {
 		"pos": [-5, 10.0],
