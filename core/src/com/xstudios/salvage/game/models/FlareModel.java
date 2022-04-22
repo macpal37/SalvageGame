@@ -16,13 +16,17 @@ import com.xstudios.salvage.game.GameObject;
 public class FlareModel extends DiverObjectModel {
 
 
-    /** The current horizontal movement of the item */
+    /**
+     * The current horizontal movement of the item
+     */
     private Vector2 movement;
 
-    private Light light;
+    private PointLight light;
+    private PointLight redLight;
 
-    private int FLARE_LIGHT_RADIUS = 15;
-    private int MIN_LIGHT_RADIUS = 5;
+
+    private int FLARE_LIGHT_RADIUS = 10;
+    private int MIN_LIGHT_RADIUS = 3;
 
     private Color light_color;
 
@@ -31,20 +35,21 @@ public class FlareModel extends DiverObjectModel {
     public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
     Color item_color;
 
-    public FlareModel(JsonValue data){
-        this(0,0, data);
+    public FlareModel(JsonValue data) {
+        this(0, 0, data);
     }
-    public FlareModel(float x, float y, JsonValue data){
 
-        super(x,y,data);
+    public FlareModel(float x, float y, JsonValue data) {
+
+        super(x, y, data);
 
         try {
             item_color = COLOR_OPTIONS[getID()];
-        } catch (Exception e){
+        } catch (Exception e) {
             item_color = Color.WHITE;
         }
         movement = new Vector2();
-        light_color = new Color(1f,0.5f,0.5f,0.5f);//Color.BLACK;
+        light_color = new Color(1f, 0.5f, 0.5f, 0.6f);//Color.BLACK;
         setCarried(true);
         drawScale.set(40, 40);
         setBodyType(BodyDef.BodyType.StaticBody);
@@ -59,16 +64,22 @@ public class FlareModel extends DiverObjectModel {
         setName("flare" + getID());
     }
 
-    public void initLight(RayHandler rayHandler){
+    public void initLight(RayHandler rayHandler) {
 //        System.out.println("INITIALIZE LIGHT");
-        light =  new PointLight(rayHandler,100, light_color, FLARE_LIGHT_RADIUS,0,0);
+        // White flickering light
+        light = new PointLight(rayHandler, 100, new Color(1f, 1f, 1f, 0.0f), 1, 0, 0);
         Filter f = new Filter();
         f.categoryBits = 0x0002;
-        f.maskBits =0x0004;
+        f.maskBits = 0x0004;
         f.groupIndex = 1;
         light.setContactFilter(f);
-//        light.setSoft(true);
+
         light.setActive(false);
+        // Red flare glow!
+        redLight = new PointLight(rayHandler, 100, light_color, FLARE_LIGHT_RADIUS * 3, 0, 0);
+        redLight.setContactFilter(f);
+
+        redLight.setActive(false);
     }
 
     public void setActivated(boolean b) {
@@ -81,13 +92,13 @@ public class FlareModel extends DiverObjectModel {
     }
 
 
-
     public Color getColor() {
         return ItemModel.COLOR_OPTIONS[getID()];
     }
+
     /**
      * Release the fixtures for this body, resetting the shape
-     *
+     * <p>
      * This is the primary method to override for custom physics objects
      */
     protected void releaseFixtures() {
@@ -122,41 +133,67 @@ public class FlareModel extends DiverObjectModel {
 
     /**
      * Sets the object texture for drawing purposes.
-     *
+     * <p>
      * In order for drawing to work properly, you MUST set the drawScale.
      * The drawScale converts the physics units to pixels.
      *
-     * @param value  the object texture for drawing purposes.
+     * @param value the object texture for drawing purposes.
      */
     public void setTexture(TextureRegion value) {
         texture = value;
-        origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
+        origin.set(texture.getRegionWidth() / 2.0f, texture.getRegionHeight() / 2.0f);
     }
 
 
+    public int tick = 0;
+
     @Override
     public void draw(GameCanvas canvas) {
+        tick++;
         if (texture != null) {
-            if(isActivated || !carried){
-                if(!carried){
-                    if(FLARE_LIGHT_RADIUS > MIN_LIGHT_RADIUS) {
-                        FLARE_LIGHT_RADIUS--;
+            if (isActivated || !carried) {
+                if (!carried) {
+//                    if (FLARE_LIGHT_RADIUS > MIN_LIGHT_RADIUS) {
+//                        FLARE_LIGHT_RADIUS--;
+//                    }
+                    //Light Flickering
+                    if (tick % 100 > 50) {
+                        light.setDistance(light.getDistance() + 0.01f);
+                    } else {
+                        light.setDistance(light.getDistance() - 0.01f);
                     }
-                    light.setDistance(FLARE_LIGHT_RADIUS);
-                    canvas.draw(texture,Color.WHITE, origin.x, origin.y, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);
+                    if (tick % 100 == 0 && redLight.getDistance() > FLARE_LIGHT_RADIUS) {
+                        redLight.setDistance(redLight.getDistance() - 1f);
+                    }
+                    if (tick % 500 == 0 && redLight.getDistance() >= MIN_LIGHT_RADIUS && redLight.getDistance() <= FLARE_LIGHT_RADIUS) {
+                        redLight.setDistance(redLight.getDistance() - 0.1f);
+                    }
+                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1f, 1f);
 
                 }
-                light.setPosition(getX(),getY());
+                light.setPosition(getX(), getY());
                 light.setActive(true);
+                redLight.setPosition(getX(), getY());
+                redLight.setActive(true);
             }
         }
     }
 
 
+    @Override
+    public void setCarried(boolean b) {
+        carried = b;
+        if (!carried) {
+            light.setColor(new Color(1f, 1f, 1f, 0.6f));
+            light.setDistance(5);
+            redLight.setColor(new Color(1f, 0.5f, 0.5f, 0.6f));
+        }
+
+    }
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        canvas.drawPhysics(shape, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
     }
 
     /**
@@ -164,15 +201,15 @@ public class FlareModel extends DiverObjectModel {
      */
     protected void resize(float width, float height) {
         // Make the box with the center in the center
-        vertices[0] = -width/2.0f;
-        vertices[1] = -height/2.0f;
-        vertices[2] = -width/2.0f;
-        vertices[3] =  height/2.0f;
-        vertices[4] =  width/2.0f;
-        vertices[5] =  height/2.0f;
-        vertices[6] =  width/2.0f;
-        vertices[7] = -height/2.0f;
-        shape.setAsBox(width,height);
+        vertices[0] = -width / 2.0f;
+        vertices[1] = -height / 2.0f;
+        vertices[2] = -width / 2.0f;
+        vertices[3] = height / 2.0f;
+        vertices[4] = width / 2.0f;
+        vertices[5] = height / 2.0f;
+        vertices[6] = width / 2.0f;
+        vertices[7] = -height / 2.0f;
+        shape.setAsBox(width, height);
     }
 
     public void applyForce() {
@@ -181,7 +218,7 @@ public class FlareModel extends DiverObjectModel {
         }
         forceCache.x = getHorizontalMovement();
         forceCache.y = getVerticalMovement();
-        body.applyForce(forceCache,getPosition(),true);
+        body.applyForce(forceCache, getPosition(), true);
         setHorizontalMovement(0);
         setVerticalMovement(0);
     }
@@ -206,7 +243,7 @@ public class FlareModel extends DiverObjectModel {
 
     /**
      * Returns left/right movement of this character.
-     *
+     * <p>
      * This is the result of input times dude force.
      *
      * @return left/right movement of this character.
@@ -217,7 +254,7 @@ public class FlareModel extends DiverObjectModel {
 
     /**
      * Returns up/down movement of this character.
-     *
+     * <p>
      * This is the result of input times dude force.
      *
      * @return left/right movement of this character.

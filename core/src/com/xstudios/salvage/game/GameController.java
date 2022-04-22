@@ -263,11 +263,11 @@ public class GameController implements Screen, ContactListener {
         this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
     }
 
-
     private PointLight light;
+    private PointLight wallShine;
+
     private RayHandler rayHandler;
 
-    private PointLight wallShine;
 
     /**
      * Creates a new game world
@@ -659,7 +659,7 @@ public class GameController implements Screen, ContactListener {
         diver.setPingDirection(dead_body.getPosition());
 
         // flare management
-        if(input.dropFlare()) {
+        if (input.dropFlare()) {
             diver.dropFlare(input.dropFlare());
         }
         diver.updateFlare();
@@ -686,7 +686,7 @@ public class GameController implements Screen, ContactListener {
         if (diver.getBody() != null && !pause) {
             cameraController.setCameraPosition(
                     diver.getX() * diver.getDrawScale().x, diver.getY() * diver.getDrawScale().y);
-//            System.out.println("LIGHT COLOR " + light.getColor());
+
             light.setPosition(
                     (diver.getX() * diver.getDrawScale().x) / 40f,
                     (diver.getY() * diver.getDrawScale().y) / 40f);
@@ -1044,7 +1044,7 @@ public class GameController implements Screen, ContactListener {
             GObject bd1 = (GObject) body1.getUserData();
             GObject bd2 = (GObject) body2.getUserData();
 
-            if ((diver.getSensorNameLeft().equals(fd2) && diver != bd1 &&!(bd1 instanceof ItemModel)) ||
+            if ((diver.getSensorNameLeft().equals(fd2) && diver != bd1 && !(bd1 instanceof ItemModel)) ||
                     (diver.getSensorNameLeft().equals(fd1) && diver != bd2 && !(bd2 instanceof ItemModel))) {
 
                 if (diver != bd1)

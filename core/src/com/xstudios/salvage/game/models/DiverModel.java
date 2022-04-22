@@ -27,6 +27,7 @@ public class DiverModel extends GameObject {
      */
     protected PolygonShape shape;
 
+
     protected CircleShape end1;
     /**
      * Shape information for the end cap
@@ -301,7 +302,7 @@ public class DiverModel extends GameObject {
         flare_duration = 0;
         flares = new ArrayList<>();
         active_flare = false;
-        for(int i = 0; i < num_flares; i++) {
+        for (int i = 0; i < num_flares; i++) {
             flares.add(new FlareModel(data));
         }
         pingDirection = new Vector2();
@@ -617,7 +618,7 @@ public class DiverModel extends GameObject {
         if (texture != null) {
 
             // draw the flares
-            for(FlareModel f: flares) {
+            for (FlareModel f : flares) {
                 f.draw(canvas);
             }
 
@@ -864,8 +865,8 @@ public class DiverModel extends GameObject {
             if (current_item != null && potential_items.size() == 0) {
                 dropItem();
             }
-            for(ItemModel i: potential_items) {
-                if(i != current_item) {
+            for (ItemModel i : potential_items) {
+                if (i != current_item) {
                     dropItem();
                     current_item = i;
                     current_item.setX(getX());
@@ -897,7 +898,7 @@ public class DiverModel extends GameObject {
     }
 
     public void addPotentialItem(ItemModel i) {
-        if(potential_items!=null && !potential_items.contains(i)) {
+        if (potential_items != null && !potential_items.contains(i)) {
             potential_items.add(i);
         }
     }
@@ -909,20 +910,23 @@ public class DiverModel extends GameObject {
     public boolean containsPotentialItem(ItemModel i) {
         return potential_items.contains(i);
     }
+
     public void printPotentialItems() {
         System.out.println("POTENTIAL ITEMS SIZE" + potential_items.size());
-        for(ItemModel i: potential_items) {
+        for (ItemModel i : potential_items) {
             System.out.println("ID NUMBER: " + i.getID());
         }
     }
 
     public void setFlareTexture(TextureRegion f) {
-        for(FlareModel flare: flares) {
+        for (FlareModel flare : flares) {
             flare.setTexture(f);
         }
     }
-    public void initFlares(RayHandler rayHandler){
-        for(FlareModel f: flares) {
+
+    public void initFlares(RayHandler rayHandler) {
+
+        for (FlareModel f : flares) {
             f.initLight(rayHandler);
         }
     }
@@ -930,10 +934,11 @@ public class DiverModel extends GameObject {
     public void dropFlare(boolean d) {
         active_flare = d;
     }
+
     public void updateFlare() {
-        if(num_flares > 0 && active_flare) {
+        if (num_flares > 0 && active_flare) {
             FlareModel f = flares.get(num_flares - 1);
-            if(flare_duration < MAX_FLARE_DURATION){
+            if (flare_duration < MAX_FLARE_DURATION) {
                 f.setActivated(true);
                 f.setX(getX());
                 f.setY(getY());
@@ -1016,7 +1021,7 @@ public class DiverModel extends GameObject {
     }
 
     public void dropItem() {
-        if(current_item!=null) {
+        if (current_item != null) {
             current_item.setGravityScale(0f);
             current_item.setX(getX());
             current_item.setY(getY());
@@ -1048,16 +1053,16 @@ public class DiverModel extends GameObject {
         else if (name.equals(sensorNameLeft) && !touchingLeft.contains(obj))
             touchingLeft.add(obj);
 
-        for(int i = 0; i < touchingRight.size(); i++) {
+        for (int i = 0; i < touchingRight.size(); i++) {
 //            System.out.println("touching right " + touchingRight.get(i).getClass());
-            if(touchingRight.get(i) instanceof ItemModel) {
+            if (touchingRight.get(i) instanceof ItemModel) {
                 ItemModel tmp = (ItemModel) (touchingRight.get(i));
 //                System.out.println("ID " + tmp.getID());
             }
         }
-        for(int i = 0; i < touchingLeft.size(); i++) {
+        for (int i = 0; i < touchingLeft.size(); i++) {
 //            System.out.println("touching left " + touchingLeft.get(i).getClass());
-            if(touchingLeft.get(i) instanceof ItemModel) {
+            if (touchingLeft.get(i) instanceof ItemModel) {
                 ItemModel tmp = (ItemModel) (touchingLeft.get(i));
 //                System.out.println("ID " + tmp.getID());
             }
@@ -1083,26 +1088,27 @@ public class DiverModel extends GameObject {
     public boolean atAngle() {
         return currentAngle == targetAngle;
     }
+
     /**
      * Returns the angle corresponding to the direction of diver's movement
-     *
+     * <p>
      * The value returned is in radians
      *
      * @return the angle of rotation for this body
      */
     public float getAngle() {
 
-        if(!faceRight && !movement.isZero()){
-            targetAngle = movement.angleRad() - (float)(Math.PI);
-        } else if(!movement.isZero()){
+        if (!faceRight && !movement.isZero()) {
+            targetAngle = movement.angleRad() - (float) (Math.PI);
+        } else if (!movement.isZero()) {
             targetAngle = movement.angleRad();
         }
-        if(currentAngle > targetAngle + .1) {
-            float tmp = targetAngle  - currentAngle;
+        if (currentAngle > targetAngle + .1) {
+            float tmp = targetAngle - currentAngle;
             currentAngle -= .1;
-        } else if(currentAngle < targetAngle - .1) {
+        } else if (currentAngle < targetAngle - .1) {
             currentAngle += .1;
-            float tmp = targetAngle  - currentAngle;
+            float tmp = targetAngle - currentAngle;
         }
         return targetAngle;
     }
