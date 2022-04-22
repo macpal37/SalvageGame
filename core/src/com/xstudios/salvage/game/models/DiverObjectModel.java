@@ -130,7 +130,6 @@ public abstract class DiverObjectModel extends GameObject {
     }
 
     public void setTouched(boolean touched) {
-        System.out.println("SETTING TOUCHED "+ touched + "ID number "+ getID());
         isTouched = touched;
     }
 

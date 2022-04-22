@@ -21,9 +21,12 @@ public class FlareModel extends DiverObjectModel {
 
     private Light light;
 
-    private final int FLARE_LIGHT_RADIUS = 75;
+    private int FLARE_LIGHT_RADIUS = 15;
+    private int MIN_LIGHT_RADIUS = 5;
 
     private Color light_color;
+
+    private boolean isActivated;
 
     public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
     Color item_color;
@@ -41,10 +44,11 @@ public class FlareModel extends DiverObjectModel {
             item_color = Color.WHITE;
         }
         movement = new Vector2();
-        light_color = Color.BLACK;
+        light_color = new Color(1f,0.5f,0.5f,0.5f);//Color.BLACK;
         setCarried(true);
         drawScale.set(40, 40);
         setBodyType(BodyDef.BodyType.StaticBody);
+        isActivated = false;
     }
 
 
@@ -56,16 +60,26 @@ public class FlareModel extends DiverObjectModel {
     }
 
     public void initLight(RayHandler rayHandler){
-
-        light =  new PointLight(rayHandler,100, light_color, FLARE_LIGHT_RADIUS,getX(),getY());
+//        System.out.println("INITIALIZE LIGHT");
+        light =  new PointLight(rayHandler,100, light_color, FLARE_LIGHT_RADIUS,0,0);
         Filter f = new Filter();
         f.categoryBits = 0x0002;
         f.maskBits =0x0004;
         f.groupIndex = 1;
         light.setContactFilter(f);
-        light.setSoft(true);
+//        light.setSoft(true);
         light.setActive(false);
     }
+
+    public void setActivated(boolean b) {
+        isActivated = b;
+
+    }
+
+    public boolean isActivated() {
+        return isActivated;
+    }
+
 
 
     public Color getColor() {
@@ -123,16 +137,17 @@ public class FlareModel extends DiverObjectModel {
     @Override
     public void draw(GameCanvas canvas) {
         if (texture != null) {
-            if(!carried){
-                System.out.println("POSITION 1 " + getX() + " " + getY());
-                System.out.println("FLAR DRAWSCALE " + drawScale);
-                canvas.draw(texture,Color.WHITE, origin.x, origin.y, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);
+            if(isActivated || !carried){
+                if(!carried){
+                    if(FLARE_LIGHT_RADIUS > MIN_LIGHT_RADIUS) {
+                        FLARE_LIGHT_RADIUS--;
+                    }
+                    light.setDistance(FLARE_LIGHT_RADIUS);
+                    canvas.draw(texture,Color.WHITE, origin.x, origin.y, getX()*drawScale.x, getY()*drawScale.y, getAngle(), 1f, 1f);
 
-                System.out.println("POSITION 2 " + light.getPosition());
+                }
                 light.setPosition(getX(),getY());
                 light.setActive(true);
-            } else {
-                light.setActive(false);
             }
         }
     }

@@ -660,8 +660,9 @@ public class GameController implements Screen, ContactListener {
 
         // flare management
         if(input.dropFlare()) {
-            diver.dropFlare();
+            diver.dropFlare(input.dropFlare());
         }
+        diver.updateFlare();
         // manage items/dead body
         diver.setPickUpOrDrop(input.getOrDropObject());
         diver.setItem();
@@ -685,7 +686,7 @@ public class GameController implements Screen, ContactListener {
         if (diver.getBody() != null && !pause) {
             cameraController.setCameraPosition(
                     diver.getX() * diver.getDrawScale().x, diver.getY() * diver.getDrawScale().y);
-            System.out.println("LIGHT COLOR " + light.getColor());
+//            System.out.println("LIGHT COLOR " + light.getColor());
             light.setPosition(
                     (diver.getX() * diver.getDrawScale().x) / 40f,
                     (diver.getY() * diver.getDrawScale().y) / 40f);
@@ -1208,7 +1209,6 @@ public class GameController implements Screen, ContactListener {
         }
 
         if (diver.getSensorNameHitBox().equals(fd1)) {
-            System.out.println(body1.getUserData());
             if (body2.getUserData() instanceof ItemModel) {
                 CollisionController.putDown(diver,
                         (ItemModel) body2.getUserData());
@@ -1216,7 +1216,6 @@ public class GameController implements Screen, ContactListener {
             }
 
         } else if (diver.getSensorNameHitBox().equals(fd2)) {
-            System.out.println(body2.getUserData());
             if (body1.getUserData() instanceof ItemModel) {
                 CollisionController.putDown(diver,
                         (ItemModel) body1.getUserData());
