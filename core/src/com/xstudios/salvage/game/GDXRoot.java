@@ -22,9 +22,11 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	private CameraController cameraController;
 
-	private CameraController levelController;
-
 	private LevelSelectController level_select_controller;
+
+	private Player player;
+
+	private int current;
 
 	/**
 	 * Called when the Application is first created.
@@ -34,6 +36,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	@Override
 	public void create () {
+		current = 0;
 		cameraController = new CameraController(32,18);
 		canvas = new GameCanvas(cameraController);
 		loading = new LoadingMode("assets.json", canvas, 1);
@@ -44,7 +47,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		game_over_controller = new GameOverController(controller.getWorldBounds());
 		menu_controller = new MenuController();
 
-		levelController = new CameraController(100, 50);
 		level_select_controller = new LevelSelectController();
 		level_select_controller.setCameraController(cameraController, canvas.getWidth(), canvas.getHeight());
 
@@ -100,7 +102,8 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void exitScreen(Screen screen, int exitCode) {
 		if (screen == loading) {
 			directory = loading.getAssets();
-			if(exitCode == 0){
+			player = new Player(directory);
+			if (exitCode == 0) {
 				menu_controller.gatherAssets(directory);
 				menu_controller.setCanvas(canvas);
 				menu_controller.setActive();
@@ -108,10 +111,10 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 			loading.dispose();
 			loading = null;
-		}
-		else if(screen == controller){
+		} else if (screen == controller) {
+			game_over_controller.dispose();
 			game_over_controller.create();
-			if(directory == null) {
+			if (directory == null) {
 				System.out.println("DIRECTORY IS NULL!");
 			}
 			game_over_controller.gatherAssets(directory);
@@ -121,42 +124,75 @@ public class GDXRoot extends Game implements ScreenListener {
 					cameraController.getCameraPosition2D().y);
 			game_over_controller.setWin(exitCode == 0);
 			setScreen(game_over_controller);
-		}
-		else if(screen == game_over_controller){
-			controller.setCanvas(canvas);
-			controller.reset();
-			setScreen(controller);
-		}
-		else if(screen == menu_controller){
-			if(exitCode == 0){
-				level_select_controller.dispose();
-				level_select_controller.gatherAssets(directory);
-				level_select_controller.setCanvas(canvas);
-				level_select_controller.setActive();
-				setScreen(level_select_controller);
-			}
-			if(exitCode == 1){
-				controller.gatherAssets(directory);
+		} else if (screen == game_over_controller) {
+			if (exitCode == 0) {
 				controller.setCanvas(canvas);
 				controller.reset();
 
 				setScreen(controller);
 			}
-			if(exitCode == 2) {
-				Gdx.app.exit();
-			}
-
-		}
-		else if(screen == level_select_controller){
-			if(exitCode == 0){
+			if (exitCode == 1) {
+				controller.setCameraPositionNormal();
 				menu_controller.dispose();
 				menu_controller.gatherAssets(directory);
 				menu_controller.setCanvas(canvas);
 				menu_controller.setActive();
 				setScreen(menu_controller);
 			}
-			else{
+			if(exitCode == 2){
+				System.out.println("current: " + current);
+				if(current > 0){
+					game_over_controller.dispose();
+					controller.setCameraPositionNormal();
+					menu_controller.dispose();
+					menu_controller.gatherAssets(directory);
+					menu_controller.setCanvas(canvas);
+					menu_controller.setActive();
+					setScreen(menu_controller);
+				}
+				else {
+					current++;
+					if (player.getLevel() == current) player.nextLevel();
+					player.save();
+					controller.setLevel(current);
+					controller.gatherAssets(directory);
+					controller.setCanvas(canvas);
+					controller.reset();
+
+					setScreen(controller);
+				}
+			}
+		} else if (screen == menu_controller) {
+			if (exitCode == 0) {
+				level_select_controller.setLocked(player.getLevel());
+				level_select_controller.dispose();
+				level_select_controller.gatherAssets(directory);
+				level_select_controller.setCanvas(canvas);
+				level_select_controller.setActive();
+				setScreen(level_select_controller);
+			}
+			if (exitCode == 1) {
+				controller.gatherAssets(directory);
+				controller.setCanvas(canvas);
+				controller.reset();
+
+				setScreen(controller);
+			}
+			if (exitCode == 2) {
+				player.save();
+				Gdx.app.exit();
+			}
+
+		} else if (screen == level_select_controller) {
+			if (exitCode == 0) {
+				menu_controller.dispose();
+				menu_controller.gatherAssets(directory);
+				menu_controller.setCanvas(canvas);
+				menu_controller.setActive();
+				setScreen(menu_controller);
+			} else {
 				controller.setLevel(exitCode - 1);
+				current = exitCode - 1;
 				controller.gatherAssets(directory);
 				controller.setCanvas(canvas);
 				controller.reset();

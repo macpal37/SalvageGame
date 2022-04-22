@@ -42,6 +42,7 @@ public class GameOverController implements Screen, ApplicationListener {
 
     private boolean restart_game;
     private boolean exit_home;
+    private boolean next_level;
 
     private boolean display_win;
 
@@ -54,6 +55,7 @@ public class GameOverController implements Screen, ApplicationListener {
         this.scale = new Vector2(1,1);
         restart_game = false;
         exit_home = false;
+        next_level = false;
     }
 
     @Override
@@ -76,12 +78,44 @@ public class GameOverController implements Screen, ApplicationListener {
 
         stage.addActor(button);
 
+        final TextButton game_over = new TextButton("Return to Home", skin, "default");
+
+        game_over.setWidth(200f);
+        game_over.setHeight(20f);
+        game_over.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 30f);
+
+        game_over.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                exit_home = true;
+            }
+        });
+
+        stage.addActor(game_over);
+
+        final TextButton next = new TextButton("Go to next level", skin, "default");
+
+        next.setWidth(200f);
+        next.setHeight(20f);
+        next.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 50f);
+
+        next.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                next_level = true;
+            }
+        });
+
+        stage.addActor(next);
+
         Gdx.input.setInputProcessor(stage);
-        restart_game = false;
     }
 
     @Override
     public void dispose() {
+        exit_home = false;
+        restart_game = false;
+        next_level = false;
     }
 
     @Override
@@ -93,6 +127,14 @@ public class GameOverController implements Screen, ApplicationListener {
             // We are are ready, notify our listener
             if (restart_game && listener != null) {
                 listener.exitScreen(this, 0);
+            }
+
+            if(exit_home && listener != null){
+                listener.exitScreen(this, 1);
+            }
+
+            if(next_level && listener != null){
+                listener.exitScreen(this, 2);
             }
             // can do this with different exit codes to indicate which screen to switch to
         }

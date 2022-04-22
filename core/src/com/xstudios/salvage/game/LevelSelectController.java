@@ -9,7 +9,6 @@ import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.Controllers;
@@ -32,7 +31,7 @@ import java.awt.*;
  * loading screen.
  */
 public class LevelSelectController implements Screen, InputProcessor, ControllerListener {
-    // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
+    // There are TWO asset managers.  One to load the loading screen.  The other to load the "assets
 
     /**
      * Default budget for asset loader (do nothing but load 60 fps)
@@ -106,24 +105,18 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * Whether or not this player mode is still active
      */
     private boolean active;
-    private ShapeRenderer shape;
+
     private CameraController camera;
-    /**
-     * Returns true if all assets are loaded and the player is ready to go.
-     *
-     * @return true if the player is ready to go
-     */
+
+    private int locked;
 
     public LevelSelectController() {
-        // Load the next two images immediately.
-
         pressState = 0;
         Gdx.input.setInputProcessor(this);
-        // Let ANY connected controller start the game.
+        // Let ANY connected controller start the game".
         for (XBoxController controller : Controllers.get().getXBoxControllers()) {
             controller.addListener(this);
         }
-        shape = new ShapeRenderer();
     }
 
     public void setActive() {
@@ -134,11 +127,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         this.canvas = canvas;
     }
 
-
     public void setCameraController(CameraController cameraController, int w, int h) {
         this.camera = cameraController;
     }
-
 
     public void gatherAssets(AssetDirectory directory) {
         background = directory.getEntry("background:level_select", Texture.class);
@@ -147,6 +138,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         line = directory.getEntry("line", Texture.class);
     }
 
+    public void setLocked(int level){
+        locked = level;
+    }
     /**
      * Called when this screen should release all resources.
      */
@@ -158,22 +152,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         line = null;
     }
 
-//    public boolean pointer(int x, int y, int width, int height) {
-//        int pX = Gdx.input.getX();
-//        int pY = Gdx.input.getY();
-//        // Flip to match graphics coordinates
-//        pY = canvas.getHeight() - pY;
-//
-//        float widthR = BUTTON_SCALE * scale * width / 2.0f;
-//        float heightR = BUTTON_SCALE * scale * height / 2.0f;
-//        float dist =
-//                (pX - x) * (pX - x) + (pY - y) * (pY - y);
-//        if (dist < widthR * heightR) {
-//            return true;
-//        }
-//        return false;
-//    }
-
     public boolean pointer1(int x, int y, int width, int height, float scale) {
         int pX = Gdx.input.getX();
         int pY = Gdx.input.getY();
@@ -184,10 +162,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         float h = scale * height;
 
         if((x + w > pX && x - w < pX) && (y1 + h > pY && y1 - h < pY)){
-            System.out.println("pX: " + pX + " pY: " + pY);
-            System.out.println("x: " + x + " y: "+ y);
-            System.out.println("w: " + w + " h: " + h);
-            System.out.println("y1: " + y1);
             return true;
         }
         return false;
@@ -237,9 +211,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 0,
                 -1,
                 1);
-        //testing
+
         tint = (pointer1(centerX/3, 2 * centerY, level.getWidth() / 2,
-                level.getHeight() / 2, 1) ? Color.GRAY : Color.WHITE);
+                level.getHeight() / 2, 1) || 1 > locked? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level,
                 tint,
@@ -252,7 +226,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 1);
         tint = (pointer1(centerX,
                 centerY, level.getWidth() / 2,
-                level.getHeight() / 2, 1) ? Color.GRAY : Color.WHITE);
+                level.getHeight() / 2, 1) || 2 > locked? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level,
                 tint,
@@ -265,7 +239,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 1);
         tint = (pointer1(centerX + centerX/2 + centerX/6,
                 2 * centerY + centerY/2, level.getWidth() / 2,
-                level.getHeight() / 2, 1) ? Color.GRAY : Color.WHITE);
+                level.getHeight() / 2, 1) || 3 > locked ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level,
                 tint,
@@ -392,7 +366,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println("clicked " + screenX + " " + screenY);
         if (pressState >= 4) {
             return true;
         }
@@ -401,12 +374,12 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
             pressState = 1;
         }
         if (pointer1(centerX/3, 2 * centerY, level.getWidth() / 2,
-                level.getHeight() / 2, 1)) {
+                level.getHeight() / 2, 1) && 1 <= locked) {
             pressState = 2;
         }
         if (pointer1(centerX,
                 centerY, level.getWidth() / 2,
-                level.getHeight() / 2, 1)) {
+                level.getHeight() / 2, 1) && 2 <= locked) {
             pressState = 3;
         }
 
@@ -534,8 +507,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         }
         else
         camera.setCameraPosition(640, camera.getCameraPosition2D().y + dy * 40.0f);
-        System.out.println(camera.getCameraPosition2D().x + " " + camera.getCameraPosition2D().y);
-        System.out.println("scroll");
         return true;
     }
 

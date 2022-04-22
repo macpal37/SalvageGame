@@ -303,6 +303,11 @@ public class GameController implements Screen, ContactListener {
 
     }
 
+    public void setCameraPositionNormal(){
+        cameraController.setCameraPosition(640, 360);
+        cameraController.render();
+    }
+
     /**
      * Returns true if this is the active screen
      *
@@ -577,6 +582,8 @@ public class GameController implements Screen, ContactListener {
             game_state = state.LOSE_GAME;
         }
     }
+
+
 
     private void updatePlayingState() {
         // apply movement
