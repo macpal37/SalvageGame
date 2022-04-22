@@ -112,6 +112,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			loading.dispose();
 			loading = null;
 		} else if (screen == controller) {
+			controller.setCameraPositionNormal();
 			game_over_controller.dispose();
 			game_over_controller.create();
 			if (directory == null) {

@@ -37,6 +37,8 @@ public class GameOverController implements Screen, ApplicationListener {
     protected Vector2 scale;
     /** Background Texture */
     protected TextureRegion background;
+    protected Texture main_menu;
+    protected Texture try_again;
     /** The font for giving messages to the player */
     public static BitmapFont displayFont;
 
@@ -122,6 +124,7 @@ public class GameOverController implements Screen, ApplicationListener {
     public void render() {
         if(active) {
             canvas.begin();
+
             stage.draw();
             canvas.end();
             // We are are ready, notify our listener
@@ -197,7 +200,7 @@ public class GameOverController implements Screen, ApplicationListener {
         canvas.clear();
 
         canvas.begin();
-        canvas.draw(background, Color.DARK_GRAY,background.getRegionWidth()/2f,background.getRegionHeight()/2f,0,0,0,4,4);
+        canvas.draw(background, Color.WHITE,0, 0, canvas.getWidth(), canvas.getHeight());
 
         // draw game objects
          if(display_win) {
@@ -215,7 +218,9 @@ public class GameOverController implements Screen, ApplicationListener {
     public void gatherAssets(AssetDirectory directory) {
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
 
-        background =  new TextureRegion(directory.getEntry( "background:game_over", Texture.class ));
+        background =  new TextureRegion(directory.getEntry( "game_over", Texture.class ));
+        main_menu = directory.getEntry("main_menu", Texture.class);
+        try_again = directory.getEntry("main_menu", Texture.class);
     }
 
     public void setWin(boolean w) {

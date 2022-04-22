@@ -197,6 +197,8 @@ public class GameController implements Screen, ContactListener {
     private String[] levels = {"level1", "small_ship"};
     private int level;
 
+    private TextureRegion test;
+
     private enum state {
         PLAYING,
         WIN_GAME,
@@ -208,7 +210,7 @@ public class GameController implements Screen, ContactListener {
 
     // TODO: when we add other screens we can actually implement code to support pausing and quitting
     private state game_state;
-
+    private boolean p;
 
     private LevelBuilder levelBuilder;
 
@@ -226,6 +228,7 @@ public class GameController implements Screen, ContactListener {
         this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
                 new Vector2(0, DEFAULT_GRAVITY));
         level = 0;
+        p = false;
     }
 
     /**
@@ -384,6 +387,7 @@ public class GameController implements Screen, ContactListener {
      */
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the tiles
+        test = new TextureRegion(directory.getEntry("m", Texture.class));
         levelBuilder.setDirectory(directory);
         tileset = new TextureRegion(directory.getEntry("levels:tilesets:old_ship_tileset", Texture.class));
         diverTexture = new TextureRegion(directory.getEntry("models:diver", Texture.class));
@@ -878,10 +882,7 @@ public class GameController implements Screen, ContactListener {
 //                        cameraController.getCameraPosition2D().x - 100,
 //                        cameraController.getCameraPosition2D().y );
 //            break;
-
-
         }
-
         for (GameObject o : objects) {
             if (o instanceof DiverObjectModel && ((DiverObjectModel) o).isCarried()) {
                 DiverObjectModel d_obj = (DiverObjectModel) o;
@@ -949,7 +950,8 @@ public class GameController implements Screen, ContactListener {
      * also paused before it is destroyed.
      */
     public void pause() {
-        // TODO Auto-generated method stub
+
+        p = !p;
     }
 
     /**

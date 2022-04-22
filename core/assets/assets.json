@@ -1,6 +1,8 @@
 {
   "textures": {
-
+    "try_again" : "ui/try_again.png",
+    "game_over" : "background/game_over_background.png",
+    "m": "background/m.jpg",
     "title": "ui/salvage.png",
     "quit": "ui/quit.png",
     "select_level": "ui/select_level.png",
