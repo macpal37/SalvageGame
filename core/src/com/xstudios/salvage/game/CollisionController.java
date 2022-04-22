@@ -10,8 +10,6 @@ import com.xstudios.salvage.game.models.Door;
 import com.xstudios.salvage.game.models.ItemModel;
 import com.xstudios.salvage.game.models.Wall;
 
-
-
 import com.xstudios.salvage.game.models.*;
 
 import com.xstudios.salvage.util.PooledList;

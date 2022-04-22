@@ -220,6 +220,7 @@ public class DiverModel extends GameObject {
 
     private final float swimDamping;
     private final float boostDamping;
+    private Vector2 facingDir;
 
     public float getMaxOxygen() {
         return MAX_OXYGEN;
@@ -289,12 +290,12 @@ public class DiverModel extends GameObject {
         cap1 = null;
         cap2 = null;
         // TODO: Put this in the constants JSON
-        boostedMaxSpeed = swimMaxSpeed * 3;
+        boostedMaxSpeed = swimMaxSpeed * 1.5f;
         maxSpeed = swimMaxSpeed;
         swimDamping = damping;
 
-        boostDamping = damping / 100;
-
+        boostDamping = damping / 7;
+        facingDir = new Vector2(0, 0);
 
         carrying_body = false;
         dead_body = null;
@@ -341,6 +342,10 @@ public class DiverModel extends GameObject {
         // Change facing if appropriate
 
 
+    }
+
+    public void setFacingDir(float x, float y) {
+        facingDir.set(x, y);
     }
 
     public void setDriftMovement(float x_val, float y_val) {
@@ -778,7 +783,6 @@ public class DiverModel extends GameObject {
             desired_xvel = getVX() + Math.signum(getHorizontalDriftMovement()) * max_impulse_drift;
             desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
             desired_yvel = getVY() + Math.signum(getVerticalDriftMovement()) * max_impulse_drift;
-
             desired_yvel = Math.max(Math.min(desired_yvel, getMaxSpeed()), -getMaxSpeed());
 
             float xvel_change = desired_xvel - getVX();
@@ -795,14 +799,23 @@ public class DiverModel extends GameObject {
             setMaxSpeed(boostedMaxSpeed);
             setLinearDamping(boostDamping);
 
-            // TODO: Currently doesn't take movement input. Will need steering in specific dirs only?
-            if (Math.abs(getVX()) >= getMaxSpeed()) {
-                setVX(Math.signum(getVX()) * getMaxSpeed());
-            }
-            if (Math.abs(getVY()) >= getMaxSpeed()) {
-                setVY(Math.signum(getVY()) * getMaxSpeed());
-            }
-//            body.applyForce(forceCache,getPosition(),true);
+            System.out.println(getLinearDamping());
+//            if (Math.abs(getVX()) >= getMaxSpeed()) {
+//                setVX(Math.signum(getVX()) * getMaxSpeed());
+//            }
+//            if (Math.abs(getVY()) >= getMaxSpeed()) {
+//                setVY(Math.signum(getVY()) * getMaxSpeed());
+//            }
+            // can steer a little bit after boosting
+            desired_xvel = getVX() + Math.signum(getHorizontalDriftMovement()) * max_impulse * .30f;
+            desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
+            desired_yvel = getVY() + Math.signum(getVerticalMovement()) * max_impulse * .30f;
+            desired_yvel = Math.max(Math.min(desired_yvel, getMaxSpeed()), -getMaxSpeed());
+            float xvel_change = desired_xvel - getVX();
+            float yvel_change = desired_yvel - getVY();
+            float x_impulse = body.getMass() * xvel_change;
+            float y_impulse = body.getMass() * yvel_change;
+            body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x, body.getWorldCenter().y, true);
         }
 
     }
@@ -932,10 +945,10 @@ public class DiverModel extends GameObject {
 
     public void boost() {
         // set impulse in direction of key input
-        forceCache.set(movement.nor().x * 20, movement.nor().y * 20);
+        forceCache.set(facingDir.nor().x * 15, facingDir.nor().y * 15);
         System.out.println("X: " + forceCache.x);
         System.out.println("Y: " + forceCache.y);
-        body.applyLinearImpulse(forceCache, body.getPosition(), true);
+        body.applyLinearImpulse(forceCache, body.getWorldCenter(), true);
     }
 
     public void dropItem() {

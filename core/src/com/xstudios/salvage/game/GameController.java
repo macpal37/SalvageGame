@@ -625,10 +625,18 @@ public class GameController implements Screen, ContactListener {
         diver.setHorizontalMovement(input.getHorizontal() * diver.getForce());
         diver.setVerticalMovement(input.getVertical() * diver.getForce());
 
+        System.out.println("LinearVelocity: " + diver.getLinearVelocity().x + " " +
+                diver.getLinearVelocity().y);
         // stop boosting when player has slowed down enough
         if (diver.getLinearVelocity().len() < 15 && diver.isBoosting()) {
             diver.setBoosting(false);
         }
+
+        // store the facing direction, which cannot be 0, 0
+        if (input.getHorizontal() != 0 || input.getVertical() != 0) {
+            diver.setFacingDir(input.getHorizontal(), input.getVertical());
+        }
+
         // set latching and boosting attributesf
         // latch onto obstacle when key pressed and close to an obstacle
         // stop latching and boost when key is let go
