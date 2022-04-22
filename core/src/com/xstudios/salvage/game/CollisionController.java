@@ -9,7 +9,6 @@ import com.xstudios.salvage.game.models.ItemModel;
 import com.xstudios.salvage.game.models.Wall;
 
 
-
 import com.xstudios.salvage.game.models.*;
 
 import com.xstudios.salvage.util.PooledList;
@@ -25,13 +24,12 @@ public class CollisionController {
         if (b1.getUserData().getClass() == DiverModel.class) {
             DiverModel d1 = (DiverModel) b1.getUserData();
             if (b2.getUserData().getClass() == ItemModel.class) {
-                if(d1.getItem() !=  b2.getUserData()) {
+                if (d1.getItem() != b2.getUserData()) {
                     d1.addPotentialItem((ItemModel) b2.getUserData());
                 }
             }
         }
-//        System.out.println("USER DATA: " + b1.getUserData().getClass());
-//        System.out.println("USER DATA: " + b1.getUserData());
+
 
     }
 
@@ -43,10 +41,10 @@ public class CollisionController {
         if (b1.getUserData().getClass() == DiverModel.class) {
             DiverModel d1 = (DiverModel) b1.getUserData();
             if (b2.getUserData().getClass() == ItemModel.class) {
-                if(d1.containsPotentialItem((ItemModel) b2.getUserData())) {
+                if (d1.containsPotentialItem((ItemModel) b2.getUserData())) {
                     d1.removePotentialItem((ItemModel) b2.getUserData());
-                    ((ItemModel)b2.getUserData()).setVX(0);
-                    ((ItemModel)b2.getUserData()).setVY(0);
+                    ((ItemModel) b2.getUserData()).setVX(0);
+                    ((ItemModel) b2.getUserData()).setVY(0);
                 }
             }
         }
@@ -54,11 +52,12 @@ public class CollisionController {
 
     /**
      * adds item to list of potential items for diver to pick up
+     *
      * @param diver diver object
-     * @param item item that diver's colliding with
+     * @param item  item that diver's colliding with
      */
-    public static void pickUp(DiverModel diver, ItemModel item){
-        if(diver.getItem() !=  item) {
+    public static void pickUp(DiverModel diver, ItemModel item) {
+        if (diver.getItem() != item) {
             diver.addPotentialItem(item);
 
         }
@@ -66,12 +65,13 @@ public class CollisionController {
 
     /**
      * Checks to see if the diver can unlock the door, if so return true
+     *
      * @param diver diver object
-     * @param door door currently colliding with
+     * @param door  door currently colliding with
      */
-    public static boolean attemptUnlock(DiverModel diver, Door door){
-        if(diver.getItem()!=null) {
-            if (diver.getItem().getID()== door.getID() || diver.getItem().getItemType() == ItemType.DEAD_BODY) {
+    public static boolean attemptUnlock(DiverModel diver, Door door) {
+        if (diver.getItem() != null) {
+            if (diver.getItem().getID() == door.getID() || diver.getItem().getItemType() == ItemType.DEAD_BODY) {
                 return true;
             }
         }
@@ -80,11 +80,12 @@ public class CollisionController {
 
     /**
      * Checks if the diver's ending contact with the item
+     *
      * @param diver diver object
-     * @param item item object to potentially put down
+     * @param item  item object to potentially put down
      */
-    public static void putDown(DiverModel diver, ItemModel item){
-        if(diver.containsPotentialItem(item)){
+    public static void putDown(DiverModel diver, ItemModel item) {
+        if (diver.containsPotentialItem(item)) {
             diver.removePotentialItem(item);
             item.setVX(0);
             item.setVY(0);
@@ -100,11 +101,11 @@ public class CollisionController {
      */
     public void startDiverToObstacle(Body b1, Body b2) {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
-//            System.out.println("body collided");
+
             ((DiverModel) b1.getUserData()).setTouchingObstacle(true);
         }
         if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
-//            System.out.println("body collided");
+
             ((DiverModel) b2.getUserData()).setTouchingObstacle(true);
         }
     }
@@ -127,16 +128,17 @@ public class CollisionController {
 
     /**
      * adds item to list of potential items for diver to pick up
+     *
      * @param diver diver object
-     * @param door door that diver's colliding with
+     * @param door  door that diver's colliding with
      * @return whether win condition is met (diver is carrying body)
      */
-    public static boolean winGame(DiverModel diver, GoalDoor door){
+    public static boolean winGame(DiverModel diver, GoalDoor door) {
         return diver.hasBody();//diver.getItem() != null
 //                && diver.getItem().getItemType() == ItemType.DEAD_BODY;
     }
 
-    public static float staticHazardCollision(DiverModel diver, HazardModel hazard){
+    public static float staticHazardCollision(DiverModel diver, HazardModel hazard) {
         System.out.println("Hazard Contact");
         if (!diver.getStunned()) {
             diver.setStunned(true);

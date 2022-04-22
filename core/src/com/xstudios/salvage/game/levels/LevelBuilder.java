@@ -1,15 +1,24 @@
 package com.xstudios.salvage.game.levels;
 
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.models.*;
+
+import com.xstudios.salvage.util.FilmStrip;
+import jdk.internal.misc.OSEnvironment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,10 +27,67 @@ import java.util.logging.FileHandler;
 public class LevelBuilder {
     private JsonReader jsonReader;
     private AssetDirectory directory;
+//    private LevelModel level;
+
+    // Assets
+    JsonValue constants;
+    protected Texture tilesheet;
+    protected Texture woodenWall;
+    protected Texture woodenChair1;
+    protected Texture woodenChair2;
+    protected Texture woodenTable;
+
+    /**
+     * The texture for diver
+     */
+    protected TextureRegion diverTexture;
+    /**
+     * The texture for item
+     */
+    protected TextureRegion keyTexture;
+    /**
+     * Ocean Background Texture
+     */
+    protected TextureRegion background;
+    /**
+     * The texture for ping
+     */
+    protected TextureRegion pingTexture;
+    /**
+     * The texture for dead body
+     */
+    protected TextureRegion deadBodyTexture;
+    /**
+     * The texture for dead body
+     */
+    protected TextureRegion doorTexture;
+    /**
+     * Texturs for the door
+     */
+    protected TextureRegion doorOpenTexture;
+    protected TextureRegion doorCloseTexture;
+    protected Texture swimmingAnimation;
+    protected Texture dustAnimation;
+    protected Texture plantAnimation;
+
+    // Models to be updated
+    protected TextureRegion wallTexture;
+    protected TextureRegion hazardTexture;
+    protected TextureRegion crateTexture;
+    protected TextureRegion barrelTexture;
+    protected TextureRegion wallBackTexture;
+
+    // Models to be updated
+    protected DiverModel diver;
+
+    protected ItemModel key;
+    //    protected ItemModel dead_body;
+    protected DeadBodyModel dead_body;
 
     public LevelBuilder() {
         this.directory = directory;
         jsonReader = new JsonReader();
+//        level = new LevelModel();
 
     }
 
@@ -29,42 +95,48 @@ public class LevelBuilder {
         this.directory = directory;
     }
 
+    public void gatherAssets(AssetDirectory directory) {
+        tilesheet = directory.getEntry("levels:tilesets:old_ship_tileset", Texture.class);
+        woodenWall = directory.getEntry("models:wooden_wall", Texture.class);
+
+        woodenChair1 = directory.getEntry("models:wooden_chair1", Texture.class);
+        woodenChair2 = directory.getEntry("models:wooden_chair2", Texture.class);
+        woodenTable = directory.getEntry("models:wooden_table", Texture.class);
+
+
+        constants = directory.getEntry("models:constants", JsonValue.class);
+
+        diverTexture = new TextureRegion(directory.getEntry("models:diver", Texture.class));
+        swimmingAnimation = directory.getEntry("models:diver_swimming", Texture.class);
+        dustAnimation = directory.getEntry("models:dust", Texture.class);
+        plantAnimation = directory.getEntry("models:plant", Texture.class);
+
+
+        background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
+        keyTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
+        pingTexture = new TextureRegion(directory.getEntry("models:ping", Texture.class));
+        wallTexture = new TextureRegion(directory.getEntry("hazard", Texture.class));
+        hazardTexture = new TextureRegion(directory.getEntry("hazard", Texture.class));
+        doorOpenTexture = new TextureRegion(directory.getEntry("models:door_open", Texture.class));
+        doorCloseTexture = new TextureRegion(directory.getEntry("models:door_closed", Texture.class));
+
+        crateTexture = new TextureRegion(directory.getEntry("models:crate", Texture.class));
+        barrelTexture = new TextureRegion(directory.getEntry("models:barrel", Texture.class));
+
+        deadBodyTexture = new TextureRegion(directory.getEntry("models:dead_body", Texture.class));
+    }
+
     enum TileType {
-        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Plant
+        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Decor
     }
-
-    TileType tileTypeFromString(String type) {
-        if (type.equals("Wall")) {
-            return TileType.Wall;
-        } else if (type.equals("Diver")) {
-            return TileType.Diver;
-        } else if (type.equals("DeadBody")) {
-            return TileType.DeadBody;
-        } else if (type.equals("Item")) {
-            return TileType.Item;
-        } else if (type.equals("Door")) {
-            return TileType.Door;
-        } else if (type.equals("Obstacle")) {
-            return TileType.Obstacle;
-        } else if (type.equals("Block")) {
-            return TileType.Block;
-        } else if (type.equals("Goal")) {
-            return TileType.Goal;
-        } else if (type.equals("Hazard")) {
-            return TileType.Hazard;
-        } else if (type.equals("Plant")) {
-            return TileType.Plant;
-        }
-
-        return TileType.Empty;
-    }
-
 
     class Tile {
 
         public float x, y, width, height;
         public float[] vertices;
         public TileType tileType;
+        public String modelType;
+        public int id = 0;
 
         public Tile() {
             vertices = new float[0];
@@ -92,10 +164,6 @@ public class LevelBuilder {
 
     }
 
-    class TObject extends Tile {
-        ArrayList<Integer> propInt = new ArrayList<>();
-    }
-
     float round(float num) {
         float result = Math.abs(num);
         boolean isNegative = num < 0;
@@ -110,12 +178,6 @@ public class LevelBuilder {
         return (isNegative) ? -result : result;
     }
 
-    public int getNighbor(int x, int y, int dx, int dy, int width, int height) {
-
-
-        return 0;
-    }
-
 
     private Tile[] createTiles(JsonValue tileset, float div, float tileSize) {
         Tile[] tiles = new Tile[tileset.getInt("tilecount")];
@@ -125,11 +187,15 @@ public class LevelBuilder {
         for (JsonValue tileJson : tileset.get("tiles")) {
             int id = tileJson.getInt("id");
             TileType tileType = TileType.Empty;
-
+            String modelType = "Empty";
+            int tileId = 0;
             if (tileJson.get("properties") != null) {
                 for (JsonValue p : tileJson.get("properties")) {
                     if (p.getString("name").equals("model_type")) {
-                        tileType = tileTypeFromString(p.getString("value"));
+                        tileType = TileType.valueOf(p.getString("value"));
+                    }
+                    if (p.getString("name").equals("id")) {
+                        tileId = p.getInt("value");
                     }
                 }
             }
@@ -144,7 +210,6 @@ public class LevelBuilder {
                         for (JsonValue point : o.get("polygon")) {
                             float vx = (round(point.getFloat("x")) / div) + x;
                             float vy = tileSize / div - ((round(point.getFloat("y")) / div) + y);
-
                             verticies.add(vx);
                             verticies.add(vy);
                         }
@@ -158,10 +223,13 @@ public class LevelBuilder {
                 tiles[tt] = (new Tile(x, y, tileSize / div,
                         tileSize / div, verts, tileType
                 ));
+                tiles[tt].id = tileId;
+
             } else {
                 tiles[tt] = tiles[tt] = (new Tile(0, 0, tileSize / div,
                         tileSize / div, tileType
                 ));
+                tiles[tt].id = tileId;
             }
             tt++;
         }
@@ -177,7 +245,10 @@ public class LevelBuilder {
         return newVerts;
     }
 
-    public ArrayList<GObject> createLevel(String levelFileName) {
+    /**
+     * Create level from a json. Objects created will be drawn at scale drawScale, and lights will be created using rayHandler
+     */
+    public void createLevel(String levelFileName, LevelModel level, Vector2 drawScale, Vector2 drawScaleSymbol, RayHandler rayHandler) {
 
         ArrayList<GObject> gameObjects = new ArrayList<GObject>();
 
@@ -201,8 +272,10 @@ public class LevelBuilder {
 
 
         int ii = 0, jj = height - 1;
-        ArrayList<TObject> tileObjects = new ArrayList<>();
         for (JsonValue layer : map.get("layers")) {
+            /*===============================================
+             * ================* Tile Layers *================
+             * ===============================================*/
             if (layer.get("data") != null) {
                 for (int n = 0; n < width * height; n++) {
                     int id = Integer.parseInt(layer.get("data").get(n).toString());
@@ -214,73 +287,40 @@ public class LevelBuilder {
                     float sx = (tileSize / div) * ii;
                     switch (tile.tileType) {
                         case Wall:
-                            float[] newVertices = new float[tile.vertices.length];
-                            int index = 0;
-                            for (Float f : tile.vertices)
-                                newVertices[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                            gameObjects.add(new Wall(newVertices, 0, 0));
-                            break;
-                        case Diver:
+                            Wall wall = new Wall(createVerticies(tile, 0, 0, 1, 1), sx, sy);
 
-                            gameObjects.add(new DiverModel(sx, sy, constants.get("diver")));
-                            break;
-                        case DeadBody:
+                            wall.setID(tile.id);
 
-                            gameObjects.add(new DeadBodyModel(sx, sy, constants.get("dead_body")));
+                            gameObjects.add(wall);
                             break;
-                        case Item:
-                            ItemModel item = new ItemModel(sx, sy, constants.get("key"), ItemType.KEY);
-                            gameObjects.add(item);
-//                                idItems.add(item);
-                            break;
-                        case Door:
-                            float[] doorVerticies = new float[tile.vertices.length];
-                            index = 0;
-                            for (Float f : tile.vertices)
-                                doorVerticies[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                            Door door = new Door(doorVerticies, 0, 0);
-                            gameObjects.add(door);
-//                                idItems.add(door);
-                            break;
-
-                        case Obstacle:
-                            break;
-
-                        case Goal:
-
-                            gameObjects.add(new GoalDoor(sx, sy, tileSize / div, tileSize / div));
-                            break;
-                        case Block:
-                            float[] blockVertices = new float[tile.vertices.length];
-                            index = 0;
-                            for (Float f : tile.vertices)
-                                blockVertices[index++] = (index % 2 == 0) ? f + sy : f + sx;
-                            Wall block = new Wall(blockVertices, 0, 0);
-                            block.setInvisible(true);
-                            gameObjects.add(block);
-                            break;
-                        case Hazard:
-
-                            HazardModel hazard = new HazardModel(createVerticies(tile, sx, sy, 1, 1), 0, 0);
-                            gameObjects.add(hazard);
-
                         case Empty:
-                            if (layer.getString("name").equals("walls"))
-                                gameObjects.add(new Dust(sx, sy));
+
+
+                            break;
+                        default:
                             break;
                     }
+                    DecorModel dust = new DecorModel(sx, sy);
+                    dust.setFilmStrip(new FilmStrip(dustAnimation, 1, 8, 8));
+                    dust.setName("dust");
+                    dust.setBodyType(BodyDef.BodyType.StaticBody);
+                    dust.setSensor(true);
+                    dust.setDrawScale(drawScale);
+//                    gameObjects.add(dust);
                     ii++;
                     if (ii == width) {
                         ii = 0;
                         jj--;
-
                     }
                 }
                 ii = 0;
                 jj = height - 1;
+            }
 
-
-            } else {
+            /*===============================================
+             * ================* Object Layers *================
+             * ===============================================*/
+            else {
                 for (JsonValue obj : layer.get("objects")) {
                     Tile tile = tiles[obj.getInt("gid") - 1];
 
@@ -289,14 +329,17 @@ public class LevelBuilder {
 
                     float objectWidth = obj.getFloat("width");
                     float objectHeight = obj.getFloat("height");
+                    float rotation = obj.getFloat("rotation");
+                    if (rotation != 0) {
+                        System.out.println("ROT: " + rotation);
+                        rotation = ((360 - rotation) / 180f) * (float) Math.PI;
+                        System.out.println("AFTER: " + rotation + "\n=======");
+                    }
 
                     float widthScale = (objectWidth) / tileSize;
                     float heightScale = (objectHeight) / tileSize;
-
-                    int index = 0;
                     switch (tile.tileType) {
                         case Wall:
-
                             gameObjects.add(new Wall(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0));
                             break;
                         case Diver:
@@ -306,6 +349,7 @@ public class LevelBuilder {
                         case DeadBody:
 
                             gameObjects.add(new DeadBodyModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("dead_body")));
+
                             break;
                         case Item:
                             ItemModel item = new ItemModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("key"), ItemType.KEY);
@@ -314,13 +358,10 @@ public class LevelBuilder {
                                     item.setID(prop.getInt("value"));
                             }
                             gameObjects.add(item);
-//
+                            item.setAngle(rotation);
                             break;
                         case Door:
-
                             Door door = new Door(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
-
-
                             door.setDoorScale((40f / div) * (widthScale / 2), (40f / div) * (heightScale / 4f));
                             if (obj.get("properties") != null)
                                 for (JsonValue prop : obj.get("properties")) {
@@ -329,11 +370,25 @@ public class LevelBuilder {
                                 }
                             else
                                 door.setID(0);
+                            door.setAngle(rotation);
                             gameObjects.add(door);
-//
                             break;
-
                         case Obstacle:
+                            ObstacleModel obstacle = new ObstacleModel(createVerticies(tile, 0, 0, widthScale / 2, heightScale / 2), sx, sy);
+                            switch (tile.id) {
+                                case 0:
+                                    obstacle.setTexture(barrelTexture);
+                                    obstacle.setScale((40f / div) * (widthScale / 4), (40f / div) * (heightScale / 4f));
+                                    break;
+                                case 1:
+                                    obstacle.setTexture(crateTexture);
+                                    obstacle.setScale((40f / div) * (widthScale / 4), (40f / div) * (heightScale / 4f));
+                                    break;
+                                default:
+                                    System.out.println("Unknown Object?");
+                            }
+                            obstacle.setAngle(rotation);
+                            gameObjects.add(obstacle);
                             break;
 
                         case Goal:
@@ -343,14 +398,43 @@ public class LevelBuilder {
                         case Block:
                             Wall block = new Wall(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
                             block.setInvisible(true);
+                            block.setAngle(rotation);
                             gameObjects.add(block);
                             break;
                         case Hazard:
                             HazardModel hazard = new HazardModel(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
                             gameObjects.add(hazard);
+                            hazard.setAngle(rotation);
                             break;
-                        case Plant:
-                            gameObjects.add(new Plant(sx, sy));
+                        case Decor:
+                            DecorModel decor = new DecorModel(sx, sy);
+                            switch (tile.id) {
+                                case 0:
+                                    decor.setFilmStrip(new FilmStrip(plantAnimation, 1, 6, 6));
+                                    break;
+                                case 1:
+                                    decor.setFilmStrip(new FilmStrip(woodenChair1, 1, 1, 1));
+                                    decor.setScale(1 / 2f, 1 / 2f);
+                                    break;
+                                case 2:
+                                    decor.setFilmStrip(new FilmStrip(woodenChair2, 1, 1, 1));
+                                    decor.setScale(1 / 2f, 1 / 2f);
+                                    break;
+                                case 3:
+                                    decor.setFilmStrip(new FilmStrip(woodenTable, 1, 1, 1));
+                                    decor.setScale(1 / 5f, 1 / 5f);
+                                    break;
+                                default:
+                                    System.out.println("Unknown Object?");
+
+                            }
+
+//                            decor.setAngle((float) Math.PI * 1 / 2f);
+                            decor.setAngle(rotation);
+                            decor.setBodyType(BodyDef.BodyType.StaticBody);
+                            decor.setSensor(true);
+                            decor.setDrawScale(drawScale);
+                            gameObjects.add(decor);
                     }
 
 
@@ -359,8 +443,114 @@ public class LevelBuilder {
             }
         }
 
+        // now we parse gameObjects into the level model
 
-        return gameObjects;
+        int wallCounter = 0;
+        int keyCounter = 0;
+        int doorCounter = 0;
+        int goalDoorCounter = 0;
+        int hazardCounter = 0;
+        for (GObject go : gameObjects) {
+            if (go instanceof HazardModel) {
+                HazardModel hazard = (HazardModel) go;
+                hazard.setOxygenDrain(-0.1f);
+                hazard.setStunDuration(60);
+                hazard.setBodyType(BodyDef.BodyType.StaticBody);
+                hazard.setDensity(0);
+                hazard.setFriction(0.4f);
+                hazard.setRestitution(0.1f);
+                hazard.setTexture(hazardTexture);
+                hazard.setDrawScale(drawScale);
+                hazard.setName("hazard" + hazardCounter++);
+                level.addObject(hazard);
+                hazard.setActive(true);
+            } else if (go instanceof Door) {
+                Door door = (Door) go;
+                door.setBodyType(BodyDef.BodyType.StaticBody);
+                door.setTexture(doorTexture);
+                door.addTextures(doorCloseTexture, doorOpenTexture);
+                door.setDrawScale(drawScale);
+                door.setName("door" + doorCounter++);
+                door.setActive(true);
+                System.out.println("HELLO?");
+                level.addObject(door);
+            } else if (go instanceof ObstacleModel) {
+                ObstacleModel obstacle = (ObstacleModel) go;
+                obstacle.setBodyType(BodyDef.BodyType.DynamicBody);
+                obstacle.setSensor(false);
+                obstacle.setFixedRotation(false);
+                obstacle.setDrawScale(drawScale);
+                obstacle.setDensity(1);
+                obstacle.setMass(10f);
+                obstacle.setFriction(0.4f);
+                obstacle.setRestitution(0.1f);
+                obstacle.setName("obstacle");
+                level.addObject(obstacle);
+            } else if (go instanceof Wall) {
+
+                Wall obj = (Wall) go;
+                obj.setBodyType(BodyDef.BodyType.StaticBody);
+                obj.setDensity(0);
+                obj.setFriction(0.4f);
+                obj.setRestitution(0.1f);
+                obj.setDrawScale(drawScale);
+                obj.setFilmStrip(new FilmStrip(woodenWall, 5, 3, 15));
+                obj.setName("wall " + wallCounter++);
+                level.addObject(obj);
+
+            } else if (go instanceof DiverModel) {
+                diver = (DiverModel) go;
+                diver.setStunned(false);
+                diver.setTexture(diverTexture);
+                diver.setFilmStrip(new FilmStrip(swimmingAnimation, 2, 12, 24));
+                diver.setPingTexture(pingTexture);
+                diver.setDrawScale(drawScale);
+                diver.setName("diver");
+                level.addObject(diver);
+            } else if (go instanceof DeadBodyModel) {
+                DeadBodyModel dead_body = (DeadBodyModel) go;
+                dead_body.setTexture(deadBodyTexture);
+                dead_body.setDrawScale(drawScale);
+                dead_body.setDrawSymbolScale(drawScaleSymbol);
+                dead_body.setName("dead_body");
+                dead_body.setGravityScale(0f);
+                dead_body.setSensor(true);
+                level.addObject(dead_body);
+            } else if (go instanceof ItemModel) {
+                ItemModel key = (ItemModel) go;
+                key.setTexture(keyTexture);
+                key.setBodyType(BodyDef.BodyType.StaticBody);
+                key.setDrawScale(drawScale);
+                key.setDrawSymbolScale(drawScaleSymbol);
+                key.setName("key" + keyCounter++);
+                key.setGravityScale(0f);
+                key.setSensor(true);
+                key.initLight(rayHandler);
+                level.addObject(key);
+            } else if (go instanceof GoalDoor) {
+                JsonValue goal = constants.get("goal");
+
+                GoalDoor goal_door = (GoalDoor) go;
+                goal_door.setBodyType(BodyDef.BodyType.StaticBody);
+                goal_door.setDensity(goal.getFloat("density", 0));
+                goal_door.setFriction(goal.getFloat("friction", 0));
+                goal_door.setRestitution(goal.getFloat("restitution", 0));
+                goal_door.setID(3);
+                goal_door.setSensor(true);
+                goal_door.setDrawScale(drawScale);
+                goal_door.setTexture(doorOpenTexture);
+                goal_door.setName("goal" + goalDoorCounter++);
+                level.addObject(goal_door);
+
+            } else if (go instanceof DecorModel) {
+                DecorModel dm = (DecorModel) go;
+                level.getAboveObjects().add(dm);
+                level.addObject(dm);
+            }
+        }
+
+        diver.setDeadBody(dead_body);
+
     }
 
 

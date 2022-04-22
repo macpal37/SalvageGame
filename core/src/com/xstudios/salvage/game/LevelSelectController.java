@@ -190,10 +190,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         float h = scale * height;
 
         if ((x + w > pX && x - w < pX) && (y1 + h > pY && y1 - h < pY)) {
-//            System.out.println("pX: " + pX + " pY: " + pY);
-//            System.out.println("x: " + x + " y: "+ y);
-//            System.out.println("w: " + w + " h: " + h);
-//            System.out.println("y1: " + y1);
             return true;
         }
         return false;
@@ -548,8 +544,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
             camera.setCameraPosition(640, camera.getCameraPosition2D().y);
         } else
             camera.setCameraPosition(640, camera.getCameraPosition2D().y + dy * 40.0f);
-        System.out.println(camera.getCameraPosition2D().x + " " + camera.getCameraPosition2D().y);
-        System.out.println("scroll");
         return true;
     }
 

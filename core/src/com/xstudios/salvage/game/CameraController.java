@@ -32,11 +32,17 @@ public class CameraController {
     private float aspectRatio;
 
 
+    public void setZoom(float z) {
+        camera.zoom = z;
+    }
+
+
     public CameraController(float width, float height) {
         aspectRatio = width / height;
 
 
         camera = new OrthographicCamera();
+
         viewport = new ScreenViewport();
         viewport.apply();
         cameraPosition = new Vector3(width / 2, height / 2, 0);

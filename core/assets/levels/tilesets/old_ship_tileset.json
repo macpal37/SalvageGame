@@ -56,6 +56,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -108,6 +113,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":1
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -116,6 +126,11 @@
         {
          "id":2,
          "properties":[
+                {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
                 {
                  "name":"model_type",
                  "type":"string",
@@ -127,7 +142,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -310,6 +324,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":3
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -362,6 +381,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":4
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -371,6 +395,11 @@
          "id":12,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Empty"
@@ -378,16 +407,80 @@
         }, 
         {
          "id":13,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":3,
+                     "name":"",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":20.7272727272727,
+                             "y":0.363636363636364
+                            }, 
+                            {
+                             "x":36.3636363636364,
+                             "y":4.18181818181818
+                            }, 
+                            {
+                             "x":37.8181818181818,
+                             "y":52.7272727272727
+                            }, 
+                            {
+                             "x":32.3636363636364,
+                             "y":84.1818181818182
+                            }, 
+                            {
+                             "x":22.3636363636364,
+                             "y":93.0909090909091
+                            }, 
+                            {
+                             "x":-2.90909090909091,
+                             "y":92.7272727272727
+                            }, 
+                            {
+                             "x":-15.2727272727273,
+                             "y":84.1818181818182
+                            }, 
+                            {
+                             "x":-22,
+                             "y":48.1818181818182
+                            }, 
+                            {
+                             "x":-19.0909090909091,
+                             "y":3.81818181818182
+                            }],
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":42.1818181818182,
+                     "y":3.45454545454545
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
          "properties":[
+                {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
                 {
                  "name":"model_type",
                  "type":"string",
                  "value":"Obstacle"
-                }, 
-                {
-                 "name":"obstacle_type",
-                 "type":"string",
-                 "value":"Barrel"
                 }]
         }, 
         {
@@ -527,6 +620,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":6
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -575,6 +673,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":7
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -619,6 +722,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":8
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -626,16 +734,64 @@
         }, 
         {
          "id":23,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":2,
+                     "name":"",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":-28.7272727272727,
+                             "y":9.63636363636363
+                            }, 
+                            {
+                             "x":-29.0909090909091,
+                             "y":77.6363636363636
+                            }, 
+                            {
+                             "x":37.4545454545455,
+                             "y":81.8181818181818
+                            }, 
+                            {
+                             "x":59.6363636363636,
+                             "y":67.0909090909091
+                            }, 
+                            {
+                             "x":60,
+                             "y":1.09090909090909
+                            }],
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":34.7272727272727,
+                     "y":10.7272727272727
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
          "properties":[
+                {
+                 "name":"id",
+                 "type":"int",
+                 "value":1
+                }, 
                 {
                  "name":"model_type",
                  "type":"string",
                  "value":"Obstacle"
-                }, 
-                {
-                 "name":"obstacle_type",
-                 "type":"string",
-                 "value":"Crate"
                 }]
         }, 
         {
@@ -840,6 +996,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":9
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -887,6 +1048,11 @@
              "y":0
             },
          "properties":[
+                {
+                 "name":"id",
+                 "type":"int",
+                 "value":10
+                }, 
                 {
                  "name":"model_type",
                  "type":"string",
@@ -936,6 +1102,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":11
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -945,18 +1116,28 @@
          "id":33,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":1
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
          "id":34,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Plant"
+                 "value":"Decor"
                 }]
         }, 
         {
@@ -1098,6 +1279,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":12
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -1146,6 +1332,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":13
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -1190,6 +1381,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":14
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -1199,18 +1395,28 @@
          "id":43,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":2
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
          "id":44,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":3
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
