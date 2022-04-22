@@ -333,8 +333,6 @@ public class DiverModel extends GameObject {
     }
 
 
-    private boolean turned = false;
-
     public void setHorizontalMovement(float value) {
         movement.x = value;
         if (movement.x < 0 && faceRight) {
@@ -591,9 +589,6 @@ public class DiverModel extends GameObject {
                 }
             } else {
 
-
-//                if(body.getAngle())
-//                float angle = 0f;
                 float angle = getAngle();
                 if (turnFrames > 0 && turnFrames < 5) {
                     if (tick % 4 == 0) {
@@ -723,8 +718,8 @@ public class DiverModel extends GameObject {
     }
 
 
-    public float targetAngleX = 0;
-    public float targetAngleY = 0;
+    public int targetAngleX = 0;
+    public int targetAngleY = 0;
     public boolean bodyFlip = false;
 
     public void applyForce() {
@@ -736,7 +731,7 @@ public class DiverModel extends GameObject {
         float angle = 0.4f * 3;
         int buffer = 5;
         int flip = 180;
-        if (Math.abs(dist) >= 180 - buffer) {
+        if (Math.abs(dist) >= 180 - buffer * 1) {
             dist += (dist > 0) ? -flip : flip;
             faceRight = !faceRight;
             if (Math.abs(dist) >= 90) {
@@ -755,15 +750,21 @@ public class DiverModel extends GameObject {
             body.setAngularVelocity(0.0f);
         }
         float tinyBuffer = 5f;
-        if (getDynamicAngle() <= 90 || getDynamicAngle() > 270) {
-            bodyFlip = false || !faceRight;
-        } else if (getDynamicAngle() > 90 && getDynamicAngle() <= 270) {
-            bodyFlip = true && faceRight;
+
+//        if (getDynamicAngle() != 269 || getDynamicAngle() != 271 || getDynamicAngle() != 89 || getDynamicAngle() != 91) {
+        if (movement.x != 0 || movement.y != 0) {
+            if (getDynamicAngle() <= 90 - tinyBuffer || getDynamicAngle() > 270 + tinyBuffer) {
+                bodyFlip = !faceRight;
+            }
+            if (getDynamicAngle() > 90 + tinyBuffer && getDynamicAngle() <= 270 - tinyBuffer) {
+                bodyFlip = faceRight;
+            }
         }
 
         if (!isActive()) {
             return;
         }
+
 
         float desired_xvel = 0;
         float desired_yvel = 0;
@@ -798,10 +799,13 @@ public class DiverModel extends GameObject {
             float x_impulse = body.getMass() * xvel_change;
             float y_impulse = body.getMass() * yvel_change;
 
+
             if (movement.y > 0) {
-                targetAngleY = 89;
+//                targetAngleY += (targetAngleY > 89) ? 0 : 5;
+
+                targetAngleY = 85;
             } else if (movement.y < 0) {
-                targetAngleY = -89;
+                targetAngleY = -85;
             }
             if (movement.x != 0) {
                 targetAngleY /= 2;
@@ -820,16 +824,12 @@ public class DiverModel extends GameObject {
             setMaxSpeed(drift_maxspeed);
             setLinearDamping(swimDamping);
 
-            targetAngleY = 0;
+//            targetAngleY = (int) getDynamicAngle() - targetAngleX;
 
             /**====================================================*/
             /**============= Turning Angle Code=============*/
             /**====================================================*/
 
-
-            /**====================================================*/
-            /**============= Turning Angle Cod: ENDe=============*/
-            /**====================================================*/
             if (tick % 10 == 0) {
                 int frame = diverSprite.getFrame();
 
@@ -845,6 +845,9 @@ public class DiverModel extends GameObject {
 
                 diverSprite.setFrame(frame);
             }
+            /**====================================================*/
+            /**============= Turning Angle Cod: ENDe=============*/
+            /**====================================================*/
 
             desired_xvel = getVX() + Math.signum(getHorizontalDriftMovement()) * max_impulse_drift;
             desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());

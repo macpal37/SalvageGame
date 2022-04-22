@@ -736,11 +736,16 @@ public class GameController implements Screen, ContactListener {
 
         // draw game objects
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0, 4, 4);
+
         for (GameObject obj : level.getAllObjects()) {
-//        for (int i = level.getAllObjects().size() - 1; i >= 0; i--) {
-//            GameObject obj = level.getAllObjects().get(i);
             if (!(obj instanceof DiverModel))
-                obj.draw(canvas);
+                if (!(obj instanceof DecorModel))
+                    obj.draw(canvas);
+        }
+        level.getDiver().draw(canvas);
+        for (GameObject obj : level.getAboveObjects()) {
+
+            obj.draw(canvas);
         }
 
         canvas.end();
@@ -748,7 +753,7 @@ public class GameController implements Screen, ContactListener {
             rayHandler.updateAndRender();
 
         canvas.begin();
-        level.getDiver().draw(canvas);
+
         switch (game_state) {
             case PLAYING:
 
@@ -979,7 +984,9 @@ public class GameController implements Screen, ContactListener {
 
             }
 
-            if (bd1 instanceof DiverModel && !level.getDiver().getSensorNameRight().equals(fd1) && !level.getDiver().getSensorNameLeft().equals(fd1) && bd2 instanceof Wall) {
+            if (bd1 instanceof DiverModel && level.getDiver().getDiverCollisionBox().equals(fd1) && bd2 instanceof Wall) {
+                audioController.wall_collision(level.getDiver().getForce());
+            } else if (bd2 instanceof DiverModel && level.getDiver().getDiverCollisionBox().equals(fd2) && bd1 instanceof Wall) {
                 audioController.wall_collision(level.getDiver().getForce());
             }
 

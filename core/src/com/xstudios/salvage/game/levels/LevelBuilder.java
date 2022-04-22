@@ -285,7 +285,6 @@ public class LevelBuilder {
                     Tile tile = tiles[id];
                     float sy = (tileSize / div) * jj;
                     float sx = (tileSize / div) * ii;
-                    int index = 0;
                     switch (tile.tileType) {
                         case Wall:
                             Wall wall = new Wall(createVerticies(tile, 0, 0, 1, 1), sx, sy);
@@ -295,18 +294,19 @@ public class LevelBuilder {
                             gameObjects.add(wall);
                             break;
                         case Empty:
-                            if (layer.getString("name").equals("walls")) {
-                                DecorModel dust = new DecorModel(sx, sy);
-                                dust.setFilmStrip(new FilmStrip(dustAnimation, 1, 8, 8));
-                                dust.setName("dust");
-                                dust.setBodyType(BodyDef.BodyType.StaticBody);
-                                dust.setSensor(true);
-                                dust.setDrawScale(drawScale);
-                            }
+
+
                             break;
                         default:
                             break;
                     }
+                    DecorModel dust = new DecorModel(sx, sy);
+                    dust.setFilmStrip(new FilmStrip(dustAnimation, 1, 8, 8));
+                    dust.setName("dust");
+                    dust.setBodyType(BodyDef.BodyType.StaticBody);
+                    dust.setSensor(true);
+                    dust.setDrawScale(drawScale);
+//                    gameObjects.add(dust);
                     ii++;
                     if (ii == width) {
                         ii = 0;
@@ -329,6 +329,12 @@ public class LevelBuilder {
 
                     float objectWidth = obj.getFloat("width");
                     float objectHeight = obj.getFloat("height");
+                    float rotation = obj.getFloat("rotation");
+                    if (rotation != 0) {
+                        System.out.println("ROT: " + rotation);
+                        rotation = ((360 - rotation) / 180f) * (float) Math.PI;
+                        System.out.println("AFTER: " + rotation + "\n=======");
+                    }
 
                     float widthScale = (objectWidth) / tileSize;
                     float heightScale = (objectHeight) / tileSize;
@@ -343,6 +349,7 @@ public class LevelBuilder {
                         case DeadBody:
 
                             gameObjects.add(new DeadBodyModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("dead_body")));
+
                             break;
                         case Item:
                             ItemModel item = new ItemModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("key"), ItemType.KEY);
@@ -351,6 +358,7 @@ public class LevelBuilder {
                                     item.setID(prop.getInt("value"));
                             }
                             gameObjects.add(item);
+                            item.setAngle(rotation);
                             break;
                         case Door:
                             Door door = new Door(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
@@ -362,6 +370,7 @@ public class LevelBuilder {
                                 }
                             else
                                 door.setID(0);
+                            door.setAngle(rotation);
                             gameObjects.add(door);
                             break;
                         case Obstacle:
@@ -378,6 +387,7 @@ public class LevelBuilder {
                                 default:
                                     System.out.println("Unknown Object?");
                             }
+                            obstacle.setAngle(rotation);
                             gameObjects.add(obstacle);
                             break;
 
@@ -388,38 +398,43 @@ public class LevelBuilder {
                         case Block:
                             Wall block = new Wall(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
                             block.setInvisible(true);
+                            block.setAngle(rotation);
                             gameObjects.add(block);
                             break;
                         case Hazard:
                             HazardModel hazard = new HazardModel(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
                             gameObjects.add(hazard);
+                            hazard.setAngle(rotation);
                             break;
                         case Decor:
-                            DecorModel dust = new DecorModel(sx, sy);
+                            DecorModel decor = new DecorModel(sx, sy);
                             switch (tile.id) {
                                 case 0:
-                                    dust.setFilmStrip(new FilmStrip(plantAnimation, 1, 6, 6));
+                                    decor.setFilmStrip(new FilmStrip(plantAnimation, 1, 6, 6));
                                     break;
                                 case 1:
-                                    dust.setFilmStrip(new FilmStrip(woodenChair1, 1, 1, 1));
-                                    dust.setScale(1 / 2f, 1 / 2f);
+                                    decor.setFilmStrip(new FilmStrip(woodenChair1, 1, 1, 1));
+                                    decor.setScale(1 / 2f, 1 / 2f);
                                     break;
                                 case 2:
-                                    dust.setFilmStrip(new FilmStrip(woodenChair2, 1, 1, 1));
-                                    dust.setScale(1 / 2f, 1 / 2f);
+                                    decor.setFilmStrip(new FilmStrip(woodenChair2, 1, 1, 1));
+                                    decor.setScale(1 / 2f, 1 / 2f);
                                     break;
                                 case 3:
-                                    dust.setFilmStrip(new FilmStrip(woodenTable, 1, 1, 1));
-                                    dust.setScale(1 / 5f, 1 / 5f);
+                                    decor.setFilmStrip(new FilmStrip(woodenTable, 1, 1, 1));
+                                    decor.setScale(1 / 5f, 1 / 5f);
                                     break;
                                 default:
                                     System.out.println("Unknown Object?");
 
                             }
-                            dust.setBodyType(BodyDef.BodyType.StaticBody);
-                            dust.setSensor(true);
-                            dust.setDrawScale(drawScale);
-                            gameObjects.add(dust);
+
+//                            decor.setAngle((float) Math.PI * 1 / 2f);
+                            decor.setAngle(rotation);
+                            decor.setBodyType(BodyDef.BodyType.StaticBody);
+                            decor.setSensor(true);
+                            decor.setDrawScale(drawScale);
+                            gameObjects.add(decor);
                     }
 
 
@@ -529,7 +544,7 @@ public class LevelBuilder {
 
             } else if (go instanceof DecorModel) {
                 DecorModel dm = (DecorModel) go;
-
+                level.getAboveObjects().add(dm);
                 level.addObject(dm);
             }
         }

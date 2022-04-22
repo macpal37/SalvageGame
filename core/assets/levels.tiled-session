@@ -3,20 +3,20 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "levels/level2.json",
     "expandedProjectPaths": [
-        "levels/objects",
-        "tilesets",
         ".",
         "levels/tilesets",
-        "levels"
+        "levels",
+        "levels/objects",
+        "tilesets"
     ],
     "fileStates": {
         "levels/level0.json": {
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 528,
+                "x": 529,
                 "y": 632
             }
         },
@@ -24,16 +24,16 @@
             "scale": 0.75,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 1333.3333333333333,
-                "y": 1094.6666666666665
+                "x": 321.99999999999994,
+                "y": 1065.3333333333335
             }
         },
         "levels/level2.json": {
             "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2372.727272727273,
-                "y": 2612.121212121212
+                "x": 2268.181818181818,
+                "y": 1960.6060606060605
             }
         },
         "levels/small_ship.json": {
@@ -45,14 +45,17 @@
             }
         },
         "levels/test_level.json": {
-            "scale": 0.75,
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 777.3333333333333,
-                "y": 1656
+                "x": 467.5,
+                "y": 1568
             }
         },
         "levels/tilesets/id_tiles.json": {
+            "scaleInDock": 1
+        },
+        "levels/tilesets/old_ship_tileset.json": {
             "scaleInDock": 1
         }
     },
@@ -62,10 +65,13 @@
     "map.tileWidth": 100,
     "map.width": 20,
     "openFiles": [
+        "levels/level0.json",
+        "levels/level2.json"
     ],
     "project": "",
     "property.type": "int",
     "recentFiles": [
+        "levels/level2.json",
         "levels/level0.json",
         "levels/small_ship.json"
     ]

@@ -1,6 +1,8 @@
 package com.xstudios.salvage.game.models;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 
@@ -16,17 +18,18 @@ public class DecorModel extends GameObject {
 
 
     private FilmStrip spriteSheet;
+    
 
-    enum DecorType {
-        Dust, Plant
-
-    }
-
+    private CircleShape circ;
 
     private int startingFrame = 0;
 
     public DecorModel(float x, float y) {
         super(x, y);
+
+        circ = new CircleShape();
+        circ.setRadius(0.0625f);
+
     }
 
     public void setStartingFrame(int f) {
@@ -42,7 +45,9 @@ public class DecorModel extends GameObject {
     public void setFilmStrip(FilmStrip value) {
         spriteSheet = value;
         spriteSheet.setFrame(startingFrame);
+//        origin.set(-50, -50);
     }
+
 
     @Override
     public boolean activatePhysics(World world) {
@@ -77,13 +82,14 @@ public class DecorModel extends GameObject {
     public void draw(GameCanvas canvas) {
         tick++;
         if (tick % 5 == 0) {
+//            System.out.println("origin: " + origin);
             int frame = spriteSheet.getFrame();
             frame++;
             if (frame >= spriteSheet.getSize())
                 frame = 0;
             spriteSheet.setFrame(frame);
         }
-        canvas.draw(spriteSheet, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), scale.x, scale.y);
+        canvas.draw(spriteSheet, Color.WHITE, origin.x, origin.y, getX() * drawScale.x - origin.x, getY() * drawScale.y - origin.y, getAngle(), scale.x, scale.y);
 
     }
 
@@ -94,7 +100,7 @@ public class DecorModel extends GameObject {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-
+        canvas.drawPhysics(circ, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
     }
 }
 
