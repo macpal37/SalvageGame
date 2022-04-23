@@ -219,6 +219,7 @@ public class DiverModel extends GameObject {
 
     private final float swimDamping;
     private final float boostDamping;
+    private Vector2 facingDir;
 
     public float getMaxOxygen() {
         return maxOxygenLevel;
@@ -288,13 +289,15 @@ public class DiverModel extends GameObject {
         cap1 = null;
         cap2 = null;
         // TODO: Put this in the constants JSON
-        boostedMaxSpeed = swimMaxSpeed * 3;
+        boostedMaxSpeed = swimMaxSpeed * 1.5f;
         maxSpeed = swimMaxSpeed;
         swimDamping = damping;
-
-        boostDamping = damping / 100;
+        
+        boostDamping = damping / 7;
+        facingDir = new Vector2(0, 0);
 
         setFixedRotation(false);
+
         carrying_body = false;
         dead_body = null;
     }
@@ -349,6 +352,10 @@ public class DiverModel extends GameObject {
         // Change facing if appropriate
 
 
+    }
+
+    public void setFacingDir(float x, float y) {
+        facingDir.set(x, y);
     }
 
     public void setDriftMovement(float x_val, float y_val) {
@@ -815,7 +822,6 @@ public class DiverModel extends GameObject {
             desired_xvel = getVX() + Math.signum(getHorizontalDriftMovement()) * max_impulse_drift;
             desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
             desired_yvel = getVY() + Math.signum(getVerticalDriftMovement()) * max_impulse_drift;
-
             desired_yvel = Math.max(Math.min(desired_yvel, getMaxSpeed()), -getMaxSpeed());
 
             float xvel_change = desired_xvel - getVX();
@@ -969,6 +975,8 @@ public class DiverModel extends GameObject {
 
     public void boost() {
         // set impulse in direction of key input
+        forceCache.set(facingDir.nor().x * 15, facingDir.nor().y * 15);
+        body.applyLinearImpulse(forceCache, body.getWorldCenter(), true);
         forceCache.set(movement.nor().x * 20, movement.nor().y * 20);
         body.applyLinearImpulse(forceCache, body.getPosition(), true);
     }

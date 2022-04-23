@@ -1,10 +1,16 @@
 package com.xstudios.salvage.audio;
 
 import com.badlogic.gdx.Gdx;
+import com.xstudios.salvage.game.InputController;
 import de.pottgames.tuningfork.*;
 
 
 public class AudioController {
+
+    /**
+     * The singleton instance of the input controller
+     */
+    private static AudioController theController = null;
 
     private Audio audio;
     private BufferedSoundSource heartbeat;
@@ -16,7 +22,7 @@ public class AudioController {
     private float max_oxygen;
     private int ticks;
 
-    public AudioController(float initial_oxygen){
+    private AudioController(){
         audio = Audio.init();
         SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("audio/heartbeat.wav"));
         SoundBuffer oxygen_alarm_wav = WaveLoader.load(Gdx.files.internal("audio/oxygen_alarm.wav"));
@@ -33,11 +39,18 @@ public class AudioController {
         music.setVolume(0.2f);
         bubbles.setVolume(0.4f);
         oxygen_alarm.setVolume(0.4f);
-        max_oxygen = initial_oxygen;
         ticks = 0;
     }
 
-    public void intialize(){
+    public static AudioController getInstance() {
+        if (theController == null) {
+            theController = new AudioController();
+        }
+        return theController;
+    }
+
+    public void initialize(float initial_oxygen){
+        max_oxygen = initial_oxygen;
         music.play();
         bubbles.play();
         heartbeat.play();
