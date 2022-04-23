@@ -12,24 +12,32 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 528,
-                "y": 632
+                "x": 750,
+                "y": 500
             }
         },
         "levels/level1.json": {
-            "scale": 2,
-            "selectedLayer": 2,
+            "scale": 1,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 893,
-                "y": 649.75
+                "x": 937,
+                "y": 695
             }
         },
         "levels/level2.json": {
             "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2372.727272727273,
-                "y": 2612.121212121212
+                "x": 2268.181818181818,
+                "y": 1960.6060606060605
+            }
+        },
+        "levels/level4.json": {
+            "scale": 0.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 602,
+                "y": 784
             }
         },
         "levels/small_ship.json": {
@@ -41,19 +49,18 @@
             }
         },
         "levels/test_level.json": {
-            "scale": 0.75,
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 777.3333333333333,
-                "y": 1656
+                "x": 999.5,
+                "y": 999.5
             }
         },
         "levels/tilesets/id_tiles.json": {
             "scaleInDock": 1
         },
         "levels/tilesets/old_ship_tileset.json": {
-            "scaleInDock": 1,
-            "scaleInEditor": 1
+            "scaleInDock": 1
         }
     },
     "openFiles": [
@@ -65,11 +72,10 @@
     ],
     "project": "levels.tiled-project",
     "recentFiles": [
+        "levels/level1.json",
         "levels/level0.json",
         "levels/test_level.json",
-        "levels/tilesets/old_ship_tileset.json",
         "levels/level2.json",
-        "levels/level1.json",
         "levels/small_ship.json"
     ]
 }
