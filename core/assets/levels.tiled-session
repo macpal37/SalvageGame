@@ -16,16 +16,16 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 529,
-                "y": 632
+                "x": 750,
+                "y": 500
             }
         },
         "levels/level1.json": {
-            "scale": 0.75,
+            "scale": 1,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 519.3333333333333,
-                "y": 1030
+                "x": 1500,
+                "y": 1000
             }
         },
         "levels/level2.json": {
@@ -34,6 +34,14 @@
             "viewCenter": {
                 "x": 2268.181818181818,
                 "y": 1960.6060606060605
+            }
+        },
+        "levels/level4.json": {
+            "scale": 0.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 602,
+                "y": 784
             }
         },
         "levels/small_ship.json": {
@@ -48,8 +56,8 @@
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 467.5,
-                "y": 1568
+                "x": 999.5,
+                "y": 999.5
             }
         },
         "levels/tilesets/id_tiles.json": {
