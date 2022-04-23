@@ -9,12 +9,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
+import com.sun.tools.javac.util.Pair;
 import com.xstudios.salvage.assets.GifDecoder;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
+import jdk.internal.module.SystemModuleFinders;
 import sun.security.x509.OtherName;
 
 import java.util.ArrayList;
@@ -45,8 +47,6 @@ public class DiverModel extends GameObject {
 
 
     private FilmStrip diverSprite;
-
-    private int current_frame = 0;
 
     public int getFrame() {
         return diverSprite.getFrame();
@@ -154,7 +154,7 @@ public class DiverModel extends GameObject {
      * Store oxygen level
      */
     private float oxygenLevel;
-    private int MAX_OXYGEN = 150;
+    private float maxOxygenLevel = 150;
 
     /** Diver Sensor Used to pick up items and open doors*/
 
@@ -172,11 +172,27 @@ public class DiverModel extends GameObject {
     private PolygonShape sensorShapeLeft;
     private PolygonShape hitboxShape;
 
+
+    Pair<String, Integer> pair = new Pair<>("Test", 99);
+
+
     /**
      * Whether you are touching another GameObject
      */
     private ArrayList<GObject> touchingRight;
     private ArrayList<GObject> touchingLeft;
+    private ArrayList<Pair<GObject, Boolean>> touchedObjects;
+
+    public Wall getTouchedWall() {
+        return touchedWall;
+    }
+
+    public void setTouchedWall(Wall touchedWall) {
+        this.touchedWall = touchedWall;
+    }
+
+    private Wall touchedWall = null;
+
 
     /**
      * The initializing data (to avoid magic numbers)
@@ -219,9 +235,17 @@ public class DiverModel extends GameObject {
 
     private final float swimDamping;
     private final float boostDamping;
+    private Vector2 facingDir;
 
     public float getMaxOxygen() {
-        return MAX_OXYGEN;
+
+        return maxOxygenLevel;
+    }
+
+    public void setMaxOxygen(float max) {
+        System.out.println("Maxed Out!");
+        maxOxygenLevel = max;
+        oxygenLevel = max;
     }
 
     // ======================== CONSTRUCTORS ================================
@@ -232,7 +256,6 @@ public class DiverModel extends GameObject {
 
     public DiverModel(float x, float y, JsonValue data) {
         super(x, y);
-
         shape = new PolygonShape();
         vertices = new float[8];
 
@@ -257,6 +280,7 @@ public class DiverModel extends GameObject {
         diverCollisionBox = "DiverBox";
         touchingRight = new ArrayList<>();
         touchingLeft = new ArrayList<>();
+        touchedObjects = new ArrayList<>();
         // Initialize
         faceRight = true;
         setDimension(1.2f, 0.5f);
@@ -269,7 +293,7 @@ public class DiverModel extends GameObject {
         ping = false;
         movement = new Vector2();
         drift_movement = new Vector2();
-        oxygenLevel = data.getInt("max_oxygen", MAX_OXYGEN);
+        oxygenLevel = data.getInt("max_oxygen", (int) maxOxygenLevel);
         pingDirection = new Vector2();
         ping_cooldown = 0;
         center = new Rectangle();
@@ -282,13 +306,15 @@ public class DiverModel extends GameObject {
         cap1 = null;
         cap2 = null;
         // TODO: Put this in the constants JSON
-        boostedMaxSpeed = swimMaxSpeed * 3;
+        boostedMaxSpeed = swimMaxSpeed * 1.5f;
         maxSpeed = swimMaxSpeed;
         swimDamping = damping;
 
-        boostDamping = damping / 100;
+        boostDamping = damping / 7;
+        facingDir = new Vector2(0, 0);
 
         setFixedRotation(false);
+
         carrying_body = false;
         dead_body = null;
     }
@@ -318,6 +344,7 @@ public class DiverModel extends GameObject {
 
 
     int turnFrames = 0;
+    int kickOffFrame = 10;
 
     public void balanceRotation() {
         while (body.getAngle() > 0.1 || body.getAngle() < -0.1) {
@@ -328,7 +355,6 @@ public class DiverModel extends GameObject {
             } else {
                 body.setAngularVelocity(0.0f);
             }
-            System.out.println("ANG: " + body.getAngle());
         }
     }
 
@@ -336,18 +362,17 @@ public class DiverModel extends GameObject {
     public void setHorizontalMovement(float value) {
         movement.x = value;
         if (movement.x < 0 && faceRight) {
-//            turnFrames = 4;
-
-
         } else if (movement.x > 0 && !faceRight) {
-//            turnFrames = 4;
-
         }
 
 
         // Change facing if appropriate
 
 
+    }
+
+    public void setFacingDir(float x, float y) {
+        facingDir.set(x, y);
     }
 
     public void setDriftMovement(float x_val, float y_val) {
@@ -491,6 +516,7 @@ public class DiverModel extends GameObject {
 
 
         JsonValue sensorjv = data.get("sensor");
+
         FixtureDef sensorDef = new FixtureDef();
         sensorDef.density = data.getFloat("density", 0);
         sensorDef.isSensor = true;
@@ -500,20 +526,20 @@ public class DiverModel extends GameObject {
         sensorShapeRight.setAsBox(sensorjv.getFloat("width", 0), sensorjv.getFloat("shrink", 0) * getWidth() / 2.0f,
                 new Vector2(getWidth() + getWidth() / 2, 0), 0.0f);
         sensorDef.shape = sensorShapeRight;
-
+        Fixture sensorFixture = body.createFixture(sensorDef);
+        sensorFixture.setUserData(sensorNameRight);
 
         FixtureDef sensorDef2 = new FixtureDef();
         sensorDef2.density = data.getFloat("density", 0);
         sensorDef2.isSensor = true;
         sensorDef2.filter.groupIndex = -1;
         sensorShapeLeft = new PolygonShape();
-
         sensorShapeLeft.setAsBox(sensorjv.getFloat("width", 0), sensorjv.getFloat("shrink", 0) * getWidth() / 2.0f,
                 new Vector2(-getWidth() - getWidth() / 2, 0), 0.0f);
         sensorDef2.shape = sensorShapeLeft;
         // Ground sensor to represent our feet
         Fixture sensorFixture2 = body.createFixture(sensorDef2);
-        sensorFixture2.setUserData(getSensorNameLeft());
+        sensorFixture2.setUserData(sensorNameLeft);
 
 
         // create a sensor to detect wall collisions
@@ -523,7 +549,7 @@ public class DiverModel extends GameObject {
         // we don't want this fixture to collide, just act as a sensor
         hitboxDef.filter.groupIndex = -1;
         hitboxShape = new PolygonShape();
-        hitboxShape.setAsBox(getWidth() * 1.6f, getHeight() * 2.4f,
+        hitboxShape.setAsBox(getWidth() * 1.6f, getHeight(),
                 new Vector2(0, 0), 0.0f);
         hitboxDef.shape = hitboxShape;
         Fixture hitboxFixture = body.createFixture(hitboxDef);
@@ -572,45 +598,7 @@ public class DiverModel extends GameObject {
     }
 
 
-    @Override
-    public void draw(GameCanvas canvas) {
-        tick++;
-        float effect = faceRight ? 1.0f : -1.0f;
-        float flip = bodyFlip ? -1.0f : 1.0f;
-
-        if (texture != null) {
-
-            if (stunned) {
-                if (stunCooldown % 20 > 5) {
-
-                    canvas.draw(diverSprite, Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
-                } else {
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
-                }
-            } else {
-
-                float angle = getAngle();
-                if (turnFrames > 0 && turnFrames < 5) {
-                    if (tick % 4 == 0) {
-                        turnFrames--;
-                    }
-                    diverSprite.setFrame(turnFrames + 12);
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
-                } else {
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
-                }
-
-            }
-        }
-
-
-        // draw the ping
-        if (ping || ping_cooldown > 0) {
-            canvas.draw(pingTexture, Color.WHITE, origin.x + pingDirection.x,
-                    origin.y + pingDirection.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
-            ping_cooldown--;
-        }
-    }
+    // draw the ping
 
 
     /**
@@ -722,6 +710,13 @@ public class DiverModel extends GameObject {
     public int targetAngleY = 0;
     public boolean bodyFlip = false;
 
+    public void setTargetAngle(int x, int y) {
+        if (x != -1)
+            targetAngleX = x;
+        if (y != -1)
+            targetAngleY = y;
+    }
+
     public void applyForce() {
         float targetAngle = targetAngleX + ((targetAngleX == 0) ? targetAngleY : -targetAngleY);
         targetAngle += (targetAngle < 0) ? 360f : 0f;
@@ -729,7 +724,7 @@ public class DiverModel extends GameObject {
         float angle = 0.4f * 3;
         int buffer = 5;
         int flip = 180;
-        if (Math.abs(dist) >= 180 - buffer * 1) {
+        if (Math.abs(dist) >= 180 - buffer * 5) {
             dist += (dist > 0) ? -flip : flip;
             faceRight = !faceRight;
             if (Math.abs(dist) >= 90) {
@@ -741,6 +736,7 @@ public class DiverModel extends GameObject {
         }
 
         if (dist > 0) {
+            angle *= (isLatching()) ? 3 : 1;
             body.setAngularVelocity(angle);
         } else if (dist < 0) {
             body.setAngularVelocity(-angle);
@@ -750,14 +746,14 @@ public class DiverModel extends GameObject {
         float tinyBuffer = 5f;
 
 //        if (getDynamicAngle() != 269 || getDynamicAngle() != 271 || getDynamicAngle() != 89 || getDynamicAngle() != 91) {
-        if (movement.x != 0 || movement.y != 0) {
-            if (getDynamicAngle() <= 90 - tinyBuffer || getDynamicAngle() > 270 + tinyBuffer) {
-                bodyFlip = !faceRight;
-            }
-            if (getDynamicAngle() > 90 + tinyBuffer && getDynamicAngle() <= 270 - tinyBuffer) {
-                bodyFlip = faceRight;
-            }
+
+        if (getDynamicAngle() <= 90 - tinyBuffer || getDynamicAngle() > 270 + tinyBuffer) {
+            bodyFlip = !faceRight;
         }
+        if (getDynamicAngle() > 90 + tinyBuffer && getDynamicAngle() <= 270 - tinyBuffer) {
+            bodyFlip = faceRight;
+        }
+
 
         if (!isActive()) {
             return;
@@ -850,7 +846,6 @@ public class DiverModel extends GameObject {
             desired_xvel = getVX() + Math.signum(getHorizontalDriftMovement()) * max_impulse_drift;
             desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
             desired_yvel = getVY() + Math.signum(getVerticalDriftMovement()) * max_impulse_drift;
-
             desired_yvel = Math.max(Math.min(desired_yvel, getMaxSpeed()), -getMaxSpeed());
 
             float xvel_change = desired_xvel - getVX();
@@ -967,7 +962,7 @@ public class DiverModel extends GameObject {
      */
     public void changeOxygenLevel(float delta) {
         float updatedOxygen = oxygenLevel + delta;
-        oxygenLevel = Math.max(Math.min(updatedOxygen, MAX_OXYGEN), 0);
+        oxygenLevel = Math.max(Math.min(updatedOxygen, maxOxygenLevel), 0);
     }
 
     public boolean isTouchingObstacle() {
@@ -989,6 +984,9 @@ public class DiverModel extends GameObject {
      * @param latched used to set whether the player has latched onto something
      */
     public void setLatching(boolean latched) {
+        if (latched && !latchedOn)
+            kickOffFrame = 0;
+
         latchedOn = latched;
     }
 
@@ -1002,6 +1000,8 @@ public class DiverModel extends GameObject {
 
     public void boost() {
         // set impulse in direction of key input
+        forceCache.set(facingDir.nor().x * 15, facingDir.nor().y * 15);
+        body.applyLinearImpulse(forceCache, body.getWorldCenter(), true);
         forceCache.set(movement.nor().x * 20, movement.nor().y * 20);
         body.applyLinearImpulse(forceCache, body.getPosition(), true);
     }
@@ -1041,11 +1041,55 @@ public class DiverModel extends GameObject {
 
     }
 
-    public boolean isTouching() {
 
-        if (faceRight)
-            return touchingRight.size() > 0;
-        else return touchingLeft.size() > 0;
+    @Override
+    public void draw(GameCanvas canvas) {
+
+        tick++;
+        float effect = faceRight ? 1.0f : -1.0f;
+        float flip = bodyFlip ? -1.0f : 1.0f;
+
+        if (texture != null) {
+
+            if (stunned) {
+                if (stunCooldown % 20 > 5) {
+
+                    canvas.draw(diverSprite, Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+                } else {
+                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+                }
+            } else {
+
+                float angle = getAngle();
+                if (turnFrames > 0 && turnFrames < 5) {
+                    if (tick % 4 == 0) {
+                        turnFrames--;
+                    }
+                    diverSprite.setFrame(turnFrames + 12);
+                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
+                } else if (kickOffFrame < 5) {
+                    if (tick % 3 == 0) {
+
+                        if (kickOffFrame < 3 && isLatching()) {
+                            kickOffFrame++;
+                        } else if (kickOffFrame >= 3 && !isLatching()) {
+                            kickOffFrame++;
+                        }
+
+                    }
+                    diverSprite.setFrame(kickOffFrame + 18);
+                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
+                } else {
+                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
+                }
+
+            }
+        }
+        if (ping || ping_cooldown > 0) {
+            canvas.draw(pingTexture, Color.WHITE, origin.x + pingDirection.x,
+                    origin.y + pingDirection.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+            ping_cooldown--;
+        }
     }
 
 }

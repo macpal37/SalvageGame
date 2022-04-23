@@ -56,7 +56,8 @@ public class InputController {
     /**
      * do we want to grab onto the wall?
      */
-    private boolean kickOff;
+    private boolean kickOffPressed;
+    private boolean kickOffPrevious;
 
     private boolean pause;
 
@@ -187,7 +188,7 @@ public class InputController {
      * @return true when the player is trying to grab or kick off a wall
      */
     public boolean didKickOff() {
-        return kickOff;
+        return kickOffPressed && !kickOffPrevious;
     }
 
     public boolean isPause() {
@@ -225,6 +226,7 @@ public class InputController {
         // Copy state from last animation frame
         // Helps us ignore buttons that are held down
         resetPrevious = resetPressed;
+//        kickOffPrevious = kickOffPressed;
         debugPrevious = debugPressed;
         menuPrevious = menuPressed;
         carryingObjectPrevious = carryingObject;
@@ -272,8 +274,12 @@ public class InputController {
     private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary) {
         // Give priority to gamepad results
         resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.O));
-        debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
+        debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
         menuPressed = (secondary && menuPressed) || (Gdx.input.isKeyPressed(Keys.ESCAPE));
+
+
+        kickOffPressed = (secondary && kickOffPrevious) || (Gdx.input.isKeyPressed(Keys.SPACE));
+        kickOffPressed = (secondary && kickOffPrevious) || (Gdx.input.isKeyPressed(Keys.SPACE));
 
         carryingObject = (secondary && carryingObject) || Gdx.input.isKeyPressed(Input.Keys.Q);
 
@@ -305,7 +311,7 @@ public class InputController {
 //            vertical -= 1.0f;
 //        }
 
-        kickOff = Gdx.input.isKeyPressed(Keys.SPACE);
+
         pause = Gdx.input.isKeyPressed(Keys.P);
 
     }

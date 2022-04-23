@@ -37,6 +37,14 @@ public class LevelBuilder {
     protected Texture woodenChair2;
     protected Texture woodenTable;
 
+
+//    /**
+//     * The texture for Hazard
+//     */
+//    protected TextureRegion hazardTexture;
+
+    protected Texture[] kitchenSet;
+
     /**
      * The texture for diver
      */
@@ -96,6 +104,11 @@ public class LevelBuilder {
     }
 
     public void gatherAssets(AssetDirectory directory) {
+        kitchenSet = new Texture[5];
+        for (int i = 1; i <= kitchenSet.length; i++) {
+            kitchenSet[i - 1] = directory.getEntry("models:kitchen" + i, Texture.class);
+        }
+
         tilesheet = directory.getEntry("levels:tilesets:old_ship_tileset", Texture.class);
         woodenWall = directory.getEntry("models:wooden_wall", Texture.class);
 
@@ -116,7 +129,7 @@ public class LevelBuilder {
         keyTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         pingTexture = new TextureRegion(directory.getEntry("models:ping", Texture.class));
         wallTexture = new TextureRegion(directory.getEntry("hazard", Texture.class));
-        hazardTexture = new TextureRegion(directory.getEntry("hazard", Texture.class));
+        hazardTexture = new TextureRegion(directory.getEntry("models:hazard", Texture.class));
         doorOpenTexture = new TextureRegion(directory.getEntry("models:door_open", Texture.class));
         doorCloseTexture = new TextureRegion(directory.getEntry("models:door_closed", Texture.class));
 
@@ -331,20 +344,23 @@ public class LevelBuilder {
                     float objectHeight = obj.getFloat("height");
                     float rotation = obj.getFloat("rotation");
                     if (rotation != 0) {
-                        System.out.println("ROT: " + rotation);
                         rotation = ((360 - rotation) / 180f) * (float) Math.PI;
-                        System.out.println("AFTER: " + rotation + "\n=======");
                     }
 
                     float widthScale = (objectWidth) / tileSize;
                     float heightScale = (objectHeight) / tileSize;
                     switch (tile.tileType) {
                         case Wall:
-                            gameObjects.add(new Wall(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0));
+                            Wall wall = new Wall(createVerticies(tile, 0, 0, 1, 1), sx, sy);
                             break;
                         case Diver:
-
-                            gameObjects.add(new DiverModel(sx, sy, constants.get("diver")));
+                            DiverModel d = new DiverModel(sx, sy, constants.get("diver"));
+                            if (obj.get("properties") != null)
+                                for (JsonValue prop : obj.get("properties")) {
+                                    if (prop.getString("name").equals("starting_oxygen"))
+                                        d.setMaxOxygen(prop.getInt("value"));
+                                }
+                            gameObjects.add(d);
                             break;
                         case DeadBody:
 
@@ -396,13 +412,13 @@ public class LevelBuilder {
                             gameObjects.add(new GoalDoor(sx, sy + objectHeight / (div * 2), objectWidth / div, objectHeight / div));
                             break;
                         case Block:
-                            Wall block = new Wall(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
+                            Wall block = new Wall(createVerticies(tile, 0, 0, widthScale, heightScale), sx, sy);
                             block.setInvisible(true);
                             block.setAngle(rotation);
                             gameObjects.add(block);
                             break;
                         case Hazard:
-                            HazardModel hazard = new HazardModel(createVerticies(tile, sx, sy, widthScale, heightScale), 0, 0);
+                            HazardModel hazard = new HazardModel(createVerticies(tile, 0, 0, widthScale, heightScale), sx, sy);
                             gameObjects.add(hazard);
                             hazard.setAngle(rotation);
                             break;
@@ -423,6 +439,14 @@ public class LevelBuilder {
                                 case 3:
                                     decor.setFilmStrip(new FilmStrip(woodenTable, 1, 1, 1));
                                     decor.setScale(1 / 5f, 1 / 5f);
+                                    break;
+                                case 11:
+                                case 12:
+                                case 13:
+                                case 14:
+                                case 15:
+                                    decor.setFilmStrip(new FilmStrip(kitchenSet[tile.id - 11], 1, 1, 1));
+                                    decor.setScale(1 / 3f, 1 / 3f);
                                     break;
                                 default:
                                     System.out.println("Unknown Object?");
