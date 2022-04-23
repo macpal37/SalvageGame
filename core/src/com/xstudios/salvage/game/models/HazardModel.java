@@ -1,5 +1,9 @@
 package com.xstudios.salvage.game.models;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
+import com.xstudios.salvage.game.GameCanvas;
+
 public class HazardModel extends Wall {
     /**
      * the amount of oxygen that this hazard drains per frame
@@ -60,5 +64,19 @@ public class HazardModel extends Wall {
         super(points, x, y);
     }
 
+    public Vector2 scale = new Vector2(1, 1);
+
+    public void setScale(float x, float y) {
+        scale.set(x, y);
+    }
+
+
+    public void draw(GameCanvas canvas) {
+        if (texture != null && !invisible) {
+            canvas.draw(region, Color.WHITE, origin.x, origin.y, getX() * drawScale.x - origin.x, getY() * drawScale.y - origin.y, getAngle(), scale.x, scale.y);
+
+        }
+
+    }
 
 }

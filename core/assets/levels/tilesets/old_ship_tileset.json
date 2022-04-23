@@ -56,6 +56,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -108,6 +113,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":1
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -116,6 +126,11 @@
         {
          "id":2,
          "properties":[
+                {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
                 {
                  "name":"model_type",
                  "type":"string",
@@ -127,7 +142,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -310,6 +324,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":3
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -362,6 +381,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":4
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -371,6 +395,11 @@
          "id":12,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Empty"
@@ -378,16 +407,79 @@
         }, 
         {
          "id":13,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":3,
+                     "name":"",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":20.7272727272727,
+                             "y":0.363636363636364
+                            }, 
+                            {
+                             "x":36.3636363636364,
+                             "y":4.18181818181818
+                            }, 
+                            {
+                             "x":37.8181818181818,
+                             "y":52.7272727272727
+                            }, 
+                            {
+                             "x":32.3636363636364,
+                             "y":84.1818181818182
+                            }, 
+                            {
+                             "x":22.3636363636364,
+                             "y":93.0909090909091
+                            }, 
+                            {
+                             "x":-2.90909090909091,
+                             "y":92.7272727272727
+                            }, 
+                            {
+                             "x":-15.2727272727273,
+                             "y":84.1818181818182
+                            }, 
+                            {
+                             "x":-22,
+                             "y":48.1818181818182
+                            }, 
+                            {
+                             "x":-19.0909090909091,
+                             "y":3.81818181818182
+                            }],
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":42.1818181818182,
+                     "y":3.45454545454545
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
          "properties":[
+                {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
                 {
                  "name":"model_type",
                  "type":"string",
                  "value":"Obstacle"
-                }, 
-                {
-                 "name":"obstacle_type",
-                 "type":"string",
-                 "value":"Barrel"
                 }]
         }, 
         {
@@ -527,6 +619,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":6
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -575,6 +672,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":7
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -619,6 +721,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":8
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -626,16 +733,63 @@
         }, 
         {
          "id":23,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":2,
+                     "name":"",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":-28.7272727272727,
+                             "y":9.63636363636363
+                            }, 
+                            {
+                             "x":-29.0909090909091,
+                             "y":77.6363636363636
+                            }, 
+                            {
+                             "x":37.4545454545455,
+                             "y":81.8181818181818
+                            }, 
+                            {
+                             "x":59.6363636363636,
+                             "y":67.0909090909091
+                            }, 
+                            {
+                             "x":60,
+                             "y":1.09090909090909
+                            }],
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":34.7272727272727,
+                     "y":10.7272727272727
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
          "properties":[
+                {
+                 "name":"id",
+                 "type":"int",
+                 "value":1
+                }, 
                 {
                  "name":"model_type",
                  "type":"string",
                  "value":"Obstacle"
-                }, 
-                {
-                 "name":"obstacle_type",
-                 "type":"string",
-                 "value":"Crate"
                 }]
         }, 
         {
@@ -840,6 +994,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":9
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -887,6 +1046,11 @@
              "y":0
             },
          "properties":[
+                {
+                 "name":"id",
+                 "type":"int",
+                 "value":10
+                }, 
                 {
                  "name":"model_type",
                  "type":"string",
@@ -936,6 +1100,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":11
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -945,18 +1114,28 @@
          "id":33,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":1
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
          "id":34,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":0
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Plant"
+                 "value":"Decor"
                 }]
         }, 
         {
@@ -964,51 +1143,104 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
                      "height":0,
-                     "id":6,
+                     "id":8,
                      "name":"",
                      "polygon":[
                             {
-                             "x":-7.5,
-                             "y":-10.5
+                             "x":0,
+                             "y":0
                             }, 
                             {
-                             "x":-16.75,
-                             "y":7.5
+                             "x":6.54545454545454,
+                             "y":-19.0909090909091
                             }, 
                             {
-                             "x":-28,
-                             "y":1.25
+                             "x":8.90909090909091,
+                             "y":-1.45454545454545
                             }, 
                             {
-                             "x":-19.75,
-                             "y":10.75
+                             "x":25.0909090909091,
+                             "y":-17.6363636363636
                             }, 
                             {
-                             "x":-31,
-                             "y":17.75
+                             "x":17.0909090909091,
+                             "y":2.72727272727273
                             }, 
                             {
-                             "x":-18.25,
-                             "y":13.25
+                             "x":39.0909090909091,
+                             "y":-14.7272727272727
                             }, 
                             {
-                             "x":-11,
-                             "y":26.5
+                             "x":27.6363636363636,
+                             "y":4.18181818181818
                             }, 
                             {
-                             "x":-15,
-                             "y":11.25
+                             "x":56.9090909090909,
+                             "y":-7.45454545454545
+                            }, 
+                            {
+                             "x":38,
+                             "y":9.81818181818182
+                            }, 
+                            {
+                             "x":65.2727272727273,
+                             "y":6.72727272727272
+                            }, 
+                            {
+                             "x":42,
+                             "y":17.2727272727273
+                            }, 
+                            {
+                             "x":70.3636363636364,
+                             "y":25.8181818181818
+                            }, 
+                            {
+                             "x":38.7272727272727,
+                             "y":26
+                            }, 
+                            {
+                             "x":60.1818181818182,
+                             "y":47.0909090909091
+                            }, 
+                            {
+                             "x":36.1818181818182,
+                             "y":36.9090909090909
+                            }, 
+                            {
+                             "x":53.0909090909091,
+                             "y":58.1818181818182
+                            }, 
+                            {
+                             "x":21.6363636363636,
+                             "y":37.6363636363636
+                            }, 
+                            {
+                             "x":28.1818181818182,
+                             "y":64.3636363636364
+                            }, 
+                            {
+                             "x":8.72727272727273,
+                             "y":40.3636363636364
+                            }, 
+                            {
+                             "x":6.36363636363636,
+                             "y":62
+                            }, 
+                            {
+                             "x":-0.545454545454545,
+                             "y":43.0909090909091
                             }],
                      "rotation":0,
                      "type":"",
                      "visible":true,
                      "width":0,
-                     "x":65.5,
-                     "y":33.5
+                     "x":0.545454545454545,
+                     "y":30.9090909090909
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -1021,6 +1253,16 @@
                  "name":"model_type",
                  "type":"string",
                  "value":"Hazard"
+                }, 
+                {
+                 "name":"oxygen_drain",
+                 "type":"float",
+                 "value":-0.1
+                }, 
+                {
+                 "name":"stun_duration",
+                 "type":"int",
+                 "value":60
                 }]
         }, 
         {
@@ -1098,6 +1340,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":12
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -1146,6 +1393,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":13
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -1190,6 +1442,11 @@
             },
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":14
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Wall"
@@ -1199,18 +1456,28 @@
          "id":43,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":2
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
          "id":44,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":3
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
@@ -1289,45 +1556,70 @@
          "id":53,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":11
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
          "id":54,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":12
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
          "id":55,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":13
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
          "id":56,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":14
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
          "id":57,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":15
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {

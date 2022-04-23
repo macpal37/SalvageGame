@@ -191,10 +191,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         float h = scale * height;
 
         if ((x + w > pX && x - w < pX) && (y + h > pY && y - h < pY)) {
-//            System.out.println("pX: " + pX + " pY: " + pY);
-//            System.out.println("x: " + x + " y: "+ y);
-//            System.out.println("w: " + w + " h: " + h);
-//            System.out.println("y1: " + y);
             return true;
         }
         return false;

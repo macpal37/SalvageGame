@@ -42,7 +42,8 @@ public class GDXRoot extends Game implements ScreenListener {
      */
     @Override
     public void create() {
-        cameraController = new CameraController(32, 18);
+//        cameraController = new CameraController(32, 18);
+        cameraController = new CameraController(64, 36);
         canvas = new GameCanvas(cameraController);
         loading = new LoadingMode("assets.json", canvas, 1);
 

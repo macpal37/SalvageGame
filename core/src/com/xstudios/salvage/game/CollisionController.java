@@ -25,11 +25,12 @@ public class CollisionController {
 
     /**
      * adds body to list of bodies the diver left right sensors are touching
+     *
      * @param diver diver object
-     * @param fix1 fixture 1 in the collision
-     * @param fix2 fixture 2 in the collision
+     * @param fix1  fixture 1 in the collision
+     * @param fix2  fixture 2 in the collision
      */
-    public void addDiverSensorTouching(DiverModel diver, Fixture fix1, Fixture fix2){
+    public void addDiverSensorTouching(DiverModel diver, Fixture fix1, Fixture fix2) {
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
         Body body1 = fix1.getBody();
@@ -49,6 +50,7 @@ public class CollisionController {
         if ((diver.getSensorNameRight().equals(fd2) && diver != bd1) ||
                 (diver.getSensorNameRight().equals(fd1) && diver != bd2)) {
 
+
             if (diver != bd1)
                 diver.addTouching(diver.getSensorNameRight(), bd1);
             else
@@ -58,11 +60,12 @@ public class CollisionController {
 
     /**
      * remove body from list of potential bodies that diver left and right sensors are touching
+     *
      * @param diver diver object
-     * @param fix1 fixture 1 in the collision
-     * @param fix2 fixture 2 in the collision
+     * @param fix1  fixture 1 in the collision
+     * @param fix2  fixture 2 in the collision
      */
-    public void removeDiverSensorTouching(DiverModel diver, Fixture fix1, Fixture fix2){
+    public void removeDiverSensorTouching(DiverModel diver, Fixture fix1, Fixture fix2) {
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
         Body body1 = fix1.getBody();
@@ -71,6 +74,7 @@ public class CollisionController {
         GObject bd2 = (GObject) body2.getUserData();
         if ((diver.getSensorNameLeft().equals(fd2) && diver != bd1) ||
                 (diver.getSensorNameLeft().equals(fd1) && diver != bd2)) {
+
 
             if (diver != bd1)
                 diver.removeTouching(diver.getSensorNameLeft(), bd1);
@@ -84,20 +88,22 @@ public class CollisionController {
                 diver.removeTouching(diver.getSensorNameRight(), bd1);
             else
                 diver.removeTouching(diver.getSensorNameRight(), bd2);
+
         }
     }
 
     /**
      * adds item to list of potential items for diver to pick up
+     *
      * @param b1 one of the colliding bodies
      * @param b2 the other of the colliding bodies
      */
-    public void startDiverItemCollision(Body b1, Body b2){
+    public void startDiverItemCollision(Body b1, Body b2) {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof ItemModel) {
             ((ItemModel) b2.getUserData()).setTouched(true);
             DiverModel diver = (DiverModel) b1.getUserData();
             ItemModel item = (ItemModel) b2.getUserData();
-            if(diver.getItem() !=  item) {
+            if (diver.getItem() != item) {
                 diver.addPotentialItem(item);
             }
         }
@@ -105,7 +111,7 @@ public class CollisionController {
             ((ItemModel) b1.getUserData()).setTouched(true);
             DiverModel diver = (DiverModel) b2.getUserData();
             ItemModel item = (ItemModel) b1.getUserData();
-            if(diver.getItem() !=  item) {
+            if (diver.getItem() != item) {
                 diver.addPotentialItem(item);
             }
         }
@@ -113,10 +119,11 @@ public class CollisionController {
 
     /**
      * Handle termination of contact of the diver with an item
+     *
      * @param b1 one of the colliding bodies
      * @param b2 the other of the colliding bodies
      */
-    public void endDiverItemCollision(Body b1, Body b2){
+    public void endDiverItemCollision(Body b1, Body b2) {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof ItemModel) {
             DiverModel diver = (DiverModel) b1.getUserData();
             ItemModel item = (ItemModel) b2.getUserData();
@@ -133,12 +140,13 @@ public class CollisionController {
 
     /**
      * Checks to see if the diver can unlock the door, if so return true
+     *
      * @param diver diver object
-     * @param door door currently colliding with
+     * @param door  door currently colliding with
      */
-    public static boolean attemptUnlock(DiverModel diver, Door door){
-        if(diver.getItem()!=null) {
-            if (diver.getItem().getID()== door.getID() || diver.getItem().getItemType() == ItemType.DEAD_BODY) {
+    public static boolean attemptUnlock(DiverModel diver, Door door) {
+        if (diver.getItem() != null) {
+            if (diver.getItem().getID() == door.getID() || diver.getItem().getItemType() == ItemType.DEAD_BODY) {
                 return true;
             }
         }
@@ -147,10 +155,11 @@ public class CollisionController {
 
     /**
      * handles collision between the diver and the door for unlocking
+     *
      * @param b1 one of the colliding bodies
      * @param b2 the other of the colliding bodies
      */
-    public void startDiverDoorCollision(Body b1, Body b2){
+    public void startDiverDoorCollision(Body b1, Body b2) {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Door) {
             Door door = (Door) b2.getUserData();
             DiverModel diver = (DiverModel) b1.getUserData();
@@ -165,10 +174,11 @@ public class CollisionController {
 
     /**
      * handles collision between the diver and the dead body
+     *
      * @param b1 one of the colliding bodies
      * @param b2 the other of the colliding bodies
      */
-    public void startDiverDeadBodyCollision(Body b1, Body b2){
+    public void startDiverDeadBodyCollision(Body b1, Body b2) {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof DeadBodyModel) {
             ((DiverModel) b1.getUserData()).setBodyContact(true);
         }
@@ -179,10 +189,11 @@ public class CollisionController {
 
     /**
      * handles termination of collision between the diver and the dead body
+     *
      * @param b1 one of the colliding bodies
      * @param b2 the other of the colliding bodies
      */
-    public void endDiverDeadBodyCollision(Body b1, Body b2){
+    public void endDiverDeadBodyCollision(Body b1, Body b2) {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof DeadBodyModel) {
             ((DiverModel) b1.getUserData()).setBodyContact(false);
         }
@@ -193,10 +204,11 @@ public class CollisionController {
 
     /**
      * Handles diver collision with hazards
+     *
      * @param f1 one of the colliding fixtures
      * @param f2 the other of the colliding fixtures
      */
-    public float startDiverHazardCollision(Fixture f1, Fixture f2, DiverModel diver){
+    public float startDiverHazardCollision(Fixture f1, Fixture f2, DiverModel diver) {
         Body b1 = f1.getBody();
         Body b2 = f2.getBody();
         Object fd1 = f1.getUserData();
@@ -222,11 +234,12 @@ public class CollisionController {
 
     /**
      * Checks if the diver's ending contact with the item
+     *
      * @param diver diver object
-     * @param item item object to potentially put down
+     * @param item  item object to potentially put down
      */
-    public static void putDown(DiverModel diver, ItemModel item){
-        if(diver.containsPotentialItem(item)){
+    public static void putDown(DiverModel diver, ItemModel item) {
+        if (diver.containsPotentialItem(item)) {
             diver.removePotentialItem(item);
             item.setVX(0);
             item.setVY(0);
@@ -241,6 +254,7 @@ public class CollisionController {
      * @param f2
      * @param diver
      */
+
     public void startDiverToObstacle(Fixture f1, Fixture f2, DiverModel diver) {
         Body b1 = f1.getBody();
         Body b2 = f2.getBody();
@@ -254,8 +268,8 @@ public class CollisionController {
             AudioController.getInstance().wall_collision(diver.getForce());
         }
         if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall &&
-        !diver.getSensorNameRight().equals(fd2) && !diver.getSensorNameLeft().equals(fd2)) {
-//            System.out.println("body collided");
+                !diver.getSensorNameRight().equals(fd2) && !diver.getSensorNameLeft().equals(fd2)) {
+
             ((DiverModel) b2.getUserData()).setTouchingObstacle(true);
         }
     }
@@ -284,12 +298,13 @@ public class CollisionController {
 
     /**
      * return whether the diver is at the goal door or not
-     * @param b1 first colliding body
-     * @param b2 second colliding body
+     *
+     * @param b1    first colliding body
+     * @param b2    second colliding body
      * @param diver diver object
      * @return whether win condition is met (diver is carrying body)
      */
-    public boolean getWinState(Body b1, Body b2, DiverModel diver){
+    public boolean getWinState(Body b1, Body b2, DiverModel diver) {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof GoalDoor) {
             return diver.hasBody();
         }
@@ -297,9 +312,10 @@ public class CollisionController {
             return diver.hasBody();
         }
         return false;
+
     }
 
-    public static float staticHazardCollision(DiverModel diver, HazardModel hazard){
+    public static float staticHazardCollision(DiverModel diver, HazardModel hazard) {
         System.out.println("Hazard Contact");
         if (!diver.getStunned()) {
             diver.setStunned(true);
