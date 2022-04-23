@@ -40,6 +40,16 @@
     "models:dead_body": "models/dead_body.png",
     "models:door_open": "models/door_opened.png",
     "models:door_closed": "models/door_locked.png",
+    "models:hazard": "models/hazard_nails.png",
+
+      "models:kitchen1": "models/kitchen1.png",
+      "models:kitchen2": "models/kitchen2.png",
+      "models:kitchen3": "models/kitchen3.png",
+      "models:kitchen4": "models/kitchen4.png",
+      "models:kitchen5": "models/kitchen5.png",
+
+
+
     "levels:tilesets:old_ship_tileset":"levels/tilesets/old_ship_tileset.png",
     "wall": {
       "file":"background/wooden_bg.png",

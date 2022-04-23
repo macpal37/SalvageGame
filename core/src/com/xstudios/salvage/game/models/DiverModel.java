@@ -154,7 +154,7 @@ public class DiverModel extends GameObject {
      * Store oxygen level
      */
     private float oxygenLevel;
-    private int MAX_OXYGEN = 150;
+    private float maxOxygenLevel = 150;
 
     /** Diver Sensor Used to pick up items and open doors*/
 
@@ -221,7 +221,13 @@ public class DiverModel extends GameObject {
     private final float boostDamping;
 
     public float getMaxOxygen() {
-        return MAX_OXYGEN;
+        return maxOxygenLevel;
+    }
+
+    public void setMaxOxygen(float max) {
+        System.out.println("Maxed Out!");
+        maxOxygenLevel = max;
+        oxygenLevel = max;
     }
 
     // ======================== CONSTRUCTORS ================================
@@ -269,7 +275,7 @@ public class DiverModel extends GameObject {
         ping = false;
         movement = new Vector2();
         drift_movement = new Vector2();
-        oxygenLevel = data.getInt("max_oxygen", MAX_OXYGEN);
+        oxygenLevel = data.getInt("max_oxygen", (int) maxOxygenLevel);
         pingDirection = new Vector2();
         ping_cooldown = 0;
         center = new Rectangle();
@@ -731,7 +737,7 @@ public class DiverModel extends GameObject {
         float angle = 0.4f * 3;
         int buffer = 5;
         int flip = 180;
-        if (Math.abs(dist) >= 180 - buffer * 1) {
+        if (Math.abs(dist) >= 180 - buffer * 5) {
             dist += (dist > 0) ? -flip : flip;
             faceRight = !faceRight;
             if (Math.abs(dist) >= 90) {
@@ -969,7 +975,7 @@ public class DiverModel extends GameObject {
      */
     public void changeOxygenLevel(float delta) {
         float updatedOxygen = oxygenLevel + delta;
-        oxygenLevel = Math.max(Math.min(updatedOxygen, MAX_OXYGEN), 0);
+        oxygenLevel = Math.max(Math.min(updatedOxygen, maxOxygenLevel), 0);
     }
 
     public boolean isTouchingObstacle() {
