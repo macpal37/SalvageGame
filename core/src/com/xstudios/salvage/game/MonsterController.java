@@ -31,7 +31,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 /**
  * InputController corresponding to AI control.
- *
+ * <p>
  * REMEMBER: As an implementation of InputController you will have access to
  * the control code constants in that interface.  You will want to use them.
  */
@@ -40,20 +40,32 @@ public class MonsterController {
      * Enumeration to encode the finite state machine.
      */
     private static enum FSMState {
-        /** The monster is idle */
+        /**
+         * The monster is idle
+         */
         IDLE,
-        /** The monster is aggravated and warning the player */
+        /**
+         * The monster is aggravated and warning the player
+         */
         AGGRIVATED,
-        /** The monster is attacking the player */
+        /**
+         * The monster is attacking the player
+         */
         ATTACK
     }
 
     // Instance Attributes
-    /** The ship being controlled by this AIController */
+    /**
+     * The ship being controlled by this AIController
+     */
     private Monster monster;
-    /** The ship's current state in the FSM */
+    /**
+     * The ship's current state in the FSM
+     */
     private FSMState state;
-    /** The ship's current state in the FSM */
+    /**
+     * The ship's current state in the FSM
+     */
     private float ticks;
     private FilmStrip filmStrip;
     private TextureRegion texture;
@@ -65,11 +77,13 @@ public class MonsterController {
      * @param insert_monster the monster for the game
      */
     public MonsterController(Monster insert_monster) {
-            monster = insert_monster;
-            //filmStrip = new FilmStrip(tentacleFilmStrip, 1, 29, 29);
+        monster = insert_monster;
+        //filmStrip = new FilmStrip(tentacleFilmStrip, 1, 29, 29);
     }
 
-    public Monster getMonster() {return monster;}
+    public Monster getMonster() {
+        return monster;
+    }
 
     public void insertAssets(FilmStrip tentacleFilmStrip, TextureRegion tentacleTexture, Vector2 tentacleScale) {
         filmStrip = tentacleFilmStrip;
@@ -83,11 +97,11 @@ public class MonsterController {
     private void changeStateIfApplicable() {
         // Add initialization code as necessary
         float aggrivation = monster.getAggrivation();
-        if (monster.getAggrivation() < 0.25f){
+        if (monster.getAggrivation() < 0.25f) {
             state = FSMState.IDLE;
-        } else if (aggrivation < 1.0f){
+        } else if (aggrivation < 1.0f) {
             state = FSMState.AGGRIVATED;
-        } else if (aggrivation >= 1.0f){
+        } else if (aggrivation >= 1.0f) {
             state = FSMState.ATTACK;
         }
 
@@ -114,10 +128,10 @@ public class MonsterController {
     /**
      * Change the state of the monster based on aggrivation levels
      */
-    public void update(DiverModel diver, GameController gameController){
+    public void update(DiverModel diver, GameController gameController) {
         float aggrivation = monster.getAggrivation();
-        if (aggrivation < 1.0f){
-            monster.setAggrivation(monster.getAggrivation() -0.001f);
+        if (aggrivation < 1.0f) {
+            monster.setAggrivation(monster.getAggrivation() - 0.001f);
         }
         changeStateIfApplicable();
 
@@ -126,28 +140,28 @@ public class MonsterController {
         float tentacle_x = -10000.0f;
         float tentacle_y = -10000.0f;
 
-        for (GameObject object : gameController.objects){
-            if (object instanceof Wall){
-                if(current_x < object.getX() +10.0f && current_x > object.getX() - 10.0f){
-                    if (Math.random() < 0.5){
-                        tentacle_x = object.getX();
-                    }
-                    else {
-                        tentacle_x = object.getX();
-                    }
-                    tentacle_y = current_y;
-                    tentacle_x = current_x;
-                }
-            }}
-            if (true){//monster.getTentacles().size() < 10) {
-                Tentacle tentacle = new Tentacle(tentacle_x, tentacle_y);
-                tentacle.setFilmStrip(filmStrip);
-                tentacle.setTexture(texture);
-                tentacle.setDrawScale(scale);
-                monster.addTentacle(tentacle);
-                //tentacle.setBodyType(BodyDef.BodyType.DynamicBody);
-                gameController.addObject(tentacle);
-            }
+//        for (GameObject object : gameController.objects){
+//            if (object instanceof Wall){
+//                if(current_x < object.getX() +10.0f && current_x > object.getX() - 10.0f){
+//                    if (Math.random() < 0.5){
+//                        tentacle_x = object.getX();
+//                    }
+//                    else {
+//                        tentacle_x = object.getX();
+//                    }
+//                    tentacle_y = current_y;
+//                    tentacle_x = current_x;
+//                }
+//            }}
+        if (true) {//monster.getTentacles().size() < 10) {
+            Tentacle tentacle = new Tentacle(tentacle_x, tentacle_y);
+            tentacle.setFilmStrip(filmStrip);
+            tentacle.setTexture(texture);
+            tentacle.setDrawScale(scale);
+            monster.addTentacle(tentacle);
+            //tentacle.setBodyType(BodyDef.BodyType.DynamicBody);
+            gameController.addObject(tentacle);
+        }
 //        if (state == FSMState.AGGRIVATED){
 //
 //            }
@@ -155,22 +169,21 @@ public class MonsterController {
 //
 //        }
         ArrayList<Tentacle> removable = new ArrayList<>();
-        for (Tentacle tentacle : monster.getTentacles()){
+        for (Tentacle tentacle : monster.getTentacles()) {
             /**if (tentacle.getLife() < 100){
-                tentacle.update();
-            }
-            else {
-                removable.add(tentacle);
-            }*/
+             tentacle.update();
+             }
+             else {
+             removable.add(tentacle);
+             }*/
             System.out.println(tentacle.getBody());
             tentacle.update();
         }
         /**for (Tentacle tentacle : removable){
-            monster.removeTentacle(tentacle);
-            tentacle.dispose();
-        }*/
+         monster.removeTentacle(tentacle);
+         tentacle.dispose();
+         }*/
     }
-
 
 
 }

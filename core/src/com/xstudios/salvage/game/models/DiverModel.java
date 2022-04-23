@@ -723,8 +723,6 @@ public class DiverModel extends GameObject {
     public boolean bodyFlip = false;
 
     public void applyForce() {
-
-
         float targetAngle = targetAngleX + ((targetAngleX == 0) ? targetAngleY : -targetAngleY);
         targetAngle += (targetAngle < 0) ? 360f : 0f;
         float dist = targetAngle - getDynamicAngle();
