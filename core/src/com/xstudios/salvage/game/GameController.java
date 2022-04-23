@@ -525,14 +525,38 @@ public class GameController implements Screen, ContactListener {
         // stop latching and boost when key is let go
         // TODO: or when it is pressed again? Have had some issues with key presses being missed
         // otherwise, stop latching
+
+        if (input.didKickOff() && !level.getDiver().isLatching() && level.getDiver().isTouchingObstacle()) {
+            System.out.println("Player Coords: " + level.getDiver().getPosition());
+            System.out.println("Wall Coords: " + level.getDiver().getTouchedWall().getPosition());
+            int playerX = (int) level.getDiver().getPosition().x - 1;
+            int playerY = (int) level.getDiver().getPosition().y - 1;
+            int wallX = (int) level.getDiver().getTouchedWall().getPosition().x;
+            int wallY = (int) level.getDiver().getTouchedWall().getPosition().y;
+            if (Math.abs(level.getDiver().targetAngleY) >= 44) {
+//                if (level.getDiver().getVerticalMovement() != 0) {
+                if (playerY > wallY) {
+                    level.getDiver().setTargetAngle(-1, 90);
+                } else if (playerY <= wallY) {
+                    level.getDiver().setTargetAngle(-1, -90);
+                }
+            } else {
+                if (playerX > wallX) {
+                    level.getDiver().setTargetAngle(0, 0);
+                } else if (playerX <= wallX) {
+                    level.getDiver().setTargetAngle(180, 0);
+                }
+            }
+
+
+        }
+
         if (input.didKickOff() && level.getDiver().isTouchingObstacle()) {
             level.getDiver().setLatching(true);
         } else if (!input.didKickOff() && level.getDiver().isLatching()) {
             level.getDiver().setLatching(false);
             level.getDiver().setBoosting(true);
             level.getDiver().boost(); // boost according to the current user input
-        } else {
-            level.getDiver().setLatching(false);
         }
 
 

@@ -39,17 +39,15 @@ public class CollisionController {
         GObject bd2 = (GObject) body2.getUserData();
 
         // add gobjects that are colliding with diver's sensors to a list
-        if ((diver.getSensorNameLeft().equals(fd2) && diver != bd1) ||
-                (diver.getSensorNameLeft().equals(fd1) && diver != bd2)) {
-
+        if ((diver.getSensorNameLeft().equals(fd2) && bd1 instanceof Wall) ||
+                (diver.getSensorNameLeft().equals(fd1) && bd2 instanceof Wall)) {
             if (diver != bd1)
                 diver.addTouching(diver.getSensorNameLeft(), bd1);
             else
                 diver.addTouching(diver.getSensorNameLeft(), bd2);
         }
-        if ((diver.getSensorNameRight().equals(fd2) && diver != bd1) ||
-                (diver.getSensorNameRight().equals(fd1) && diver != bd2)) {
-
+        if ((diver.getSensorNameRight().equals(fd2) && bd1 instanceof Wall) ||
+                (diver.getSensorNameRight().equals(fd1) && bd2 instanceof Wall)) {
 
             if (diver != bd1)
                 diver.addTouching(diver.getSensorNameRight(), bd1);
@@ -215,15 +213,13 @@ public class CollisionController {
         Object fd2 = f2.getUserData();
         // if the diver is touching a hazard (excluding the extra sensors)
         if (b1.getUserData() instanceof DiverModel &&
-                !diver.getSensorNameRight().equals(fd1) &&
-                !diver.getSensorNameLeft().equals(fd1) &&
+                diver.getDiverCollisionBox().equals(fd1) &&
                 b2.getUserData() instanceof HazardModel) {
             HazardModel hazard = (HazardModel) b2.getUserData();
             return staticHazardCollision(diver, hazard);
         }
         if (b2.getUserData() instanceof DiverModel &&
-                !diver.getSensorNameRight().equals(fd2) &&
-                !diver.getSensorNameLeft().equals(fd2) &&
+                diver.getDiverCollisionBox().equals(fd2) &&
                 b1.getUserData() instanceof HazardModel) {
             HazardModel hazard = (HazardModel) b1.getUserData();
             return staticHazardCollision(diver, hazard);
@@ -261,15 +257,16 @@ public class CollisionController {
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
 
+
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall &&
-                !diver.getSensorNameRight().equals(fd1) && !diver.getSensorNameLeft().equals(fd1)) {
-//            System.out.println("body collided");
+                diver.getHitboxSensorName().equals(fd1)) {
+            diver.setTouchedWall((Wall) b2.getUserData());
             diver.setTouchingObstacle(true);
             AudioController.getInstance().wall_collision(diver.getForce());
         }
         if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall &&
-                !diver.getSensorNameRight().equals(fd2) && !diver.getSensorNameLeft().equals(fd2)) {
-
+                diver.getHitboxSensorName().equals(fd2)) {
+            diver.setTouchedWall((Wall) b1.getUserData());
             ((DiverModel) b2.getUserData()).setTouchingObstacle(true);
         }
     }
@@ -287,11 +284,11 @@ public class CollisionController {
         Body b2 = f2.getBody();
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
-        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall &&
-                !diver.getSensorNameRight().equals(fd1) && !diver.getSensorNameLeft().equals(fd1)) {
+        if (b1.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd1) && b2.getUserData() instanceof Wall
+        ) {
             ((DiverModel) b1.getUserData()).setTouchingObstacle(false);
         }
-        if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
+        if (b2.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd2) && b1.getUserData() instanceof Wall) {
             ((DiverModel) b2.getUserData()).setTouchingObstacle(false);
         }
     }

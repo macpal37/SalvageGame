@@ -344,9 +344,7 @@ public class LevelBuilder {
                     float objectHeight = obj.getFloat("height");
                     float rotation = obj.getFloat("rotation");
                     if (rotation != 0) {
-                        System.out.println("ROT: " + rotation);
                         rotation = ((360 - rotation) / 180f) * (float) Math.PI;
-                        System.out.println("AFTER: " + rotation + "\n=======");
                     }
 
                     float widthScale = (objectWidth) / tileSize;

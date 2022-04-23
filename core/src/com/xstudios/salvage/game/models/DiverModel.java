@@ -9,12 +9,14 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
+import com.sun.tools.javac.util.Pair;
 import com.xstudios.salvage.assets.GifDecoder;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
+import jdk.internal.module.SystemModuleFinders;
 import sun.security.x509.OtherName;
 
 import java.util.ArrayList;
@@ -45,8 +47,6 @@ public class DiverModel extends GameObject {
 
 
     private FilmStrip diverSprite;
-
-    private int current_frame = 0;
 
     public int getFrame() {
         return diverSprite.getFrame();
@@ -172,11 +172,27 @@ public class DiverModel extends GameObject {
     private PolygonShape sensorShapeLeft;
     private PolygonShape hitboxShape;
 
+
+    Pair<String, Integer> pair = new Pair<>("Test", 99);
+
+
     /**
      * Whether you are touching another GameObject
      */
     private ArrayList<GObject> touchingRight;
     private ArrayList<GObject> touchingLeft;
+    private ArrayList<Pair<GObject, Boolean>> touchedObjects;
+
+    public Wall getTouchedWall() {
+        return touchedWall;
+    }
+
+    public void setTouchedWall(Wall touchedWall) {
+        this.touchedWall = touchedWall;
+    }
+
+    private Wall touchedWall = null;
+
 
     /**
      * The initializing data (to avoid magic numbers)
@@ -222,6 +238,7 @@ public class DiverModel extends GameObject {
     private Vector2 facingDir;
 
     public float getMaxOxygen() {
+
         return maxOxygenLevel;
     }
 
@@ -239,7 +256,6 @@ public class DiverModel extends GameObject {
 
     public DiverModel(float x, float y, JsonValue data) {
         super(x, y);
-
         shape = new PolygonShape();
         vertices = new float[8];
 
@@ -264,6 +280,7 @@ public class DiverModel extends GameObject {
         diverCollisionBox = "DiverBox";
         touchingRight = new ArrayList<>();
         touchingLeft = new ArrayList<>();
+        touchedObjects = new ArrayList<>();
         // Initialize
         faceRight = true;
         setDimension(1.2f, 0.5f);
@@ -292,7 +309,7 @@ public class DiverModel extends GameObject {
         boostedMaxSpeed = swimMaxSpeed * 1.5f;
         maxSpeed = swimMaxSpeed;
         swimDamping = damping;
-        
+
         boostDamping = damping / 7;
         facingDir = new Vector2(0, 0);
 
@@ -499,6 +516,7 @@ public class DiverModel extends GameObject {
 
 
         JsonValue sensorjv = data.get("sensor");
+
         FixtureDef sensorDef = new FixtureDef();
         sensorDef.density = data.getFloat("density", 0);
         sensorDef.isSensor = true;
@@ -508,20 +526,20 @@ public class DiverModel extends GameObject {
         sensorShapeRight.setAsBox(sensorjv.getFloat("width", 0), sensorjv.getFloat("shrink", 0) * getWidth() / 2.0f,
                 new Vector2(getWidth() + getWidth() / 2, 0), 0.0f);
         sensorDef.shape = sensorShapeRight;
-
+        Fixture sensorFixture = body.createFixture(sensorDef);
+        sensorFixture.setUserData(sensorNameRight);
 
         FixtureDef sensorDef2 = new FixtureDef();
         sensorDef2.density = data.getFloat("density", 0);
         sensorDef2.isSensor = true;
         sensorDef2.filter.groupIndex = -1;
         sensorShapeLeft = new PolygonShape();
-
         sensorShapeLeft.setAsBox(sensorjv.getFloat("width", 0), sensorjv.getFloat("shrink", 0) * getWidth() / 2.0f,
                 new Vector2(-getWidth() - getWidth() / 2, 0), 0.0f);
         sensorDef2.shape = sensorShapeLeft;
         // Ground sensor to represent our feet
         Fixture sensorFixture2 = body.createFixture(sensorDef2);
-        sensorFixture2.setUserData(getSensorNameLeft());
+        sensorFixture2.setUserData(sensorNameLeft);
 
 
         // create a sensor to detect wall collisions
@@ -531,7 +549,7 @@ public class DiverModel extends GameObject {
         // we don't want this fixture to collide, just act as a sensor
         hitboxDef.filter.groupIndex = -1;
         hitboxShape = new PolygonShape();
-        hitboxShape.setAsBox(getWidth() * 1.6f, getHeight() * 2.4f,
+        hitboxShape.setAsBox(getWidth() * 1.6f, getHeight(),
                 new Vector2(0, 0), 0.0f);
         hitboxDef.shape = hitboxShape;
         Fixture hitboxFixture = body.createFixture(hitboxDef);
@@ -692,6 +710,13 @@ public class DiverModel extends GameObject {
     public int targetAngleY = 0;
     public boolean bodyFlip = false;
 
+    public void setTargetAngle(int x, int y) {
+        if (x != -1)
+            targetAngleX = x;
+        if (y != -1)
+            targetAngleY = y;
+    }
+
     public void applyForce() {
 
 
@@ -713,6 +738,7 @@ public class DiverModel extends GameObject {
         }
 
         if (dist > 0) {
+            angle *= (isLatching()) ? 3 : 1;
             body.setAngularVelocity(angle);
         } else if (dist < 0) {
             body.setAngularVelocity(-angle);
@@ -722,14 +748,14 @@ public class DiverModel extends GameObject {
         float tinyBuffer = 5f;
 
 //        if (getDynamicAngle() != 269 || getDynamicAngle() != 271 || getDynamicAngle() != 89 || getDynamicAngle() != 91) {
-        if (movement.x != 0 || movement.y != 0) {
-            if (getDynamicAngle() <= 90 - tinyBuffer || getDynamicAngle() > 270 + tinyBuffer) {
-                bodyFlip = !faceRight;
-            }
-            if (getDynamicAngle() > 90 + tinyBuffer && getDynamicAngle() <= 270 - tinyBuffer) {
-                bodyFlip = faceRight;
-            }
+
+        if (getDynamicAngle() <= 90 - tinyBuffer || getDynamicAngle() > 270 + tinyBuffer) {
+            bodyFlip = !faceRight;
         }
+        if (getDynamicAngle() > 90 + tinyBuffer && getDynamicAngle() <= 270 - tinyBuffer) {
+            bodyFlip = faceRight;
+        }
+
 
         if (!isActive()) {
             return;
@@ -960,8 +986,9 @@ public class DiverModel extends GameObject {
      * @param latched used to set whether the player has latched onto something
      */
     public void setLatching(boolean latched) {
-        if (latched)
+        if (latched && !latchedOn)
             kickOffFrame = 0;
+
         latchedOn = latched;
     }
 
@@ -1016,15 +1043,10 @@ public class DiverModel extends GameObject {
 
     }
 
-    public boolean isTouching() {
-
-        if (faceRight)
-            return touchingRight.size() > 0;
-        else return touchingLeft.size() > 0;
-    }
 
     @Override
     public void draw(GameCanvas canvas) {
+
         tick++;
         float effect = faceRight ? 1.0f : -1.0f;
         float flip = bodyFlip ? -1.0f : 1.0f;
@@ -1047,9 +1069,15 @@ public class DiverModel extends GameObject {
                     }
                     diverSprite.setFrame(turnFrames + 12);
                     canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
-                } else if (kickOffFrame < 6) {
+                } else if (kickOffFrame < 5) {
                     if (tick % 3 == 0) {
-                        kickOffFrame++;
+
+                        if (kickOffFrame < 3 && isLatching()) {
+                            kickOffFrame++;
+                        } else if (kickOffFrame >= 3 && !isLatching()) {
+                            kickOffFrame++;
+                        }
+
                     }
                     diverSprite.setFrame(kickOffFrame + 18);
                     canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
