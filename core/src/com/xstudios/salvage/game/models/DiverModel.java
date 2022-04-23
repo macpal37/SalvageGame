@@ -324,6 +324,7 @@ public class DiverModel extends GameObject {
 
 
     int turnFrames = 0;
+    int kickOffFrame = 10;
 
     public void balanceRotation() {
         while (body.getAngle() > 0.1 || body.getAngle() < -0.1) {
@@ -334,7 +335,6 @@ public class DiverModel extends GameObject {
             } else {
                 body.setAngularVelocity(0.0f);
             }
-            System.out.println("ANG: " + body.getAngle());
         }
     }
 
@@ -342,12 +342,7 @@ public class DiverModel extends GameObject {
     public void setHorizontalMovement(float value) {
         movement.x = value;
         if (movement.x < 0 && faceRight) {
-//            turnFrames = 4;
-
-
         } else if (movement.x > 0 && !faceRight) {
-//            turnFrames = 4;
-
         }
 
 
@@ -578,45 +573,7 @@ public class DiverModel extends GameObject {
     }
 
 
-    @Override
-    public void draw(GameCanvas canvas) {
-        tick++;
-        float effect = faceRight ? 1.0f : -1.0f;
-        float flip = bodyFlip ? -1.0f : 1.0f;
-
-        if (texture != null) {
-
-            if (stunned) {
-                if (stunCooldown % 20 > 5) {
-
-                    canvas.draw(diverSprite, Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
-                } else {
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
-                }
-            } else {
-
-                float angle = getAngle();
-                if (turnFrames > 0 && turnFrames < 5) {
-                    if (tick % 4 == 0) {
-                        turnFrames--;
-                    }
-                    diverSprite.setFrame(turnFrames + 12);
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
-                } else {
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
-                }
-
-            }
-        }
-
-
-        // draw the ping
-        if (ping || ping_cooldown > 0) {
-            canvas.draw(pingTexture, Color.WHITE, origin.x + pingDirection.x,
-                    origin.y + pingDirection.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
-            ping_cooldown--;
-        }
-    }
+    // draw the ping
 
 
     /**
@@ -997,6 +954,8 @@ public class DiverModel extends GameObject {
      * @param latched used to set whether the player has latched onto something
      */
     public void setLatching(boolean latched) {
+        if (latched)
+            kickOffFrame = 0;
         latchedOn = latched;
     }
 
@@ -1054,6 +1013,49 @@ public class DiverModel extends GameObject {
         if (faceRight)
             return touchingRight.size() > 0;
         else return touchingLeft.size() > 0;
+    }
+
+    @Override
+    public void draw(GameCanvas canvas) {
+        tick++;
+        float effect = faceRight ? 1.0f : -1.0f;
+        float flip = bodyFlip ? -1.0f : 1.0f;
+
+        if (texture != null) {
+
+            if (stunned) {
+                if (stunCooldown % 20 > 5) {
+
+                    canvas.draw(diverSprite, Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+                } else {
+                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+                }
+            } else {
+
+                float angle = getAngle();
+                if (turnFrames > 0 && turnFrames < 5) {
+                    if (tick % 4 == 0) {
+                        turnFrames--;
+                    }
+                    diverSprite.setFrame(turnFrames + 12);
+                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
+                } else if (kickOffFrame < 6) {
+                    if (tick % 3 == 0) {
+                        kickOffFrame++;
+                    }
+                    diverSprite.setFrame(kickOffFrame + 18);
+                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
+                } else {
+                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
+                }
+
+            }
+        }
+        if (ping || ping_cooldown > 0) {
+            canvas.draw(pingTexture, Color.WHITE, origin.x + pingDirection.x,
+                    origin.y + pingDirection.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+            ping_cooldown--;
+        }
     }
 
 }

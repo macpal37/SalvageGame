@@ -357,10 +357,11 @@ public class LevelBuilder {
                             break;
                         case Diver:
                             DiverModel d = new DiverModel(sx, sy, constants.get("diver"));
-                            for (JsonValue prop : obj.get("properties")) {
-                                if (prop.getString("name").equals("starting_oxygen"))
-                                    d.setMaxOxygen(prop.getInt("value"));
-                            }
+                            if (obj.get("properties") != null)
+                                for (JsonValue prop : obj.get("properties")) {
+                                    if (prop.getString("name").equals("starting_oxygen"))
+                                        d.setMaxOxygen(prop.getInt("value"));
+                                }
                             gameObjects.add(d);
                             break;
                         case DeadBody:
