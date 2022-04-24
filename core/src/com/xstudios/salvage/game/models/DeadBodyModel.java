@@ -12,19 +12,17 @@ import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 
-import static com.xstudios.salvage.game.models.ItemType.DEAD_BODY;
-import static com.xstudios.salvage.game.models.ItemType.KEY;
 
 public class DeadBodyModel extends DiverObjectModel {
 
 
-
-    public DeadBodyModel(float x, float y,JsonValue data){
-        super(x,y,data);
+    public DeadBodyModel(float x, float y, JsonValue data) {
+        super(x, y, data);
     }
+
     /**
      * Release the fixtures for this body, resetting the shape
-     *
+     * <p>
      * This is the primary method to override for custom physics objects
      */
     protected void releaseFixtures() {
@@ -33,7 +31,6 @@ public class DeadBodyModel extends DiverObjectModel {
             geometry = null;
         }
     }
-
 
 
     protected void createFixtures() {
@@ -61,35 +58,34 @@ public class DeadBodyModel extends DiverObjectModel {
 
     /**
      * Sets the object texture for drawing purposes.
-     *
+     * <p>
      * In order for drawing to work properly, you MUST set the drawScale.
      * The drawScale converts the physics units to pixels.
      *
-     * @param value  the object texture for drawing purposes.
+     * @param value the object texture for drawing purposes.
      */
     public void setTexture(TextureRegion value) {
         texture = value;
-        origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
+        origin.set(texture.getRegionWidth() / 2.0f, texture.getRegionHeight() / 2.0f);
     }
 
 
     @Override
     public void draw(GameCanvas canvas) {
         if (texture != null) {
-            if(!carried){
+            if (!carried) {
                 canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
             }
-            if(isTouched) {
+            if (isTouched) {
                 canvas.drawText("Press q", GameController.displayFont, (getX() - getWidth() * 1.25f) * drawScale.x, (getY() + getHeight() * 1.5f) * drawScale.y);
             }
         }
     }
 
 
-
     @Override
     public void drawDebug(GameCanvas canvas) {
-        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        canvas.drawPhysics(shape, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
     }
 
     /**
@@ -97,15 +93,15 @@ public class DeadBodyModel extends DiverObjectModel {
      */
     protected void resize(float width, float height) {
         // Make the box with the center in the center
-        vertices[0] = -width/2.0f;
-        vertices[1] = -height/2.0f;
-        vertices[2] = -width/2.0f;
-        vertices[3] =  height/2.0f;
-        vertices[4] =  width/2.0f;
-        vertices[5] =  height/2.0f;
-        vertices[6] =  width/2.0f;
-        vertices[7] = -height/2.0f;
-        shape.setAsBox(width,height);
+        vertices[0] = -width / 2.0f;
+        vertices[1] = -height / 2.0f;
+        vertices[2] = -width / 2.0f;
+        vertices[3] = height / 2.0f;
+        vertices[4] = width / 2.0f;
+        vertices[5] = height / 2.0f;
+        vertices[6] = width / 2.0f;
+        vertices[7] = -height / 2.0f;
+        shape.setAsBox(width, height);
     }
 
     /**

@@ -75,7 +75,7 @@ public class GameController implements Screen, ContactListener {
 //    protected TextureRegion hazardTexture;
 //    protected TextureRegion wallBackTexture;
 
-
+    protected Texture monsterTenctacle;
     protected TextureRegion hud;
     protected TextureRegion oxygen;
     protected TextureRegion depletedOxygen;
@@ -129,6 +129,12 @@ public class GameController implements Screen, ContactListener {
      * manages collisions
      */
     protected CollisionController collisionController;
+
+    /**
+     * manages the Monster AI
+     */
+    protected MonsterController monsterController;
+
     /**
      * The rate at which oxygen should decrease passively
      */
@@ -268,6 +274,9 @@ public class GameController implements Screen, ContactListener {
         this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
     }
 
+
+    protected Monster monster;
+
     /**
      * Creates a new game world
      * <p>
@@ -322,6 +331,7 @@ public class GameController implements Screen, ContactListener {
 
         levelBuilder = new LevelBuilder();
         level = new LevelModel();
+
 
         game_state = state.PLAYING;
 
@@ -391,6 +401,8 @@ public class GameController implements Screen, ContactListener {
 //        audioController.dispose();
     }
 
+    Texture plantAnimation;
+
     /**
      * Gather the assets for this controller.
      * <p>
@@ -411,8 +423,7 @@ public class GameController implements Screen, ContactListener {
 //
 //
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
-//
-//
+
 //        deadBodyTexture = new TextureRegion(directory.getEntry("models:dead_body", Texture.class));
         hud = new TextureRegion(directory.getEntry("hud", Texture.class));
         depletedOxygen = new TextureRegion(directory.getEntry("oxygen_depleted", Texture.class));
@@ -420,8 +431,8 @@ public class GameController implements Screen, ContactListener {
         bodyHud = new TextureRegion(directory.getEntry("body_hud", Texture.class));
         keyHud = new TextureRegion(directory.getEntry("key_hud", Texture.class));
         oxygen = new TextureRegion(directory.getEntry("oxygen", Texture.class));
-//        keys = new TextureRegion(directory.getEntry("keys", Texture.class));
-
+        monsterTenctacle = directory.getEntry("models:monster1", Texture.class);
+        plantAnimation = directory.getEntry("models:plant", Texture.class);
 
     }
 
@@ -445,7 +456,6 @@ public class GameController implements Screen, ContactListener {
      */
     protected void addObject(GameObject obj) {
         assert inBounds(obj) : "Object is not in bounds";
-//        level.addObject(obj);
         obj.activatePhysics(world);
     }
 
@@ -489,7 +499,15 @@ public class GameController implements Screen, ContactListener {
         for (GameObject obj : level.getAllObjects()) {
             addObject(obj);
         }
+        monster = new Monster(level.getDiver().getX(), level.getDiver().getY());
+        monster.setTentacleSprite(new FilmStrip(monsterTenctacle, 1, 30, 30));
+//        monster.setTentacleSprite(new FilmStrip(plantAnimation, 1, 6, 6));
+        monster.setDrawScale(scale);
+        monster.setName("Monster");
+        monsterController = new MonsterController(monster);
 
+        level.addObject(monster);
+        addObject(monster);
 
     }
 
@@ -670,6 +688,7 @@ public class GameController implements Screen, ContactListener {
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
 
+        monsterController.update(level.getDiver());
 
         switch (game_state) {
             case PLAYING:

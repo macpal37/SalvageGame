@@ -18,11 +18,10 @@ public class DecorModel extends GameObject {
 
 
     private FilmStrip spriteSheet;
-    
+
 
     private CircleShape circ;
 
-    private int startingFrame = 0;
 
     public DecorModel(float x, float y) {
         super(x, y);
@@ -36,16 +35,16 @@ public class DecorModel extends GameObject {
         startingFrame = f;
     }
 
+    private int startingFrame = 0;
+
     public int getFrame() {
         return spriteSheet.getFrame();
 
     }
 
-
     public void setFilmStrip(FilmStrip value) {
         spriteSheet = value;
         spriteSheet.setFrame(startingFrame);
-//        origin.set(-50, -50);
     }
 
 

@@ -67,28 +67,25 @@ public class MonsterController {
      * The ship's current state in the FSM
      */
     private float ticks;
-    private FilmStrip filmStrip;
-    private TextureRegion texture;
-    private Vector2 scale;
+
+
+    private PooledList<Vector2> targetLocations;
+
 
     /**
      * Creates an AIController for the ship with the given id.
      *
-     * @param insert_monster the monster for the game
+     * @param monster the monster for the game
      */
-    public MonsterController(Monster insert_monster) {
-        monster = insert_monster;
-        //filmStrip = new FilmStrip(tentacleFilmStrip, 1, 29, 29);
+    public MonsterController(Monster monster) {
+        this.monster = monster;
+        targetLocations = new PooledList<>();
+        targetLocations.push(monster.getPosition());
     }
+
 
     public Monster getMonster() {
         return monster;
-    }
-
-    public void insertAssets(FilmStrip tentacleFilmStrip, TextureRegion tentacleTexture, Vector2 tentacleScale) {
-        filmStrip = tentacleFilmStrip;
-        texture = tentacleTexture;
-        scale = tentacleScale;
     }
 
     /**
@@ -104,7 +101,6 @@ public class MonsterController {
         } else if (aggrivation >= 1.0f) {
             state = FSMState.ATTACK;
         }
-
         // Next state depends on current state.
         switch (state) {
 
@@ -123,66 +119,60 @@ public class MonsterController {
                 state = FSMState.IDLE; // If debugging is off
                 break;
         }
+        state = FSMState.AGGRIVATED;
     }
+
+    float tick = 0;
+
+    /**
+     * Controls the movement of the monster
+     */
+    public void travelToPosition(Vector2 target) {
+        float travelSpeed = 0.1f;
+        Vector2 dist = new Vector2(target.x - monster.getPosition().x, target.y - monster.getPosition().y);
+        float angle = dist.angleRad();
+        Vector2 step = new Vector2(travelSpeed * (float) Math.cos(angle), travelSpeed * (float) Math.sin(angle));
+
+        monster.setPosition(monster.getPosition().add(step));
+
+    }
+
 
     /**
      * Change the state of the monster based on aggrivation levels
      */
-    public void update(DiverModel diver, GameController gameController) {
+    public void update(DiverModel diver) {
+        tick++;
         float aggrivation = monster.getAggrivation();
         if (aggrivation < 1.0f) {
             monster.setAggrivation(monster.getAggrivation() - 0.001f);
         }
         changeStateIfApplicable();
+//        if (tick % 2 == 0)
+//            travelToPosition(targetLocations.get(0));
 
-        float current_x = diver.getX();
-        float current_y = diver.getY();
-        float tentacle_x = -10000.0f;
-        float tentacle_y = -10000.0f;
 
-//        for (GameObject object : gameController.objects){
-//            if (object instanceof Wall){
-//                if(current_x < object.getX() +10.0f && current_x > object.getX() - 10.0f){
-//                    if (Math.random() < 0.5){
-//                        tentacle_x = object.getX();
-//                    }
-//                    else {
-//                        tentacle_x = object.getX();
-//                    }
-//                    tentacle_y = current_y;
-//                    tentacle_x = current_x;
-//                }
-//            }}
-        if (true) {//monster.getTentacles().size() < 10) {
-            Tentacle tentacle = new Tentacle(tentacle_x, tentacle_y);
-            tentacle.setFilmStrip(filmStrip);
-            tentacle.setTexture(texture);
-            tentacle.setDrawScale(scale);
-            monster.addTentacle(tentacle);
-            //tentacle.setBodyType(BodyDef.BodyType.DynamicBody);
-            gameController.addObject(tentacle);
+        switch (state) {
+
+            case AGGRIVATED:
+
+//                monster.setPosition(diver.getPosition());
+                if (tick % 100 == 0) {
+                    if (targetLocations.size() < 5) {
+                        targetLocations.push(monster.getPosition());
+                    } else {
+                        targetLocations.poll();
+                        targetLocations.push(diver.getPosition());
+                    }
+                }
+
+
+                break;
+            default:
+
         }
-//        if (state == FSMState.AGGRIVATED){
-//
-//            }
-//
-//
-//        }
-        ArrayList<Tentacle> removable = new ArrayList<>();
-        for (Tentacle tentacle : monster.getTentacles()) {
-            /**if (tentacle.getLife() < 100){
-             tentacle.update();
-             }
-             else {
-             removable.add(tentacle);
-             }*/
-            System.out.println(tentacle.getBody());
-            tentacle.update();
-        }
-        /**for (Tentacle tentacle : removable){
-         monster.removeTentacle(tentacle);
-         tentacle.dispose();
-         }*/
+
+
     }
 
 

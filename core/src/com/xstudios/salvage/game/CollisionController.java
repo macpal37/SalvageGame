@@ -144,7 +144,7 @@ public class CollisionController {
      */
     public static boolean attemptUnlock(DiverModel diver, Door door) {
         if (diver.getItem() != null) {
-            if (diver.getItem().getID() == door.getID() || diver.getItem().getItemType() == ItemType.DEAD_BODY) {
+            if (diver.getItem().getID() == door.getID() || diver.getItem().getItemType() == ItemModel.ItemType.DEAD_BODY) {
                 return true;
             }
         }

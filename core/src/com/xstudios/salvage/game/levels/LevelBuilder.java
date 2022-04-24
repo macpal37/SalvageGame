@@ -146,9 +146,12 @@ public class LevelBuilder {
     class Tile {
 
         public float x, y, width, height;
+        public float spawnX, spawnY;
+        public float rotation;
         public float[] vertices;
         public TileType tileType;
         public String modelType;
+
         public int id = 0;
 
         public Tile() {
@@ -215,16 +218,25 @@ public class LevelBuilder {
             if (tileJson.get("objectgroup") != null) {
                 float x = 0;
                 float y = 0;
+                float spawnX = -1, spawnY = -1;
+                float rotation = 0;
                 for (JsonValue o : tileJson.get("objectgroup").get("objects")) {
-                    x = round(o.getFloat("x")) / div;
-                    y = round(o.getFloat("y")) / div;
-                    verticies.clear();
-                    if (o.get("polygon") != null) {
-                        for (JsonValue point : o.get("polygon")) {
-                            float vx = (round(point.getFloat("x")) / div) + x;
-                            float vy = tileSize / div - ((round(point.getFloat("y")) / div) + y);
-                            verticies.add(vx);
-                            verticies.add(vy);
+
+                    if (o.getString("name").equals("SpawnLocation")) {
+                        rotation = o.getFloat("rotation");
+                        spawnX = round(o.getFloat("x")) / div;
+                        spawnY = (100 - round(o.getFloat("y"))) / div;
+                    } else {
+                        x = round(o.getFloat("x")) / div;
+                        y = round(o.getFloat("y")) / div;
+                        verticies.clear();
+                        if (o.get("polygon") != null) {
+                            for (JsonValue point : o.get("polygon")) {
+                                float vx = (round(point.getFloat("x")) / div) + x;
+                                float vy = tileSize / div - ((round(point.getFloat("y")) / div) + y);
+                                verticies.add(vx);
+                                verticies.add(vy);
+                            }
                         }
                     }
                 }
@@ -237,6 +249,9 @@ public class LevelBuilder {
                         tileSize / div, verts, tileType
                 ));
                 tiles[tt].id = tileId;
+                tiles[tt].spawnX = spawnX;
+                tiles[tt].spawnY = spawnY;
+                tiles[tt].rotation = rotation;
 
             } else {
                 tiles[tt] = tiles[tt] = (new Tile(0, 0, tileSize / div,
@@ -301,7 +316,8 @@ public class LevelBuilder {
                     switch (tile.tileType) {
                         case Wall:
                             Wall wall = new Wall(createVerticies(tile, 0, 0, 1, 1), sx, sy);
-
+                            wall.setTentacleSpawnPosition(tile.spawnX, tile.spawnY);
+                            wall.setTentacleRotation(tile.rotation);
                             wall.setID(tile.id);
 
                             gameObjects.add(wall);
@@ -368,7 +384,7 @@ public class LevelBuilder {
 
                             break;
                         case Item:
-                            ItemModel item = new ItemModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("key"), ItemType.KEY);
+                            ItemModel item = new ItemModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("key"), ItemModel.ItemType.KEY);
                             for (JsonValue prop : obj.get("properties")) {
                                 if (prop.getString("name").equals("id"))
                                     item.setID(prop.getInt("value"));

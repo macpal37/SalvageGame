@@ -13,10 +13,14 @@ import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 
-import static com.xstudios.salvage.game.models.ItemType.DEAD_BODY;
-import static com.xstudios.salvage.game.models.ItemType.KEY;
 
 public class ItemModel extends DiverObjectModel {
+
+    public enum ItemType {
+        KEY,
+        TNT,
+        DEAD_BODY
+    }
 
     /**
      * Type of item

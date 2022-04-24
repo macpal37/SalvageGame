@@ -15,9 +15,13 @@ public class Tentacle extends GameObject {
     private float y;
     private float angle;
     private float size = 1.0f;
-    /** Shape information for this box */
+    /**
+     * Shape information for this box
+     */
     protected PolygonShape shape;
-    /** Cache of the polygon vertices (for resizing) */
+    /**
+     * Cache of the polygon vertices (for resizing)
+     */
     private float[] vertices;
     private TextureRegion tentacle;
     private FilmStrip tentacleSprite;
@@ -27,16 +31,39 @@ public class Tentacle extends GameObject {
     private int change = 0;
     private Vector2 dimension;
 
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public float getAngle() {return angle;}
-    public float getSize()  {return size;}
-    public void setX(float x_base) { x = x_base; }
-    public void setY(float y_base) { y = y_base; }
-    public void setAngle(float temp_angle) { angle = temp_angle; }
-    public void setSize(float temp_size) { size = temp_size; }
+    public float getX() {
+        return x;
+    }
 
-    public Tentacle(float x, float y){
+    public float getY() {
+        return y;
+    }
+
+    public float getAngle() {
+        return angle;
+    }
+
+    public float getSize() {
+        return size;
+    }
+
+    public void setX(float x_base) {
+        x = x_base;
+    }
+
+    public void setY(float y_base) {
+        y = y_base;
+    }
+
+    public void setAngle(float temp_angle) {
+        angle = temp_angle;
+    }
+
+    public void setSize(float temp_size) {
+        size = temp_size;
+    }
+
+    public Tentacle(float x, float y) {
         super(x, y);
         shape = new PolygonShape();
         origin = new Vector2();
@@ -44,7 +71,7 @@ public class Tentacle extends GameObject {
         vertices = new float[8];
 
         setDensity(1.0f);
-        setFriction(0.5f);  /// HE WILL STICK TO WALLS IF YOU FORGET
+        setFriction(0.5f);
         setMass(1);
         setFixedRotation(true);
 
@@ -58,11 +85,14 @@ public class Tentacle extends GameObject {
     public FilmStrip getTentacleSprite() {
         return tentacleSprite;
     }
+
     public void resize(float width, float height) {
 
     }
 
-    public int getLife () {return life;}
+    public int getLife() {
+        return life;
+    }
 
     public void setTexture(TextureRegion value) {
         texture = value;
@@ -78,7 +108,6 @@ public class Tentacle extends GameObject {
         return tentacleSprite.getFrame();
 
     }
-
 
     protected void createFixtures() {
         if (body == null) {
@@ -101,7 +130,7 @@ public class Tentacle extends GameObject {
         }
     }
 
-    public void dispose(){
+    public void dispose() {
 
     }
 
@@ -109,16 +138,15 @@ public class Tentacle extends GameObject {
         life++;
         if (life % 10 == 0) {
             int current_frame = tentacleSprite.getFrame();
-            if (current_frame == 29){
+            if (current_frame == 29) {
                 change = -1;
-            }
-            else if (current_frame == 1){
+            } else if (current_frame == 1) {
                 change = 1;
             }
             frame = current_frame + change;
             tentacleSprite.setFrame(frame);
         }
-        if (life > 100){
+        if (life > 100) {
             //releaseFixtures();
         }
     }
@@ -126,7 +154,7 @@ public class Tentacle extends GameObject {
     @Override
     public void drawDebug(GameCanvas canvas) {
         if (texture != null) {
-            canvas.drawPhysics(shape, Color.YELLOW,getX(),getY(), getAngle(), drawScale.x  , drawScale.y);
+            canvas.drawPhysics(shape, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
         }
     }
 
@@ -134,7 +162,7 @@ public class Tentacle extends GameObject {
     @Override
     public void draw(GameCanvas canvas) {
         if (texture != null) {
-            canvas.draw(tentacleSprite, Color.RED,getX(),getY(), drawScale.x, drawScale.y, 1f, 1f);
+            canvas.draw(tentacleSprite, Color.RED, getX(), getY(), drawScale.x, drawScale.y, 1f, 1f);
         }
     }
 
