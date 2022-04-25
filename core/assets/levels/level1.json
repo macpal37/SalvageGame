@@ -24,6 +24,12 @@
                  "height":100,
                  "id":12,
                  "name":"Diver",
+                 "properties":[
+                        {
+                         "name":"starting_oxygen",
+                         "type":"int",
+                         "value":150
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,

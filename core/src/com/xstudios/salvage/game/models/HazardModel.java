@@ -85,7 +85,6 @@ public class HazardModel extends Wall {
 
     public void draw(GameCanvas canvas) {
         if (texture != null && !invisible) {
-            System.out.println("???");
             canvas.draw(region, Color.WHITE, origin.x, origin.y, getX() * drawScale.x - origin.x, getY() * drawScale.y - origin.y, getAngle(), scale.x, scale.y);
 
         }

@@ -174,7 +174,7 @@ public class GameController implements Screen, ContactListener {
     /**
      * The default value of gravity (going down)
      */
-    protected static final float DEFAULT_GRAVITY = 0;//-4.9f;
+    protected static final float DEFAULT_GRAVITY = -0.01f;//-4.9f;
 
     /**
      * Reference to the game canvas
@@ -693,7 +693,7 @@ public class GameController implements Screen, ContactListener {
         monsterController.update(level.getDiver());
 
 
-        //** ADDING TENCTACLES TO WalL!
+        //** ADDING TENTACLES TO WalL!
         if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
             Wall w = level.getDiver().getTouchedWall();
             Tentacle t = levelBuilder.createTentcle(w, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
@@ -723,14 +723,16 @@ public class GameController implements Screen, ContactListener {
 
 //        System.out.println("STUN: " + level.getDiver().getStunCooldown());
         if (level.getDiver().getStunCooldown() > 0) {
+            System.out.println("PAIN: " + hostileOxygenDrain);
+            level.getDiver().changeOxygenLevel(hostileOxygenDrain);
             level.getDiver().setStunCooldown(level.getDiver().getStunCooldown() - 1);
-
         } else {
 
             level.getDiver().setStunned(false);
             hostileOxygenDrain = 0.0f;
+            level.getDiver().changeOxygenLevel(hostileOxygenDrain);
         }
-        level.getDiver().changeOxygenLevel(hostileOxygenDrain);
+
 
     }
 
@@ -746,10 +748,13 @@ public class GameController implements Screen, ContactListener {
     public void postUpdate(float dt) {
         // Add any objects created by actions
         while (!addQueue.isEmpty()) {
-            System.out.println("TENTACLE???");
             GameObject go = addQueue.poll();
             addObject(go);
             level.addObject(go);
+        }
+
+        if (level.getDiver().isBodyContact()) {
+            level.getDeadBody().setActive(false);
         }
 
         // Turn the physics engine crank.
@@ -839,20 +844,23 @@ public class GameController implements Screen, ContactListener {
                         tempProjectedHud.x, tempProjectedHud.y,
                         0.0f, 1, 0.5f);
 
-//                canvas.draw(hud, Color.WHITE, hud.getRegionWidth()/2,hud.getRegionHeight()/2,
-//                        cameraController.getCameraPosition2D().x,
-//                        cameraController.getCameraPosition2D().y + cameraController.getCameraHeight()/2 - hud.getRegionHeight()/2,
-//                        0,(float)canvas.getWidth()/(float)hud.getRegionWidth(), 1f);
-
-
                 //draw remaining oxygen
                 tempProjectedOxygen.x = (float) canvas.getWidth() / 5.5f;
                 tempProjectedOxygen.y = (45 * canvas.getHeight()) / 1080;
                 tempProjectedOxygen = cameraController.getCamera().unproject(tempProjectedOxygen);
 
-                if (level.getDiver().getStunCooldown() % 20 > 5 || (level.getDiver().getOxygenLevel() < 50 && tick % 25 > (level.getDiver().getOxygenLevel() / 2))) {
+                if (level.getDiver().getStunCooldown() % 20 > 10) {
 
-                    canvas.draw(oxygen, Color.RED, 0, (float) oxygen.getRegionHeight() / 2,
+                    canvas.draw(oxygen, Color.BLUE, 0, (float) oxygen.getRegionHeight() / 2,
+                            (float) tempProjectedOxygen.x,
+                            tempProjectedOxygen.y,
+                            0.0f,
+                            1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()),
+                            0.5f
+                    );
+
+                } else if (level.getDiver().getOxygenLevel() < 50 && tick % 25 > (level.getDiver().getOxygenLevel() / 2)) {
+                    canvas.draw(oxygen, Color.BLUE, 0, (float) oxygen.getRegionHeight() / 2,
                             (float) tempProjectedOxygen.x,
                             tempProjectedOxygen.y,
                             0.0f,
@@ -1035,11 +1043,15 @@ public class GameController implements Screen, ContactListener {
         if (listener != null) {
             reach_target = collisionController.getWinState(body1, body2, level.getDiver());
         }
-        collisionController.addDiverSensorTouching(level.getDiver(), fix1, fix2);
+
+//        collisionController.addDiverSensorTouching(level.getDiver(), fix1, fix2);
         collisionController.startDiverItemCollision(body1, body2);
         collisionController.startDiverDoorCollision(body1, body2);
         collisionController.startDiverDeadBodyCollision(body1, body2);
-        hostileOxygenDrain = collisionController.startDiverHazardCollision(fix1, fix2, level.getDiver());
+        float d = collisionController.startDiverHazardCollision(fix1, fix2, level.getDiver());
+        if (d != 0)
+            hostileOxygenDrain = d;
+
     }
 
     /**
