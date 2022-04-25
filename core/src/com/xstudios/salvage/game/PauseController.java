@@ -38,15 +38,15 @@ public class PauseController implements Screen, ApplicationListener, InputProces
     protected Vector2 scale;
     /** Background Texture */
     protected TextureRegion background;
+
     protected Texture main_menu;
-    protected Texture try_again_next;
-    protected Texture title;
-    /** The font for giving messages to the player */
-    public static BitmapFont displayFont;
+    protected Texture try_again;
+    protected Texture resume;
+    protected Texture spot;
 
     private boolean restart_game;
     private boolean exit_home;
-    private boolean next_level;
+    private boolean resume_level;
 
     public PauseController(Rectangle bounds) {
         active = false;
@@ -54,19 +54,19 @@ public class PauseController implements Screen, ApplicationListener, InputProces
         this.scale = new Vector2(1,1);
         restart_game = false;
         exit_home = false;
-        next_level = false;
+        resume_level = false;
     }
 
     @Override
     public void create() {
 
-        TextureRegion imageTR = new TextureRegion(try_again_next);
+        TextureRegion imageTR = new TextureRegion(try_again);
         TextureRegionDrawable imageTRD = new TextureRegionDrawable(imageTR);
         ImageButton button = new ImageButton(imageTRD);
         stage = new Stage();
 
-        button.setWidth(try_again_next.getWidth());
-        button.setHeight(try_again_next.getHeight());
+        button.setWidth(try_again.getWidth());
+        button.setHeight(try_again.getHeight());
         button.setPosition(87, 66);
 
         button.addListener(new ClickListener() {
@@ -100,7 +100,7 @@ public class PauseController implements Screen, ApplicationListener, InputProces
     public void dispose() {
         exit_home = false;
         restart_game = false;
-        next_level = false;
+        resume_level = false;
     }
 
     @Override
@@ -109,8 +109,8 @@ public class PauseController implements Screen, ApplicationListener, InputProces
             canvas.begin();
             stage.draw();
 
-            Color tint = pointer1(87, 66, try_again_next.getWidth() , try_again_next.getHeight()) ? Color.GRAY : Color.WHITE;
-            canvas.draw(try_again_next, tint, 0, 0, 87, 66, 0, 1, 1);
+            Color tint = pointer1(87, 66, try_again.getWidth() , try_again.getHeight()) ? Color.GRAY : Color.WHITE;
+//            canvas.draw(try_again, tint, 0, 0, 87, 66, 0, 1, 1);
 
             tint = pointer1(780, 66, main_menu.getWidth(), main_menu.getHeight()) ? Color.GRAY : Color.WHITE;
             canvas.draw(main_menu, tint, 0, 0,780,66, 0, 1, 1);
@@ -125,7 +125,7 @@ public class PauseController implements Screen, ApplicationListener, InputProces
                 listener.exitScreen(this, 1);
             }
 
-            if(next_level && listener != null){
+            if(resume_level && listener != null){
                 listener.exitScreen(this, 2);
             }
             // can do this with different exit codes to indicate which screen to switch to
@@ -208,17 +208,16 @@ public class PauseController implements Screen, ApplicationListener, InputProces
         canvas.begin();
         pointer();
         canvas.draw(background, Color.WHITE,0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.draw(title, Color.WHITE, 220, 573, title.getWidth(), title.getHeight());
+//        canvas.draw(title, Color.WHITE, 220, 573, title.getWidth(), title.getHeight());
 
         canvas.end();
     }
 
     public void gatherAssets(AssetDirectory directory) {
-        displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
-        background =  new TextureRegion(directory.getEntry( "game_over", Texture.class ));
-        try_again_next = directory.getEntry("try_again", Texture.class);
+        background =  new TextureRegion(directory.getEntry( "pause", Texture.class ));
+        try_again = directory.getEntry("try_again", Texture.class);
         main_menu = directory.getEntry("main_menu", Texture.class);
-        title = directory.getEntry("perish", Texture.class);
+        resume = directory.getEntry("resume", Texture.class);
     }
 
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {

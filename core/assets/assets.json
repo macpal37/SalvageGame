@@ -1,5 +1,8 @@
 {
   "textures": {
+    "black_spot" : "ui/black_spot.png",
+    "resume" : "ui/resume.png",
+    "pause" : "ui/pause_screen.png",
     "complete" : "ui/complete.png",
     "perish" : "ui/perish.png",
     "level_complete" : "background/level_complete_background.png",

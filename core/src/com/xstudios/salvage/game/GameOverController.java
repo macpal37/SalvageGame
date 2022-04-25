@@ -220,21 +220,20 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
         canvas.begin();
         pointer();
         canvas.draw(background, Color.WHITE,0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.draw(title, Color.WHITE, 220, 573, title.getWidth(), title.getHeight());
-
+        canvas.draw(title, Color.WHITE, title.getWidth()/2, title.getHeight()/2, Gdx.graphics.getWidth()/2, 625, 0,1, 1);
         canvas.end();
     }
 
     public void gatherAssets(AssetDirectory directory) {
-        displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
-        background =  new TextureRegion(directory.getEntry( "game_over", Texture.class ));
-        try_again_next = directory.getEntry("try_again", Texture.class);
         main_menu = directory.getEntry("main_menu", Texture.class);
-        title = directory.getEntry("perish", Texture.class);
         if(display_win) {
+            try_again_next = directory.getEntry("next", Texture.class);
             background = new TextureRegion(directory.getEntry("level_complete", Texture.class));
-            try_again_next = directory.getEntry("try_again", Texture.class);
             title = directory.getEntry("complete", Texture.class);
+        }else{
+            try_again_next = directory.getEntry("try_again", Texture.class);
+            background =  new TextureRegion(directory.getEntry( "game_over", Texture.class ));
+            title = directory.getEntry("perish", Texture.class);
         }
     }
 

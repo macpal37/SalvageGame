@@ -117,10 +117,10 @@ public class GDXRoot extends Game implements ScreenListener {
 			if (directory == null) {
 				System.out.println("DIRECTORY IS NULL!");
 			}
+			game_over_controller.setWin(exitCode == 0);
 			game_over_controller.gatherAssets(directory);
 			game_over_controller.create();
 			game_over_controller.setCanvas(canvas);
-			game_over_controller.setWin(exitCode == 0);
 			setScreen(game_over_controller);
 		} else if (screen == game_over_controller) {
 			if (exitCode == 0) {
