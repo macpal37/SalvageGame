@@ -81,7 +81,6 @@ public class DecorModel extends GameObject {
     public void draw(GameCanvas canvas) {
         tick++;
         if (tick % 5 == 0) {
-//            System.out.println("origin: " + origin);
             int frame = spriteSheet.getFrame();
             frame++;
             if (frame >= spriteSheet.getSize())

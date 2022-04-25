@@ -199,8 +199,19 @@ public class Wall extends GameObject {
 /===================================================================*
  */
 
+    public boolean isHasTentcle() {
+        return hasTentcle;
+    }
+
+    public void setHasTentcle(boolean hasTentcle) {
+        this.hasTentcle = hasTentcle;
+    }
+
+    private boolean hasTentcle = false;
+
+
     public boolean canSpawnTentacle() {
-        return tentacleSpawnPosition != null;
+        return tentacleSpawnPosition != null && !hasTentcle;
     }
 
     public Vector2 getTentacleSpawnPosition() {

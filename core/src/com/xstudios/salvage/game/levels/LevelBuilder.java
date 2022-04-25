@@ -195,6 +195,111 @@ public class LevelBuilder {
     }
 
 
+    public float div = 25f;
+
+    public Tentacle createTentcle(Wall w, FilmStrip sprite, Vector2 scale) {
+
+        float tScale = 3f / 2;
+        if (w.canSpawnTentacle()) {
+
+
+            Tentacle t = new Tentacle(w);
+            t.setScale(1, 1);
+            JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_tile.json"));
+            HazardModel[] boxes = new HazardModel[4];
+            int tCount = 0;
+
+            Vector2 dif = new Vector2(0, 0);
+
+            float tileHieght = tileset.getFloat("tileheight");
+
+            for (JsonValue tileJson : tileset.get("tiles")) {
+                float x = 0;
+                float y = 0;
+                ArrayList<Float> verticies = new ArrayList<>();
+                for (JsonValue o : tileJson.get("objectgroup").get("objects")) {
+
+
+                    if (o.getString("name").equals("Origin")) {
+                        x = round(o.getFloat("x"));
+                        y = round(o.getFloat("y"));
+                        t.setPivot((-x * t.getScale().x) * (float) Math.cos(t.getAngle())
+                                        + (tileHieght - y) * t.getScale().y * (float) Math.sin(t.getAngle())
+
+
+                                , (-(tileHieght - y) * t.getScale().y) * (float) Math.cos(t.getAngle()) +
+
+                                        (-x * t.getScale().x) * (float) Math.sin(t.getAngle())
+                        );
+                        dif.set(x / div, tileHieght / div - (2 * y / div)
+
+
+                        );
+
+                    } else {
+                        x = round(o.getFloat("x")) / div;
+                        y = round(o.getFloat("y")) / div;
+                        verticies.clear();
+                        if (o.get("polygon") != null) {
+
+
+                            for (JsonValue point : o.get("polygon")) {
+                                float vx = (round(point.getFloat("x")) / div) + x
+
+
+//                                        - dif.y * (float) Math.cos(t.getAngle())
+                                        - ((dif.x) * 2 * ((Math.sin(t.getAngle()) >= 0) ? 0 : 1));
+
+                                float vy = -((round(point.getFloat("y")) / div) + y
+                                        - ((dif.x) * 2 * ((Math.sin(t.getAngle()) >= 0) ? 0 : 1))
+                                        - ((dif.x) * 2 * (float) Math.cos(t.getAngle()))
+//                                        - ((dif.x) * 2 * ((Math.cos(t.getAngle()) >= 0) ? 1 : 0))
+//                                        + ((dif.x) * 2 * ((Math.cos(t.getAngle()) < 0) ? 1 : 0))
+//
+
+//                                        +(float) (tileHieght / div * Math.cos(t.getAngle()))
+
+                                );
+                                verticies.add(vx / tScale);
+                                verticies.add(vy / tScale);
+                            }
+                        }
+                        float[] verts = new float[verticies.size()];
+                        int index = 0;
+                        for (int i = 0; i < verticies.size(); i++)
+                            verts[index++] = verticies.get(i);
+                        HazardModel hazard = new HazardModel(verts, w.getX(), w.getY());
+                        hazard.setAngle(t.getAngle());
+                        hazard.setOxygenDrain(-0.1f);
+                        hazard.setStunDuration(60);
+                        hazard.setBodyType(BodyDef.BodyType.StaticBody);
+                        hazard.setDensity(0);
+                        hazard.setFriction(0.4f);
+                        hazard.setRestitution(0.1f);
+                        hazard.setName("tentacle" + tCount);
+                        hazard.setDrawScale(drawScale);
+                        hazard.setActive(false);
+                        boxes[tCount] = hazard;
+                        tCount++;
+                    }
+                }
+            }
+
+            t.initShape(boxes);
+            t.setBodyType(BodyDef.BodyType.StaticBody);
+            t.setDensity(0);
+            t.setFriction(0.4f);
+            t.setRestitution(0.1f);
+            t.setDrawScale(scale);
+            t.setFilmStrip(sprite);
+            t.setStartGrowing(true);
+            t.setName("tentacle");
+            return t;
+        } else
+            return null;
+    }
+
+
     private Tile[] createTiles(JsonValue tileset, float div, float tileSize) {
         Tile[] tiles = new Tile[tileset.getInt("tilecount")];
 
@@ -273,11 +378,13 @@ public class LevelBuilder {
         return newVerts;
     }
 
+    public Vector2 drawScale;
+
     /**
      * Create level from a json. Objects created will be drawn at scale drawScale, and lights will be created using rayHandler
      */
     public void createLevel(String levelFileName, LevelModel level, Vector2 drawScale, Vector2 drawScaleSymbol, RayHandler rayHandler) {
-
+        this.drawScale = drawScale;
         ArrayList<GObject> gameObjects = new ArrayList<GObject>();
 
         JsonValue map = jsonReader.parse(Gdx.files.internal("levels/" + levelFileName + ".json"));
@@ -502,8 +609,9 @@ public class LevelBuilder {
                 hazard.setTexture(hazardTexture);
                 hazard.setDrawScale(drawScale);
                 hazard.setName("hazard" + hazardCounter++);
-                level.addObject(hazard);
                 hazard.setActive(true);
+                level.addObject(hazard);
+
             } else if (go instanceof Door) {
                 Door door = (Door) go;
                 door.setBodyType(BodyDef.BodyType.StaticBody);

@@ -2,6 +2,7 @@ package com.xstudios.salvage.game.models;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.xstudios.salvage.game.GameCanvas;
 
 public class HazardModel extends Wall {
@@ -70,9 +71,21 @@ public class HazardModel extends Wall {
         scale.set(x, y);
     }
 
+    @Override
+    public void drawDebug(GameCanvas canvas) {
+
+        for (PolygonShape tri : shapes) {
+            if (isActive())
+                canvas.drawPhysics(tri, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+            else
+                canvas.drawPhysics(tri, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+        }
+
+    }
 
     public void draw(GameCanvas canvas) {
         if (texture != null && !invisible) {
+            System.out.println("???");
             canvas.draw(region, Color.WHITE, origin.x, origin.y, getX() * drawScale.x - origin.x, getY() * drawScale.y - origin.y, getAngle(), scale.x, scale.y);
 
         }

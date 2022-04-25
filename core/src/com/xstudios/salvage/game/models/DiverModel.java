@@ -586,12 +586,10 @@ public class DiverModel extends GameObject {
 
         releaseFixtures();
         // Create the fixture
-
         fixture.shape = shape;
         fixture.filter.categoryBits = 0x002;
         fixture.filter.groupIndex = 0x004;
         fixture.filter.maskBits = -1;
-
         geometry = body.createFixture(fixture);
         geometry.setUserData(getDiverCollisionBox());
         markDirty(false);
@@ -898,12 +896,10 @@ public class DiverModel extends GameObject {
                 current_item.setVY(0);
                 dropItem();
             } else if (potential_items.size() > 0) {
-
                 current_item = potential_items.get(0);
-
                 current_item.setX(getX());
                 current_item.setY(getY());
-                //current_item.setGravityScale(1);
+//                current_item.setGravityScale(1);
                 current_item.setCarried(true);
             }
         }
@@ -1027,6 +1023,10 @@ public class DiverModel extends GameObject {
      */
     public void addTouching(String name, GObject obj) {
 
+        if (obj instanceof Wall) {
+            touchingRight.add(obj);
+
+        }
         if (name.equals(sensorNameRight) && !touchingRight.contains(obj))
             touchingRight.add(obj);
         else if (name.equals(sensorNameLeft) && !touchingLeft.contains(obj))

@@ -1,86 +1,81 @@
 package com.xstudios.salvage.game.models;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.ShortArray;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.xstudios.salvage.util.FilmStrip;
 
 public class Tentacle extends GameObject {
-    private float x;
-    private float y;
-    private float angle;
-    private float size = 1.0f;
     /**
-     * Shape information for this box
+     * Shape information for this physics object
      */
-    protected PolygonShape shape;
+    protected PolygonShape[][] shapes;
+
+    /**
+     * Shape information for this physics object
+     */
+    protected Fixture[][] geoms;
     /**
      * Cache of the polygon vertices (for resizing)
      */
+
+    protected HazardModel[] collisionBoxes;
+
+
     private float[] vertices;
-    private TextureRegion tentacle;
     private FilmStrip tentacleSprite;
     protected Fixture geometry;
     private int frame = 0;
     private int life = 0;
     private int change = 0;
-    private Vector2 dimension;
 
-    public float getX() {
-        return x;
+    private Wall spawnWall;
+
+    public Tentacle(Wall wall) {
+        this(wall.getTentacleSpawnPosition().x, wall.getTentacleSpawnPosition().y);
+        spawnWall = wall;
+        spawnWall.setHasTentcle(true);
+        setAngle(wall.getTentacleRotation() / 180 * (float) Math.PI);
     }
 
-    public float getY() {
-        return y;
-    }
-
-    public float getAngle() {
-        return angle;
-    }
-
-    public float getSize() {
-        return size;
-    }
-
-    public void setX(float x_base) {
-        x = x_base;
-    }
-
-    public void setY(float y_base) {
-        y = y_base;
-    }
-
-    public void setAngle(float temp_angle) {
-        angle = temp_angle;
-    }
-
-    public void setSize(float temp_size) {
-        size = temp_size;
+    public Tentacle() {
+        this(0, 0);
     }
 
     public Tentacle(float x, float y) {
         super(x, y);
-        shape = new PolygonShape();
+
         origin = new Vector2();
         body = null;
-        vertices = new float[8];
 
         setDensity(1.0f);
         setFriction(0.5f);
         setMass(1);
         setFixedRotation(true);
-
         // Initialize
         setDimension(1, 1);
         setMass(1);
         resetMass();
-
+        collisionBoxes = new HazardModel[4];
+        circ.setRadius(0.0625f * 2);
     }
+
+    public void initShape(HazardModel[] hazards) {
+        int i = 0;
+        for (HazardModel hm : hazards) {
+            collisionBoxes[i] = hazards[i++];
+        }
+    }
+
 
     public FilmStrip getTentacleSprite() {
         return tentacleSprite;
@@ -109,25 +104,24 @@ public class Tentacle extends GameObject {
 
     }
 
+    @Override
     protected void createFixtures() {
         if (body == null) {
             return;
         }
 
         releaseFixtures();
-        fixture.filter.maskBits = -1;
-        fixture.shape = shape;
 
-        geometry = body.createFixture(fixture);
+        for (HazardModel hm : collisionBoxes)
+            hm.createFixtures();
+
         markDirty(false);
     }
 
 
     protected void releaseFixtures() {
-        if (geometry != null) {
-            body.destroyFixture(geometry);
-            geometry = null;
-        }
+        for (HazardModel hm : collisionBoxes)
+            hm.releaseFixtures();
     }
 
     public void dispose() {
@@ -136,43 +130,149 @@ public class Tentacle extends GameObject {
 
     public void update() {
         life++;
-        if (life % 10 == 0) {
-            int current_frame = tentacleSprite.getFrame();
-            if (current_frame == 29) {
-                change = -1;
-            } else if (current_frame == 1) {
-                change = 1;
-            }
-            frame = current_frame + change;
-            tentacleSprite.setFrame(frame);
+
+        if (life > 200) {
+            startGrowing = false;
         }
-        if (life > 100) {
-            //releaseFixtures();
+        System.out.println(life);
+
+        if (frame == 1) {
+            collisionBoxes[0].setActive(true);
         }
+        if (frame == 5) {
+            collisionBoxes[1].setActive(true);
+        }
+        if (frame == 10) {
+            collisionBoxes[2].setActive(true);
+        }
+        if (frame == 15) {
+            collisionBoxes[3].setActive(true);
+        }
+        if (frame == 17) {
+            collisionBoxes[3].setActive(false);
+        }
+        if (frame == 20) {
+            collisionBoxes[2].setActive(false);
+        }
+        if (frame == 24) {
+            collisionBoxes[1].setActive(false);
+        }
+        if (frame == 29) {
+            collisionBoxes[0].setActive(false);
+        }
+
+
     }
+
+    /*==============================================
+     * Activates the tentacles and makes it start growing
+     */
+    public void setStartGrowing(boolean startGrowing) {
+        this.startGrowing = startGrowing;
+    }
+
+    public boolean isStartGrowing() {
+        return startGrowing;
+    }
+
+    private boolean startGrowing = false;
+
+    private CircleShape circ = new CircleShape();
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-        if (texture != null) {
-            canvas.drawPhysics(shape, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+
+
+        canvas.drawPhysics(circ, Color.GREEN, getX(), getY(), drawScale.x, drawScale.y);
+        for (HazardModel hm : collisionBoxes) {
+            hm.drawDebug(canvas);
         }
+    }
+
+    public Vector2 getScale() {
+        return scale;
+    }
+
+    public Vector2 scale = new Vector2(1 / 2f, 1 / 2f);
+
+    public void setScale(float x, float y) {
+        scale.set(x, y);
+    }
+
+
+    int tick = 0;
+
+    public Vector2 pivot = new Vector2(0, 0);
+
+    public void setPivot(float x, float y) {
+        pivot.set(x, y);
     }
 
 
     @Override
     public void draw(GameCanvas canvas) {
-        if (texture != null) {
-            canvas.draw(tentacleSprite, Color.RED, getX(), getY(), drawScale.x, drawScale.y, 1f, 1f);
+        update();
+
+        tick++;
+        if (frame == 30) {
+            frame = -1;
+
+        }
+        if (startGrowing && frame < 16) {
+            if (tick % 5 == 0) {
+                frame++;
+            }
+        } else if (!startGrowing && frame > 0) {
+            if (tick % 5 == 0) {
+                frame++;
+            }
+        }
+
+        if (frame >= 0) {
+            tentacleSprite.setFrame(frame);
+            canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x, (getY()) * drawScale.y + pivot.y, getAngle(), scale.x, scale.y);
+
+
+        }
+
+    }
+
+
+    public void despawn() {
+        spawnWall.setHasTentcle(false);
+        for (HazardModel hm : collisionBoxes) {
+            hm.setActive(false);
         }
     }
 
 
     public boolean activatePhysics(World world) {
-        if (!super.activatePhysics(world)) {
-            return false;
+        for (HazardModel hm : collisionBoxes) {
+            hm.activatePhysics(world);
+            hm.setActive(false);
         }
-        body.setUserData(this);
 
         return false;
+    }
+
+    /**
+     * Destroys the physics Body(s) of this object if applicable,
+     * removing them from the world.
+     *
+     * @param world Box2D world that stores body
+     */
+    public void deactivatePhysics(World world) {
+        for (HazardModel hm : collisionBoxes) {
+            hm.deactivatePhysics(world);
+        }
+
+
+        if (body != null) {
+            // Snapshot the values
+            setBodyState(body);
+            world.destroyBody(body);
+            body = null;
+            bodyinfo.active = false;
+        }
     }
 }

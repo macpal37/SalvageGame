@@ -12,16 +12,16 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 730,
-                "y": 690
+                "x": 728,
+                "y": 688
             }
         },
         "levels/level1.json": {
             "scale": 0.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 418,
-                "y": 1373
+                "x": 496,
+                "y": 1528
             }
         },
         "levels/level2.json": {
@@ -36,8 +36,8 @@
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 602,
-                "y": 783
+                "x": 676,
+                "y": 934
             }
         },
         "levels/small_ship.json": {
@@ -49,11 +49,11 @@
             }
         },
         "levels/test_level.json": {
-            "scale": 1,
+            "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 999.5,
-                "y": 999.5
+                "x": 678.6666666666667,
+                "y": 1385.3333333333335
             }
         },
         "levels/tilesets/id_tiles.json": {
@@ -64,6 +64,7 @@
             "scaleInEditor": 0.75
         }
     },
+    "last.imagePath": "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels/tilesets",
     "openFiles": [
         "levels/tilesets/old_ship_tileset.json",
         "levels/level0.json",
@@ -79,5 +80,10 @@
         "levels/test_level.json",
         "levels/level2.json",
         "levels/small_ship.json"
-    ]
+    ],
+    "tileset.lastUsedFormat": "json",
+    "tileset.tileSize": {
+        "height": 350,
+        "width": 500
+    }
 }

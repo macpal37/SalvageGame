@@ -51,6 +51,7 @@
 
 
     "levels:tilesets:old_ship_tileset":"levels/tilesets/old_ship_tileset.png",
+
     "wall": {
       "file":"background/wooden_bg.png",
       "wrapU":"repeated",

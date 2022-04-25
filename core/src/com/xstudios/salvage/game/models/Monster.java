@@ -86,8 +86,7 @@ public class Monster extends GameObject {
     public void drawDebug(GameCanvas canvas) {
         canvas.drawPhysics(radialPresence, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
     }
-
-
+    
     public void spawnTenctacle(DiverModel diver) {
         Tentacle tentacle = new Tentacle(diver.getX(), diver.getY());
         tentacle.setFilmStrip(tentacleSprite.copy());

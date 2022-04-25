@@ -2,6 +2,7 @@ package com.xstudios.salvage.game;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -501,11 +502,9 @@ public class GameController implements Screen, ContactListener {
         }
         monster = new Monster(level.getDiver().getX(), level.getDiver().getY());
         monster.setTentacleSprite(new FilmStrip(monsterTenctacle, 1, 30, 30));
-//        monster.setTentacleSprite(new FilmStrip(plantAnimation, 1, 6, 6));
         monster.setDrawScale(scale);
         monster.setName("Monster");
         monsterController = new MonsterController(monster);
-
         level.addObject(monster);
         addObject(monster);
 
@@ -670,6 +669,9 @@ public class GameController implements Screen, ContactListener {
 
     }
 
+
+    int tentacleSpawn = 0;
+
     /**
      * The core gameplay loop of this world.
      * <p>
@@ -689,6 +691,14 @@ public class GameController implements Screen, ContactListener {
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
 
         monsterController.update(level.getDiver());
+
+
+        //** ADDING TENCTACLES TO WalL!
+        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
+            Wall w = level.getDiver().getTouchedWall();
+            Tentacle t = levelBuilder.createTentcle(w, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+            addQueuedObject(t);
+        }
 
         switch (game_state) {
             case PLAYING:
@@ -736,7 +746,10 @@ public class GameController implements Screen, ContactListener {
     public void postUpdate(float dt) {
         // Add any objects created by actions
         while (!addQueue.isEmpty()) {
-            addObject(addQueue.poll());
+            System.out.println("TENTACLE???");
+            GameObject go = addQueue.poll();
+            addObject(go);
+            level.addObject(go);
         }
 
         // Turn the physics engine crank.
@@ -793,6 +806,10 @@ public class GameController implements Screen, ContactListener {
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0, 4, 4);
 
         for (GameObject obj : level.getAllObjects()) {
+            if (obj instanceof Tentacle) {
+//                System.out.println("YeAH TENTACLE!!!");
+            }
+
             if (!(obj instanceof DiverModel))
                 if (!(obj instanceof DecorModel))
                     obj.draw(canvas);
