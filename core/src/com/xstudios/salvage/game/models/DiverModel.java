@@ -46,6 +46,8 @@ public class DiverModel extends GameObject {
     protected TextureRegion pingTexture;
 
 
+    private int minFlareDist = 5;
+
     private FilmStrip diverSprite;
 
     private int current_frame = 0;
@@ -166,6 +168,7 @@ public class DiverModel extends GameObject {
      */
     private int num_flares;
     private ArrayList<FlareModel> flares;
+    private ArrayList<FlareModel> neighboring_flares;
     /**
      * flare duration
      */
@@ -301,6 +304,7 @@ public class DiverModel extends GameObject {
         MAX_FLARE_DURATION = data.getInt("flare_duration", 100);
         flare_duration = 0;
         flares = new ArrayList<>();
+        neighboring_flares = new ArrayList<>();
         active_flare = false;
         for (int i = 0; i < num_flares; i++) {
             flares.add(new FlareModel(data));
@@ -579,6 +583,13 @@ public class DiverModel extends GameObject {
 //            f.activatePhysics(world);
 //        }
         return true;
+    }
+
+    public void deactivatePhysics(World world) {
+        super.deactivatePhysics(world);
+        for(FlareModel f: flares) {
+            f.removeLights();
+        }
     }
 
     /**
@@ -928,6 +939,9 @@ public class DiverModel extends GameObject {
 
         for (FlareModel f : flares) {
             f.initLight(rayHandler);
+//            f.
+            f.setCarried(true);
+            f.setActivated(false);
         }
     }
 
@@ -939,13 +953,26 @@ public class DiverModel extends GameObject {
         if (num_flares > 0 && active_flare) {
             FlareModel f = flares.get(num_flares - 1);
             if (flare_duration < MAX_FLARE_DURATION) {
+
+                int num_neighbors = 0;
+                for (int i = num_flares; i < flares.size(); i++) {
+                    System.out.println("Dist " + flares.get(i).getPosition().dst(getPosition()));
+                    if (flares.get(i).getPosition().dst(getPosition()) < minFlareDist) {
+//                        flares.get(i).setBrightness(.2f);
+                        neighboring_flares.add(flares.get(i));
+                        num_neighbors++;
+                    }
+                }
+                for(int i = 0; i < num_neighbors; i++) {
+                    neighboring_flares.get(i).setBrightness(1/((float) num_neighbors));
+                }
                 f.setActivated(true);
                 f.setX(getX());
                 f.setY(getY());
                 flare_duration++;
                 System.out.println("FLARe IS ACTIVE");
             } else {
-                f.setActive(false);
+                f.setActivated(false);
                 f.setCarried(false);
                 f.setX(getX());
                 f.setY(getY());
@@ -954,6 +981,8 @@ public class DiverModel extends GameObject {
                 num_flares--;
                 System.out.println("FLARe IS DROPPED");
                 active_flare = false;
+                flare_duration = 0;
+
             }
         }
     }

@@ -29,6 +29,7 @@ public class FlareModel extends DiverObjectModel {
     private int MIN_LIGHT_RADIUS = 3;
 
     private Color light_color;
+    private Color white_light;
 
     private boolean isActivated;
 
@@ -50,6 +51,7 @@ public class FlareModel extends DiverObjectModel {
         }
         movement = new Vector2();
         light_color = new Color(1f, 0.5f, 0.5f, 0.6f);//Color.BLACK;
+        white_light = new Color(1f, 1f, 1f, 0.8f);
         setCarried(true);
         drawScale.set(40, 40);
         setBodyType(BodyDef.BodyType.StaticBody);
@@ -67,7 +69,7 @@ public class FlareModel extends DiverObjectModel {
     public void initLight(RayHandler rayHandler) {
 //        System.out.println("INITIALIZE LIGHT");
         // White flickering light
-        light = new PointLight(rayHandler, 100, new Color(1f, 1f, 1f, 0.0f), 1, 0, 0);
+        light = new PointLight(rayHandler, 100, white_light, 1, 0, 0);
         Filter f = new Filter();
         f.categoryBits = 0x0002;
         f.maskBits = 0x0004;
@@ -84,7 +86,15 @@ public class FlareModel extends DiverObjectModel {
 
     public void setActivated(boolean b) {
         isActivated = b;
+        if(!b) {
+            light.setActive(false);
+            redLight.setActive(false);
+        }
+    }
 
+    public void removeLights() {
+        light.remove();
+        redLight.remove();
     }
 
     public boolean isActivated() {
@@ -273,4 +283,31 @@ public class FlareModel extends DiverObjectModel {
         movement.x = value;
     }
 
+    public PointLight getLight() {
+        return light;
+    }
+
+    public void setLightColor(Color c) {
+        light.setColor(c);
+    }
+
+    public void setBrightness(float f) {
+        System.out.println("light color 1 "+ light_color.a);
+        System.out.println("light white 1 "+ white_light.a);
+        light_color.a *= f;
+        white_light.a *= f;
+
+        light_color.r *= f;
+        white_light.r *= f;
+
+        light_color.g *= f;
+        white_light.g *= f;
+
+        light_color.b *= f;
+        white_light.b *= f;
+        light.setColor(white_light);
+        redLight.setColor(light_color);
+        System.out.println("light color 2 "+ light_color.a);
+        System.out.println("light white 2 "+ white_light.a);
+    }
 }
