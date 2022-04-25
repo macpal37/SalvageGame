@@ -114,15 +114,12 @@ public class GDXRoot extends Game implements ScreenListener {
 		} else if (screen == controller) {
 			controller.setCameraPositionNormal();
 			game_over_controller.dispose();
-			game_over_controller.create();
 			if (directory == null) {
 				System.out.println("DIRECTORY IS NULL!");
 			}
 			game_over_controller.gatherAssets(directory);
+			game_over_controller.create();
 			game_over_controller.setCanvas(canvas);
-			game_over_controller.setTextPos(
-					cameraController.getCameraPosition2D().x,
-					cameraController.getCameraPosition2D().y);
 			game_over_controller.setWin(exitCode == 0);
 			setScreen(game_over_controller);
 		} else if (screen == game_over_controller) {

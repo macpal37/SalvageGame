@@ -5,11 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
-import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -17,14 +15,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
-public class GameOverController implements Screen, ApplicationListener, InputProcessor {
-    private Skin skin;
+public class PauseController implements Screen, ApplicationListener, InputProcessor {
     private Stage stage;
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
@@ -52,12 +48,7 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
     private boolean exit_home;
     private boolean next_level;
 
-    private boolean display_win;
-
-    private float x_pos_text;
-    private float y_pos_text;
-
-    public GameOverController(Rectangle bounds) {
+    public PauseController(Rectangle bounds) {
         active = false;
         this.bounds = bounds;
         this.scale = new Vector2(1,1);
@@ -81,8 +72,7 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(display_win) next_level = true;
-                else restart_game = true;
+                restart_game = true;
             }
         });
         stage.addActor(button);
@@ -191,8 +181,6 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
         this.canvas = canvas;
         this.scale.x = canvas.getWidth()/bounds.getWidth();
         this.scale.y = canvas.getHeight()/bounds.getHeight();
-        x_pos_text = canvas.getWidth()/2f;
-        y_pos_text = canvas.getHeight()/2f;
     }
     public boolean pointer1(int x, int y, int w, int h) {
         int pX = Gdx.input.getX();
@@ -231,15 +219,6 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
         try_again_next = directory.getEntry("try_again", Texture.class);
         main_menu = directory.getEntry("main_menu", Texture.class);
         title = directory.getEntry("perish", Texture.class);
-        if(display_win) {
-            background = new TextureRegion(directory.getEntry("level_complete", Texture.class));
-            try_again_next = directory.getEntry("try_again", Texture.class);
-            title = directory.getEntry("complete", Texture.class);
-        }
-    }
-
-    public void setWin(boolean w) {
-        display_win = w;
     }
 
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
@@ -261,31 +240,6 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         return true;
     }
-    /**
-     * Called when a button on the Controller was pressed.
-     *
-     * The buttonCode is controller specific. This listener only supports the start
-     * button on an X-Box controller.  This outcome of this method is identical to
-     * pressing (but not releasing) the play button.
-     *
-     * @param controller The game controller
-     * @param buttonCode The button pressed
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean buttonDown (Controller controller, int buttonCode) {return true;}
-
-    /**
-     * Called when a button on the Controller was released.
-     *
-     * The buttonCode is controller specific. This listener only supports the start
-     * button on an X-Box controller.  This outcome of this method is identical to
-     * releasing the the play button after pressing it.
-     *
-     * @param controller The game controller
-     * @param buttonCode The button pressed
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean buttonUp (Controller controller, int buttonCode) {return true;}
 
     // UNSUPPORTED METHODS FROM InputProcessor
 
@@ -350,35 +304,4 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         return true;
     }
-
-    // UNSUPPORTED METHODS FROM ControllerListener
-
-    /**
-     * Called when a controller is connected. (UNSUPPORTED)
-     *
-     * @param controller The game controller
-     */
-    public void connected (Controller controller) {}
-
-    /**
-     * Called when a controller is disconnected. (UNSUPPORTED)
-     *
-     * @param controller The game controller
-     */
-    public void disconnected (Controller controller) {}
-
-    /**
-     * Called when an axis on the Controller moved. (UNSUPPORTED)
-     *
-     * The axisCode is controller specific. The axis value is in the range [-1, 1].
-     *
-     * @param controller The game controller
-     * @param axisCode 	The axis moved
-     * @param value 	The axis value, -1 to 1
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean axisMoved (Controller controller, int axisCode, float value) {
-        return true;
-    }
-
 }

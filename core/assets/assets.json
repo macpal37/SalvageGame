@@ -1,5 +1,9 @@
 {
   "textures": {
+    "complete" : "ui/complete.png",
+    "perish" : "ui/perish.png",
+    "level_complete" : "background/level_complete_background.png",
+    "next" : "ui/next.png",
     "try_again" : "ui/try_again.png",
     "game_over" : "background/game_over_background.png",
     "m": "background/m.jpg",
