@@ -715,8 +715,11 @@ public class DiverModel extends GameObject {
             targetAngleY = y;
     }
 
+    float targetAngle = 0;
+
     public void applyForce() {
-        float targetAngle = targetAngleX + ((targetAngleX == 0) ? targetAngleY : -targetAngleY);
+        targetAngle = (isSwimming()) ? targetAngleX + ((targetAngleX == 0) ? targetAngleY : -targetAngleY) : getDynamicAngle();
+
         targetAngle += (targetAngle < 0) ? 360f : 0f;
         float dist = targetAngle - getDynamicAngle();
         float angle = 0.4f * 3;

@@ -653,8 +653,8 @@ public class LevelBuilder {
                 diver = (DiverModel) go;
                 diver.setStunned(false);
                 diver.setTexture(diverTexture);
-                diver.addFilmStrip(new FilmStrip(swimmingAnimation, 2, 12, 24));
-                diver.addFilmStrip(new FilmStrip(swimmingAnimationWBody, 3, 12, 36));
+                diver.addFilmStrip(new FilmStrip(swimmingAnimation, 4, 12, 48));
+                diver.addFilmStrip(new FilmStrip(swimmingAnimationWBody, 4, 12, 48));
                 diver.setPingTexture(pingTexture);
                 diver.setDrawScale(drawScale);
                 diver.setName("diver");
@@ -681,7 +681,6 @@ public class LevelBuilder {
                 level.addObject(key);
             } else if (go instanceof GoalDoor) {
                 JsonValue goal = constants.get("goal");
-
                 GoalDoor goal_door = (GoalDoor) go;
                 goal_door.setBodyType(BodyDef.BodyType.StaticBody);
                 goal_door.setDensity(goal.getFloat("density", 0));

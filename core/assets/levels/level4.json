@@ -272,24 +272,6 @@
                  "y":1091.33333333333
                 }, 
                 {
-                 "gid":5,
-                 "height":100,
-                 "id":104,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"id",
-                         "type":"int",
-                         "value":2
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":100,
-                 "x":1050.90909090909,
-                 "y":1091.33333333333
-                }, 
-                {
                  "gid":4,
                  "height":100,
                  "id":66,
