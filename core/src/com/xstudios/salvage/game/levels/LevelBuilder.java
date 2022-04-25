@@ -75,6 +75,7 @@ public class LevelBuilder {
     protected TextureRegion doorOpenTexture;
     protected TextureRegion doorCloseTexture;
     protected Texture swimmingAnimation;
+    protected Texture swimmingAnimationWBody;
     protected Texture dustAnimation;
     protected Texture plantAnimation;
 
@@ -121,6 +122,7 @@ public class LevelBuilder {
 
         diverTexture = new TextureRegion(directory.getEntry("models:diver", Texture.class));
         swimmingAnimation = directory.getEntry("models:diver_swimming", Texture.class);
+        swimmingAnimationWBody = directory.getEntry("models:diver_swimming_w_body", Texture.class);
         dustAnimation = directory.getEntry("models:dust", Texture.class);
         plantAnimation = directory.getEntry("models:plant", Texture.class);
 
@@ -146,9 +148,12 @@ public class LevelBuilder {
     class Tile {
 
         public float x, y, width, height;
+        public float spawnX, spawnY;
+        public float rotation;
         public float[] vertices;
         public TileType tileType;
         public String modelType;
+
         public int id = 0;
 
         public Tile() {
@@ -192,6 +197,112 @@ public class LevelBuilder {
     }
 
 
+    public float div = 25f;
+
+    public Tentacle createTentcle(Wall w, FilmStrip sprite, Vector2 scale) {
+
+        float tScale = 3f / 2;
+        if (w.canSpawnTentacle()) {
+
+
+            Tentacle t = new Tentacle(w);
+            t.setScale(1, 1);
+            JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_tile.json"));
+            HazardModel[] boxes = new HazardModel[4];
+            int tCount = 0;
+
+            Vector2 dif = new Vector2(0, 0);
+
+            float tileHieght = tileset.getFloat("tileheight");
+
+            for (JsonValue tileJson : tileset.get("tiles")) {
+                float x = 0;
+                float y = 0;
+                ArrayList<Float> verticies = new ArrayList<>();
+                for (JsonValue o : tileJson.get("objectgroup").get("objects")) {
+
+
+                    if (o.getString("name").equals("Origin")) {
+                        x = round(o.getFloat("x"));
+                        y = round(o.getFloat("y"));
+                        t.setPivot((-x * t.getScale().x) * (float) Math.cos(t.getAngle())
+                                        + (tileHieght - y) * t.getScale().y * (float) Math.sin(t.getAngle())
+
+
+                                , (-(tileHieght - y) * t.getScale().y) * (float) Math.cos(t.getAngle()) +
+
+                                        (-x * t.getScale().x) * (float) Math.sin(t.getAngle())
+                        );
+                        dif.set(x / div, tileHieght / div - (2 * y / div)
+
+
+                        );
+
+                    } else {
+                        x = round(o.getFloat("x")) / div;
+                        y = round(o.getFloat("y")) / div;
+                        verticies.clear();
+                        if (o.get("polygon") != null) {
+
+
+                            for (JsonValue point : o.get("polygon")) {
+                                float vx = (round(point.getFloat("x")) / div) + x
+
+
+//                                        - dif.y * (float) Math.cos(t.getAngle())
+                                        - ((dif.x) * 2 * ((Math.sin(t.getAngle()) >= 0) ? 0 : 1));
+
+                                float vy = -((round(point.getFloat("y")) / div) + y
+                                        - ((dif.x) * 2 * ((Math.sin(t.getAngle()) >= 0) ? 0 : 1))
+                                        - ((dif.x) * 2 * (float) Math.cos(t.getAngle()))
+//                                        - ((dif.x) * 2 * ((Math.cos(t.getAngle()) >= 0) ? 1 : 0))
+//                                        + ((dif.x) * 2 * ((Math.cos(t.getAngle()) < 0) ? 1 : 0))
+//
+
+//                                        +(float) (tileHieght / div * Math.cos(t.getAngle()))
+
+                                );
+                                verticies.add(vx / tScale);
+                                verticies.add(vy / tScale);
+                            }
+                        }
+                        float[] verts = new float[verticies.size()];
+                        int index = 0;
+                        for (int i = 0; i < verticies.size(); i++)
+                            verts[index++] = verticies.get(i);
+                        HazardModel hazard = new HazardModel(verts, w.getX(), w.getY());
+                        hazard.setAngle(t.getAngle());
+                        hazard.setOxygenDrain(-0.1f);
+                        hazard.setStunDuration(60);
+                        hazard.setBodyType(BodyDef.BodyType.StaticBody);
+                        hazard.setDensity(0);
+                        hazard.setFriction(0.4f);
+                        hazard.setRestitution(0.1f);
+                        hazard.setName("tentacle" + tCount);
+                        hazard.setDrawScale(drawScale);
+                        hazard.setActive(false);
+                        boxes[tCount] = hazard;
+                        tCount++;
+                    }
+                }
+            }
+
+            t.initShape(boxes);
+            t.setBodyType(BodyDef.BodyType.StaticBody);
+            t.setDensity(0);
+            t.setFriction(0.4f);
+            t.setRestitution(0.1f);
+            t.setDrawScale(scale);
+            t.setFilmStrip(sprite);
+            t.setStartGrowing(true);
+            t.setMaxLifeSpan(300);
+            t.setName("tentacle");
+            return t;
+        } else
+            return null;
+    }
+
+
     private Tile[] createTiles(JsonValue tileset, float div, float tileSize) {
         Tile[] tiles = new Tile[tileset.getInt("tilecount")];
 
@@ -215,16 +326,25 @@ public class LevelBuilder {
             if (tileJson.get("objectgroup") != null) {
                 float x = 0;
                 float y = 0;
+                float spawnX = -1, spawnY = -1;
+                float rotation = 0;
                 for (JsonValue o : tileJson.get("objectgroup").get("objects")) {
-                    x = round(o.getFloat("x")) / div;
-                    y = round(o.getFloat("y")) / div;
-                    verticies.clear();
-                    if (o.get("polygon") != null) {
-                        for (JsonValue point : o.get("polygon")) {
-                            float vx = (round(point.getFloat("x")) / div) + x;
-                            float vy = tileSize / div - ((round(point.getFloat("y")) / div) + y);
-                            verticies.add(vx);
-                            verticies.add(vy);
+
+                    if (o.getString("name").equals("SpawnLocation")) {
+                        rotation = o.getFloat("rotation");
+                        spawnX = round(o.getFloat("x")) / div;
+                        spawnY = (100 - round(o.getFloat("y"))) / div;
+                    } else {
+                        x = round(o.getFloat("x")) / div;
+                        y = round(o.getFloat("y")) / div;
+                        verticies.clear();
+                        if (o.get("polygon") != null) {
+                            for (JsonValue point : o.get("polygon")) {
+                                float vx = (round(point.getFloat("x")) / div) + x;
+                                float vy = tileSize / div - ((round(point.getFloat("y")) / div) + y);
+                                verticies.add(vx);
+                                verticies.add(vy);
+                            }
                         }
                     }
                 }
@@ -237,6 +357,9 @@ public class LevelBuilder {
                         tileSize / div, verts, tileType
                 ));
                 tiles[tt].id = tileId;
+                tiles[tt].spawnX = spawnX;
+                tiles[tt].spawnY = spawnY;
+                tiles[tt].rotation = rotation;
 
             } else {
                 tiles[tt] = tiles[tt] = (new Tile(0, 0, tileSize / div,
@@ -258,11 +381,13 @@ public class LevelBuilder {
         return newVerts;
     }
 
+    public Vector2 drawScale;
+
     /**
      * Create level from a json. Objects created will be drawn at scale drawScale, and lights will be created using rayHandler
      */
     public void createLevel(String levelFileName, LevelModel level, Vector2 drawScale, Vector2 drawScaleSymbol, RayHandler rayHandler) {
-
+        this.drawScale = drawScale;
         ArrayList<GObject> gameObjects = new ArrayList<GObject>();
 
         JsonValue map = jsonReader.parse(Gdx.files.internal("levels/" + levelFileName + ".json"));
@@ -301,7 +426,8 @@ public class LevelBuilder {
                     switch (tile.tileType) {
                         case Wall:
                             Wall wall = new Wall(createVerticies(tile, 0, 0, 1, 1), sx, sy);
-
+                            wall.setTentacleSpawnPosition(tile.spawnX, tile.spawnY);
+                            wall.setTentacleRotation(tile.rotation);
                             wall.setID(tile.id);
 
                             gameObjects.add(wall);
@@ -368,7 +494,7 @@ public class LevelBuilder {
 
                             break;
                         case Item:
-                            ItemModel item = new ItemModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("key"), ItemType.KEY);
+                            ItemModel item = new ItemModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("key"), ItemModel.ItemType.KEY);
                             for (JsonValue prop : obj.get("properties")) {
                                 if (prop.getString("name").equals("id"))
                                     item.setID(prop.getInt("value"));
@@ -486,8 +612,9 @@ public class LevelBuilder {
                 hazard.setTexture(hazardTexture);
                 hazard.setDrawScale(drawScale);
                 hazard.setName("hazard" + hazardCounter++);
-                level.addObject(hazard);
                 hazard.setActive(true);
+                level.addObject(hazard);
+
             } else if (go instanceof Door) {
                 Door door = (Door) go;
                 door.setBodyType(BodyDef.BodyType.StaticBody);
@@ -526,7 +653,8 @@ public class LevelBuilder {
                 diver = (DiverModel) go;
                 diver.setStunned(false);
                 diver.setTexture(diverTexture);
-                diver.setFilmStrip(new FilmStrip(swimmingAnimation, 2, 12, 24));
+                diver.addFilmStrip(new FilmStrip(swimmingAnimation, 2, 12, 24));
+                diver.addFilmStrip(new FilmStrip(swimmingAnimationWBody, 3, 12, 36));
                 diver.setPingTexture(pingTexture);
                 diver.setDrawScale(drawScale);
                 diver.setName("diver");

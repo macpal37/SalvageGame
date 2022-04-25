@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.ShortArray;
@@ -190,7 +191,50 @@ public class Wall extends GameObject {
         // Compute the bounds.
         initShapes(points);
         initBounds();
+        circ.setRadius(0.0625f);
     }
+
+/*===================================================================*
+======================== Tentacle Spawn Location ========================
+/===================================================================*
+ */
+
+    public boolean isHasTentcle() {
+        return hasTentcle;
+    }
+
+    public void setHasTentcle(boolean hasTentcle) {
+        this.hasTentcle = hasTentcle;
+    }
+
+    private boolean hasTentcle = false;
+
+
+    public boolean canSpawnTentacle() {
+        return tentacleSpawnPosition != null && !hasTentcle;
+    }
+
+    public Vector2 getTentacleSpawnPosition() {
+        return tentacleSpawnPosition;
+    }
+
+    public float getTentacleRotation() {
+        return tentacleRotation;
+    }
+
+    public void setTentacleSpawnPosition(float x, float y) {
+        if (x >= 0 || y >= 0)
+            this.tentacleSpawnPosition = new Vector2(getX() + x, y + getY());
+    }
+
+    private Vector2 tentacleSpawnPosition = null;
+
+    public void setTentacleRotation(float tentacleRotation) {
+        this.tentacleRotation = tentacleRotation;
+    }
+
+    private float tentacleRotation = 0;
+
 
     /**
      * Initializes the bounding box (and drawing scale) for this polygon
@@ -449,6 +493,8 @@ public class Wall extends GameObject {
         }
     }
 
+    private CircleShape circ = new CircleShape();
+
     /**
      * Draws the outline of the physics body.
      * <p>
@@ -458,6 +504,9 @@ public class Wall extends GameObject {
      */
     @Override
     public void drawDebug(GameCanvas canvas) {
+
+        if (canSpawnTentacle())
+            canvas.drawPhysics(circ, Color.RED, tentacleSpawnPosition.x, tentacleSpawnPosition.y, drawScale.x, drawScale.y);
         for (PolygonShape tri : shapes) {
             canvas.drawPhysics(tri, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
         }

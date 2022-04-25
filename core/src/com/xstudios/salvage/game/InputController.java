@@ -273,12 +273,10 @@ public class InputController {
      */
     private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary) {
         // Give priority to gamepad results
-        resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.O));
-        debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
+        resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
+        debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
         menuPressed = (secondary && menuPressed) || (Gdx.input.isKeyPressed(Keys.ESCAPE));
 
-
-        kickOffPressed = (secondary && kickOffPrevious) || (Gdx.input.isKeyPressed(Keys.SPACE));
         kickOffPressed = (secondary && kickOffPrevious) || (Gdx.input.isKeyPressed(Keys.SPACE));
 
         carryingObject = (secondary && carryingObject) || Gdx.input.isKeyPressed(Input.Keys.Q);
@@ -304,12 +302,6 @@ public class InputController {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             vertical -= 1.0f;
         }
-//        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-//            vertical += 1.0f;
-//        }
-//        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-//            vertical -= 1.0f;
-//        }
 
 
         pause = Gdx.input.isKeyPressed(Keys.P);

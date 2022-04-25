@@ -14,6 +14,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -47,6 +48,17 @@
                      "width":0,
                      "x":0.604960677555959,
                      "y":100.725952813067
+                    }, 
+                    {
+                     "height":0,
+                     "id":3,
+                     "name":"SpawnLocation",
+                     "rotation":-135,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":25,
+                     "y":25
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -71,6 +83,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -104,6 +117,17 @@
                      "width":0,
                      "x":99.9517141477547,
                      "y":49.9758570738773
+                    }, 
+                    {
+                     "height":0,
+                     "id":3,
+                     "name":"SpawnLocation",
+                     "rotation":135,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":75,
+                     "y":25
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -282,6 +306,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -315,6 +340,17 @@
                      "width":0,
                      "x":99.8185117967332,
                      "y":0.302480338777979
+                    }, 
+                    {
+                     "height":0,
+                     "id":3,
+                     "name":"SpawnLocation",
+                     "rotation":45,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":25,
+                     "y":75
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -339,6 +375,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -372,6 +409,17 @@
                      "width":0,
                      "x":100.434572670208,
                      "y":49.9758570738773
+                    }, 
+                    {
+                     "height":0,
+                     "id":3,
+                     "name":"SpawnLocation",
+                     "rotation":45,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":75,
+                     "y":75
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -585,6 +633,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -610,6 +659,17 @@
                      "width":0,
                      "x":101.64171897634,
                      "y":99.9517141477547
+                    }, 
+                    {
+                     "height":0,
+                     "id":2,
+                     "name":"SpawnLocation",
+                     "rotation":-135,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":75,
+                     "y":75
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -634,6 +694,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -663,6 +724,17 @@
                      "width":0,
                      "x":0,
                      "y":50.5142165759226
+                    }, 
+                    {
+                     "height":0,
+                     "id":5,
+                     "name":"SpawnLocation",
+                     "rotation":180,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":50,
+                     "y":50
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -687,6 +759,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -712,6 +785,17 @@
                      "width":0,
                      "x":0,
                      "y":100.423472474289
+                    }, 
+                    {
+                     "height":0,
+                     "id":4,
+                     "name":"SpawnLocation",
+                     "rotation":135,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":25,
+                     "y":75
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -956,6 +1040,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -985,6 +1070,17 @@
                      "width":0,
                      "x":50.2117362371446,
                      "y":0.302480338777979
+                    }, 
+                    {
+                     "height":0,
+                     "id":4,
+                     "name":"SpawnLocation",
+                     "rotation":-90,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":50,
+                     "y":50
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -1062,6 +1158,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -1091,6 +1188,17 @@
                      "width":0,
                      "x":-0.0925589836660663,
                      "y":-0.392289503386274
+                    }, 
+                    {
+                     "height":0,
+                     "id":5,
+                     "name":"SpawnLocation",
+                     "rotation":90,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":50,
+                     "y":50
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -1143,7 +1251,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -1306,6 +1413,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -1331,6 +1439,17 @@
                      "width":0,
                      "x":100.193143408981,
                      "y":50.7001448575567
+                    }, 
+                    {
+                     "height":0,
+                     "id":2,
+                     "name":"SpawnLocation",
+                     "rotation":-45,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":75,
+                     "y":25
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -1355,6 +1474,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -1384,6 +1504,17 @@
                      "width":0,
                      "x":0.302480338777976,
                      "y":0.0925589836660663
+                    }, 
+                    {
+                     "height":0,
+                     "id":3,
+                     "name":"SpawnLocation",
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":50,
+                     "y":50
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -1408,6 +1539,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -1433,6 +1565,17 @@
                      "width":0,
                      "x":0,
                      "y":0
+                    }, 
+                    {
+                     "height":0,
+                     "id":3,
+                     "name":"SpawnLocation",
+                     "rotation":45,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":25,
+                     "y":25
                     }],
              "opacity":1,
              "type":"objectgroup",

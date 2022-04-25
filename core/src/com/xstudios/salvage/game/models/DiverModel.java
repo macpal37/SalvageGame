@@ -46,18 +46,16 @@ public class DiverModel extends GameObject {
     protected TextureRegion pingTexture;
 
 
-    private FilmStrip diverSprite;
+    private ArrayList<FilmStrip> diverSprites;
 
-    public int getFrame() {
-        return diverSprite.getFrame();
 
-    }
-
+    private int diverState = 0;
     private final int DIVER_IMG_FLAT = 6;
 
-    public void setFilmStrip(FilmStrip value) {
-        diverSprite = value;
-        diverSprite.setFrame(DIVER_IMG_FLAT);
+    public void addFilmStrip(FilmStrip value) {
+        value.setFrame(DIVER_IMG_FLAT);
+        diverSprites.add(value);
+
     }
 
 
@@ -168,8 +166,8 @@ public class DiverModel extends GameObject {
     /**
      * The physics shape of this object
      */
-    private PolygonShape sensorShapeRight;
-    private PolygonShape sensorShapeLeft;
+//    private PolygonShape sensorShapeRight;
+//    private PolygonShape sensorShapeLeft;
     private PolygonShape hitboxShape;
 
 
@@ -258,7 +256,7 @@ public class DiverModel extends GameObject {
         super(x, y);
         shape = new PolygonShape();
         vertices = new float[8];
-
+        diverSprites = new ArrayList<>();
         setDensity(data.getFloat("density", 0));
         setFriction(data.getFloat("friction", 0));  /// HE WILL STICK TO WALLS IF YOU FORGET
         setLinearDamping(data.getFloat("damping", 0));
@@ -345,6 +343,8 @@ public class DiverModel extends GameObject {
 
     int turnFrames = 0;
     int kickOffFrame = 10;
+    int pickupFrame = 6;
+
 
     public void balanceRotation() {
         while (body.getAngle() > 0.1 || body.getAngle() < -0.1) {
@@ -517,29 +517,29 @@ public class DiverModel extends GameObject {
 
         JsonValue sensorjv = data.get("sensor");
 
-        FixtureDef sensorDef = new FixtureDef();
-        sensorDef.density = data.getFloat("density", 0);
-        sensorDef.isSensor = true;
-        sensorDef.filter.groupIndex = -1;
-        sensorShapeRight = new PolygonShape();
-
-        sensorShapeRight.setAsBox(sensorjv.getFloat("width", 0), sensorjv.getFloat("shrink", 0) * getWidth() / 2.0f,
-                new Vector2(getWidth() + getWidth() / 2, 0), 0.0f);
-        sensorDef.shape = sensorShapeRight;
-        Fixture sensorFixture = body.createFixture(sensorDef);
-        sensorFixture.setUserData(sensorNameRight);
-
-        FixtureDef sensorDef2 = new FixtureDef();
-        sensorDef2.density = data.getFloat("density", 0);
-        sensorDef2.isSensor = true;
-        sensorDef2.filter.groupIndex = -1;
-        sensorShapeLeft = new PolygonShape();
-        sensorShapeLeft.setAsBox(sensorjv.getFloat("width", 0), sensorjv.getFloat("shrink", 0) * getWidth() / 2.0f,
-                new Vector2(-getWidth() - getWidth() / 2, 0), 0.0f);
-        sensorDef2.shape = sensorShapeLeft;
-        // Ground sensor to represent our feet
-        Fixture sensorFixture2 = body.createFixture(sensorDef2);
-        sensorFixture2.setUserData(sensorNameLeft);
+//        FixtureDef sensorDef = new FixtureDef();
+//        sensorDef.density = data.getFloat("density", 0);
+//        sensorDef.isSensor = true;
+//        sensorDef.filter.groupIndex = -1;
+//        sensorShapeRight = new PolygonShape();
+//
+//        sensorShapeRight.setAsBox(sensorjv.getFloat("width", 0), sensorjv.getFloat("shrink", 0) * getWidth() / 2.0f,
+//                new Vector2(getWidth() + getWidth() / 2, 0), 0.0f);
+//        sensorDef.shape = sensorShapeRight;
+//        Fixture sensorFixture = body.createFixture(sensorDef);
+//        sensorFixture.setUserData(sensorNameRight);
+//
+//        FixtureDef sensorDef2 = new FixtureDef();
+//        sensorDef2.density = data.getFloat("density", 0);
+//        sensorDef2.isSensor = true;
+//        sensorDef2.filter.groupIndex = -1;
+//        sensorShapeLeft = new PolygonShape();
+//        sensorShapeLeft.setAsBox(sensorjv.getFloat("width", 0), sensorjv.getFloat("shrink", 0) * getWidth() / 2.0f,
+//                new Vector2(-getWidth() - getWidth() / 2, 0), 0.0f);
+//        sensorDef2.shape = sensorShapeLeft;
+//        // Ground sensor to represent our feet
+//        Fixture sensorFixture2 = body.createFixture(sensorDef2);
+//        sensorFixture2.setUserData(sensorNameLeft);
 
 
         // create a sensor to detect wall collisions
@@ -586,12 +586,10 @@ public class DiverModel extends GameObject {
 
         releaseFixtures();
         // Create the fixture
-
         fixture.shape = shape;
         fixture.filter.categoryBits = 0x002;
         fixture.filter.groupIndex = 0x004;
         fixture.filter.maskBits = -1;
-
         geometry = body.createFixture(fixture);
         geometry.setUserData(getDiverCollisionBox());
         markDirty(false);
@@ -718,8 +716,6 @@ public class DiverModel extends GameObject {
     }
 
     public void applyForce() {
-
-
         float targetAngle = targetAngleX + ((targetAngleX == 0) ? targetAngleY : -targetAngleY);
         targetAngle += (targetAngle < 0) ? 360f : 0f;
         float dist = targetAngle - getDynamicAngle();
@@ -775,13 +771,16 @@ public class DiverModel extends GameObject {
             setMaxSpeed(swimMaxSpeed);
             setLinearDamping(swimDamping);
 
-            int frame = diverSprite.getFrame();
-            if (tick % 5 == 0) {
-                frame++;
-                if (frame >= diverSprite.getSize() / 2)
-                    frame = 0;
-                diverSprite.setFrame(frame);
+            int frame = diverSprites.get(diverState).getFrame();
+            if (pickupFrame >= 5) {
+                if (tick % 5 == 0) {
+                    frame++;
+                    if (frame >= 12)
+                        frame = 0;
+                    diverSprites.get(diverState).setFrame(frame);
+                }
             }
+
             // compute desired velocity, capping it if it exceeds the maximum speed
             // TODO: Do we only want to be able to swim in 4 directions?
             desired_xvel = getVX() + Math.signum(getHorizontalMovement()) * max_impulse;
@@ -826,20 +825,22 @@ public class DiverModel extends GameObject {
             /**============= Turning Angle Code=============*/
             /**====================================================*/
 
-            if (tick % 10 == 0) {
-                int frame = diverSprite.getFrame();
+            if (pickupFrame >= 5) {
+                if (tick % 10 == 0) {
+                    int frame = diverSprites.get(diverState).getFrame();
 
-                if (frame > 8) {
-                    frame = 7;
-                    stroke = true;
-                }
-                frame += (stroke) ? -1 : 1;
-                if (frame < 6) {
-                    frame = 7;
-                    stroke = false;
-                }
+                    if (frame > 8) {
+                        frame = 7;
+                        stroke = true;
+                    }
+                    frame += (stroke) ? -1 : 1;
+                    if (frame < 6) {
+                        frame = 7;
+                        stroke = false;
+                    }
 
-                diverSprite.setFrame(frame);
+                    diverSprites.get(diverState).setFrame(frame);
+                }
             }
             /**====================================================*/
             /**============= Turning Angle Cod: ENDe=============*/
@@ -879,8 +880,8 @@ public class DiverModel extends GameObject {
     public void drawDebug(GameCanvas canvas) {
 
         canvas.drawPhysics(shape, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
-        canvas.drawPhysics(sensorShapeRight, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
-        canvas.drawPhysics(sensorShapeLeft, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+//        canvas.drawPhysics(sensorShapeRight, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+//        canvas.drawPhysics(sensorShapeLeft, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
         canvas.drawPhysics(hitboxShape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
 
     }
@@ -900,12 +901,10 @@ public class DiverModel extends GameObject {
                 current_item.setVY(0);
                 dropItem();
             } else if (potential_items.size() > 0) {
-
                 current_item = potential_items.get(0);
-
                 current_item.setX(getX());
                 current_item.setY(getY());
-                //current_item.setGravityScale(1);
+//                current_item.setGravityScale(1);
                 current_item.setCarried(true);
             }
         }
@@ -941,10 +940,17 @@ public class DiverModel extends GameObject {
         return potential_items.contains(i);
     }
 
+    public DeadBodyModel getDeadBody() {
+        return dead_body;
+    }
+
     public void setBodyContact(boolean b) {
         contact_body = b;
         if (b) {
+            diverState = 1;
+            pickupFrame = 0;
             carrying_body = true;
+
         }
     }
 
@@ -1029,6 +1035,10 @@ public class DiverModel extends GameObject {
      */
     public void addTouching(String name, GObject obj) {
 
+        if (obj instanceof Wall) {
+            touchingRight.add(obj);
+
+        }
         if (name.equals(sensorNameRight) && !touchingRight.contains(obj))
             touchingRight.add(obj);
         else if (name.equals(sensorNameLeft) && !touchingLeft.contains(obj))
@@ -1050,39 +1060,47 @@ public class DiverModel extends GameObject {
         tick++;
         float effect = faceRight ? 1.0f : -1.0f;
         float flip = bodyFlip ? -1.0f : 1.0f;
-
+        float angle = getAngle();
         if (texture != null) {
 
-            if (stunned) {
-                if (stunCooldown % 20 > 5) {
-
-                    canvas.draw(diverSprite, Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
-                } else {
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+            if (pickupFrame < 5) {
+                if (tick % 3 == 0) {
+                    pickupFrame++;
                 }
+                diverSprites.get(diverState).setFrame(pickupFrame + 24);
+                canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
             } else {
+                if (stunned) {
+                    if (stunCooldown % 20 > 5) {
 
-                float angle = getAngle();
-                if (turnFrames > 0 && turnFrames < 5) {
-                    if (tick % 4 == 0) {
-                        turnFrames--;
+                        canvas.draw(diverSprites.get(diverState), Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
+                    } else {
+                        canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
                     }
-                    diverSprite.setFrame(turnFrames + 12);
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
-                } else if (kickOffFrame < 5) {
-                    if (tick % 3 == 0) {
-
-                        if (kickOffFrame < 3 && isLatching()) {
-                            kickOffFrame++;
-                        } else if (kickOffFrame >= 3 && !isLatching()) {
-                            kickOffFrame++;
-                        }
-
-                    }
-                    diverSprite.setFrame(kickOffFrame + 18);
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
                 } else {
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
+
+
+                    if (turnFrames > 0 && turnFrames < 5) {
+                        if (tick % 4 == 0) {
+                            turnFrames--;
+                        }
+                        diverSprites.get(diverState).setFrame(turnFrames + 12);
+                        canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
+                    } else if (kickOffFrame < 5) {
+                        if (tick % 3 == 0) {
+
+                            if (kickOffFrame < 3) {
+                                kickOffFrame++;
+                            } else if (kickOffFrame >= 3 && !isLatching()) {
+                                kickOffFrame++;
+                            }
+
+                        }
+                        diverSprites.get(diverState).setFrame(kickOffFrame + 18);
+                        canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
+                    } else {
+                        canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
+                    }
                 }
 
             }
