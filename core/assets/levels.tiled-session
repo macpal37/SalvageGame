@@ -12,16 +12,16 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 750,
-                "y": 500
+                "x": 748,
+                "y": 498
             }
         },
         "levels/level1.json": {
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 230,
-                "y": 1052
+                "x": 228,
+                "y": 1050
             }
         },
         "levels/level2.json": {

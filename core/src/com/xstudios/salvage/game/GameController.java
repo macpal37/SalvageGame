@@ -694,11 +694,11 @@ public class GameController implements Screen, ContactListener {
 
 
         //** ADDING TENTACLES TO WalL!
-        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
-            Wall w = level.getDiver().getTouchedWall();
-            Tentacle t = levelBuilder.createTentcle(w, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
-            addQueuedObject(t);
-        }
+//        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
+//            Wall w = level.getDiver().getTouchedWall();
+//            Tentacle t = levelBuilder.createTentcle(w, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+//            addQueuedObject(t);
+//        }
 
         switch (game_state) {
             case PLAYING:
@@ -819,12 +819,12 @@ public class GameController implements Screen, ContactListener {
                 if (!(obj instanceof DecorModel))
                     obj.draw(canvas);
         }
-        level.getDiver().draw(canvas);
+
         for (GameObject obj : level.getAboveObjects()) {
 
             obj.draw(canvas);
         }
-
+        level.getDiver().draw(canvas);
         canvas.end();
         if (!debug)
             rayHandler.updateAndRender();
