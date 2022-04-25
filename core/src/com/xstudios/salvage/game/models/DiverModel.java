@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
-import com.sun.tools.javac.util.Pair;
 import com.xstudios.salvage.assets.GifDecoder;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
@@ -171,15 +170,11 @@ public class DiverModel extends GameObject {
     private PolygonShape hitboxShape;
 
 
-    Pair<String, Integer> pair = new Pair<>("Test", 99);
-
-
     /**
      * Whether you are touching another GameObject
      */
     private ArrayList<GObject> touchingRight;
     private ArrayList<GObject> touchingLeft;
-    private ArrayList<Pair<GObject, Boolean>> touchedObjects;
 
     public Wall getTouchedWall() {
         return touchedWall;
@@ -278,7 +273,6 @@ public class DiverModel extends GameObject {
         diverCollisionBox = "DiverBox";
         touchingRight = new ArrayList<>();
         touchingLeft = new ArrayList<>();
-        touchedObjects = new ArrayList<>();
         // Initialize
         faceRight = true;
         setDimension(1.2f, 0.5f);
@@ -344,7 +338,7 @@ public class DiverModel extends GameObject {
     int turnFrames = 0;
     int kickOffFrame = 10;
     int pickupFrame = 6;
-
+    int idleFrame = 0;
 
     public void balanceRotation() {
         while (body.getAngle() > 0.1 || body.getAngle() < -0.1) {
@@ -765,6 +759,8 @@ public class DiverModel extends GameObject {
         float desired_yvel = 0;
         float max_impulse = 15f;
         float max_impulse_drift = 2f;
+
+
 //        tick++;
         // possible states: swimming, idling/drifting, latching, boosting
         if (isSwimming()) { // player is actively using the arrow keys
@@ -828,23 +824,13 @@ public class DiverModel extends GameObject {
             /**============= Turning Angle Code=============*/
             /**====================================================*/
 
-            if (pickupFrame >= 5) {
-                if (tick % 10 == 0) {
-                    int frame = diverSprites.get(diverState).getFrame();
-
-                    if (frame > 8) {
-                        frame = 7;
-                        stroke = true;
-                    }
-                    frame += (stroke) ? -1 : 1;
-                    if (frame < 6) {
-                        frame = 7;
-                        stroke = false;
-                    }
-
-                    diverSprites.get(diverState).setFrame(frame);
-                }
-            }
+//            if (pickupFrame >= 5) {
+//                if (tick % 10 == 0) {
+//                    int frame = diverSprites.get(diverState).getFrame();
+//
+//                    diverSprites.get(diverState).setFrame(frame);
+//                }
+//            }
             /**====================================================*/
             /**============= Turning Angle Cod: ENDe=============*/
             /**====================================================*/
@@ -1070,10 +1056,21 @@ public class DiverModel extends GameObject {
                 if (tick % 3 == 0) {
                     pickupFrame++;
                 }
-                diverSprites.get(diverState).setFrame(pickupFrame + 24);
+                diverSprites.get(diverState).setFrame(pickupFrame + 38);
                 canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
             } else {
-                if (stunned) {
+                if (isIdling()) {
+
+                    if (tick % 4 == 0) {
+                        idleFrame++;
+                    }
+                    if (idleFrame >= 16) {
+                        idleFrame = 0;
+                    }
+                    diverSprites.get(diverState).setFrame(idleFrame + 24);
+                    canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
+
+                } else if (stunned) {
                     if (stunCooldown % 20 > 5) {
 
                         canvas.draw(diverSprites.get(diverState), Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
@@ -1081,8 +1078,6 @@ public class DiverModel extends GameObject {
                         canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
                     }
                 } else {
-
-
                     if (turnFrames > 0 && turnFrames < 5) {
                         if (tick % 4 == 0) {
                             turnFrames--;

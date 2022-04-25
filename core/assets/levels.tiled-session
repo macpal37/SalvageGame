@@ -24,7 +24,7 @@
             "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1500,
+                "x": 1499.6666666666665,
                 "y": 1000
             }
         },
@@ -37,11 +37,11 @@
             }
         },
         "levels/level4.json": {
-            "scale": 0.5,
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 910,
-                "y": 686
+                "x": 1182.5,
+                "y": 870
             }
         },
         "levels/small_ship.json": {
@@ -56,7 +56,7 @@
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 942.6666666666667,
+                "x": 942,
                 "y": 1692
             }
         },
@@ -84,13 +84,13 @@
     ],
     "project": "",
     "recentFiles": [
-        "levels/tilesets/tentacle_tile.json",
+        "levels/level2.json",
         "levels/test_level.json",
         "levels/level4.json",
         "levels/level1.json",
         "levels/level0.json",
         "levels/tilesets/old_ship_tileset.json",
-        "levels/level2.json",
+        "levels/tilesets/tentacle_tile.json",
         "levels/small_ship.json"
     ]
 }
