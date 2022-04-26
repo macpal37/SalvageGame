@@ -92,8 +92,8 @@ public class MonsterController {
 
     public void wallCollision() {
         float agg = monster.getAggrivation();
-        if (agg < 6.0f){
-             monster.setAggrivation(agg + 1.0f);
+        if (agg < 7.0f) {
+            monster.setAggrivation(agg + 1.0f);
         }
     }
 
