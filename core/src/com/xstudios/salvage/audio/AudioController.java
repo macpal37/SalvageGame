@@ -19,10 +19,10 @@ public class AudioController {
     private StreamedSoundSource music;
     private StreamedSoundSource bubbles;
     private SoundBuffer background_roar;
-    private float max_oxygen;
+    //    private float max_oxygen;
     private int ticks;
 
-    private AudioController(){
+    private AudioController() {
         audio = Audio.init();
         SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("audio/heartbeat.wav"));
         SoundBuffer oxygen_alarm_wav = WaveLoader.load(Gdx.files.internal("audio/oxygen_alarm.wav"));
@@ -49,46 +49,45 @@ public class AudioController {
         return theController;
     }
 
-    public void initialize(float initial_oxygen){
-        max_oxygen = initial_oxygen;
+    public void initialize() {
         music.play();
         bubbles.play();
         heartbeat.play();
         heartbeat.setVolume(0.0f);
     }
 
-    public void update(float oxygen){
-        if (ticks > 750){
+    public void update(float oxygen, float max_oxygen) {
+        if (ticks > 750) {
             double rand = Math.random();
-            if (rand > 0.5){
-                float roar_volume = (float)(1.15 - rand);
+            if (rand > 0.5) {
+                float roar_volume = (float) (1.15 - rand);
                 audio.play(background_roar, roar_volume);
             }
             ticks = 0;
         }
         ticks++;
 
-        float volume = (max_oxygen-oxygen)/max_oxygen;
-        heartbeat.setVolume(volume-0.1f);
+        float volume = (max_oxygen - oxygen) / max_oxygen;
+        heartbeat.setVolume(volume - 0.1f);
 
-        if (((oxygen/max_oxygen) < 0.25f) && !oxygen_alarm.isPlaying()){
-            float oxygen_volume = 0.4f + ((25.0f - oxygen)/50.0f);
+        if (((oxygen / max_oxygen) < 0.25f) && !oxygen_alarm.isPlaying()) {
+            float oxygen_volume = 0.4f + ((25.0f - oxygen) / 50.0f);
             oxygen_alarm.setVolume(oxygen_volume);
             oxygen_alarm.play();
 
         }
     }
 
-    public void wall_collision(float force){
+    public void wall_collision(float force) {
         //float volume = (force)/20.f;
         audio.play(wall_collision, 0.5f);
     }
 
-    public void reset(){
+    public void reset() {
         oxygen_alarm.stop();
     }
 
-    public void dispose(){
+    public void dispose() {
         music.dispose();
         audio.dispose();
     }

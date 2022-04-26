@@ -24,6 +24,12 @@
                  "height":100,
                  "id":1,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"starting_oxygen",
+                         "type":"int",
+                         "value":100
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -64,8 +70,20 @@
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":121.151515151515,
-                 "y":541.818181818182
+                 "x":151.818181818182,
+                 "y":547.151515151515
+                }, 
+                {
+                 "gid":25,
+                 "height":100,
+                 "id":25,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":151.818181818182,
+                 "y":547.151515151515
                 }, 
                 {
                  "gid":5,
@@ -298,18 +316,6 @@
                 {
                  "gid":15,
                  "height":114.666666666667,
-                 "id":22,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":100,
-                 "x":208,
-                 "y":556
-                }, 
-                {
-                 "gid":15,
-                 "height":114.666666666667,
                  "id":23,
                  "name":"",
                  "properties":[
@@ -322,8 +328,26 @@
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":208,
-                 "y":556
+                 "x":204.333333333333,
+                 "y":560
+                }, 
+                {
+                 "gid":15,
+                 "height":114.666666666667,
+                 "id":26,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"id",
+                         "type":"int",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":204.333333333333,
+                 "y":560
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -332,7 +356,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":25,
+ "nextobjectid":27,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",

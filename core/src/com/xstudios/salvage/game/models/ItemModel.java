@@ -35,7 +35,7 @@ public class ItemModel extends DiverObjectModel {
 
     private Light light;
 
-    public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
+    public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.YELLOW, Color.CYAN};
     Color item_color;
 
 

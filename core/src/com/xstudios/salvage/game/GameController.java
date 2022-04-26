@@ -221,7 +221,7 @@ public class GameController implements Screen, ContactListener {
      * ================================LEVELS=================================
      */
 
-    private String[] levels = {"tutorial1", "tutorial2", "level4"};
+    private String[] levels = {"tutorial1", "tutorial2", "tutorial3"};
 
 //    private String[] levels = {"test_level", "level1", "level3"};
 
@@ -329,7 +329,7 @@ public class GameController implements Screen, ContactListener {
         wallShine.setContactFilter(f2);
         light.setContactFilter(f);
 //        audioController = new AudioController(100.0f);
-        AudioController.getInstance().initialize(100.0f);
+        AudioController.getInstance().initialize();
         collisionController = new CollisionController();
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
@@ -610,7 +610,8 @@ public class GameController implements Screen, ContactListener {
         }
 
         // update audio according to oxygen level
-        AudioController.getInstance().update(level.getDiver().getOxygenLevel());
+        System.out.println("DIVER: " + level.getDiver().getOxygenLevel());
+        AudioController.getInstance().update(level.getDiver().getOxygenLevel(), level.getDiver().getMaxOxygen());
 
 
         if (level.getDiver().getBody() != null && !pause) {
