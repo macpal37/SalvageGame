@@ -23,7 +23,6 @@ public class CollisionController {
     public void endContact(Body b1, Body b2) {
     }
 
-<<<<<<< HEAD
     /**
      * adds body to list of bodies the diver left right sensors are touching
      *
@@ -73,20 +72,7 @@ public class CollisionController {
         GObject bd2 = (GObject) body2.getUserData();
         if ((diver.getSensorNameLeft().equals(fd2) && diver != bd1) ||
                 (diver.getSensorNameLeft().equals(fd1) && diver != bd2)) {
-=======
-        if (b1.getUserData().getClass() == DiverModel.class) {
-            DiverModel d1 = (DiverModel) b1.getUserData();
-            if (b2.getUserData().getClass() == ItemModel.class) {
-//                if(d1.getItem() !=  b2.getUserData()) {
-                    d1.addPotentialItem((ItemModel) b2.getUserData());
-//                }
-            }
-        }
-    }
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
 
-
-<<<<<<< HEAD
             if (diver != bd1)
                 diver.removeTouching(diver.getSensorNameLeft(), bd1);
             else
@@ -101,10 +87,7 @@ public class CollisionController {
                 diver.removeTouching(diver.getSensorNameRight(), bd2);
 
         }
-=======
-        // end contact with wall
-        endDiverToObstacle(b1, b2);
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
+
     }
 
     /**
@@ -113,7 +96,7 @@ public class CollisionController {
      * @param b1 one of the colliding bodies
      * @param b2 the other of the colliding bodies
      */
-<<<<<<< HEAD
+
     public void startDiverItemCollision(Body b1, Body b2) {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof ItemModel) {
             ((ItemModel) b2.getUserData()).setTouched(true);
@@ -152,14 +135,7 @@ public class CollisionController {
             putDown(diver, item);
             item.setTouched(false);
         }
-=======
-    public static void pickUp(DiverModel diver, ItemModel item){
-        diver.printPotentialItems();
-//        if(diver.getItem() !=  item) {
-            diver.addPotentialItem(item);
 
-//        }
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
     }
 
     /**
@@ -168,15 +144,11 @@ public class CollisionController {
      * @param diver diver object
      * @param door  door currently colliding with
      */
-<<<<<<< HEAD
+
     public static boolean attemptUnlock(DiverModel diver, Door door) {
         if (diver.getItem() != null) {
             if (diver.getItem().getID() == door.getID() || diver.getItem().getItemType() == ItemModel.ItemType.DEAD_BODY) {
-=======
-    public static boolean attemptUnlock(DiverModel diver, Door door){
-        if(diver.getItem()!=null) {
-            if (diver.getItem().getID()== door.getID()) {
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
+
                 return true;
             }
         }
@@ -293,17 +265,13 @@ public class CollisionController {
 
 
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
-<<<<<<< HEAD
+
             diver.setTouchedWall((Wall) b2.getUserData());
             diver.setTouchingObstacle(true);
         }
         if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
             diver.setTouchedWall((Wall) b1.getUserData());
-=======
-            ((DiverModel) b1.getUserData()).setTouchingObstacle(true);
-        }
-        if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
+
             ((DiverModel) b2.getUserData()).setTouchingObstacle(true);
         }
 
@@ -361,12 +329,10 @@ public class CollisionController {
 
     }
 
-<<<<<<< HEAD
+
     public static float staticHazardCollision(DiverModel diver, HazardModel hazard) {
         System.out.println("Hazard Contact: " + hazard.getOxygenDrain());
-=======
-    public static float staticHazardCollision(DiverModel diver, HazardModel hazard){
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
+
         if (!diver.getStunned()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());

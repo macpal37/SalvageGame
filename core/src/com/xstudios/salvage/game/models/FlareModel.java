@@ -56,11 +56,11 @@ public class FlareModel extends DiverObjectModel {
         }
         movement = new Vector2();
         light_color = new Color(1f, 0.5f, 0.5f, 0.6f);//Color.BLACK;
-        white_light = new Color(1f, 1f, 1f, 0.8f);
+        white_light = new Color(1f, 1f, 1f, 0.4f);
         setCarried(true);
         drawScale.set(40, 40);
         isActivated = false;
-        shape.setAsBox(.5f,.05f, new Vector2(.15f,-.225f), 0);
+        shape.setAsBox(.5f, .05f, new Vector2(.15f, -.225f), 0);
     }
 
 
@@ -96,15 +96,17 @@ public class FlareModel extends DiverObjectModel {
 
     public void setActivated(boolean b) {
         isActivated = b;
-        if(!b) {
+        if (!b) {
             light.setActive(false);
             redLight.setActive(false);
         }
     }
 
     public void removeLights() {
-        light.remove();
-        redLight.remove();
+        if (light != null)
+            light.remove();
+        if (redLight != null)
+            redLight.remove();
     }
 
     public boolean isActivated() {
@@ -173,46 +175,46 @@ public class FlareModel extends DiverObjectModel {
     @Override
     public void draw(GameCanvas canvas) {
         tick++;
-        if (texture != null) {
-            if (isActivated || !carried) {
-                if (!carried) {
+
+        if (isActivated || !carried) {
+            if (!carried) {
 //                    if (FLARE_LIGHT_RADIUS > MIN_LIGHT_RADIUS) {
 //                        FLARE_LIGHT_RADIUS--;
 //                    }
-                    //Light Flickering
-                    if (tick % 20 > 10) {
-                        light.setDistance(light.getDistance() + 0.01f);
-                    } else {
-                        light.setDistance(light.getDistance() - 0.01f);
-                    }
-                    if (tick % 20 == 0 && redLight.getDistance() > FLARE_LIGHT_RADIUS) {
-                        redLight.setDistance(redLight.getDistance() - 1f);
-                    }
-                    if (tick % 100 == 0 && redLight.getDistance() >= MIN_LIGHT_RADIUS && redLight.getDistance() <= FLARE_LIGHT_RADIUS) {
-                        redLight.setDistance(redLight.getDistance() - 0.5f);
-                    }
-                    if(redLight.getDistance() > MIN_LIGHT_RADIUS ) {
-                        if (tick % 5 == 0) {
-                            int frame = flareSprite.getFrame();
+                //Light Flickering
+                if (tick % 20 > 10) {
+                    light.setDistance(light.getDistance() + 0.01f);
+                } else {
+                    light.setDistance(light.getDistance() - 0.01f);
+                }
+                if (tick % 20 == 0 && redLight.getDistance() > FLARE_LIGHT_RADIUS) {
+                    redLight.setDistance(redLight.getDistance() - 1f);
+                }
+                if (tick % 100 == 0 && redLight.getDistance() >= MIN_LIGHT_RADIUS && redLight.getDistance() <= FLARE_LIGHT_RADIUS) {
+                    redLight.setDistance(redLight.getDistance() - 0.5f);
+                }
+                if (redLight.getDistance() > MIN_LIGHT_RADIUS) {
+                    if (tick % 5 == 0) {
+                        int frame = flareSprite.getFrame();
 
-                            frame++;
-                            if (frame >= flareSprite.getSize())
-                                frame = 0;
-                            flareSprite.setFrame(frame);
-                        }
-//                        System.out.println("flickering");
+                        frame++;
+                        if (frame >= flareSprite.getSize())
+                            frame = 0;
+                        flareSprite.setFrame(frame);
                     }
-                    canvas.draw(flareSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, (float)-Math.PI /2, .36f, .36f);
+//                        System.out.println("flickering");
+                }
+                canvas.draw(flareSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, (float) -Math.PI / 2, .36f, .36f);
 //                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1f, 1f);
 
-                }
-                light.setPosition(getX(), getY());
-                light.setActive(true);
-                redLight.setPosition(getX(), getY());
-                redLight.setActive(true);
             }
+            light.setPosition(getX(), getY());
+            light.setActive(true);
+            redLight.setPosition(getX(), getY());
+            redLight.setActive(true);
         }
     }
+
 
     public int getFrame() {
         return flareSprite.getFrame();
@@ -340,8 +342,8 @@ public class FlareModel extends DiverObjectModel {
     }
 
     public void setBrightness(float f) {
-        System.out.println("light color 1 "+ light_color.a);
-        System.out.println("light white 1 "+ white_light.a);
+        System.out.println("light color 1 " + light_color.a);
+        System.out.println("light white 1 " + white_light.a);
         light_color.a *= f;
         white_light.a *= f;
 
@@ -355,8 +357,8 @@ public class FlareModel extends DiverObjectModel {
         white_light.b *= f;
         light.setColor(white_light);
         redLight.setColor(light_color);
-        System.out.println("light color 2 "+ light_color.a);
-        System.out.println("light white 2 "+ white_light.a);
+        System.out.println("light color 2 " + light_color.a);
+        System.out.println("light white 2 " + white_light.a);
     }
 
     public void setFilmStrip(FilmStrip value) {

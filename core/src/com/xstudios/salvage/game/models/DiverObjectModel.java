@@ -10,25 +10,43 @@ import com.xstudios.salvage.game.GameObject;
 public abstract class DiverObjectModel extends GameObject {
 
 
-    /** Drawing scale for when being carried*/
+    /**
+     * Drawing scale for when being carried
+     */
     protected Vector2 drawSymbolScale;
-    /** If item is being carried */
+    /**
+     * If item is being carried
+     */
     protected boolean carried;
 
     protected boolean isTouched;
-    /** Shape information for this box */
+    /**
+     * Shape information for this box
+     */
     protected PolygonShape shape;
-    /** A cache value for the fixture (for resizing) */
+    /**
+     * A cache value for the fixture (for resizing)
+     */
     protected Fixture geometry;
-    /** Cache of the polygon vertices (for resizing) */
+    /**
+     * Cache of the polygon vertices (for resizing)
+     */
     protected float[] vertices;
-    /** The factor to multiply by the input */
+    /**
+     * The factor to multiply by the input
+     */
     protected float force;
-    /** Cache for internal force calculations */
+    /**
+     * Cache for internal force calculations
+     */
     protected final Vector2 forceCache = new Vector2();
-    /** The amount to slow the character down */
+    /**
+     * The amount to slow the character down
+     */
     protected float damping;
-    /** The maximum character speed */
+    /**
+     * The maximum character speed
+     */
     protected float maxspeed;
 
     /**
@@ -42,8 +60,8 @@ public abstract class DiverObjectModel extends GameObject {
      *
      * @param data Json values
      */
-    protected DiverObjectModel(float x,float y, JsonValue data) {
-       // super (x,y);
+    protected DiverObjectModel(float x, float y, JsonValue data) {
+        // super (x,y);
         super(x,
                 y);
 
@@ -64,7 +82,7 @@ public abstract class DiverObjectModel extends GameObject {
         setDimension(1, 1);
         setMass(1);
         resetMass();
-        drawSymbolScale = new Vector2(1,1);
+        drawSymbolScale = new Vector2(1, 1);
     }
 
 
@@ -83,7 +101,7 @@ public abstract class DiverObjectModel extends GameObject {
 
     /**
      * Returns the drawing scale for this object when it is being carried
-     *
+     * <p>
      * We allow for the scaling factor to be non-uniform.
      *
      * @return the drawing scale for this object when it is being carried
@@ -95,23 +113,23 @@ public abstract class DiverObjectModel extends GameObject {
 
     /**
      * Sets the drawing scale for this object when it is being carried
-     *
+     * <p>
      * We allow for the scaling factor to be non-uniform.
      *
-     * @param value  the drawing scale for this object when it is being carried
+     * @param value the drawing scale for this object when it is being carried
      */
     public void setDrawSymbolScale(Vector2 value) {
-        setDrawSymbolScale(value.x,value.y);
+        setDrawSymbolScale(value.x, value.y);
     }
 
     /**
      * Sets the drawing scale for this object when it is being carried
      *
-     * @param x  the x-axis scale for this object
-     * @param y  the y-axis scale for this object
+     * @param x the x-axis scale for this object
+     * @param y the y-axis scale for this object
      */
     public void setDrawSymbolScale(float x, float y) {
-        drawSymbolScale.set(x,y);
+        drawSymbolScale.set(x, y);
     }
 
 

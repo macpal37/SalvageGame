@@ -45,24 +45,13 @@ public class DiverModel extends GameObject {
     protected TextureRegion pingTexture;
 
 
-<<<<<<< HEAD
     private ArrayList<FilmStrip> diverSprites;
 
-=======
+
     private int minFlareDist = 5;
 
     private FilmStrip diverSprite;
 
-    private int current_frame = 0;
-
-    private float targetAngle;
-    private float currentAngle;
-
-    public int getFrame() {
-        return diverSprite.getFrame();
-
-    }
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
 
     private int diverState = 0;
     private final int DIVER_IMG_FLAT = 6;
@@ -317,10 +306,9 @@ public class DiverModel extends GameObject {
         ping = false;
         movement = new Vector2();
         drift_movement = new Vector2();
-<<<<<<< HEAD
+
         oxygenLevel = data.getInt("max_oxygen", (int) maxOxygenLevel);
-=======
-        oxygenLevel = data.getInt("max_oxygen", MAX_OXYGEN);
+
         num_flares = data.getInt("num_flares", 5);
         MAX_FLARE_DURATION = data.getInt("flare_duration", 100);
         flare_duration = 0;
@@ -330,7 +318,7 @@ public class DiverModel extends GameObject {
         for (int i = 0; i < num_flares; i++) {
             flares.add(new FlareModel(data));
         }
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
+
         pingDirection = new Vector2();
         ping_cooldown = 0;
         center = new Rectangle();
@@ -343,23 +331,17 @@ public class DiverModel extends GameObject {
         cap1 = null;
         cap2 = null;
         // TODO: Put this in the constants JSON
-<<<<<<< HEAD
+
         boostedMaxSpeed = swimMaxSpeed * 1.5f;
-=======
-        boostedMaxSpeed = swimMaxSpeed * 1.27f;
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
+
         maxSpeed = swimMaxSpeed;
         swimDamping = damping;
 
         boostDamping = damping / 7;
         facingDir = new Vector2(0, 0);
 
-<<<<<<< HEAD
         setFixedRotation(false);
-=======
-        targetAngle = 0;
-        currentAngle = 0;
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
+
 
         carrying_body = false;
         dead_body = null;
@@ -410,15 +392,8 @@ public class DiverModel extends GameObject {
     public void setHorizontalMovement(float value) {
         movement.x = value;
         if (movement.x < 0 && faceRight) {
-<<<<<<< HEAD
         } else if (movement.x > 0 && !faceRight) {
-=======
-            turnFrames = 4;
-            faceRight = false;
-        } else if (movement.x > 0 && !faceRight) {
-            turnFrames = 4;
-            faceRight = true;
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
+
         }
 
 
@@ -436,10 +411,7 @@ public class DiverModel extends GameObject {
             drift_movement.x = x_val;
             drift_movement.y = y_val;
         }
-//        for(FlareModel f: flares) {
-//            f.setHorizontalMovement(x_val);
-//            f.setVerticalMovement(y_val);
-//        }
+
     }
 
     /**
@@ -581,30 +553,6 @@ public class DiverModel extends GameObject {
 
         JsonValue sensorjv = data.get("sensor");
 
-//        FixtureDef sensorDef = new FixtureDef();
-//        sensorDef.density = data.getFloat("density", 0);
-//        sensorDef.isSensor = true;
-//        sensorDef.filter.groupIndex = -1;
-//        sensorShapeRight = new PolygonShape();
-//
-//        sensorShapeRight.setAsBox(sensorjv.getFloat("width", 0), sensorjv.getFloat("shrink", 0) * getWidth() / 2.0f,
-//                new Vector2(getWidth() + getWidth() / 2, 0), 0.0f);
-//        sensorDef.shape = sensorShapeRight;
-//        Fixture sensorFixture = body.createFixture(sensorDef);
-//        sensorFixture.setUserData(sensorNameRight);
-//
-//        FixtureDef sensorDef2 = new FixtureDef();
-//        sensorDef2.density = data.getFloat("density", 0);
-//        sensorDef2.isSensor = true;
-//        sensorDef2.filter.groupIndex = -1;
-//        sensorShapeLeft = new PolygonShape();
-//        sensorShapeLeft.setAsBox(sensorjv.getFloat("width", 0), sensorjv.getFloat("shrink", 0) * getWidth() / 2.0f,
-//                new Vector2(-getWidth() - getWidth() / 2, 0), 0.0f);
-//        sensorDef2.shape = sensorShapeLeft;
-//        // Ground sensor to represent our feet
-//        Fixture sensorFixture2 = body.createFixture(sensorDef2);
-//        sensorFixture2.setUserData(sensorNameLeft);
-
 
         // create a sensor to detect wall collisions
         FixtureDef hitboxDef = new FixtureDef();
@@ -619,14 +567,13 @@ public class DiverModel extends GameObject {
         Fixture hitboxFixture = body.createFixture(hitboxDef);
         hitboxFixture.setUserData(hitboxSensorName);
 
-        for (FlareModel f: flares) {
+        for (FlareModel f : flares) {
             f.activatePhysics(world);
         }
         System.out.println("WORLD GRAVITY " + world.getGravity());
         return true;
     }
 
-<<<<<<< HEAD
     public String getHitboxSensorName() {
         return hitboxSensorName;
     }
@@ -636,15 +583,14 @@ public class DiverModel extends GameObject {
     }
 
 
-=======
     public void deactivatePhysics(World world) {
         super.deactivatePhysics(world);
-        for(FlareModel f: flares) {
+        for (FlareModel f : flares) {
             f.removeLights();
         }
     }
 
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
+
     /**
      * Release the fixtures for this body, reseting the shape
      * <p>
@@ -672,55 +618,6 @@ public class DiverModel extends GameObject {
         geometry.setUserData(getDiverCollisionBox());
         markDirty(false);
     }
-
-<<<<<<< HEAD
-
-    // draw the ping
-=======
-    @Override
-    public void draw(GameCanvas canvas) {
-        tick++;
-        float effect = faceRight ? 1.0f : -1.0f;
-
-        // darw the diver
-        if (texture != null) {
-
-            // draw the flares
-            for (FlareModel f : flares) {
-                f.draw(canvas);
-            }
-
-//            System.out.println("DRAWSCALE + "+ drawScale);
-            if (stunned) {
-                if (stunCooldown % 20 > 5) {
-                    canvas.draw(diverSprite, Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
-                } else {
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
-                }
-            } else {
-
-                if (turnFrames > 0 && turnFrames < 5) {
-                    if (tick % 4 == 0) {
-                        turnFrames--;
-                    }
-                    diverSprite.setFrame(turnFrames + 12);
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
-                } else {
-                    canvas.draw(diverSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
-                }
-
-            }
-        }
-
-        // draw the ping
-        if (ping || ping_cooldown > 0) {
-            canvas.draw(pingTexture, Color.WHITE, origin.x + pingDirection.x,
-                    origin.y + pingDirection.y, getX() * drawScale.x, getY() * drawScale.y, 0, 0.25f, 0.25f);
-            ping_cooldown--;
-        }
-    }
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
-
 
     /**
      * Returns left/right movement of this character.
@@ -806,7 +703,7 @@ public class DiverModel extends GameObject {
 
     // TODO: Having a state machine would probably be helpful
     public boolean isSwimming() {
-        return !isLatching() /*&& !isBoosting() */&& movement.len() != 0;
+        return !isLatching() /*&& !isBoosting() */ && movement.len() != 0;
     }
 
     public boolean isIdling() {
@@ -871,8 +768,6 @@ public class DiverModel extends GameObject {
 
         float newAngle = angle * ((isLatching()) ? ((isBoosting()) ? 4 : 5) : 1);
         float coAngle = angle;
-//        if (newAngle + getDynamicAngle() > targetAngle)
-////            newAngle = 0f;
 
 
         if (dist > coAngle / 2) {
@@ -882,7 +777,6 @@ public class DiverModel extends GameObject {
         } else {
             body.setAngularVelocity(0.0f);
         }
-        System.out.println("Angle: " + getDynamicAngle());
         float tinyBuffer = 5f;
 
 //        if (getDynamicAngle() != 269 || getDynamicAngle() != 271 || getDynamicAngle() != 89 || getDynamicAngle() != 91) {
@@ -1029,7 +923,7 @@ public class DiverModel extends GameObject {
 //        canvas.drawPhysics(sensorShapeLeft, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
         canvas.drawPhysics(hitboxShape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
 
-        for(FlareModel f: flares) {
+        for (FlareModel f : flares) {
             f.drawDebug(canvas);
         }
     }
@@ -1039,23 +933,6 @@ public class DiverModel extends GameObject {
      */
     public void setItem() {
         if (pickUpOrDrop) {
-<<<<<<< HEAD
-            if (current_item != null) {
-
-                current_item.setGravityScale(0f);
-                current_item.setX(getX());
-                current_item.setY(getY());
-                current_item.setVerticalMovement(0);
-                current_item.setVX(0);
-                current_item.setVY(0);
-                dropItem();
-            } else if (potential_items.size() > 0) {
-                current_item = potential_items.get(0);
-                current_item.setX(getX());
-                current_item.setY(getY());
-//                current_item.setGravityScale(1);
-                current_item.setCarried(true);
-=======
 
             if (current_item != null && potential_items.size() == 0) {
                 dropItem();
@@ -1070,7 +947,7 @@ public class DiverModel extends GameObject {
                     current_item.setCarried(true);
                     break;
                 }
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
+
             }
         }
     }
@@ -1107,10 +984,12 @@ public class DiverModel extends GameObject {
         return potential_items.contains(i);
     }
 
-<<<<<<< HEAD
+
     public DeadBodyModel getDeadBody() {
         return dead_body;
-=======
+
+    }
+
     public void printPotentialItems() {
         System.out.println("POTENTIAL ITEMS SIZE" + potential_items.size());
         for (ItemModel i : potential_items) {
@@ -1134,10 +1013,8 @@ public class DiverModel extends GameObject {
 
         for (FlareModel f : flares) {
             f.initLight(rayHandler);
-//            f.
             f.setCarried(true);
             f.setActivated(false);
-//            f.setSensor(true);
         }
     }
 
@@ -1146,25 +1023,10 @@ public class DiverModel extends GameObject {
     }
 
     public void updateFlare() {
+
         if (num_flares > 0 && active_flare) {
             FlareModel f = flares.get(num_flares - 1);
             if (flare_duration < MAX_FLARE_DURATION) {
-
-//                int num_neighbors = 0;
-//                for (int i = num_flares; i < flares.size(); i++) {
-//                    System.out.println("Dist " + flares.get(i).getPosition().dst(getPosition()));
-//                    if (flares.get(i).getPosition().dst(getPosition()) < minFlareDist) {
-////                        flares.get(i).setActivated(false);
-//                        neighboring_flares.add(flares.get(i));
-//                        num_neighbors++;
-//                    }
-//                }
-////                System.out.println("NUM NEIGHBORS " + num_neighbors);
-//                for(int i = 0; i < num_neighbors; i++) {
-////                    neighboring_flares.get(i).setBrightness(1/((float) num_neighbors));
-//                }
-//
-//                f.setBrightness(1/((float) num_neighbors));
 
                 f.setActivated(true);
                 f.setX(getX());
@@ -1185,7 +1047,7 @@ public class DiverModel extends GameObject {
 
             }
         }
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
+
     }
 
     public void setBodyContact(boolean b) {
@@ -1327,7 +1189,9 @@ public class DiverModel extends GameObject {
             dead_body.setCarried(true);
             dead_body.setActive(false);
         }
-
+        for (FlareModel f : flares) {
+            f.draw(canvas);
+        }
 
         tick++;
         float effect = faceRight ? 1.0f : -1.0f;
@@ -1393,12 +1257,12 @@ public class DiverModel extends GameObject {
     }
 
 
-    public boolean atAngle() {
-        return currentAngle == targetAngle;
-    }
+//    public boolean atAngle() {
+//        return currentAngle == targetAngle;
+//    }
 
     public int getRemainingFlares() {
-        if(num_flares > 0 && (!flares.get(num_flares - 1).isCarried() || flares.get(num_flares-1).isActivated())){
+        if (num_flares > 0 && (!flares.get(num_flares - 1).isCarried() || flares.get(num_flares - 1).isActivated())) {
             return num_flares - 1;
         }
         return num_flares;
@@ -1411,21 +1275,21 @@ public class DiverModel extends GameObject {
      *
      * @return the angle of rotation for this body
      */
-    public float getAngle() {
-
-        if (!faceRight && !movement.isZero()) {
-            targetAngle = movement.angleRad() - (float) (Math.PI);
-        } else if (!movement.isZero()) {
-            targetAngle = movement.angleRad();
-        }
-        if (currentAngle > targetAngle + .1) {
-            float tmp = targetAngle - currentAngle;
-            currentAngle -= .1;
-        } else if (currentAngle < targetAngle - .1) {
-            currentAngle += .1;
-            float tmp = targetAngle - currentAngle;
-        }
-        return targetAngle;
-    }
+//    public float getAngle() {
+//
+//        if (!faceRight && !movement.isZero()) {
+//            targetAngle = movement.angleRad() - (float) (Math.PI);
+//        } else if (!movement.isZero()) {
+//            targetAngle = movement.angleRad();
+//        }
+//        if (currentAngle > targetAngle + .1) {
+//            float tmp = targetAngle - currentAngle;
+//            currentAngle -= .1;
+//        } else if (currentAngle < targetAngle - .1) {
+//            currentAngle += .1;
+//            float tmp = targetAngle - currentAngle;
+//        }
+//        return targetAngle;
+//    }
 
 }
