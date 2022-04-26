@@ -461,6 +461,8 @@ public class LevelBuilder {
              * ===============================================*/
             else {
                 for (JsonValue obj : layer.get("objects")) {
+                    System.out.println("gid: " + obj.getInt("gid"));
+                    System.out.println("num tiles : " + tiles.length);
                     Tile tile = tiles[obj.getInt("gid") - 1];
 
                     float sx = obj.getFloat("x") / div;
@@ -495,9 +497,13 @@ public class LevelBuilder {
                             break;
                         case Item:
                             ItemModel item = new ItemModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("key"), ItemModel.ItemType.KEY);
-                            for (JsonValue prop : obj.get("properties")) {
-                                if (prop.getString("name").equals("id"))
-                                    item.setID(prop.getInt("value"));
+                            if (obj.get("properties") != null) {
+                                for (JsonValue prop : obj.get("properties")) {
+                                    if (prop.getString("name").equals("id"))
+                                        item.setID(prop.getInt("value"));
+                                }
+                            } else {
+                                System.out.println("Please manually set the custom id property in tiled (if desired)");
                             }
                             gameObjects.add(item);
                             item.setAngle(rotation);

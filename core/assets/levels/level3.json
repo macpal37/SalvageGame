@@ -1,4 +1,12 @@
 { "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"json",
+         "target":"level3.tmj"
+        }
+    },
  "height":15,
  "infinite":false,
  "layers":[
@@ -53,10 +61,10 @@
                  "visible":true,
                  "width":174.666666666667,
                  "x":584,
-                 "y":652.666666666667
+                 "y":649.666666666667
                 }, 
                 {
-                 "gid":2147483683,
+                 "gid":35,
                  "height":100,
                  "id":25,
                  "name":"",
@@ -101,7 +109,7 @@
                  "visible":true,
                  "width":148,
                  "x":258,
-                 "y":1356
+                 "y":1353
                 }, 
                 {
                  "gid":35,
@@ -176,7 +184,7 @@
                  "y":830
                 }, 
                 {
-                 "gid":1073741860,
+                 "gid":36,
                  "height":100,
                  "id":41,
                  "name":"",
@@ -199,7 +207,7 @@
          "name":"Midground",
          "objects":[
                 {
-                 "gid":2147483652,
+                 "gid":4,
                  "height":100,
                  "id":2,
                  "name":"",
@@ -215,6 +223,12 @@
                  "height":100,
                  "id":5,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"id",
+                         "type":"int",
+                         "value":0
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -235,7 +249,7 @@
                  "y":1304
                 }, 
                 {
-                 "gid":1073741860,
+                 "gid":36,
                  "height":150.277953002313,
                  "id":7,
                  "name":"",

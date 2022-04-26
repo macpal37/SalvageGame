@@ -220,7 +220,7 @@ public class GameController implements Screen, ContactListener {
     /**
      * ================================LEVELS=================================
      */
-    private String[] levels = {"test_level", "level1", "level4"};
+    private String[] levels = {"test_level", "level1", "level3"};
     private int curr_level;
 
     private enum state {
