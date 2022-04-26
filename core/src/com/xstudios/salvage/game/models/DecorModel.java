@@ -68,6 +68,10 @@ public class DecorModel extends GameObject {
 
     }
 
+    public Vector2 getScale() {
+        return scale;
+    }
+
     public Vector2 scale = new Vector2(1, 1);
 
     public void setScale(float x, float y) {

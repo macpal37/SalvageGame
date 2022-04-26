@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
+import com.xstudios.salvage.util.FilmStrip;
 
 
 public class ItemModel extends DiverObjectModel {
@@ -64,7 +65,7 @@ public class ItemModel extends DiverObjectModel {
 
     public void initLight(RayHandler rayHandler) {
 
-        light = new PointLight(rayHandler, 100, new Color(1f, 0.5f, 0.5f, 0.5f), 2, getX(), getY());
+        light = new PointLight(rayHandler, 100, new Color(225 / 255f, 185 / 255f, 80 / 255f, 0.2f), 5, getX(), getY());
         Filter f = new Filter();
         f.categoryBits = 0x0002;
         f.maskBits = 0x0004;
@@ -127,12 +128,35 @@ public class ItemModel extends DiverObjectModel {
         origin.set(texture.getRegionWidth() / 2.0f, texture.getRegionHeight() / 2.0f);
     }
 
+    private FilmStrip spriteSheet;
+
+    private int startingFrame = 0;
+
+    public int getFrame() {
+        return spriteSheet.getFrame();
+
+    }
+
+    public void setFilmStrip(FilmStrip value) {
+        spriteSheet = value;
+        spriteSheet.setFrame(startingFrame);
+    }
+
+    int tick = 0;
 
     @Override
     public void draw(GameCanvas canvas) {
         if (texture != null) {
             if (!carried) {
-                canvas.draw(texture, ItemModel.COLOR_OPTIONS[getID()], origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
+
+                if (tick % 15 == 0) {
+                    int frame = spriteSheet.getFrame();
+                    frame++;
+                    if (frame >= spriteSheet.getSize())
+                        frame = 0;
+                    spriteSheet.setFrame(frame);
+                }
+                canvas.draw(spriteSheet, ItemModel.COLOR_OPTIONS[getID()], origin.x * 2, origin.y * 2, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
             }
             if (!carried && isTouched) {
                 canvas.drawText("Press q", GameController.displayFont, (getX() - getWidth() * 1.25f) * drawScale.x, (getY() + getHeight() * 1.5f) * drawScale.y);

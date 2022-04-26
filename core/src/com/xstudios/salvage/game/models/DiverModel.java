@@ -718,7 +718,8 @@ public class DiverModel extends GameObject {
             else
                 targetAngle = 0;
         } else {
-            targetAngle = (isSwimming()) ? targetAngleX + ((targetAngleX == 0) ? targetAngleY : -targetAngleY) : getDynamicAngle();
+
+            targetAngle = (isSwimming() || isBoosting()) ? targetAngleX + ((targetAngleX == 0) ? targetAngleY : -targetAngleY) : getDynamicAngle();
 
         }
 
@@ -737,15 +738,22 @@ public class DiverModel extends GameObject {
                 turnFrames = 4;
             }
         }
+//        float coAngle = 180 * angle / (float) Math.PI;
 
-        if (dist > 0) {
-            angle *= (isLatching()) ? 5 : 1;
-            body.setAngularVelocity(angle);
-        } else if (dist < 0) {
-            body.setAngularVelocity(-angle);
+        float newAngle = angle * ((isLatching()) ? ((isBoosting()) ? 4 : 5) : 1);
+        float coAngle = angle;
+//        if (newAngle + getDynamicAngle() > targetAngle)
+////            newAngle = 0f;
+
+
+        if (dist > coAngle / 2) {
+            body.setAngularVelocity(newAngle);
+        } else if (dist < -coAngle / 2) {
+            body.setAngularVelocity(-newAngle);
         } else {
             body.setAngularVelocity(0.0f);
         }
+        System.out.println("Angle: " + getDynamicAngle());
         float tinyBuffer = 5f;
 
 //        if (getDynamicAngle() != 269 || getDynamicAngle() != 271 || getDynamicAngle() != 89 || getDynamicAngle() != 91) {
@@ -803,8 +811,6 @@ public class DiverModel extends GameObject {
 
 
             if (movement.y > 0) {
-//                targetAngleY += (targetAngleY > 89) ? 0 : 5;
-
                 targetAngleY = 85;
             } else if (movement.y < 0) {
                 targetAngleY = -85;
@@ -812,7 +818,6 @@ public class DiverModel extends GameObject {
             if (movement.x != 0) {
                 targetAngleY /= 2;
             }
-
             if (movement.x > 0) {
                 targetAngleX = 0;
             } else if (movement.x < 0) {
@@ -861,7 +866,19 @@ public class DiverModel extends GameObject {
         } else if (isBoosting()) { // player has kicked off a wall and may or may not be steering
             setMaxSpeed(boostedMaxSpeed);
             setLinearDamping(boostDamping);
-
+            if (movement.y > 0) {
+                targetAngleY = 85;
+            } else if (movement.y < 0) {
+                targetAngleY = -85;
+            }
+            if (movement.x != 0) {
+                targetAngleY /= 2;
+            }
+            if (movement.x > 0) {
+                targetAngleX = 0;
+            } else if (movement.x < 0) {
+                targetAngleX = 180;
+            }
             // TODO: Currently doesn't take movement input. Will need steering in specific dirs only?
             if (Math.abs(getVX()) >= getMaxSpeed()) {
                 setVX(Math.signum(getVX()) * getMaxSpeed());
@@ -1054,7 +1071,7 @@ public class DiverModel extends GameObject {
     @Override
     public void draw(GameCanvas canvas) {
         if (pickupFrame == 5 && dead_body != null) {
-
+            oxygenLevel += dead_body.getOxygenRewarded();
             dead_body.setCarried(true);
             dead_body.setActive(false);
         }

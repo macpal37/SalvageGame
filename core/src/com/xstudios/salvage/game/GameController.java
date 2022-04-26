@@ -220,7 +220,7 @@ public class GameController implements Screen, ContactListener {
     /**
      * ================================LEVELS=================================
      */
-    private String[] levels = {"test_level", "level1", "level4"};
+    private String[] levels = {"tutorial1", "tutorial2", "level4"};
     private int curr_level;
 
     private enum state {
@@ -305,8 +305,8 @@ public class GameController implements Screen, ContactListener {
         rayHandler = new RayHandler(world);
         rayHandler.setAmbientLight(.015f);
 
-        light = new PointLight(rayHandler, 100, Color.BLACK, 12, 0, 0);
-        wallShine = new PointLight(rayHandler, 100, Color.BLUE, 6, 0, 0);
+        light = new PointLight(rayHandler, 100, Color.BLACK, 15, 0, 0);
+        wallShine = new PointLight(rayHandler, 100, Color.BLUE, 8, 0, 0);
         wallShine.setSoft(true);
 
         int r = 225, g = 103, b = 30;
@@ -482,6 +482,7 @@ public class GameController implements Screen, ContactListener {
         }
 
         level.getAllObjects().clear();
+        level.getAboveObjects().clear();
         addQueue.clear();
         AudioController.getInstance().reset();
         populateLevel();
@@ -859,7 +860,7 @@ public class GameController implements Screen, ContactListener {
                             0.5f
                     );
 
-                } else if (level.getDiver().getOxygenLevel() < 50 && tick % 25 > (level.getDiver().getOxygenLevel() / 2)) {
+                } else if (level.getDiver().getOxygenLevel() < level.getDiver().getMaxOxygen() / 4 && tick % 25 > (level.getDiver().getOxygenLevel() / 2)) {
                     canvas.draw(oxygen, Color.BLUE, 0, (float) oxygen.getRegionHeight() / 2,
                             (float) tempProjectedOxygen.x,
                             tempProjectedOxygen.y,

@@ -78,7 +78,7 @@ public class LevelBuilder {
     protected Texture swimmingAnimationWBody;
     protected Texture dustAnimation;
     protected Texture plantAnimation;
-
+    protected Texture keyAnimation;
     // Models to be updated
     protected TextureRegion wallTexture;
     protected TextureRegion hazardTexture;
@@ -125,7 +125,7 @@ public class LevelBuilder {
         swimmingAnimationWBody = directory.getEntry("models:diver_swimming_w_body", Texture.class);
         dustAnimation = directory.getEntry("models:dust", Texture.class);
         plantAnimation = directory.getEntry("models:plant", Texture.class);
-
+        keyAnimation = directory.getEntry("models:key_animation", Texture.class);
 
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
         keyTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
@@ -489,16 +489,24 @@ public class LevelBuilder {
                             gameObjects.add(d);
                             break;
                         case DeadBody:
+                            DeadBodyModel db = new DeadBodyModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("dead_body"));
+                            if (obj.get("properties") != null)
+                                for (JsonValue prop : obj.get("properties")) {
+                                    if (prop.getString("name").equals("oxygen_rewarded"))
+                                        db.setOxygenRewarded(prop.getFloat("value"));
+                                }
+                            gameObjects.add(db);
 
-                            gameObjects.add(new DeadBodyModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("dead_body")));
 
                             break;
                         case Item:
                             ItemModel item = new ItemModel(sx + tileSize / (2 * div), sy + tileSize / (2 * div), constants.get("key"), ItemModel.ItemType.KEY);
-                            for (JsonValue prop : obj.get("properties")) {
-                                if (prop.getString("name").equals("id"))
-                                    item.setID(prop.getInt("value"));
-                            }
+                            if (obj.get("properties") != null)
+                                for (JsonValue prop : obj.get("properties")) {
+                                    if (prop.getString("name").equals("id"))
+                                        item.setID(prop.getInt("value"));
+                                }
+                            item.setFilmStrip(new FilmStrip(keyAnimation, 1, 6, 6));
                             gameObjects.add(item);
                             item.setAngle(rotation);
                             break;
@@ -552,7 +560,9 @@ public class LevelBuilder {
                             DecorModel decor = new DecorModel(sx, sy);
                             switch (tile.id) {
                                 case 0:
+
                                     decor.setFilmStrip(new FilmStrip(plantAnimation, 1, 6, 6));
+
                                     break;
                                 case 1:
                                     decor.setFilmStrip(new FilmStrip(woodenChair1, 1, 1, 1));
@@ -580,7 +590,7 @@ public class LevelBuilder {
                             }
 
 //                            decor.setAngle((float) Math.PI * 1 / 2f);
-                            decor.setScale(objectWidth / tileSize, objectHeight / tileSize);
+                            decor.setScale(decor.getScale().x * objectWidth / tileSize, decor.getScale().y * objectHeight / tileSize);
                             decor.setAngle(rotation);
                             decor.setBodyType(BodyDef.BodyType.StaticBody);
                             decor.setSensor(true);

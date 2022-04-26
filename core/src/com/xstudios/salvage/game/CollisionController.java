@@ -260,17 +260,23 @@ public class CollisionController {
         Object fd2 = f2.getUserData();
 
 
-        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall &&
-                diver.getHitboxSensorName().equals(fd1)) {
+        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
             diver.setTouchedWall((Wall) b2.getUserData());
             diver.setTouchingObstacle(true);
-            AudioController.getInstance().wall_collision(diver.getForce());
         }
-        if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall &&
-                diver.getHitboxSensorName().equals(fd2)) {
+        if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
             diver.setTouchedWall((Wall) b1.getUserData());
             ((DiverModel) b2.getUserData()).setTouchingObstacle(true);
         }
+
+        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall &&
+                diver.getDiverCollisionBox().equals(fd1)) {
+            AudioController.getInstance().wall_collision(diver.getForce());
+        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall &&
+                diver.getDiverCollisionBox().equals(fd2)) {
+            AudioController.getInstance().wall_collision(diver.getForce());
+        }
+
     }
 
     /**

@@ -20,6 +20,17 @@ public class DeadBodyModel extends DiverObjectModel {
         super(x, y, data);
     }
 
+    public float getOxygenRewarded() {
+        return oxygenRewarded;
+    }
+
+    public void setOxygenRewarded(float oxygenRewarded) {
+        this.oxygenRewarded = oxygenRewarded;
+    }
+
+    private float oxygenRewarded = 0f;
+
+
     /**
      * Release the fixtures for this body, resetting the shape
      * <p>
