@@ -183,8 +183,8 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 //    }
 
     public boolean pointer1(int x, int y, int width, int height, float scale) {
-        int pX = Gdx.input.getX();
-        int pY = Gdx.input.getY();
+        float pX = Gdx.input.getX();
+        float pY = Gdx.input.getY();
         // Flip to match graphics coordinates
         y = canvas.getHeight() - y;
         float w = scale * width;

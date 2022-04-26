@@ -586,6 +586,7 @@ public class LevelBuilder {
                             }
 
 //                            decor.setAngle((float) Math.PI * 1 / 2f);
+                            decor.setScale(objectWidth / tileSize, objectHeight / tileSize);
                             decor.setAngle(rotation);
                             decor.setBodyType(BodyDef.BodyType.StaticBody);
                             decor.setSensor(true);
@@ -673,6 +674,7 @@ public class LevelBuilder {
                 dead_body.setName("dead_body");
                 dead_body.setGravityScale(0f);
                 dead_body.setSensor(true);
+                this.dead_body = dead_body;
                 level.addObject(dead_body);
             } else if (go instanceof ItemModel) {
                 ItemModel key = (ItemModel) go;

@@ -710,7 +710,15 @@ public class DiverModel extends GameObject {
     float targetAngle = 0;
 
     public void applyForce() {
-        targetAngle = (isSwimming()) ? targetAngleX + ((targetAngleX == 0) ? targetAngleY : -targetAngleY) : getDynamicAngle();
+        if (isLatching()) {
+            if (touchedWall != null)
+                targetAngle = touchedWall.getTentacleRotation() + 270;
+            else
+                targetAngle = 0;
+        } else {
+            targetAngle = (isSwimming()) ? targetAngleX + ((targetAngleX == 0) ? targetAngleY : -targetAngleY) : getDynamicAngle();
+
+        }
 
         targetAngle += (targetAngle < 0) ? 360f : 0f;
         float dist = targetAngle - getDynamicAngle();
@@ -729,7 +737,7 @@ public class DiverModel extends GameObject {
         }
 
         if (dist > 0) {
-            angle *= (isLatching()) ? 3 : 1;
+            angle *= (isLatching()) ? 5 : 1;
             body.setAngularVelocity(angle);
         } else if (dist < 0) {
             body.setAngularVelocity(-angle);
@@ -1043,6 +1051,12 @@ public class DiverModel extends GameObject {
 
     @Override
     public void draw(GameCanvas canvas) {
+        if (pickupFrame == 5 && dead_body != null) {
+
+            dead_body.setCarried(true);
+            dead_body.setActive(false);
+        }
+
 
         tick++;
         float effect = faceRight ? 1.0f : -1.0f;
@@ -1050,15 +1064,14 @@ public class DiverModel extends GameObject {
         float angle = getAngle();
         if (texture != null) {
 
-            if (pickupFrame < 5) {
+            if (pickupFrame < 7) {
                 if (tick % 3 == 0) {
                     pickupFrame++;
                 }
-                diverSprites.get(diverState).setFrame(pickupFrame + 38);
+                diverSprites.get(diverState).setFrame(pickupFrame + 40);
                 canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
             } else {
                 if (isIdling()) {
-
                     if (tick % 4 == 0) {
                         idleFrame++;
                     }
