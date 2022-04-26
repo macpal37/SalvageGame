@@ -157,7 +157,7 @@ public class MonsterController {
      */
     public void update(float aggrivationDrain, DiverModel diver) {
         tick++;
-        if (tick % 75 == 0) {
+        if (tick % 50 == 0) {
             if (monster.getAggrivation() > 0.0f){
             float aggrivation = monster.getAggrivation() - 0.5f;
             monster.setAggrivation(aggrivation);
