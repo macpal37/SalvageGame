@@ -221,7 +221,7 @@ public class GameController implements Screen, ContactListener {
      * ================================LEVELS=================================
      */
     // Beta Release Setup
-    private String[] levels = {"tutorial1", "tutorial2", "level4"};
+    private String[] levels = {"beta_0", "beta_1", "beta_3"};
 
 //    private String[] levels = {"test_level", "level1", "level3"};
 
