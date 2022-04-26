@@ -53,7 +53,6 @@ public class GDXRoot extends Game implements ScreenListener {
         game_over_controller = new GameOverController(controller.getWorldBounds());
         menu_controller = new MenuController();
 
-//        levelCameraController = new CameraController(100, 50);
         level_select_controller = new LevelSelectController();
 
         level_select_controller.setCameraController(cameraController, canvas.getWidth(), canvas.getHeight());
@@ -101,6 +100,7 @@ public class GDXRoot extends Game implements ScreenListener {
      * @param height The new height in pixels
      */
     public void resize(int width, int height) {
+
         canvas.resize();
         super.resize(width, height);
         cameraController.resize(width, height);
@@ -110,6 +110,8 @@ public class GDXRoot extends Game implements ScreenListener {
     public void exitScreen(Screen screen, int exitCode) {
 
         System.out.println("CAMERA: " + cameraController.getCameraPosition2D().toString());
+//        cameraController.setCameraPosition(720.0f, 450.0f - 50);
+        cameraController.setCameraPosition(640.0f, 360.0f);
         if (screen == loading) {
             directory = loading.getAssets();
             if (exitCode == 0) {
@@ -140,8 +142,8 @@ public class GDXRoot extends Game implements ScreenListener {
                 level_select_controller.gatherAssets(directory);
                 level_select_controller.setCanvas(canvas);
                 level_select_controller.setActive();
-                level_select_controller.readjustCamera();
-                cameraController.setCameraPosition(640.0f, 360.0f);
+//                level_select_controller.readjustCamera();
+
                 setScreen(level_select_controller);
 
 

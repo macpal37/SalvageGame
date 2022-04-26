@@ -580,6 +580,7 @@ public class LevelBuilder {
                             }
 
 //                            decor.setAngle((float) Math.PI * 1 / 2f);
+                            decor.setScale(objectWidth / tileSize, objectHeight / tileSize);
                             decor.setAngle(rotation);
                             decor.setBodyType(BodyDef.BodyType.StaticBody);
                             decor.setSensor(true);
