@@ -19,7 +19,7 @@ public class Monster extends GameObject {
     public float agression = 0.0f;
     private Queue<Wall> tentacles;
     private float aggrivation = 0.0f;
-    private final float RADIUS = 30;
+    private final float RADIUS = 7;
     private CircleShape radialPresence;
     private FilmStrip tentacleSprite;
     private ArrayList<Wall> targetLocations;
@@ -74,6 +74,10 @@ public class Monster extends GameObject {
 
     }
 
+    public void moveMonster(Vector2 location){
+        super.setPosition(location);
+    }
+
     private int startingFrame = 0;
 
 
@@ -85,20 +89,19 @@ public class Monster extends GameObject {
 
     @Override
     public void draw(GameCanvas canvas) {
-        canvas.draw(tentacleSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
+       // canvas.draw(tentacleSprite, Color.CLEAR, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
 
 
     }
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-        canvas.drawPhysics(radialPresence, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
+       canvas.drawPhysics(radialPresence, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
     }
     
     public void spawnTenctacle(DiverModel diver) {
         Tentacle tentacle = new Tentacle(diver.getX(), diver.getY());
         tentacle.setFilmStrip(tentacleSprite.copy());
-
     }
 
     public void addTentacle(Wall wall) {

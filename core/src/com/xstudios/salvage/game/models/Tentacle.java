@@ -132,13 +132,18 @@ public class Tentacle extends GameObject {
 
     }
 
+    private float maxLifeSpan = 1000;
+
+    public void setMaxLifeSpan(float maxLifeSpan) {
+        this.maxLifeSpan = maxLifeSpan;
+    }
+
     public void update() {
         life++;
 
-        if (life > 200) {
+        if (life > maxLifeSpan) {
             startGrowing = false;
         }
-        //System.out.println(life);
 
         if (frame == 1) {
             collisionBoxes[0].setActive(true);

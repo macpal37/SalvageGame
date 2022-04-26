@@ -75,6 +75,7 @@ public class LevelBuilder {
     protected TextureRegion doorOpenTexture;
     protected TextureRegion doorCloseTexture;
     protected Texture swimmingAnimation;
+    protected Texture swimmingAnimationWBody;
     protected Texture dustAnimation;
     protected Texture plantAnimation;
 
@@ -121,6 +122,7 @@ public class LevelBuilder {
 
         diverTexture = new TextureRegion(directory.getEntry("models:diver", Texture.class));
         swimmingAnimation = directory.getEntry("models:diver_swimming", Texture.class);
+        swimmingAnimationWBody = directory.getEntry("models:diver_swimming_w_body", Texture.class);
         dustAnimation = directory.getEntry("models:dust", Texture.class);
         plantAnimation = directory.getEntry("models:plant", Texture.class);
 
@@ -293,6 +295,7 @@ public class LevelBuilder {
             t.setDrawScale(scale);
             t.setFilmStrip(sprite);
             t.setStartGrowing(true);
+            t.setMaxLifeSpan(300);
             t.setName("tentacle");
             return t;
         } else
@@ -650,7 +653,8 @@ public class LevelBuilder {
                 diver = (DiverModel) go;
                 diver.setStunned(false);
                 diver.setTexture(diverTexture);
-                diver.setFilmStrip(new FilmStrip(swimmingAnimation, 2, 12, 24));
+                diver.addFilmStrip(new FilmStrip(swimmingAnimation, 2, 12, 24));
+                diver.addFilmStrip(new FilmStrip(swimmingAnimationWBody, 3, 12, 36));
                 diver.setPingTexture(pingTexture);
                 diver.setDrawScale(drawScale);
                 diver.setName("diver");

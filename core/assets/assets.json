@@ -30,6 +30,7 @@
 
     "models:diver": "models/diver.png",
     "models:diver_swimming": "models/diver_swimming.png",
+        "models:diver_swimming_w_body": "models/diver_swimming_w_body.png",
     "models:dust": "models/dust.png",
     "models:plant": "models/plant2.png",
 

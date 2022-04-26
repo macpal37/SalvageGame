@@ -66,7 +66,8 @@ public class MonsterController {
     /**
      * The ship's current state in the FSM
      */
-    private float ticks;
+    private float tick;
+
 
 
     private PooledList<Vector2> targetLocations;
@@ -81,6 +82,7 @@ public class MonsterController {
         this.monster = monster;
         targetLocations = new PooledList<>();
         targetLocations.push(monster.getPosition());
+        tick = 0;
     }
 
 
@@ -88,7 +90,12 @@ public class MonsterController {
         return monster;
     }
 
-    public void wallCollision() {monster.setAggrivation(monster.getAggrivation() + 1.0f);}
+    public void wallCollision() {
+        float agg = monster.getAggrivation();
+        if (agg < 6.0f){
+             monster.setAggrivation(agg + 1.0f);
+        }
+    }
 
     /**
      * Change the state of the monster based on aggrivation levels
@@ -97,10 +104,8 @@ public class MonsterController {
         // Add initialization code as necessary
         float aggrivation = monster.getAggrivation();
         System.out.println(aggrivation);
-        if (aggrivation > 5.0f)  {
+        if (aggrivation > 6.0f)  {
             state = FSMState.AGGRIVATED;
-        } else if (aggrivation > 10.0f) {
-            state = FSMState.ATTACK;
         }
         else {
             state = FSMState.IDLE;
@@ -109,18 +114,19 @@ public class MonsterController {
         switch (state) {
 
             case IDLE:
-                if (aggrivation > 5.0f)  {
+                if (aggrivation > 6.0f)  {
                     state = FSMState.AGGRIVATED;
-                } else if (aggrivation > 10.0f) {
-                    state = FSMState.ATTACK;
                 }
                 break;
 
             case AGGRIVATED:
-
+                if (aggrivation <= 6.0f)  {
+                    state = FSMState.IDLE;
+                }
                 break;
 
             case ATTACK:
+                state = FSMState.AGGRIVATED;
                 break;
 
             default:
@@ -131,7 +137,6 @@ public class MonsterController {
         }
     }
 
-    float tick = 0;
 
     /**
      * Controls the movement of the monster
@@ -152,17 +157,17 @@ public class MonsterController {
      */
     public void update(float aggrivationDrain, DiverModel diver) {
         tick++;
-        if (tick % 100 == 0) {
+        if (tick % 75 == 0) {
             if (monster.getAggrivation() > 0.0f){
-            float aggrivation = monster.getAggrivation() - 1.0f;
+            float aggrivation = monster.getAggrivation() - 0.5f;
             monster.setAggrivation(aggrivation);
             }
         }
+        monster.moveMonster(diver.getPosition());
         changeStateIfApplicable();
 
         float goal_x = diver.getX() + diver.getVX();
         float goal_y = diver.getY() + diver.getVY();
-
 
         switch (state) {
 
@@ -175,8 +180,8 @@ public class MonsterController {
                             if (wall.canSpawnTentacle()) {
                                 Vector2 location = wall.getPosition();
                                 temp_distance = (float) Math.sqrt(
-                                        Math.pow((double) (location.x - goal_x), 2) +
-                                                Math.pow((double) (location.y - goal_y), 2)
+                                        Math.pow((double) (goal_x - location.x), 2) +
+                                                Math.pow((double) (goal_y - location.y), 2)
                                 );
                                 if (temp_distance < best_distance) {
                                     best_distance = temp_distance;
@@ -185,7 +190,7 @@ public class MonsterController {
                             }
                         }
                         if (final_loc != null) {
-                            System.out.println(final_loc);
+                            //System.out.println(final_loc);
                             monster.addTentacle(final_loc);
                             //monster.setAggrivation(0.0f);
                         }

@@ -16,6 +16,7 @@ public class AudioController {
     private BufferedSoundSource heartbeat;
     private BufferedSoundSource oxygen_alarm;
     private SoundBuffer wall_collision;
+    private SoundBuffer wood_collision;
     private StreamedSoundSource music;
     private StreamedSoundSource bubbles;
     private SoundBuffer background_roar;
@@ -30,6 +31,7 @@ public class AudioController {
         bubbles = new StreamedSoundSource(Gdx.files.internal("audio/bubbles.ogg"));
         background_roar = WaveLoader.load(Gdx.files.internal("audio/suble_roar.wav"));
         wall_collision = WaveLoader.load(Gdx.files.internal("audio/wall_collision.wav"));
+        wood_collision = WaveLoader.load(Gdx.files.internal("audio/wood_collision.wav"));
         oxygen_alarm = audio.obtainSource(oxygen_alarm_wav);
         heartbeat = audio.obtainSource(heartbeat_wav);
         music.setLooping(true);
@@ -58,14 +60,6 @@ public class AudioController {
     }
 
     public void update(float oxygen){
-        if (ticks > 750){
-            double rand = Math.random();
-            if (rand > 0.5){
-                float roar_volume = (float)(1.15 - rand);
-                audio.play(background_roar, roar_volume);
-            }
-            ticks = 0;
-        }
         ticks++;
 
         float volume = (max_oxygen-oxygen)/max_oxygen;
@@ -82,6 +76,17 @@ public class AudioController {
     public void wall_collision(float force){
         //float volume = (force)/20.f;
         audio.play(wall_collision, 0.5f);
+    }
+
+    public void wood_collision(float force){
+        //float volume = (force)/20.f;
+        audio.play(wood_collision, 0.05f);
+    }
+
+    public void roar(){
+        double rand = Math.random();
+        float roar_volume = (float)(0.8);
+        audio.play(background_roar, roar_volume);
     }
 
     public void reset(){

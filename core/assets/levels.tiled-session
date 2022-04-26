@@ -12,16 +12,16 @@
             "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 728,
-                "y": 688
+                "x": 748,
+                "y": 498
             }
         },
         "levels/level1.json": {
             "scale": 0.5,
-            "selectedLayer": 3,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 496,
-                "y": 1528
+                "x": 228,
+                "y": 1050
             }
         },
         "levels/level2.json": {
@@ -36,8 +36,8 @@
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 676,
-                "y": 934
+                "x": 912,
+                "y": 688
             }
         },
         "levels/small_ship.json": {
@@ -52,8 +52,8 @@
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 678.6666666666667,
-                "y": 1385.3333333333335
+                "x": 944,
+                "y": 1693.3333333333333
             }
         },
         "levels/tilesets/id_tiles.json": {
@@ -73,10 +73,10 @@
     ],
     "project": "",
     "recentFiles": [
-        "levels/tilesets/old_ship_tileset.json",
         "levels/level0.json",
-        "levels/level4.json",
         "levels/level1.json",
+        "levels/tilesets/old_ship_tileset.json",
+        "levels/level4.json",
         "levels/test_level.json",
         "levels/level2.json",
         "levels/small_ship.json"
