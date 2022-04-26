@@ -76,9 +76,6 @@ public class DeadBodyModel extends DiverObjectModel {
             if (!carried) {
                 canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
             }
-            if (isTouched) {
-                canvas.drawText("Press q", GameController.displayFont, (getX() - getWidth() * 1.25f) * drawScale.x, (getY() + getHeight() * 1.5f) * drawScale.y);
-            }
         }
     }
 

@@ -592,7 +592,7 @@ public class GameController implements Screen, ContactListener {
         // manage items/dead body
         level.getDiver().setPickUpOrDrop(input.getOrDropObject());
         level.getDiver().setItem();
-        level.getDeadBody().setCarried(level.getDiver().hasBody());
+
 
         if (!level.getDiver().getStunned()) {
             // decrease oxygen from movement
@@ -753,7 +753,7 @@ public class GameController implements Screen, ContactListener {
             level.addObject(go);
         }
 
-        if (level.getDiver().isBodyContact()) {
+        if (level.getDiver().getDeadBody() != null && level.getDiver().getDeadBody().isCarried()) {
             level.getDeadBody().setActive(false);
         }
 

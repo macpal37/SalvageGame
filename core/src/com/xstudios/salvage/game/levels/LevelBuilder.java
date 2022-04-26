@@ -667,6 +667,7 @@ public class LevelBuilder {
                 dead_body.setName("dead_body");
                 dead_body.setGravityScale(0f);
                 dead_body.setSensor(true);
+                this.dead_body = dead_body;
                 level.addObject(dead_body);
             } else if (go instanceof ItemModel) {
                 ItemModel key = (ItemModel) go;
