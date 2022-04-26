@@ -28,6 +28,7 @@ import com.xstudios.salvage.util.ScreenListener;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Queue;
 
 public class GameController implements Screen, ContactListener {
 
@@ -530,8 +531,8 @@ public class GameController implements Screen, ContactListener {
         // otherwise, stop latching
 
         if (input.didKickOff() && !level.getDiver().isLatching() && level.getDiver().isTouchingObstacle()) {
-            System.out.println("Player Coords: " + level.getDiver().getPosition());
-            System.out.println("Wall Coords: " + level.getDiver().getTouchedWall().getPosition());
+            //System.out.println("Player Coords: " + level.getDiver().getPosition());
+            //System.out.println("Wall Coords: " + level.getDiver().getTouchedWall().getPosition());
             int playerX = (int) level.getDiver().getPosition().x - 1;
             int playerY = (int) level.getDiver().getPosition().y - 1;
             int wallX = (int) level.getDiver().getTouchedWall().getPosition().x;
@@ -644,6 +645,7 @@ public class GameController implements Screen, ContactListener {
         // Toggle debug
         if (input.didDebug()) {
             debug = !debug;
+
         }
         if (input.didMenu()) {
             cameraController.setCameraPosition(640.0f, 360.0f);
@@ -683,8 +685,32 @@ public class GameController implements Screen, ContactListener {
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
 //        rayHandlerFlare.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
 
-        monsterController.update(level.getDiver());
+        //monsterController.update(level.getDiver());
 
+
+        monsterController.update(hostileOxygenDrain, level.getDiver());
+        Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
+//        Wall add_wall = tentacles.poll();
+//        if (add_wall != null && add_wall.canSpawnTentacle()) {
+//            Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+//            addQueuedObject(t);
+//        }
+        while (tentacles.size() > 0) {
+            Wall add_wall = tentacles.poll();
+            if (add_wall.canSpawnTentacle() && add_wall != null) {
+                Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+                addQueuedObject(t);
+                AudioController.getInstance().roar();
+            }
+        }
+//        for (Tentacle t : monsterController.getMonster().getTentacles()) {
+//            Wall w = t.getSpawnWall();
+//            System.out.println(w);
+//            if (w.canSpawnTentacle()) {
+//                t = levelBuilder.createTentcle(t, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+//                addQueuedObject(t);
+//            }
+//        }
 
         //** ADDING TENTACLES TO WalL!
 //        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
@@ -692,6 +718,7 @@ public class GameController implements Screen, ContactListener {
 //            Tentacle t = levelBuilder.createTentcle(w, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
 //            addQueuedObject(t);
 //        }
+
 
         switch (game_state) {
             case PLAYING:
@@ -904,6 +931,7 @@ public class GameController implements Screen, ContactListener {
                 }
 
                 break;
+
         }
 
 
@@ -1026,7 +1054,7 @@ public class GameController implements Screen, ContactListener {
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
 
-        collisionController.startDiverToObstacle(fix1, fix2, level.getDiver());
+        collisionController.startDiverToObstacle(fix1, fix2, level.getDiver(), monsterController);
         if (listener != null) {
             reach_target = collisionController.getWinState(body1, body2, level.getDiver());
 
@@ -1035,6 +1063,7 @@ public class GameController implements Screen, ContactListener {
 //        collisionController.addDiverSensorTouching(level.getDiver(), fix1, fix2);
         collisionController.startDiverItemCollision(body1, body2);
         collisionController.startDiverDoorCollision(body1, body2);
+        collisionController.startMonsterWallCollision(body1, body2);
         collisionController.startDiverDeadBodyCollision(body1, body2);
         float d = collisionController.startDiverHazardCollision(fix1, fix2, level.getDiver());
         if (d != 0)
@@ -1061,6 +1090,7 @@ public class GameController implements Screen, ContactListener {
 
         collisionController.endDiverToObstacle(fix1, fix2, level.getDiver());
         collisionController.endDiverDeadBodyCollision(body1, body2);
+        collisionController.endMonsterWallCollision(body1, body2);
         collisionController.removeDiverSensorTouching(level.getDiver(), fix1, fix2);
         collisionController.endDiverItemCollision(body1, body2);
 
