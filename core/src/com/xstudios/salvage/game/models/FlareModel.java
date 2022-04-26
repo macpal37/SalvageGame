@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
+import com.xstudios.salvage.util.FilmStrip;
 
 public class FlareModel extends DiverObjectModel {
 
@@ -24,14 +25,18 @@ public class FlareModel extends DiverObjectModel {
     private PointLight light;
     private PointLight redLight;
 
+    private FilmStrip flareSprite;
 
     private int FLARE_LIGHT_RADIUS = 10;
-    private int MIN_LIGHT_RADIUS = 3;
+    private int MIN_LIGHT_RADIUS = 1;
 
     private Color light_color;
     private Color white_light;
 
     private boolean isActivated;
+    private float MAX_SPEED = .7f;
+
+    private RayHandler rayHandler;
 
     public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
     Color item_color;
@@ -54,8 +59,8 @@ public class FlareModel extends DiverObjectModel {
         white_light = new Color(1f, 1f, 1f, 0.8f);
         setCarried(true);
         drawScale.set(40, 40);
-        setBodyType(BodyDef.BodyType.StaticBody);
         isActivated = false;
+        shape.setAsBox(.5f,.05f, new Vector2(.15f,-.225f), 0);
     }
 
 
@@ -68,6 +73,7 @@ public class FlareModel extends DiverObjectModel {
 
     public void initLight(RayHandler rayHandler) {
 //        System.out.println("INITIALIZE LIGHT");
+        this.rayHandler = rayHandler;
         // White flickering light
         light = new PointLight(rayHandler, 100, white_light, 1, 0, 0);
         Filter f = new Filter();
@@ -82,6 +88,10 @@ public class FlareModel extends DiverObjectModel {
         redLight.setContactFilter(f);
 
         redLight.setActive(false);
+    }
+
+    public RayHandler getRayHandler() {
+        return rayHandler;
     }
 
     public void setActivated(boolean b) {
@@ -122,9 +132,11 @@ public class FlareModel extends DiverObjectModel {
         if (body == null) {
             return;
         }
-
+        System.out.println("IN FLARE CREATE FIXTURES");
         releaseFixtures();
-        fixture.filter.maskBits = -1;
+        fixture.filter.maskBits = 0x004;
+        fixture.filter.groupIndex = 5;
+        fixture.filter.categoryBits = 0x001;
         fixture.shape = shape;
 
         geometry = body.createFixture(fixture);
@@ -137,6 +149,7 @@ public class FlareModel extends DiverObjectModel {
             return false;
         }
 
+        body.setGravityScale(.5f);
         body.setUserData(this);
         return false;
     }
@@ -167,18 +180,30 @@ public class FlareModel extends DiverObjectModel {
 //                        FLARE_LIGHT_RADIUS--;
 //                    }
                     //Light Flickering
-                    if (tick % 100 > 50) {
+                    if (tick % 20 > 10) {
                         light.setDistance(light.getDistance() + 0.01f);
                     } else {
                         light.setDistance(light.getDistance() - 0.01f);
                     }
-                    if (tick % 100 == 0 && redLight.getDistance() > FLARE_LIGHT_RADIUS) {
+                    if (tick % 20 == 0 && redLight.getDistance() > FLARE_LIGHT_RADIUS) {
                         redLight.setDistance(redLight.getDistance() - 1f);
                     }
-                    if (tick % 500 == 0 && redLight.getDistance() >= MIN_LIGHT_RADIUS && redLight.getDistance() <= FLARE_LIGHT_RADIUS) {
-                        redLight.setDistance(redLight.getDistance() - 0.1f);
+                    if (tick % 100 == 0 && redLight.getDistance() >= MIN_LIGHT_RADIUS && redLight.getDistance() <= FLARE_LIGHT_RADIUS) {
+                        redLight.setDistance(redLight.getDistance() - 0.5f);
                     }
-                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1f, 1f);
+                    if(redLight.getDistance() > MIN_LIGHT_RADIUS ) {
+                        if (tick % 5 == 0) {
+                            int frame = flareSprite.getFrame();
+
+                            frame++;
+                            if (frame >= flareSprite.getSize())
+                                frame = 0;
+                            flareSprite.setFrame(frame);
+                        }
+//                        System.out.println("flickering");
+                    }
+                    canvas.draw(flareSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, (float)-Math.PI /2, .36f, .36f);
+//                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1f, 1f);
 
                 }
                 light.setPosition(getX(), getY());
@@ -189,6 +214,10 @@ public class FlareModel extends DiverObjectModel {
         }
     }
 
+    public int getFrame() {
+        return flareSprite.getFrame();
+
+    }
 
     @Override
     public void setCarried(boolean b) {
@@ -223,14 +252,33 @@ public class FlareModel extends DiverObjectModel {
     }
 
     public void applyForce() {
-        if (!isActive()) {
+        if (!isActive() || carried) {
             return;
         }
-        forceCache.x = getHorizontalMovement();
-        forceCache.y = getVerticalMovement();
-        body.applyForce(forceCache, getPosition(), true);
-        setHorizontalMovement(0);
-        setVerticalMovement(0);
+        float desired_xvel = 0;
+        float desired_yvel = 0;
+        float max_impulse_drift = 2f;
+
+        desired_xvel = getVX() + Math.signum(getHorizontalMovement()) * max_impulse_drift;
+        desired_xvel = Math.max(Math.min(desired_xvel, MAX_SPEED), -MAX_SPEED);
+        desired_yvel = getVY() + Math.signum(getVerticalMovement()) * max_impulse_drift;
+
+        desired_yvel = Math.max(Math.min(desired_yvel, MAX_SPEED), -MAX_SPEED);
+
+        float xvel_change = desired_xvel - getVX();
+        float yvel_change = desired_yvel - getVY();
+
+        float x_impulse = body.getMass() * xvel_change;
+        float y_impulse = body.getMass() * yvel_change;
+
+        body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x,
+                body.getWorldCenter().y, true);
+
+//        forceCache.x = getHorizontalMovement();
+//        forceCache.y = getVerticalMovement();
+//        body.applyForce(forceCache, getPosition(), true);
+//        setHorizontalMovement(0);
+//        setVerticalMovement(0);
     }
 
     /**
@@ -310,4 +358,10 @@ public class FlareModel extends DiverObjectModel {
         System.out.println("light color 2 "+ light_color.a);
         System.out.println("light white 2 "+ white_light.a);
     }
+
+    public void setFilmStrip(FilmStrip value) {
+        flareSprite = value;
+        flareSprite.setFrame(0);
+    }
+
 }

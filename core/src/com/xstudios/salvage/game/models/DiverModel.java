@@ -321,7 +321,7 @@ public class DiverModel extends GameObject {
         cap1 = null;
         cap2 = null;
         // TODO: Put this in the constants JSON
-        boostedMaxSpeed = swimMaxSpeed * 3;
+        boostedMaxSpeed = swimMaxSpeed * 1.27f;
         maxSpeed = swimMaxSpeed;
         swimDamping = damping;
 
@@ -380,6 +380,10 @@ public class DiverModel extends GameObject {
             drift_movement.x = x_val;
             drift_movement.y = y_val;
         }
+//        for(FlareModel f: flares) {
+//            f.setHorizontalMovement(x_val);
+//            f.setVerticalMovement(y_val);
+//        }
     }
 
     /**
@@ -579,9 +583,10 @@ public class DiverModel extends GameObject {
         Fixture hitboxFixture = body.createFixture(hitboxDef);
         hitboxFixture.setUserData(hitboxSensorName);
 
-//        for (FlareModel f: flares) {
-//            f.activatePhysics(world);
-//        }
+        for (FlareModel f: flares) {
+            f.activatePhysics(world);
+        }
+        System.out.println("WORLD GRAVITY " + world.getGravity());
         return true;
     }
 
@@ -755,7 +760,7 @@ public class DiverModel extends GameObject {
 
     // TODO: Having a state machine would probably be helpful
     public boolean isSwimming() {
-        return !isLatching() && !isBoosting() && movement.len() != 0;
+        return !isLatching() /*&& !isBoosting() */&& movement.len() != 0;
     }
 
     public boolean isIdling() {
@@ -854,7 +859,9 @@ public class DiverModel extends GameObject {
             }
 //            body.applyForce(forceCache,getPosition(),true);
         }
-
+//        for(FlareModel f: flares) {
+//            f.applyForce();
+//        }
     }
 
     @Override
@@ -865,6 +872,9 @@ public class DiverModel extends GameObject {
         canvas.drawPhysics(sensorShapeLeft, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
         canvas.drawPhysics(hitboxShape, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
 
+        for(FlareModel f: flares) {
+            f.drawDebug(canvas);
+        }
     }
 
     /**
@@ -935,6 +945,12 @@ public class DiverModel extends GameObject {
         }
     }
 
+    public void setFlareFilmStrip(FilmStrip f) {
+        for (FlareModel flare : flares) {
+            flare.setFilmStrip(f);
+        }
+    }
+
     public void initFlares(RayHandler rayHandler) {
 
         for (FlareModel f : flares) {
@@ -942,6 +958,7 @@ public class DiverModel extends GameObject {
 //            f.
             f.setCarried(true);
             f.setActivated(false);
+//            f.setSensor(true);
         }
     }
 
@@ -954,18 +971,22 @@ public class DiverModel extends GameObject {
             FlareModel f = flares.get(num_flares - 1);
             if (flare_duration < MAX_FLARE_DURATION) {
 
-                int num_neighbors = 0;
-                for (int i = num_flares; i < flares.size(); i++) {
-                    System.out.println("Dist " + flares.get(i).getPosition().dst(getPosition()));
-                    if (flares.get(i).getPosition().dst(getPosition()) < minFlareDist) {
-//                        flares.get(i).setBrightness(.2f);
-                        neighboring_flares.add(flares.get(i));
-                        num_neighbors++;
-                    }
-                }
-                for(int i = 0; i < num_neighbors; i++) {
-                    neighboring_flares.get(i).setBrightness(1/((float) num_neighbors));
-                }
+//                int num_neighbors = 0;
+//                for (int i = num_flares; i < flares.size(); i++) {
+//                    System.out.println("Dist " + flares.get(i).getPosition().dst(getPosition()));
+//                    if (flares.get(i).getPosition().dst(getPosition()) < minFlareDist) {
+////                        flares.get(i).setActivated(false);
+//                        neighboring_flares.add(flares.get(i));
+//                        num_neighbors++;
+//                    }
+//                }
+////                System.out.println("NUM NEIGHBORS " + num_neighbors);
+//                for(int i = 0; i < num_neighbors; i++) {
+////                    neighboring_flares.get(i).setBrightness(1/((float) num_neighbors));
+//                }
+//
+//                f.setBrightness(1/((float) num_neighbors));
+
                 f.setActivated(true);
                 f.setX(getX());
                 f.setY(getY());

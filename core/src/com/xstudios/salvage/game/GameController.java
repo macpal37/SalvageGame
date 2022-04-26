@@ -67,6 +67,7 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion doorOpenTexture;
     protected TextureRegion doorCloseTexture;
     protected Texture swimmingAnimation;
+    protected Texture flareAnimation;
     protected Texture dustAnimation;
     protected Texture plantAnimation;
     protected TextureRegion tileset;
@@ -157,7 +158,7 @@ public class GameController implements Screen, ContactListener {
     /**
      * The default value of gravity (going down)
      */
-    protected static final float DEFAULT_GRAVITY = 0;//-4.9f;
+    protected static final float DEFAULT_GRAVITY = -1f;
 
 
     /**
@@ -267,6 +268,7 @@ public class GameController implements Screen, ContactListener {
     private PointLight wallShine;
 
     private RayHandler rayHandler;
+//    private RayHandler rayHandlerFlare;
 
 
     /**
@@ -295,6 +297,9 @@ public class GameController implements Screen, ContactListener {
         forceCache = new Vector2(0, 0);
         rayHandler = new RayHandler(world);
         rayHandler.setAmbientLight(.015f);
+//        rayHandlerFlare = new RayHandler(world);
+//        rayHandlerFlare.setAmbientLight(1f);
+//        RayHandler.useDiffuseLight(true);
 
         light = new PointLight(rayHandler, 100, Color.BLACK, 12, 0, 0);
         wallShine = new PointLight(rayHandler, 100, Color.BLUE, 6, 0, 0);
@@ -383,6 +388,7 @@ public class GameController implements Screen, ContactListener {
         addQueue.clear();
         world.dispose();
         rayHandler.dispose();
+//        rayHandlerFlare.dispose();
 
         objects = null;
         addQueue = null;
@@ -407,6 +413,7 @@ public class GameController implements Screen, ContactListener {
         tileset = new TextureRegion(directory.getEntry("levels:tilesets:old_ship_tileset", Texture.class));
         diverTexture = new TextureRegion(directory.getEntry("models:diver", Texture.class));
         swimmingAnimation = directory.getEntry("models:diver_swimming", Texture.class);
+        flareAnimation = directory.getEntry("models:flare_animation", Texture.class);
         dustAnimation = directory.getEntry("models:dust", Texture.class);
 
         plantAnimation = directory.getEntry("models:plant", Texture.class);
@@ -540,7 +547,7 @@ public class GameController implements Screen, ContactListener {
                 obj.setDrawScale(scale);
                 obj.setName("wall " + wallCounter++);
                 addObject(obj);
-
+                System.out.println("filter data " + obj.getFilterData().categoryBits + " " + obj.getFilterData().maskBits+ " " + obj.getFilterData().groupIndex);
             } else if (go instanceof DiverModel) {
                 diver = (DiverModel) go;
                 diver.setStunned(false);
@@ -548,11 +555,15 @@ public class GameController implements Screen, ContactListener {
                 diver.setTexture(diverTexture);
                 diver.setFilmStrip(new FilmStrip(swimmingAnimation, 2, 12, 24));
                 diver.setPingTexture(pingTexture);
+                diver.setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
                 diver.setFlareTexture(flareTexture);
                 diver.setDrawScale(scale);
                 diver.setName("diver");
                 diver.initFlares(rayHandler);
                 addObject(diver);
+
+                System.out.println("diver filter data " + diver.getFilterData().categoryBits + " " + diver.getFilterData().maskBits+ " " + diver.getFilterData().groupIndex);
+
             } else if (go instanceof DeadBodyModel) {
                 dead_body = (DeadBodyModel) go;
                 dead_body.setTexture(deadBodyTexture);
@@ -588,6 +599,8 @@ public class GameController implements Screen, ContactListener {
                 goal_door.setName("goal" + goalDoorCounter++);
                 goalArea.add(goal_door);
                 addObject(goal_door);
+                System.out.println("goal door filter data " + goal_door.getFilterData().categoryBits + " " + goal_door.getFilterData().maskBits+ " " + goal_door.getFilterData().groupIndex);
+
 
             } else if (go instanceof Dust) {
                 Dust dust = (Dust) go;
@@ -759,6 +772,7 @@ public class GameController implements Screen, ContactListener {
         }
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
+//        rayHandlerFlare.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
 
 
         switch (game_state) {
@@ -864,9 +878,10 @@ public class GameController implements Screen, ContactListener {
         }
 
         canvas.end();
-        if (!debug)
+        if (!debug){
             rayHandler.updateAndRender();
-
+//            rayHandlerFlare.updateAndRender();
+        }
         canvas.begin();
         diver.draw(canvas);
         switch (game_state) {
