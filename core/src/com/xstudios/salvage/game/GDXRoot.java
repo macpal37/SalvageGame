@@ -3,6 +3,8 @@ package com.xstudios.salvage.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
@@ -57,6 +59,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		level_select_controller.setScreenListener(this);
 
 		setScreen(loading);
+
 	}
 
 	/**
@@ -104,6 +107,9 @@ public class GDXRoot extends Game implements ScreenListener {
 			System.out.println("loading");
 			directory = loading.getAssets();
 			player = new Player(directory);
+			Pixmap pm = new Pixmap(Gdx.files.internal("core/assets/ui/cursor.png"));
+			Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
+			pm.dispose();
 			if (exitCode == 0) {
 				controller.setCameraPositionNormal();
 				menu_controller.dispose();
@@ -201,25 +207,30 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		} else if (screen == level_select_controller) {
 			if (exitCode == 0) {
+				controller.setCameraPositionNormal();
 				menu_controller.dispose();
 				menu_controller.gatherAssets(directory);
 				menu_controller.setCanvas(canvas);
 				menu_controller.setActive();
 				setScreen(menu_controller);
 			} else {
+				System.out.println("exitCode= " + exitCode);
 				current = exitCode - 1;
-				if(current >= 3) {
+				if(current > 1) {
+					controller.setCameraPositionNormal();
 					menu_controller.dispose();
 					menu_controller.gatherAssets(directory);
 					menu_controller.setCanvas(canvas);
 					menu_controller.setActive();
 					setScreen(menu_controller);
 				}
-				controller.setLevel(exitCode - 1);
-				controller.gatherAssets(directory);
-				controller.setCanvas(canvas);
-				controller.reset();
-				setScreen(controller);
+				else {
+					controller.setLevel(exitCode - 1);
+					controller.gatherAssets(directory);
+					controller.setCanvas(canvas);
+					controller.reset();
+					setScreen(controller);
+				}
 			}
 		}
 	}

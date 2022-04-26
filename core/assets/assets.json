@@ -1,5 +1,6 @@
 {
   "textures": {
+    "cursor" : "ui/cursor.png",
     "main_menu_pause" : "ui/main_menu_pause.png",
     "restart" : "ui/restart.png",
     "black_spot" : "ui/black_spot.png",

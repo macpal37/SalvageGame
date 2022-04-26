@@ -26,7 +26,7 @@ import java.awt.*;
  * this to your needs.
  *
  * You will note that this mode has some textures that are not loaded by the AssetManager.
- * You are never required to load through the AssetManager.  But doing this will block
+ * You are never required to load through the e.  But doing this will block
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
@@ -348,31 +348,16 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         if (active) {
             draw();
             camera.render();
-
+            System.out.println("pressState= " + pressState);
             // We are ready, notify our listener
-            if (pressState == 4 && listener != null) {
+            if (pressState == 1 && listener != null) {
                 camera.setCameraPosition(640, 360);
                 camera.render();
                 listener.exitScreen(this, 0);
             }
 
-            if (pressState == 5 && listener != null) {
-                listener.exitScreen(this, 1);
-            }
-            else if (pressState == 6 && listener != null) {
-                listener.exitScreen(this, 2);
-            }
-            else if (pressState == 7 && listener != null) {
-                listener.exitScreen(this, 3);
-            }
-            else if (pressState == 8 && listener != null) {
-                listener.exitScreen(this, 4);
-            }
-            else if (pressState == 9 && listener != null) {
-                listener.exitScreen(this, 5);
-            }
-            else if (pressState == 10 && listener != null) {
-                listener.exitScreen(this, 6);
+            if (pressState >= 2  && listener != null) {
+                listener.exitScreen(this, pressState - 1);
             }
         }
     }
@@ -459,7 +444,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (pressState >= 7) {
+        if (pressState >= 1) {
             return true;
         }
         if (pointer1(15,canvas.getHeight() * 7/8, main_menu.getWidth(),
@@ -486,19 +471,19 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         }
 
         //4
-        if (pointer1(centerX + centerX/2 + centerX/6,
+        else if (pointer1(centerX + centerX/2 + centerX/6,
                 -1 * centerY, level.getWidth() / 2,
                 level.getHeight() / 2, 1) && 4 <= locked) {
             pressState = 5;
         }
         //5
-        if (pointer1(centerX,
+        else if (pointer1(centerX,
                 -2 * centerY, level.getWidth() / 2,
                 level.getHeight() / 2, 1) && 5 <= locked) {
             pressState = 6;
         }
         //6
-        if (pointer1(centerX/3, - 3 * centerY, level.getWidth() / 2,
+        else if (pointer1(centerX/3, - 3 * centerY, level.getWidth() / 2,
                 level.getHeight() / 2, 1) && 6 <= locked) {
             pressState = 7;
         }
@@ -519,10 +504,11 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (pressState >= 1) {
-            pressState = pressState + 3;
-            return false;
-        }
+//        if (pressState >= 1) {
+//            System.out.println("touchup");
+//            pressState = pressState + 3;
+//            return false;
+//        }
         return true;
     }
 
