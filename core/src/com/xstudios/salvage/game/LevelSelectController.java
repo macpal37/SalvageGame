@@ -317,7 +317,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
         //4
         tint = (pointer1(centerX + centerX/2 + centerX/6,
-                centerY, level.getWidth() / 2,
+                -1 * centerY, level.getWidth() / 2,
                 level.getHeight() / 2, 1) || 4 > locked ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level,
