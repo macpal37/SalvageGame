@@ -2,7 +2,11 @@ package com.xstudios.salvage.game;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -11,6 +15,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
@@ -72,6 +81,13 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion hud;
     protected TextureRegion oxygen;
     protected TextureRegion keys;
+
+    //pause
+    protected TextureRegion pause_screen;
+    protected TextureRegion black_spot;
+    protected TextureRegion resume;
+    protected TextureRegion restart;
+    protected TextureRegion main_menu;
 
     /** The font for giving messages to the player */
 
@@ -161,6 +177,7 @@ public class GameController implements Screen, ContactListener {
      * Listener that will update the player mode when we are done
      */
     private ScreenListener listener;
+    private Stage stage;
 
     /**
      * The Box2D world
@@ -199,6 +216,7 @@ public class GameController implements Screen, ContactListener {
 
     private TextureRegion test;
 
+
     private enum state {
         PLAYING,
         WIN_GAME,
@@ -210,7 +228,11 @@ public class GameController implements Screen, ContactListener {
 
     // TODO: when we add other screens we can actually implement code to support pausing and quitting
     private state game_state;
-    private boolean p;
+    private boolean pause;
+    boolean resume_game;
+    boolean restart_game;
+    boolean exit_home;
+    boolean clicked;
 
     private LevelBuilder levelBuilder;
 
@@ -228,7 +250,10 @@ public class GameController implements Screen, ContactListener {
         this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
                 new Vector2(0, DEFAULT_GRAVITY));
         level = 0;
-        p = false;
+        pause = false;
+        resume_game= false;
+        restart_game = false;
+        exit_home = false;
     }
 
     /**
@@ -374,6 +399,11 @@ public class GameController implements Screen, ContactListener {
         scale = null;
         world = null;
         canvas = null;
+        pause = false;
+        resume_game = false;
+        restart_game = false;
+        exit_home = false;
+        clicked = false;
         audioController.dispose();
     }
 
@@ -412,6 +442,12 @@ public class GameController implements Screen, ContactListener {
         oxygen = new TextureRegion(directory.getEntry( "oxygen", Texture.class ));
         keys = new TextureRegion(directory.getEntry( "keys", Texture.class ));
 
+        //pause
+        pause_screen = new TextureRegion(directory.getEntry( "pause", Texture.class ));
+        black_spot = new TextureRegion(directory.getEntry( "black_spot", Texture.class ));
+        resume = new TextureRegion(directory.getEntry( "resume", Texture.class ));
+        restart = new TextureRegion(directory.getEntry( "restart", Texture.class ));
+        main_menu = new TextureRegion(directory.getEntry( "main_menu_pause", Texture.class ));
     }
 
     /**
@@ -456,6 +492,11 @@ public class GameController implements Screen, ContactListener {
 
     public void reset() {
         game_state = state.PLAYING;
+        pause = false;
+        resume_game = false;
+        restart_game = false;
+        exit_home = false;
+        clicked = false;
         Vector2 gravity = new Vector2(world.getGravity());
         for (GameObject obj : objects) {
             obj.deactivatePhysics(world);
@@ -585,6 +626,8 @@ public class GameController implements Screen, ContactListener {
         if (diver.getOxygenLevel() <= 0) {
             game_state = state.LOSE_GAME;
         }
+        if(pause) game_state = state.PAUSE;
+        if(!pause) game_state = state.PLAYING;
     }
 
 
@@ -592,7 +635,9 @@ public class GameController implements Screen, ContactListener {
     private void updatePlayingState() {
         // apply movement
         InputController input = InputController.getInstance();
-        if(input.isPause()) pause();
+        if(input.isPause()){
+            pause();
+        }
         diver.setHorizontalMovement(input.getHorizontal() * diver.getForce());
         diver.setVerticalMovement(input.getVertical() * diver.getForce());
 
@@ -712,7 +757,6 @@ public class GameController implements Screen, ContactListener {
      */
     public void update(float dt) {
         for (Door door : doors) {
-
             door.setActive(!door.getUnlock(diver.getItem()));
         }
 
@@ -723,6 +767,12 @@ public class GameController implements Screen, ContactListener {
             case PLAYING:
                 updatePlayingState();
                 break;
+            case PAUSE:
+                InputController input = InputController.getInstance();
+                if(input.isPause()){
+                    resume();
+                }
+                break;
             // could be useful later but currently just has updates for PLAYING state
 //            case WIN_GAME:
 //
@@ -732,8 +782,8 @@ public class GameController implements Screen, ContactListener {
 //            break;
         }
 
+
         // apply movement
-        InputController input = InputController.getInstance();
 
 //        if (!diver.getStunned()) {
 //            diver.setHorizontalMovement(input.getHorizontal() * diver.getForce());
@@ -816,6 +866,44 @@ public class GameController implements Screen, ContactListener {
         }
     }
 
+    public boolean pointer1(int x, int y, int width, int height, float scale) {
+        int pX = Gdx.input.getX();
+        int pY = Gdx.input.getY();
+        System.out.println("touched: " + Gdx.input.isTouched());
+        // Flip to match graphics coordinates
+        y = canvas.getHeight() - y;
+        float y1 = (float)y - (int)(360 - cameraController.getCameraPosition2D().y);
+        float x1 = (float)x - (int)(640 - cameraController.getCameraPosition2D().x);
+        float w = scale * width;
+        float h = scale * height;
+
+        System.out.println("pointer: " + pX + " " + pY);
+        if((x1 + w > pX && x1 - w < pX) && (y1 + h > pY && y1 - h < pY)){
+            if(Gdx.input.isTouched()) clicked = true;
+            return true;
+        }
+        return false;
+    }
+
+//    public boolean pointer2(int x, int y, int width, int height, float scale) {
+//        int pX = Gdx.input.getX();
+//        int pY = Gdx.input.getY();
+//        // Flip to match graphics coordinates
+//        y = canvas.getHeight() - y;
+//        float y1 = (float)y - (int)(360 - cameraController.getCameraPosition2D().y);
+//        float x1 = (float)x - (int)(640 - cameraController.getCameraPosition2D().x);
+//        float w = scale * width;
+//        float h = scale * height;
+//
+//        System.out.println("pointer: " + pX + " " + pY);
+//        if((x1 + w > pX && x1 - w < pX) && (y1 + h > pY && y1 - h < pY)){
+//            if(Gdx.input.isTouched())
+//                System.out.println("touch");
+//                return true;
+//        }
+//        return false;
+//    }
+
     /**
      * Draw the physics objects to the canvas
      * <p>
@@ -844,8 +932,10 @@ public class GameController implements Screen, ContactListener {
         if (!debug)
             rayHandler.updateAndRender();
         canvas.begin();
+
         switch (game_state) {
             case PLAYING:
+
                 canvas.draw(hud, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
                         cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/20f);
                 canvas.draw(oxygen, cameraController.getCameraPosition2D().x - canvas.getWidth()/4f - canvas.getWidth()/75f,
@@ -867,6 +957,36 @@ public class GameController implements Screen, ContactListener {
                         cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + 50,
                         cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f + 50);
                 break;
+            case PAUSE:
+                setCameraPositionNormal();
+                System.out.println("pause state");
+                canvas.draw(pause_screen, Color.WHITE, cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f,
+                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f, canvas.getWidth(), canvas.getHeight());
+                canvas.draw(black_spot, Color.WHITE, cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f,
+                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f - canvas.getHeight()/4f,
+                        black_spot.getRegionWidth(), black_spot.getRegionHeight());
+
+                Color tint = (pointer1((int)cameraController.getCameraPosition2D().x, (int)cameraController.getCameraPosition2D().y + main_menu.getRegionHeight() + main_menu.getRegionHeight() / 2,
+                        resume.getRegionWidth() / 2, resume.getRegionHeight() / 2, 0.7f) ? Color.GRAY : Color.WHITE);
+                if(clicked) resume();
+                canvas.draw(resume, tint, resume.getRegionWidth() / 2, resume.getRegionHeight(), cameraController.getCameraPosition2D().x,
+                        cameraController.getCameraPosition2D().y + main_menu.getRegionHeight() + main_menu.getRegionHeight() / 2, 0, 0.7f, 0.7f);
+
+                tint = (pointer1((int)cameraController.getCameraPosition2D().x, (int)cameraController.getCameraPosition2D().y
+                                + main_menu.getRegionHeight() / 2, restart.getRegionWidth() / 2,
+                        restart.getRegionHeight() / 2, 0.7f) ? Color.GRAY : Color.WHITE);
+                if(clicked) reset();
+                canvas.draw(restart, tint, restart.getRegionWidth() / 2, resume.getRegionHeight(),
+                        cameraController.getCameraPosition2D().x, cameraController.getCameraPosition2D().y
+                                + main_menu.getRegionHeight() / 2, 0, 0.7f, 0.7f);
+
+                tint = (pointer1((int)cameraController.getCameraPosition2D().x, (int)cameraController.getCameraPosition2D().y - main_menu.getRegionHeight() / 2
+                                , main_menu.getRegionWidth() / 2,
+                        main_menu.getRegionHeight() / 2, 0.7f) ? Color.GRAY : Color.WHITE);
+                if(clicked) exit_home = true;
+                canvas.draw(main_menu, tint, main_menu.getRegionWidth() / 2, main_menu.getRegionHeight(),
+                        cameraController.getCameraPosition2D().x, cameraController.getCameraPosition2D().y - main_menu.getRegionHeight() / 2,
+                        0, 0.7f, 0.7f);
             case WIN_GAME:
                 System.out.println("TEXT POS" +
                         cameraController.getCameraPosition2D().x + " " +
@@ -904,6 +1024,7 @@ public class GameController implements Screen, ContactListener {
             }
             canvas.endDebug();
         }
+
     }
 
 
@@ -935,10 +1056,14 @@ public class GameController implements Screen, ContactListener {
                 postUpdate(delta);
             }
             draw(delta);
+            //draw(delta);
             if (game_state == state.WIN_GAME) {
                 listener.exitScreen(this, 0);
             } else if (game_state == state.LOSE_GAME) {
                 listener.exitScreen(this, 1);
+            }
+            else if (exit_home == true && listener != null){
+                listener.exitScreen(this, 2);
             }
         }
     }
@@ -949,9 +1074,12 @@ public class GameController implements Screen, ContactListener {
      * This is usually when it's not active or visible on screen. An Application is
      * also paused before it is destroyed.
      */
-    public void pause() {
 
-        p = !p;
+    public void pause() {
+        System.out.println("pause() was called");
+        pause = true;
+
+        updateGameState();
     }
 
     /**
@@ -960,6 +1088,9 @@ public class GameController implements Screen, ContactListener {
      * This is usually when it regains focus.
      */
     public void resume() {
+        System.out.println("resume");
+        pause = false;
+        updateGameState();
         // TODO Auto-generated method stub
     }
 
@@ -1201,4 +1332,5 @@ public class GameController implements Screen, ContactListener {
     public Rectangle getWorldBounds() {
         return bounds;
     }
+
 }

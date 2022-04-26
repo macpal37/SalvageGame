@@ -220,7 +220,8 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
         canvas.begin();
         pointer();
         canvas.draw(background, Color.WHITE,0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.draw(title, Color.WHITE, title.getWidth()/2, title.getHeight()/2, Gdx.graphics.getWidth()/2, 625, 0,1, 1);
+        canvas.draw(title, Color.WHITE, title.getWidth()/2, title.getHeight()/2, Gdx.graphics.getWidth()/2,
+                625, 0,1, 1);
         canvas.end();
     }
 

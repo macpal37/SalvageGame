@@ -101,9 +101,12 @@ public class GDXRoot extends Game implements ScreenListener {
 	@Override
 	public void exitScreen(Screen screen, int exitCode) {
 		if (screen == loading) {
+			System.out.println("loading");
 			directory = loading.getAssets();
 			player = new Player(directory);
 			if (exitCode == 0) {
+				controller.setCameraPositionNormal();
+				menu_controller.dispose();
 				menu_controller.gatherAssets(directory);
 				menu_controller.setCanvas(canvas);
 				menu_controller.setActive();
@@ -112,17 +115,32 @@ public class GDXRoot extends Game implements ScreenListener {
 			loading.dispose();
 			loading = null;
 		} else if (screen == controller) {
-			controller.setCameraPositionNormal();
-			game_over_controller.dispose();
-			if (directory == null) {
-				System.out.println("DIRECTORY IS NULL!");
+			if(exitCode == 2){
+				controller.setCameraPositionNormal();
+				menu_controller.dispose();
+				menu_controller.gatherAssets(directory);
+				menu_controller.setCanvas(canvas);
+				menu_controller.setActive();
+				setScreen(menu_controller);
 			}
-			game_over_controller.setWin(exitCode == 0);
-			game_over_controller.gatherAssets(directory);
-			game_over_controller.create();
-			game_over_controller.setCanvas(canvas);
-			setScreen(game_over_controller);
+			else {
+				System.out.println("controller");
+				System.out.println(exitCode);
+				System.out.println("this happened");
+				controller.setCameraPositionNormal();
+				game_over_controller.dispose();
+				if (directory == null) {
+					System.out.println("DIRECTORY IS NULL!");
+				}
+				game_over_controller.setWin(exitCode == 0);
+				game_over_controller.gatherAssets(directory);
+				game_over_controller.create();
+				game_over_controller.setCanvas(canvas);
+				setScreen(game_over_controller);
+			}
+
 		} else if (screen == game_over_controller) {
+			System.out.println("game_over_controller");
 			if (exitCode == 0) {
 				controller.setCanvas(canvas);
 				controller.reset();

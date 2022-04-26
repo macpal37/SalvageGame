@@ -342,6 +342,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         if (pointer1(centerX, centerY + centerY, select_level.getWidth() / 2,
                 select_level.getHeight() / 2, BUTTON_SCALE * scale)) {
             pressState = 1;
+            return false;
         }
 
         if (pointer1(centerX,
