@@ -1139,6 +1139,13 @@ public class DiverModel extends GameObject {
         return currentAngle == targetAngle;
     }
 
+    public int getRemainingFlares() {
+        if(num_flares > 0 && (!flares.get(num_flares - 1).isCarried() || flares.get(num_flares-1).isActivated())){
+            return num_flares - 1;
+        }
+        return num_flares;
+    }
+
     /**
      * Returns the angle corresponding to the direction of diver's movement
      * <p>

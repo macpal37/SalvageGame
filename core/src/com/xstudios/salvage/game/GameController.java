@@ -85,6 +85,7 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion oxygenText;
     protected TextureRegion bodyHud;
     protected TextureRegion keyHud;
+    protected TextureRegion flareHud;
     protected TextureRegion keys;
     private Vector3 tempProjectedHud;
     private Vector3 tempProjectedOxygen;
@@ -437,6 +438,7 @@ public class GameController implements Screen, ContactListener {
         oxygenText = new TextureRegion(directory.getEntry("oxygen_text", Texture.class));
         bodyHud = new TextureRegion(directory.getEntry("body_hud", Texture.class));
         keyHud = new TextureRegion(directory.getEntry("key_hud", Texture.class));
+        flareHud = new TextureRegion(directory.getEntry("flare_hud", Texture.class));
         oxygen = new TextureRegion(directory.getEntry("oxygen", Texture.class));
         keys = new TextureRegion(directory.getEntry("keys", Texture.class));
 
@@ -926,7 +928,7 @@ public class GameController implements Screen, ContactListener {
                 //draw inventory indicator
                 if (diver.carryingItem()) {
 
-                    canvas.draw(keyHud, Color.WHITE, (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
+                    canvas.draw(keyHud, diver.getItem().getColor(), (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
                             tempProjectedOxygen.x - 50,
                             tempProjectedOxygen.y,
                             0.0f, 0.35f, 0.35f);
@@ -938,6 +940,12 @@ public class GameController implements Screen, ContactListener {
 
                     canvas.draw(bodyHud, Color.WHITE, 0, (float) bodyHud.getRegionHeight() / 2,
                             tempProjectedHud.x + 50 + (cameraController.getCameraPosition2D().x - tempProjectedOxygen.x),
+                            tempProjectedOxygen.y,
+                            0.0f, 0.35f, 0.35f);
+                }
+                for(int i = 0; i < diver.getRemainingFlares(); i++) {
+                    canvas.draw(flareHud, Color.WHITE, (float) flareHud.getRegionWidth(), (float) flareHud.getRegionHeight() / 2,
+                            tempProjectedOxygen.x - 10*i,
                             tempProjectedOxygen.y,
                             0.0f, 0.35f, 0.35f);
                 }
