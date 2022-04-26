@@ -207,6 +207,13 @@ public class GDXRoot extends Game implements ScreenListener {
 				menu_controller.setActive();
 				setScreen(menu_controller);
 			} else {
+//				if(exitCode > 2) {
+//					menu_controller.dispose();
+//					menu_controller.gatherAssets(directory);
+//					menu_controller.setCanvas(canvas);
+//					menu_controller.setActive();
+//					setScreen(menu_controller);
+//				}
 				controller.setLevel(exitCode - 1);
 				current = exitCode - 1;
 				controller.gatherAssets(directory);

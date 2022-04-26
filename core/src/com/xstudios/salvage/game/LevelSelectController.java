@@ -191,27 +191,59 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 0,
                 0.7f,
                 0.7f);
-        canvas.draw(
-                line,
-                Color.WHITE,
-                level.getWidth() / 2,
-                level.getHeight() / 2,
-                centerX/3 + centerX/4,
-                2 * centerY,
-                0,
-                1,
-                1);
-        canvas.draw(
-                line,
-                Color.WHITE,
-                level.getWidth() / 2,
-                level.getHeight() / 2,
-                centerX + centerX/2,
-                2 * centerY + centerY/3,
-                0,
-                -1,
-                1);
+//        canvas.draw(
+//                line,
+//                Color.WHITE,
+//                level.getWidth() / 2,
+//                level.getHeight() / 2,
+//                centerX/3 + centerX/4,
+//                2 * centerY,
+//                0,
+//                1,
+//                1);
+//        canvas.draw(
+//                line,
+//                Color.WHITE,
+//                level.getWidth() / 2,
+//                level.getHeight() / 2,
+//                centerX + centerX/2,
+//                2 * centerY + centerY/3,
+//                0,
+//                -1,
+//                1);
+//
+//        canvas.draw(
+//                line,
+//                Color.WHITE,
+//                level.getWidth() / 2,
+//                level.getHeight() / 2,
+//                centerX/3 + centerX/4,
+//                centerY,
+//                0,
+//                -1,
+//                -2);
+//        canvas.draw(
+//                line,
+//                Color.WHITE,
+//                level.getWidth() / 2,
+//                level.getHeight() / 2,
+//                centerX + centerX/2,
+//                2 * centerY + centerY/3,
+//                0,
+//                -1,
+//                1);
+//        canvas.draw(
+//                line,
+//                Color.WHITE,
+//                level.getWidth() / 2,
+//                level.getHeight() / 2,
+//                centerX + centerX/2,
+//                2 * centerY + centerY/3,
+//                0,
+//                -1,
+//                1);
 
+        //1
         tint = (pointer1(centerX/3, 2 * centerY, level.getWidth() / 2,
                 level.getHeight() / 2, 1) || 1 > locked? Color.GRAY : Color.WHITE);
         canvas.draw(
@@ -224,6 +256,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 0,
                 1,
                 1);
+        //2
         tint = (pointer1(centerX,
                 centerY, level.getWidth() / 2,
                 level.getHeight() / 2, 1) || 2 > locked? Color.GRAY : Color.WHITE);
@@ -237,6 +270,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 0,
                 1,
                 1);
+        //3
         tint = (pointer1(centerX + centerX/2 + centerX/6,
                 2 * centerY + centerY/2, level.getWidth() / 2,
                 level.getHeight() / 2, 1) || 3 > locked ? Color.GRAY : Color.WHITE);
@@ -251,63 +285,47 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 1,
                 1);
 
-
-        canvas.draw(
-                line,
-                Color.WHITE,
-                level.getWidth() / 2,
-                level.getHeight() / 2,
-                centerX/3 + centerX/4,
-                2 * centerY,
-                0,
-                1,
-                1);
-        canvas.draw(
-                line,
-                Color.WHITE,
-                level.getWidth() / 2,
-                level.getHeight() / 2,
-                centerX + centerX/2,
-                2 * centerY + centerY/3,
-                0,
-                -1,
-                1);
-
-        tint = (pointer1(centerX/3, 2 * centerY, level.getWidth() / 2,
-                level.getHeight() / 2, 1) || 1 > locked? Color.GRAY : Color.WHITE);
+        //second row stuff
+        //6
+        tint = (pointer1(centerX/3, - 3 * centerY, level.getWidth() / 2,
+                level.getHeight() / 2, 1) || 6 > locked? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level,
                 tint,
                 level.getWidth() / 2,
                 level.getHeight() / 2,
                 centerX/3,
-                2 * centerY,
+                - 3 * centerY,
                 0,
                 1,
                 1);
+
+        //5
         tint = (pointer1(centerX,
-                centerY, level.getWidth() / 2,
-                level.getHeight() / 2, 1) || 2 > locked? Color.GRAY : Color.WHITE);
+                -2 * centerY, level.getWidth() / 2,
+                level.getHeight() / 2, 1) || 5 > locked? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level,
                 tint,
                 level.getWidth() / 2,
                 level.getHeight() / 2,
                 centerX,
-                centerY,
+                -2 * centerY,
                 0,
                 1,
                 1);
+
+        //4
         tint = (pointer1(centerX + centerX/2 + centerX/6,
-                2 * centerY + centerY/2, level.getWidth() / 2,
-                level.getHeight() / 2, 1) || 3 > locked ? Color.GRAY : Color.WHITE);
+                centerY, level.getWidth() / 2,
+                level.getHeight() / 2, 1) || 4 > locked ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level,
                 tint,
                 level.getWidth() / 2,
                 level.getHeight() / 2,
                 centerX + centerX/2 + centerX/6,
-                2 * centerY + centerY/2,
+                -1 * centerY,
                 0,
                 1,
                 1);
@@ -337,11 +355,24 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 camera.render();
                 listener.exitScreen(this, 0);
             }
+
             if (pressState == 5 && listener != null) {
                 listener.exitScreen(this, 1);
             }
-            if (pressState == 6 && listener != null) {
+            else if (pressState == 6 && listener != null) {
                 listener.exitScreen(this, 2);
+            }
+            else if (pressState == 7 && listener != null) {
+                listener.exitScreen(this, 3);
+            }
+            else if (pressState == 8 && listener != null) {
+                listener.exitScreen(this, 4);
+            }
+            else if (pressState == 9 && listener != null) {
+                listener.exitScreen(this, 5);
+            }
+            else if (pressState == 10 && listener != null) {
+                listener.exitScreen(this, 6);
             }
         }
     }
@@ -428,21 +459,48 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (pressState >= 4) {
+        if (pressState >= 7) {
             return true;
         }
         if (pointer1(15,canvas.getHeight() * 7/8, main_menu.getWidth(),
                 main_menu.getHeight(), 0.7f)) {
             pressState = 1;
         }
-        if (pointer1(centerX/3, 2 * centerY, level.getWidth() / 2,
+        //1
+        else if (pointer1(centerX/3, 2 * centerY, level.getWidth() / 2,
                 level.getHeight() / 2, 1) && 1 <= locked) {
             pressState = 2;
         }
-        if (pointer1(centerX,
+        //2
+        else if (pointer1(centerX,
                 centerY, level.getWidth() / 2,
                 level.getHeight() / 2, 1) && 2 <= locked) {
             pressState = 3;
+        }
+
+        //3
+        else if (pointer1(centerX + centerX/2 + centerX/6,
+                2 * centerY + centerY/2, level.getWidth() / 2,
+                level.getHeight() / 2, 1) && 3 <= locked) {
+            pressState = 4;
+        }
+
+        //4
+        if (pointer1(centerX + centerX/2 + centerX/6,
+                -1 * centerY, level.getWidth() / 2,
+                level.getHeight() / 2, 1) && 4 <= locked) {
+            pressState = 5;
+        }
+        //5
+        if (pointer1(centerX,
+                -2 * centerY, level.getWidth() / 2,
+                level.getHeight() / 2, 1) && 5 <= locked) {
+            pressState = 6;
+        }
+        //6
+        if (pointer1(centerX/3, - 3 * centerY, level.getWidth() / 2,
+                level.getHeight() / 2, 1) && 6 <= locked) {
+            pressState = 7;
         }
 
         return false;
