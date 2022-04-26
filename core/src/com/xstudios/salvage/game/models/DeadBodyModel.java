@@ -12,6 +12,10 @@ import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 
+<<<<<<< HEAD
+=======
+import static com.xstudios.salvage.game.models.ItemType.KEY;
+>>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
 
 public class DeadBodyModel extends DiverObjectModel {
 

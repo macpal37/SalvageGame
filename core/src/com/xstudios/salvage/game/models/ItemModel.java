@@ -14,6 +14,10 @@ import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
 
+<<<<<<< HEAD
+=======
+import static com.xstudios.salvage.game.models.ItemType.KEY;
+>>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
 
 public class ItemModel extends DiverObjectModel {
 
@@ -35,7 +39,15 @@ public class ItemModel extends DiverObjectModel {
 
     private Light light;
 
+<<<<<<< HEAD
     public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.YELLOW, Color.CYAN};
+=======
+    private final int HOVER_LIGHT_RADIUS = 2;
+
+    private Color light_color;
+
+    public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
+>>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
     Color item_color;
 
 
@@ -50,9 +62,9 @@ public class ItemModel extends DiverObjectModel {
         } catch (Exception e) {
             item_color = Color.WHITE;
         }
-        drawSymbolPos.add(data.getFloat("symbol_dist", 50.0f), 0);
         setName(item_type + "" + getID());
         movement = new Vector2();
+        light_color = new Color(1f,0.5f,0.5f,0.5f);
     }
 
 
@@ -65,7 +77,11 @@ public class ItemModel extends DiverObjectModel {
 
     public void initLight(RayHandler rayHandler) {
 
+<<<<<<< HEAD
         light = new PointLight(rayHandler, 100, new Color(225 / 255f, 185 / 255f, 80 / 255f, 0.2f), 5, getX(), getY());
+=======
+        light =  new PointLight(rayHandler,100, light_color, HOVER_LIGHT_RADIUS,getX(),getY());
+>>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
         Filter f = new Filter();
         f.categoryBits = 0x0002;
         f.maskBits = 0x0004;
