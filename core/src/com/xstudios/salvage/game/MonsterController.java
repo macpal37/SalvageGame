@@ -88,26 +88,36 @@ public class MonsterController {
         return monster;
     }
 
+    public void wallCollision() {monster.setAggrivation(monster.getAggrivation() + 1.0f);}
+
     /**
      * Change the state of the monster based on aggrivation levels
      */
     private void changeStateIfApplicable() {
         // Add initialization code as necessary
         float aggrivation = monster.getAggrivation();
-        if (monster.getAggrivation() < 0.25f) {
-            state = FSMState.IDLE;
-        } else if (aggrivation < 1.0f) {
+        System.out.println(aggrivation);
+        if (aggrivation > 5.0f)  {
             state = FSMState.AGGRIVATED;
-        } else if (aggrivation >= 1.0f) {
+        } else if (aggrivation > 10.0f) {
             state = FSMState.ATTACK;
+        }
+        else {
+            state = FSMState.IDLE;
         }
         // Next state depends on current state.
         switch (state) {
 
             case IDLE:
+                if (aggrivation > 5.0f)  {
+                    state = FSMState.AGGRIVATED;
+                } else if (aggrivation > 10.0f) {
+                    state = FSMState.ATTACK;
+                }
                 break;
 
             case AGGRIVATED:
+
                 break;
 
             case ATTACK:
@@ -119,7 +129,6 @@ public class MonsterController {
                 state = FSMState.IDLE; // If debugging is off
                 break;
         }
-        state = FSMState.AGGRIVATED;
     }
 
     float tick = 0;
@@ -141,32 +150,46 @@ public class MonsterController {
     /**
      * Change the state of the monster based on aggrivation levels
      */
-    public void update(DiverModel diver) {
+    public void update(float aggrivationDrain, DiverModel diver) {
         tick++;
-        float aggrivation = monster.getAggrivation();
-        if (aggrivation < 1.0f) {
-            monster.setAggrivation(monster.getAggrivation() - 0.001f);
+        if (tick % 100 == 0) {
+            if (monster.getAggrivation() > 0.0f){
+            float aggrivation = monster.getAggrivation() - 1.0f;
+            monster.setAggrivation(aggrivation);
+            }
         }
         changeStateIfApplicable();
-//        if (tick % 2 == 0)
-//            travelToPosition(targetLocations.get(0));
+
+        float goal_x = diver.getX() + diver.getVX();
+        float goal_y = diver.getY() + diver.getVY();
 
 
         switch (state) {
 
             case AGGRIVATED:
-
-//                monster.setPosition(diver.getPosition());
-                if (tick % 100 == 0) {
-                    if (targetLocations.size() < 5) {
-                        targetLocations.push(monster.getPosition());
-                    } else {
-                        targetLocations.poll();
-                        targetLocations.push(diver.getPosition());
-                    }
+                if (tick % 250 == 0) {
+                        float best_distance = 10000.0f;
+                        float temp_distance = 0.0f;
+                        Wall final_loc = null;
+                        for (Wall wall : monster.getSpawnLocations()) {
+                            if (wall.canSpawnTentacle()) {
+                                Vector2 location = wall.getPosition();
+                                temp_distance = (float) Math.sqrt(
+                                        Math.pow((double) (location.x - goal_x), 2) +
+                                                Math.pow((double) (location.y - goal_y), 2)
+                                );
+                                if (temp_distance < best_distance) {
+                                    best_distance = temp_distance;
+                                    final_loc = wall;
+                                }
+                            }
+                        }
+                        if (final_loc != null) {
+                            System.out.println(final_loc);
+                            monster.addTentacle(final_loc);
+                            //monster.setAggrivation(0.0f);
+                        }
                 }
-
-
                 break;
             default:
 

@@ -6,18 +6,24 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
+import com.xstudios.salvage.util.PooledList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Monster extends GameObject {
 
     private float maxAggression = 100;
-    public float agression = 0;
-    private ArrayList<Tentacle> tentacles;
-    private float aggrivationRate = 0.75f;
-    private final float RADIUS = 15;
+    public float agression = 0.0f;
+    private Queue<Wall> tentacles;
+    private float aggrivation = 0.0f;
+    private final float RADIUS = 30;
     private CircleShape radialPresence;
     private FilmStrip tentacleSprite;
+    private ArrayList<Wall> targetLocations;
+
     /**
      * A cache value for the fixture (for resizing)
      */
@@ -25,14 +31,15 @@ public class Monster extends GameObject {
 
     public Monster(float x, float y) {
         super(x, y);
-        System.out.println("SUMMO!");
+        //System.out.println("SUMMO!");
         radialPresence = new CircleShape();
         setFixedRotation(true);
 
         setDimension(RADIUS, RADIUS);
         setName("monster");
 
-        tentacles = new ArrayList<>();
+        tentacles = new LinkedList<Wall>();
+        targetLocations = new ArrayList<Wall>();;
     }
 
     @Override
@@ -75,6 +82,7 @@ public class Monster extends GameObject {
         tentacleSprite.setFrame(11);
     }
 
+
     @Override
     public void draw(GameCanvas canvas) {
         canvas.draw(tentacleSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
@@ -93,24 +101,28 @@ public class Monster extends GameObject {
 
     }
 
-    public void addTentacle(Tentacle tentacle) {
-        tentacles.add(tentacle);
+    public void addTentacle(Wall wall) {
+        tentacles.add(wall);
     }
 
-    public void removeTentacle(Tentacle tentacle) {
-        tentacles.remove(tentacle);
-    }
+    public Wall getNextTentacle() { return tentacles.poll(); }
 
-    public ArrayList<Tentacle> getTentacles() {
-        return tentacles;
-    }
+    public void addLocation(Wall location) { targetLocations.add(location); }
+
+    public void removeLocation(Wall location) {targetLocations.remove(location); }
+
+    public Queue<Wall> getTentacles() { return tentacles; }
+
+    public ArrayList<Wall> getSpawnLocations() { return targetLocations; }
 
     public void setAggrivation(float temp_aggrivation) {
-        aggrivationRate = temp_aggrivation;
+        aggrivation = temp_aggrivation;
     }
 
     public float getAggrivation() {
-        return aggrivationRate;
+        return aggrivation;
     }
+
+
 }
 

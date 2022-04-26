@@ -89,6 +89,10 @@ public class Tentacle extends GameObject {
         return life;
     }
 
+    public Wall getSpawnWall() {
+        return spawnWall;
+    }
+
     public void setTexture(TextureRegion value) {
         texture = value;
         origin.set(texture.getRegionWidth() / 2.0f, texture.getRegionHeight() / 2.0f);
@@ -134,7 +138,7 @@ public class Tentacle extends GameObject {
         if (life > 200) {
             startGrowing = false;
         }
-        System.out.println(life);
+        //System.out.println(life);
 
         if (frame == 1) {
             collisionBoxes[0].setActive(true);
@@ -191,6 +195,15 @@ public class Tentacle extends GameObject {
 
     public Vector2 getScale() {
         return scale;
+    }
+
+    public Wall getDead() {
+        if (frame == -1){
+            return spawnWall;
+        }
+        else{
+            return null;
+        }
     }
 
     public Vector2 scale = new Vector2(1 / 2f, 1 / 2f);
