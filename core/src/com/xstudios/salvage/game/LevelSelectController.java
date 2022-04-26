@@ -251,6 +251,68 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 1,
                 1);
 
+
+        canvas.draw(
+                line,
+                Color.WHITE,
+                level.getWidth() / 2,
+                level.getHeight() / 2,
+                centerX/3 + centerX/4,
+                2 * centerY,
+                0,
+                1,
+                1);
+        canvas.draw(
+                line,
+                Color.WHITE,
+                level.getWidth() / 2,
+                level.getHeight() / 2,
+                centerX + centerX/2,
+                2 * centerY + centerY/3,
+                0,
+                -1,
+                1);
+
+        tint = (pointer1(centerX/3, 2 * centerY, level.getWidth() / 2,
+                level.getHeight() / 2, 1) || 1 > locked? Color.GRAY : Color.WHITE);
+        canvas.draw(
+                level,
+                tint,
+                level.getWidth() / 2,
+                level.getHeight() / 2,
+                centerX/3,
+                2 * centerY,
+                0,
+                1,
+                1);
+        tint = (pointer1(centerX,
+                centerY, level.getWidth() / 2,
+                level.getHeight() / 2, 1) || 2 > locked? Color.GRAY : Color.WHITE);
+        canvas.draw(
+                level,
+                tint,
+                level.getWidth() / 2,
+                level.getHeight() / 2,
+                centerX,
+                centerY,
+                0,
+                1,
+                1);
+        tint = (pointer1(centerX + centerX/2 + centerX/6,
+                2 * centerY + centerY/2, level.getWidth() / 2,
+                level.getHeight() / 2, 1) || 3 > locked ? Color.GRAY : Color.WHITE);
+        canvas.draw(
+                level,
+                tint,
+                level.getWidth() / 2,
+                level.getHeight() / 2,
+                centerX + centerX/2 + centerX/6,
+                2 * centerY + centerY/2,
+                0,
+                1,
+                1);
+
+
         canvas.end();
     }
 

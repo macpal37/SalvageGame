@@ -275,7 +275,7 @@ public class InputController {
 //        }
 
         kickOff = Gdx.input.isKeyPressed(Keys.SPACE);
-        pause = Gdx.input.isKeyPressed(Keys.P);
+        pause = Gdx.input.isKeyPressed(Keys.ESCAPE);
 
     }
 
