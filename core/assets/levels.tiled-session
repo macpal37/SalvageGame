@@ -73,6 +73,7 @@
         }
     },
     "map.height": 20,
+    "map.lastUsedFormat": "json",
     "map.tileHeight": 100,
     "map.tileWidth": 100,
     "map.width": 20,
@@ -84,13 +85,15 @@
     ],
     "project": "",
     "recentFiles": [
-        "levels/level2.json",
         "levels/test_level.json",
+        "levels/level0.json",
+        "level3.tmx",
+        "levels/level3.tmj",
+        "levels/tilesets/old_ship_tileset.json",
         "levels/level4.json",
         "levels/level1.json",
-        "levels/level0.json",
-        "levels/tilesets/old_ship_tileset.json",
         "levels/tilesets/tentacle_tile.json",
+        "levels/level2.json",
         "levels/small_ship.json"
     ]
 }

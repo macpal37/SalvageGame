@@ -461,8 +461,8 @@ public class LevelBuilder {
              * ===============================================*/
             else {
                 for (JsonValue obj : layer.get("objects")) {
-                    System.out.println("gid: " + obj.getInt("gid"));
-                    System.out.println("num tiles : " + tiles.length);
+//                    System.out.println("gid: " + obj.getInt("gid"));
+//                    System.out.println("num tiles : " + tiles.length);
                     Tile tile = tiles[obj.getInt("gid") - 1];
 
                     float sx = obj.getFloat("x") / div;
@@ -562,15 +562,15 @@ public class LevelBuilder {
                                     break;
                                 case 1:
                                     decor.setFilmStrip(new FilmStrip(woodenChair1, 1, 1, 1));
-                                    decor.setScale(1 / 2f, 1 / 2f);
+                                    decor.setScale(1 / 1.5f, 1 / 1.5f);
                                     break;
                                 case 2:
                                     decor.setFilmStrip(new FilmStrip(woodenChair2, 1, 1, 1));
-                                    decor.setScale(1 / 2f, 1 / 2f);
+                                    decor.setScale(1 / 1.5f, 1 / 1.5f);
                                     break;
                                 case 3:
                                     decor.setFilmStrip(new FilmStrip(woodenTable, 1, 1, 1));
-                                    decor.setScale(1 / 5f, 1 / 5f);
+                                    decor.setScale(1 / 3f, 1 / 3f);
                                     break;
                                 case 11:
                                 case 12:
@@ -586,7 +586,7 @@ public class LevelBuilder {
                             }
 
 //                            decor.setAngle((float) Math.PI * 1 / 2f);
-                            decor.setScale(objectWidth / tileSize, objectHeight / tileSize);
+                            decor.setScale(objectWidth / tileSize / 2, objectHeight / tileSize / 2);
                             decor.setAngle(rotation);
                             decor.setBodyType(BodyDef.BodyType.StaticBody);
                             decor.setSensor(true);
