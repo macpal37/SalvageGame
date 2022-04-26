@@ -1,16 +1,4 @@
 {
-    "Map/SizeTest": {
-        "height": 4300,
-        "width": 2
-    },
-    "activeFile": "levels/test_level.json",
-    "expandedProjectPaths": [
-        ".",
-        "tilesets",
-        "levels",
-        "levels/tilesets",
-        "levels/objects"
-    ],
     "fileStates": {
         "levels/level0.json": {
             "scale": 0.75,
@@ -80,34 +68,12 @@
             }
         },
         "levels/tutorial2.json": {
-            "scale": 0.75,
+            "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 536.6666666666666,
-                "y": 642.6666666666666
+                "x": 923,
+                "y": 508
             }
         }
-    },
-    "map.height": 10,
-    "map.lastUsedFormat": "json",
-    "map.tileHeight": 100,
-    "map.tileWidth": 100,
-    "map.width": 10,
-    "openFiles": [
-        "levels/level0.json",
-        "levels/tilesets/old_ship_tileset.json",
-        "levels/test_level.json"
-    ],
-    "project": "",
-    "property.type": "int",
-    "recentFiles": [
-        "levels/test_level.json",
-        "levels/tilesets/old_ship_tileset.json",
-        "levels/level0.json",
-        "levels/level2.json",
-        "levels/level4.json",
-        "levels/level1.json",
-        "levels/tilesets/tentacle_tile.json",
-        "levels/small_ship.json"
-    ]
+    }
 }

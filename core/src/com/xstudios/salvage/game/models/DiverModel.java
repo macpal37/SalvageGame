@@ -15,8 +15,6 @@ import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
-import jdk.internal.module.SystemModuleFinders;
-import sun.security.x509.OtherName;
 
 import java.util.ArrayList;
 
