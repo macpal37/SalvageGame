@@ -35,8 +35,6 @@ public class LoadingMode implements Screen {
 
     /** Background texture for start-up */
     private Texture background;
-    /** Play button to display when done */
-    private boolean play;
 
     // statusBar is a "texture atlas." Break it up into parts.
     /** Left cap to the status background (grey region) */
@@ -45,12 +43,6 @@ public class LoadingMode implements Screen {
     private TextureRegion statusBkgMiddle;
     /** Right cap to the status background (grey region) */
     private TextureRegion statusBkgRight;
-    /** Left cap to the status forground (colored region) */
-    private TextureRegion statusFrgLeft;
-    /** Middle portion of the status forground (colored region) */
-    private TextureRegion statusFrgMiddle;
-    /** Right cap to the status forground (colored region) */
-    private TextureRegion statusFrgRight;
 
     /** Default budget for asset loader (do nothing but load 60 fps) */
     private static int DEFAULT_BUDGET = 15;
@@ -60,10 +52,6 @@ public class LoadingMode implements Screen {
     private static int STANDARD_HEIGHT = 700;
     /** Ratio of the bar width to the screen */
     private static float BAR_WIDTH_RATIO = 0.66f;
-    /** Ration of the bar height to the screen */
-    private static float BAR_HEIGHT_RATIO = 0.25f;
-    /** Height of the progress bar */
-    private static float BUTTON_SCALE = 0.75f;
 
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
@@ -82,6 +70,7 @@ public class LoadingMode implements Screen {
 
     /** Whether or not this player mode is still active */
     private boolean active;
+    private boolean done;
 
     /**
      * Returns the asset directory produced by this loading screen
@@ -93,16 +82,6 @@ public class LoadingMode implements Screen {
      */
     public AssetDirectory getAssets() {
         return assets;
-    }
-
-    /**
-     * Creates a LoadingMode with the default budget, size and position.
-     *
-     * @param file The asset directory to load in the background
-     * @param canvas The game canvas to draw to
-     */
-    public LoadingMode(String file, GameCanvas canvas) {
-        this(file, canvas, DEFAULT_BUDGET);
     }
 
     /**
@@ -136,13 +115,9 @@ public class LoadingMode implements Screen {
         statusBkgRight = internal.getEntry("progress.backright", TextureRegion.class);
         statusBkgMiddle = internal.getEntry("progress.background", TextureRegion.class);
 
-        statusFrgLeft = internal.getEntry("progress.foreleft", TextureRegion.class);
-        statusFrgRight = internal.getEntry("progress.foreright", TextureRegion.class);
-        statusFrgMiddle = internal.getEntry("progress.foreground", TextureRegion.class);
-
         // No progress so far.
         progress = 0;
-        play = false;
+        done = false;
 
         // Start loading the real assets
         assets = new AssetDirectory(file);
@@ -150,9 +125,13 @@ public class LoadingMode implements Screen {
         active = true;
     }
 
+    public void setScreenListener(ScreenListener listener) {
+        this.listener = listener;
+    }
+
     /** Called when this screen should release all resources. */
     public void dispose() {
-        play = false;
+        done = false;
         internal.unloadAssets();
         internal.dispose();
     }
@@ -166,12 +145,12 @@ public class LoadingMode implements Screen {
      * @param delta Number of seconds since last animation frame
      */
     private void update(float delta) {
-        if (play == false) {
+        if (done == false) {
             assets.update(budget);
             this.progress = assets.getProgress();
             if (progress >= 1.0f) {
                 this.progress = 1.0f;
-                play = true;
+                done = true;
             }
         }
     }
@@ -185,7 +164,7 @@ public class LoadingMode implements Screen {
     private void draw() {
         canvas.begin();
         canvas.draw(background, 0, 0);
-        if (play == false) drawProgress(canvas);
+        if (done == false) drawProgress(canvas);
         canvas.end();
     }
 
@@ -250,7 +229,7 @@ public class LoadingMode implements Screen {
             draw();
 
             // We are  ready, notify our listener
-            if (play == true  && listener != null) {
+            if (done == true && listener != null) {
                 listener.exitScreen(this, 0);
             }
         }
@@ -297,23 +276,12 @@ public class LoadingMode implements Screen {
 
     /** Called when this screen becomes the current screen for a Game. */
     public void show() {
-        // Useless if called in outside animation loop
-        active = true;
     }
 
     /** Called when this screen is no longer the current screen for a Game. */
     public void hide() {
         // Useless if called in outside animation loop
-        active = false;
-    }
-
-    /**
-     * Sets the ScreenListener for this mode
-     *
-     * <p>The ScreenListener will respond to requests to quit.
-     */
-    public void setScreenListener(ScreenListener listener) {
-        this.listener = listener;
     }
 }
+
 
