@@ -139,6 +139,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     public void gatherAssets(AssetDirectory directory) {
         background = directory.getEntry("background:level_select", Texture.class);
         main_menu = directory.getEntry("main_menu", Texture.class);
+        System.out.println("M: " + main_menu);
         level = directory.getEntry("level", Texture.class);
         line = directory.getEntry("line", Texture.class);
     }

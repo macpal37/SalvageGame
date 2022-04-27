@@ -1,16 +1,11 @@
 {
-<<<<<<< HEAD
-    "Map/SizeTest": {
-        "height": 4300,
-        "width": 2
-    },
-    "activeFile": "levels/test_level.json",
+    "activeFile": "levels/tutorial2.json",
     "expandedProjectPaths": [
-        ".",
         "tilesets",
-        "levels",
+        "levels/objects",
         "levels/tilesets",
-        "levels/objects"
+        ".",
+        "levels"
     ],
     "fileStates": {
         "levels/level0.json": {
@@ -43,39 +38,6 @@
             "viewCenter": {
                 "x": 991,
                 "y": 878
-=======
-    "activeFile": "levels/level1.json",
-    "expandedProjectPaths": [
-        "levels/objects",
-        "levels",
-        ".",
-        "levels/tilesets",
-        "tilesets"
-    ],
-    "fileStates": {
-        "levels/level0.json": {
-            "scale": 0.5,
-            "selectedLayer": 0,
-            "viewCenter": {
-                "x": 528,
-                "y": 632
-            }
-        },
-        "levels/level1.json": {
-            "scale": 2,
-            "selectedLayer": 2,
-            "viewCenter": {
-                "x": 893,
-                "y": 649.75
-            }
-        },
-        "levels/level2.json": {
-            "scale": 0.33,
-            "selectedLayer": 0,
-            "viewCenter": {
-                "x": 2372.727272727273,
-                "y": 2612.121212121212
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
             }
         },
         "levels/small_ship.json": {
@@ -84,7 +46,6 @@
             "viewCenter": {
                 "x": 2006.835269993165,
                 "y": 1503.7593984962407
-<<<<<<< HEAD
             }
         },
         "levels/test_level.json": {
@@ -118,8 +79,8 @@
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 567,
-                "y": 536
+                "x": 440,
+                "y": 351
             }
         },
         "levels/tutorial3.json": {
@@ -129,60 +90,28 @@
                 "x": 300.6666666666667,
                 "y": 648
             }
-=======
-            }
-        },
-        "levels/test_level.json": {
-            "scale": 0.75,
-            "selectedLayer": 1,
-            "viewCenter": {
-                "x": 777.3333333333333,
-                "y": 1656
-            }
-        },
-        "levels/tilesets/id_tiles.json": {
-            "scaleInDock": 1
-        },
-        "levels/tilesets/old_ship_tileset.json": {
-            "scaleInDock": 1,
-            "scaleInEditor": 1
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
         }
     },
-    "last.exportedFilePath": "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels",
-    "map.height": 10,
-    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
-    "map.lastUsedFormat": "json",
-    "map.tileHeight": 100,
-    "map.tileWidth": 100,
-    "map.width": 15,
     "openFiles": [
-        "levels/level0.json",
-<<<<<<< HEAD
-=======
-        "levels/level1.json",
-        "levels/level2.json",
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
-        "levels/tilesets/old_ship_tileset.json",
-        "levels/test_level.json"
-    ],
-    "project": "",
-    "recentFiles": [
-<<<<<<< HEAD
-        "levels/level1.json",
-        "levels/test_level.json",
-        "levels/tilesets/old_ship_tileset.json",
-        "levels/level0.json",
         "levels/level2.json",
         "levels/level4.json",
-        "levels/tilesets/tentacle_tile.json",
-=======
-        "levels/level0.json",
-        "levels/test_level.json",
-        "levels/tilesets/old_ship_tileset.json",
-        "levels/level2.json",
         "levels/level1.json",
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
+        "levels/tutorial1.json",
+        "levels/tilesets/old_ship_tileset.json",
+        "levels/tutorial2.json",
+        "levels/tutorial3.json"
+    ],
+    "recentFiles": [
+        "levels/level2.json",
+        "levels/level4.json",
+        "levels/level1.json",
+        "levels/tutorial1.json",
+        "levels/tilesets/old_ship_tileset.json",
+        "levels/tutorial3.json",
+        "levels/tutorial2.json",
+        "levels/test_level.json",
+        "levels/level0.json",
+        "levels/tilesets/tentacle_tile.json",
         "levels/small_ship.json"
     ]
 }

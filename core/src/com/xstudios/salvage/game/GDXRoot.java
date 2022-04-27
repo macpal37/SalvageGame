@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
+import java.awt.*;
+
 public class GDXRoot extends Game implements ScreenListener {
 
 //    /**
@@ -217,6 +219,8 @@ public class GDXRoot extends Game implements ScreenListener {
 
     private Player player;
 
+    private Pixmap pm;
+    private Pixmap no_pm;
     private int current;
 
     /**
@@ -247,6 +251,11 @@ public class GDXRoot extends Game implements ScreenListener {
         menu_controller.setScreenListener(this);
         level_select_controller.setScreenListener(this);
 
+
+        pm = new Pixmap(Gdx.files.internal("ui/cursor.png"));
+        no_pm = new Pixmap(Gdx.files.internal("ui/no_cursor.png"));
+        Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
+
         setScreen(loading);
 
     }
@@ -263,7 +272,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
         canvas.dispose();
         canvas = null;
-
+        pm.dispose();
         // Unload all of the resources
         // Unload all of the resources
         if (directory != null) {
@@ -296,10 +305,8 @@ public class GDXRoot extends Game implements ScreenListener {
             System.out.println("loading");
             directory = loading.getAssets();
             player = new Player(directory);
-            Pixmap pm = new Pixmap(Gdx.files.internal("core/assets/ui/cursor.png"));
-            Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
-            pm.dispose();
             if (exitCode == 0) {
+                Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
                 controller.setCameraPositionNormal();
                 menu_controller.dispose();
                 menu_controller.gatherAssets(directory);
@@ -317,6 +324,7 @@ public class GDXRoot extends Game implements ScreenListener {
                 menu_controller.setCanvas(canvas);
                 menu_controller.setActive();
                 setScreen(menu_controller);
+                Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
             } else {
                 System.out.println("controller");
                 System.out.println(exitCode);
@@ -331,6 +339,7 @@ public class GDXRoot extends Game implements ScreenListener {
                 game_over_controller.create();
                 game_over_controller.setCanvas(canvas);
                 setScreen(game_over_controller);
+                Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
             }
 
         } else if (screen == game_over_controller) {
@@ -338,8 +347,8 @@ public class GDXRoot extends Game implements ScreenListener {
             if (exitCode == 0) {
                 controller.setCanvas(canvas);
                 controller.reset();
-
                 setScreen(controller);
+                Gdx.graphics.setCursor(Gdx.graphics.newCursor(no_pm, 0, 0));
             }
             if (exitCode == 1) {
                 controller.setCameraPositionNormal();
@@ -348,6 +357,7 @@ public class GDXRoot extends Game implements ScreenListener {
                 menu_controller.setCanvas(canvas);
                 menu_controller.setActive();
                 setScreen(menu_controller);
+                Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
             }
             if (exitCode == 2) {
                 System.out.println("current: " + current);
@@ -359,6 +369,7 @@ public class GDXRoot extends Game implements ScreenListener {
                     menu_controller.setCanvas(canvas);
                     menu_controller.setActive();
                     setScreen(menu_controller);
+                    Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
                 } else {
                     current++;
                     if (player.getLevel() == current) player.nextLevel();
@@ -369,6 +380,7 @@ public class GDXRoot extends Game implements ScreenListener {
                     controller.reset();
 
                     setScreen(controller);
+                    Gdx.graphics.setCursor(Gdx.graphics.newCursor(no_pm, 0, 0));
                 }
             }
         } else if (screen == menu_controller) {
@@ -379,6 +391,7 @@ public class GDXRoot extends Game implements ScreenListener {
                 level_select_controller.setCanvas(canvas);
                 level_select_controller.setActive();
                 setScreen(level_select_controller);
+                Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
             }
             if (exitCode == 1) {
                 controller.gatherAssets(directory);
@@ -386,6 +399,7 @@ public class GDXRoot extends Game implements ScreenListener {
                 controller.reset();
 
                 setScreen(controller);
+                Gdx.graphics.setCursor(Gdx.graphics.newCursor(no_pm, 0, 0));
             }
             if (exitCode == 2) {
                 player.save();
@@ -400,6 +414,7 @@ public class GDXRoot extends Game implements ScreenListener {
                 menu_controller.setCanvas(canvas);
                 menu_controller.setActive();
                 setScreen(menu_controller);
+                Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
             } else {
                 System.out.println("exitCode= " + exitCode);
                 current = exitCode - 1;
@@ -410,12 +425,14 @@ public class GDXRoot extends Game implements ScreenListener {
                     menu_controller.setCanvas(canvas);
                     menu_controller.setActive();
                     setScreen(menu_controller);
+                    Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
                 } else {
                     controller.setLevel(exitCode - 1);
                     controller.gatherAssets(directory);
                     controller.setCanvas(canvas);
                     controller.reset();
                     setScreen(controller);
+                    Gdx.graphics.setCursor(Gdx.graphics.newCursor(no_pm, 0, 0));
                 }
             }
         }

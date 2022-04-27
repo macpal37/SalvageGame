@@ -15,11 +15,11 @@ import java.util.Queue;
 
 public class Monster extends GameObject {
 
-    private float maxAggression = 100;
+    private float maxAggression = 1;
     public float agression = 0.0f;
     private Queue<Wall> tentacles;
     private float aggrivation = 0.0f;
-    private final float RADIUS = 7;
+    private final float RADIUS = 10;
     private CircleShape radialPresence;
     private FilmStrip tentacleSprite;
     private ArrayList<Wall> targetLocations;
@@ -39,7 +39,8 @@ public class Monster extends GameObject {
         setName("monster");
 
         tentacles = new LinkedList<Wall>();
-        targetLocations = new ArrayList<Wall>();;
+        targetLocations = new ArrayList<Wall>();
+        ;
     }
 
     @Override
@@ -74,7 +75,7 @@ public class Monster extends GameObject {
 
     }
 
-    public void moveMonster(Vector2 location){
+    public void moveMonster(Vector2 location) {
         super.setPosition(location);
     }
 
@@ -89,16 +90,16 @@ public class Monster extends GameObject {
 
     @Override
     public void draw(GameCanvas canvas) {
-       // canvas.draw(tentacleSprite, Color.CLEAR, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
+        // canvas.draw(tentacleSprite, Color.CLEAR, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
 
 
     }
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-       canvas.drawPhysics(radialPresence, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
+        canvas.drawPhysics(radialPresence, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
     }
-    
+
     public void spawnTenctacle(DiverModel diver) {
         Tentacle tentacle = new Tentacle(diver.getX(), diver.getY());
         tentacle.setFilmStrip(tentacleSprite.copy());
@@ -108,15 +109,25 @@ public class Monster extends GameObject {
         tentacles.add(wall);
     }
 
-    public Wall getNextTentacle() { return tentacles.poll(); }
+    public Wall getNextTentacle() {
+        return tentacles.poll();
+    }
 
-    public void addLocation(Wall location) { targetLocations.add(location); }
+    public void addLocation(Wall location) {
+        targetLocations.add(location);
+    }
 
-    public void removeLocation(Wall location) {targetLocations.remove(location); }
+    public void removeLocation(Wall location) {
+        targetLocations.remove(location);
+    }
 
-    public Queue<Wall> getTentacles() { return tentacles; }
+    public Queue<Wall> getTentacles() {
+        return tentacles;
+    }
 
-    public ArrayList<Wall> getSpawnLocations() { return targetLocations; }
+    public ArrayList<Wall> getSpawnLocations() {
+        return targetLocations;
+    }
 
     public void setAggrivation(float temp_aggrivation) {
         aggrivation = temp_aggrivation;
