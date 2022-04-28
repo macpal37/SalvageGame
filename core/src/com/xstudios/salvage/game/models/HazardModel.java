@@ -47,8 +47,8 @@ public class HazardModel extends Wall {
         releaseFixtures();
 
         for (int ii = 0; ii < shapes.length; ii++) {
-            fixture.filter.categoryBits = 0x002;
-            fixture.filter.groupIndex = 0x004;
+//            fixture.filter.categoryBits = 0x002;
+//            fixture.filter.groupIndex = 0x004;
             fixture.filter.maskBits = -1;
             fixture.shape = shapes[ii];
             geoms[ii] = body.createFixture(fixture);
