@@ -234,6 +234,7 @@ public class GameController implements Screen, ContactListener {
     boolean exit_home;
     boolean clicked;
 
+
     private LevelBuilder levelBuilder;
 
 
@@ -626,8 +627,7 @@ public class GameController implements Screen, ContactListener {
         if (diver.getOxygenLevel() <= 0) {
             game_state = state.LOSE_GAME;
         }
-        if(pause) game_state = state.PAUSE;
-        if(!pause) game_state = state.PLAYING;
+        else if(pause) game_state = state.PAUSE;
     }
 
 
@@ -1058,9 +1058,9 @@ public class GameController implements Screen, ContactListener {
             draw(delta);
             //draw(delta);
             if (game_state == state.WIN_GAME) {
-                listener.exitScreen(this, 0);
-            } else if (game_state == state.LOSE_GAME) {
                 listener.exitScreen(this, 1);
+            } else if (game_state == state.LOSE_GAME) {
+                listener.exitScreen(this, 0);
             }
             else if (exit_home == true && listener != null){
                 listener.exitScreen(this, 2);
