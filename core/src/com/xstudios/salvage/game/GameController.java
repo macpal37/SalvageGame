@@ -555,7 +555,7 @@ public class GameController implements Screen, ContactListener {
             game_state = state.WIN_GAME;
         }
         if(pause) game_state = state.PAUSE;
-        if(!pause) game_state = state.PLAYING;
+//        if(!pause) game_state = state.PLAYING;
     }
 
 
@@ -795,6 +795,7 @@ public class GameController implements Screen, ContactListener {
 
 
         updateGameState();
+        System.out.println("GAME STATE: " + game_state);
 
         //deal with hazard stun
 

@@ -103,7 +103,7 @@ public class MonsterController {
     private void changeStateIfApplicable() {
         // Add initialization code as necessary
         float aggrivation = monster.getAggrivation();
-        System.out.println(aggrivation);
+//        System.out.println(aggrivation);
         if (aggrivation > 6.0f)  {
             state = FSMState.AGGRIVATED;
         }
