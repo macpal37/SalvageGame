@@ -150,7 +150,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         quit = directory.getEntry("quit", Texture.class);
         level_editor = directory.getEntry("level_editor", Texture.class);
         select_level = directory.getEntry("select_level", Texture.class);
-
     }
 
     /**
@@ -190,7 +189,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         float w = scale * width;
         float h = scale * height;
 
-        if ((x + w > pX && x - w < pX) && (y + h > pY && y - h < pY)) {
+        if((x + w > pX && x - w < pX) && (y + h > pY && y - h < pY)){
             return true;
         }
         return false;
@@ -380,6 +379,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         if (pointer1(centerX, centerY + centerY, select_level.getWidth() / 2,
                 select_level.getHeight() / 2, BUTTON_SCALE * scale)) {
             pressState = 1;
+            return false;
         }
 
         if (pointer1(centerX,

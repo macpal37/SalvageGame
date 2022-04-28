@@ -303,8 +303,9 @@ public class InputController {
             vertical -= 1.0f;
         }
 
+        pause = Gdx.input.isKeyPressed(Keys.C);
 
-        pause = Gdx.input.isKeyPressed(Keys.P);
+        // TODO: MERGE PAUSE AND MENUPRESSED
 
     }
 

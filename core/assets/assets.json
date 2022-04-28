@@ -1,6 +1,18 @@
 {
   "textures": {
-
+    "cursor" : "ui/cursor.png",
+    "main_menu_pause" : "ui/main_menu_pause.png",
+    "restart" : "ui/restart.png",
+    "black_spot" : "ui/black_spot.png",
+    "resume" : "ui/resume.png",
+    "pause" : "ui/pause_screen.png",
+    "complete" : "ui/complete.png",
+    "perish" : "ui/perish.png",
+    "level_complete" : "background/level_complete_background.png",
+    "next" : "ui/next.png",
+    "try_again" : "ui/try_again.png",
+    "game_over" : "background/game_over_background.png",
+    "m": "background/m.jpg",
     "title": "ui/salvage.png",
     "quit": "ui/quit.png",
     "select_level": "ui/select_level.png",
@@ -72,7 +84,8 @@
 
   },
   "jsons"  : {
-    "models:constants":  "models/constants.json"
+    "models:constants":  "models/constants.json",
+    "player": "player.json"
   },
 
   "fonts": {
