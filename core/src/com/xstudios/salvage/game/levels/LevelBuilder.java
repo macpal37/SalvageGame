@@ -201,12 +201,15 @@ public class LevelBuilder {
 
     public Tentacle createTentcle(Wall w, FilmStrip sprite, Vector2 scale) {
 
-        float tScale = 3f / 2;
+//        float tScale = 3f / 2;
         if (w.canSpawnTentacle()) {
 
 
             Tentacle t = new Tentacle(w);
-            t.setScale(1, 1);
+            t.setScale(1 / 1f, 1 / 1f);
+            Vector2 tScale = new Vector2(2f / 3 * t.getScale().x, 2f / 3 * t.getScale().y);
+
+
             JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_tile.json"));
             HazardModel[] boxes = new HazardModel[4];
             int tCount = 0;
@@ -223,8 +226,8 @@ public class LevelBuilder {
 
 
                     if (o.getString("name").equals("Origin")) {
-                        x = round(o.getFloat("x"));
-                        y = round(o.getFloat("y"));
+                        x = o.getFloat("x") * t.scale.x;
+                        y = o.getFloat("y") * t.scale.y;
                         t.setPivot((-x * t.getScale().x) * (float) Math.cos(t.getAngle())
                                         + (tileHieght - y) * t.getScale().y * (float) Math.sin(t.getAngle())
 
@@ -233,14 +236,13 @@ public class LevelBuilder {
 
                                         (-x * t.getScale().x) * (float) Math.sin(t.getAngle())
                         );
-                        dif.set(x / div, tileHieght / div - (2 * y / div)
-
+                        dif.set((x / div), tileHieght / div - (2 * y / div)
 
                         );
 
                     } else {
-                        x = round(o.getFloat("x")) / div;
-                        y = round(o.getFloat("y")) / div;
+                        x = o.getFloat("x") / div;
+                        y = o.getFloat("y") / div;
                         verticies.clear();
                         if (o.get("polygon") != null) {
 
@@ -251,19 +253,15 @@ public class LevelBuilder {
 
 //                                        - dif.y * (float) Math.cos(t.getAngle())
                                         - ((dif.x) * 2 * ((Math.sin(t.getAngle()) >= 0) ? 0 : 1));
-
+                                ;
                                 float vy = -((round(point.getFloat("y")) / div) + y
                                         - ((dif.x) * 2 * ((Math.sin(t.getAngle()) >= 0) ? 0 : 1))
                                         - ((dif.x) * 2 * (float) Math.cos(t.getAngle()))
-//                                        - ((dif.x) * 2 * ((Math.cos(t.getAngle()) >= 0) ? 1 : 0))
-//                                        + ((dif.x) * 2 * ((Math.cos(t.getAngle()) < 0) ? 1 : 0))
 //
 
-//                                        +(float) (tileHieght / div * Math.cos(t.getAngle()))
-
                                 );
-                                verticies.add(vx / tScale);
-                                verticies.add(vy / tScale);
+                                verticies.add(vx * tScale.x);
+                                verticies.add(vy * tScale.y);
                             }
                         }
                         float[] verts = new float[verticies.size()];

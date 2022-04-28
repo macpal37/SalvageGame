@@ -20,24 +20,24 @@
             "scale": 0.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1499,
-                "y": 1000
+                "x": 1500,
+                "y": 999
             }
         },
         "levels/level2.json": {
             "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1284.8484848484848,
-                "y": 2121.212121212121
+                "x": 2000,
+                "y": 1498.4848484848485
             }
         },
         "levels/level4.json": {
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 991,
-                "y": 878
+                "x": 1800,
+                "y": 799
             }
         },
         "levels/small_ship.json": {
@@ -71,8 +71,8 @@
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 210,
-                "y": 638.6666666666666
+                "x": 500,
+                "y": 499.33333333333326
             }
         },
         "levels/tutorial2.json": {
@@ -87,8 +87,8 @@
             "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 300.6666666666667,
-                "y": 648
+                "x": 301.3333333333333,
+                "y": 647.3333333333333
             }
         }
     },
@@ -101,14 +101,15 @@
         "levels/tutorial2.json",
         "levels/tutorial3.json"
     ],
+    "project": "",
     "recentFiles": [
-        "levels/level2.json",
-        "levels/level4.json",
-        "levels/level1.json",
-        "levels/tutorial1.json",
-        "levels/tilesets/old_ship_tileset.json",
         "levels/tutorial3.json",
         "levels/tutorial2.json",
+        "levels/tilesets/old_ship_tileset.json",
+        "levels/tutorial1.json",
+        "levels/level1.json",
+        "levels/level4.json",
+        "levels/level2.json",
         "levels/test_level.json",
         "levels/level0.json",
         "levels/tilesets/tentacle_tile.json",

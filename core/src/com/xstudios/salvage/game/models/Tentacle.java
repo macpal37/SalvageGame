@@ -203,10 +203,9 @@ public class Tentacle extends GameObject {
     }
 
     public Wall getDead() {
-        if (frame == -1){
+        if (frame == -1) {
             return spawnWall;
-        }
-        else{
+        } else {
             return null;
         }
     }
@@ -219,6 +218,10 @@ public class Tentacle extends GameObject {
 
 
     int tick = 0;
+
+    public Vector2 getPivot() {
+        return pivot;
+    }
 
     public Vector2 pivot = new Vector2(0, 0);
 
