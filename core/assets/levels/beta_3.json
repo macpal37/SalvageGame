@@ -211,6 +211,12 @@
                  "height":100,
                  "id":2,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"starting_oxygen",
+                         "type":"int",
+                         "value":180
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
