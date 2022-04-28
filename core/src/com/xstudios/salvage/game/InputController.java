@@ -59,7 +59,8 @@ public class InputController {
     private boolean kickOffPressed;
     private boolean kickOffPrevious;
 
-    private boolean pause;
+    private boolean pausePressed;
+    private boolean pausePrevious;
 
     /**
      * Return the singleton instance of the input controller
@@ -192,7 +193,7 @@ public class InputController {
     }
 
     public boolean isPause() {
-        return pause;
+        return pausePressed && !pausePrevious;
     }
 
 
@@ -232,6 +233,7 @@ public class InputController {
         carryingObjectPrevious = carryingObject;
         pingPrevious = pingPressed;
         dropFlarePrevious = dropFlarePressed;
+        pausePrevious = pausePressed;
 
 
         // Check to see if a GamePad is connected
@@ -285,6 +287,7 @@ public class InputController {
 
         pingPressed = (secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.E);
 
+        pausePressed = (secondary && pausePressed) || Gdx.input.isKeyPressed(Keys.C);
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);
@@ -302,10 +305,6 @@ public class InputController {
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             vertical -= 1.0f;
         }
-
-        pause = Gdx.input.isKeyPressed(Keys.C);
-
-        // TODO: MERGE PAUSE AND MENUPRESSED
 
     }
 

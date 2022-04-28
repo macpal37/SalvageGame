@@ -163,7 +163,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 			if(exitCode == 2){
 				System.out.println("current: " + current);
-				if(current > 0){
+				if(current > 1){
 					game_over_controller.dispose();
 					controller.setCameraPositionNormal();
 					menu_controller.dispose();
