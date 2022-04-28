@@ -173,6 +173,7 @@ public class MonsterController {
 
             case AGGRIVATED:
                 if (tick % 250 == 0) {
+                    if (monster.getTentacles().size() < 3) {
                         float best_distance = 10000.0f;
                         float temp_distance = 0.0f;
                         Wall final_loc = null;
@@ -194,6 +195,7 @@ public class MonsterController {
                             monster.addTentacle(final_loc);
                             //monster.setAggrivation(0.0f);
                         }
+                    }
                 }
                 break;
             default:
