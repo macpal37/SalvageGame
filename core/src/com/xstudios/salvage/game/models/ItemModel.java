@@ -35,7 +35,9 @@ public class ItemModel extends DiverObjectModel {
 
     private Light light;
 
+
     public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.YELLOW, Color.CYAN};
+
     Color item_color;
 
 
@@ -50,9 +52,9 @@ public class ItemModel extends DiverObjectModel {
         } catch (Exception e) {
             item_color = Color.WHITE;
         }
-        drawSymbolPos.add(data.getFloat("symbol_dist", 50.0f), 0);
         setName(item_type + "" + getID());
         movement = new Vector2();
+//        light_color = new Color(1f,0.5f,0.5f,0.5f);
     }
 
 
@@ -65,7 +67,9 @@ public class ItemModel extends DiverObjectModel {
 
     public void initLight(RayHandler rayHandler) {
 
+
         light = new PointLight(rayHandler, 100, new Color(225 / 255f, 185 / 255f, 80 / 255f, 0.2f), 5, getX(), getY());
+
         Filter f = new Filter();
         f.categoryBits = 0x0002;
         f.maskBits = 0x0004;

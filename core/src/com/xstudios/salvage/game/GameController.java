@@ -28,6 +28,7 @@ import com.xstudios.salvage.util.ScreenListener;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Queue;
 
 public class GameController implements Screen, ContactListener {
 
@@ -41,48 +42,16 @@ public class GameController implements Screen, ContactListener {
      */
     protected TextureRegion background;
 
-//    /**
-//     * The texture for level.getDiver()
-//     */
-//    protected TextureRegion level.getDiver()Texture;
-//    /**
-//     * The texture for item
-//     */
-//    protected TextureRegion itemTexture;
-//
-//    /**
-//     * The texture for ping
-//     */
-//    protected TextureRegion pingTexture;
-//    /**
-//     * The texture for dead body
-//     */
-//    protected TextureRegion deadBodyTexture;
-//    /**
-//     * The texture for dead body
-//     */
-//    protected TextureRegion doorTexture;
-//    /**
-//     * Texturs for the door
-//     */
-//    protected TextureRegion doorOpenTexture;
-//    protected TextureRegion doorCloseTexture;
-//    protected Texture swimmingAnimation;
-//    protected Texture dustAnimation;
-//    protected Texture plantAnimation;
-//    protected TextureRegion tileset;
-//
-//    protected TextureRegion wallTexture;
-//    protected TextureRegion hazardTexture;
-//    protected TextureRegion wallBackTexture;
 
     protected Texture monsterTenctacle;
+    protected Texture flareAnimation;
     protected TextureRegion hud;
     protected TextureRegion oxygen;
     protected TextureRegion depletedOxygen;
     protected TextureRegion oxygenText;
     protected TextureRegion bodyHud;
     protected TextureRegion keyHud;
+    protected TextureRegion flareHud;
     protected TextureRegion keys;
     private Vector3 tempProjectedHud;
     private Vector3 tempProjectedOxygen;
@@ -174,7 +143,11 @@ public class GameController implements Screen, ContactListener {
     /**
      * The default value of gravity (going down)
      */
-    protected static final float DEFAULT_GRAVITY = -0.01f;//-4.9f;
+
+//    protected static final float DEFAULT_GRAVITY = -0.01f;//-4.9f;
+
+    protected static final float DEFAULT_GRAVITY = -1f;
+
 
     /**
      * Reference to the game canvas
@@ -279,8 +252,10 @@ public class GameController implements Screen, ContactListener {
         this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
     }
 
-
     protected Monster monster;
+
+//    private RayHandler rayHandlerFlare;
+
 
     /**
      * Creates a new game world
@@ -308,6 +283,9 @@ public class GameController implements Screen, ContactListener {
         forceCache = new Vector2(0, 0);
         rayHandler = new RayHandler(world);
         rayHandler.setAmbientLight(.015f);
+//        rayHandlerFlare = new RayHandler(world);
+//        rayHandlerFlare.setAmbientLight(1f);
+//        RayHandler.useDiffuseLight(true);
 
         light = new PointLight(rayHandler, 100, Color.BLACK, 15, 0, 0);
         wallShine = new PointLight(rayHandler, 100, Color.BLUE, 8, 0, 0);
@@ -396,6 +374,7 @@ public class GameController implements Screen, ContactListener {
         addQueue.clear();
         world.dispose();
         rayHandler.dispose();
+//        rayHandlerFlare.dispose();
 
         level.dispose();
         addQueue = null;
@@ -421,12 +400,12 @@ public class GameController implements Screen, ContactListener {
         levelBuilder.setDirectory(directory);
 
         levelBuilder.gatherAssets(directory);
-//
+
+        flareAnimation = directory.getEntry("models:flare_animation", Texture.class);
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
 //        itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         constants = directory.getEntry("models:constants", JsonValue.class);
-//
-//
+
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
 
 //        deadBodyTexture = new TextureRegion(directory.getEntry("models:dead_body", Texture.class));
@@ -435,6 +414,7 @@ public class GameController implements Screen, ContactListener {
         oxygenText = new TextureRegion(directory.getEntry("oxygen_text", Texture.class));
         bodyHud = new TextureRegion(directory.getEntry("body_hud", Texture.class));
         keyHud = new TextureRegion(directory.getEntry("key_hud", Texture.class));
+        flareHud = new TextureRegion(directory.getEntry("flare_hud", Texture.class));
         oxygen = new TextureRegion(directory.getEntry("oxygen", Texture.class));
         monsterTenctacle = directory.getEntry("models:monster1", Texture.class);
         plantAnimation = directory.getEntry("models:plant", Texture.class);
@@ -511,6 +491,8 @@ public class GameController implements Screen, ContactListener {
         monster.setName("Monster");
         monsterController = new MonsterController(monster);
         level.addObject(monster);
+        level.getDiver().initFlares(rayHandler);
+        level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
         addObject(monster);
 
     }
@@ -549,8 +531,8 @@ public class GameController implements Screen, ContactListener {
         // otherwise, stop latching
 
         if (input.didKickOff() && !level.getDiver().isLatching() && level.getDiver().isTouchingObstacle()) {
-            System.out.println("Player Coords: " + level.getDiver().getPosition());
-            System.out.println("Wall Coords: " + level.getDiver().getTouchedWall().getPosition());
+            //System.out.println("Player Coords: " + level.getDiver().getPosition());
+            //System.out.println("Wall Coords: " + level.getDiver().getTouchedWall().getPosition());
             int playerX = (int) level.getDiver().getPosition().x - 1;
             int playerY = (int) level.getDiver().getPosition().y - 1;
             int wallX = (int) level.getDiver().getTouchedWall().getPosition().x;
@@ -570,7 +552,6 @@ public class GameController implements Screen, ContactListener {
                 }
             }
 
-
         }
 
         if (input.didKickOff() && level.getDiver().isTouchingObstacle()) {
@@ -580,7 +561,6 @@ public class GameController implements Screen, ContactListener {
             level.getDiver().setBoosting(true);
             level.getDiver().boost(); // boost according to the current user input
         }
-
 
         // set forces from ocean currents
         level.getDiver().setDriftMovement(physicsController.getCurrentVector(level.getDiver().getPosition()).x,
@@ -593,10 +573,17 @@ public class GameController implements Screen, ContactListener {
         level.getDiver().setPing(input.didPing());
         level.getDiver().setPingDirection(level.getDeadBody().getPosition());
 
-
+        // flare management
+        if (input.dropFlare()) {
+            level.getDiver().dropFlare(input.dropFlare());
+        }
+        level.getDiver().updateFlare();
         // manage items/dead body
+
         level.getDiver().setPickUpOrDrop(input.getOrDropObject());
         level.getDiver().setItem();
+
+        level.getDeadBody().setCarried(level.getDiver().hasBody());
 
 
         if (!level.getDiver().getStunned()) {
@@ -609,8 +596,9 @@ public class GameController implements Screen, ContactListener {
             }
         }
 
+
         // update audio according to oxygen level
-        System.out.println("DIVER: " + level.getDiver().getOxygenLevel());
+
         AudioController.getInstance().update(level.getDiver().getOxygenLevel(), level.getDiver().getMaxOxygen());
 
 
@@ -657,7 +645,7 @@ public class GameController implements Screen, ContactListener {
         // Toggle debug
         if (input.didDebug()) {
             debug = !debug;
-            System.out.println("Debug: " + debug);
+
         }
         if (input.didMenu()) {
             cameraController.setCameraPosition(640.0f, 360.0f);
@@ -695,9 +683,34 @@ public class GameController implements Screen, ContactListener {
         }
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
+//        rayHandlerFlare.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
 
-        monsterController.update(level.getDiver());
+        //monsterController.update(level.getDiver());
 
+
+        monsterController.update(hostileOxygenDrain, level.getDiver());
+        Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
+//        Wall add_wall = tentacles.poll();
+//        if (add_wall != null && add_wall.canSpawnTentacle()) {
+//            Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+//            addQueuedObject(t);
+//        }
+        while (tentacles.size() > 0) {
+            Wall add_wall = tentacles.poll();
+            if (add_wall.canSpawnTentacle() && add_wall != null) {
+                Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+                addQueuedObject(t);
+                AudioController.getInstance().roar();
+            }
+        }
+//        for (Tentacle t : monsterController.getMonster().getTentacles()) {
+//            Wall w = t.getSpawnWall();
+//            System.out.println(w);
+//            if (w.canSpawnTentacle()) {
+//                t = levelBuilder.createTentcle(t, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+//                addQueuedObject(t);
+//            }
+//        }
 
         //** ADDING TENTACLES TO WalL!
 //        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
@@ -705,6 +718,7 @@ public class GameController implements Screen, ContactListener {
 //            Tentacle t = levelBuilder.createTentcle(w, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
 //            addQueuedObject(t);
 //        }
+
 
         switch (game_state) {
             case PLAYING:
@@ -727,11 +741,13 @@ public class GameController implements Screen, ContactListener {
 
         //deal with hazard stun
 
+
 //        System.out.println("STUN: " + level.getDiver().getStunCooldown());
         if (level.getDiver().getStunCooldown() > 0) {
             System.out.println("PAIN: " + hostileOxygenDrain);
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
             level.getDiver().setStunCooldown(level.getDiver().getStunCooldown() - 1);
+
         } else {
 
             level.getDiver().setStunned(false);
@@ -832,9 +848,10 @@ public class GameController implements Screen, ContactListener {
         }
         level.getDiver().draw(canvas);
         canvas.end();
-        if (!debug)
+        if (!debug) {
             rayHandler.updateAndRender();
-
+//            rayHandlerFlare.updateAndRender();
+        }
         canvas.begin();
 
         switch (game_state) {
@@ -891,7 +908,7 @@ public class GameController implements Screen, ContactListener {
                 //draw inventory indicator
                 if (level.getDiver().carryingItem()) {
 
-                    canvas.draw(keyHud, Color.WHITE, (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
+                    canvas.draw(keyHud, level.getDiver().getItem().getColor(), (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
                             tempProjectedOxygen.x - 50,
                             tempProjectedOxygen.y,
                             0.0f, 0.35f, 0.35f);
@@ -906,37 +923,29 @@ public class GameController implements Screen, ContactListener {
                             tempProjectedOxygen.y,
                             0.0f, 0.35f, 0.35f);
                 }
+                for (int i = 0; i < level.getDiver().getRemainingFlares(); i++) {
+                    canvas.draw(flareHud, Color.WHITE, (float) flareHud.getRegionWidth(), (float) flareHud.getRegionHeight() / 2,
+                            tempProjectedOxygen.x - 10 * i,
+                            tempProjectedOxygen.y,
+                            0.0f, 0.35f, 0.35f);
+                }
 
                 break;
-            case WIN_GAME:
-                System.out.println("TEXT POS" +
-                        cameraController.getCameraPosition2D().x + " " +
-                        cameraController.getCameraPosition2D().y);
-//                canvas.drawText("you win! Press R to restart",
-//                        displayFont,
-//                        cameraController.getCameraPosition2D().x - 100,
-//                        cameraController.getCameraPosition2D().y );
-                break;
-//            case LOSE_GAME:
-//                canvas.drawText("you lose :( Press R to restart",
-//                        displayFont,
-//                        cameraController.getCameraPosition2D().x - 100,
-//                        cameraController.getCameraPosition2D().y );
-//            break;
-
 
         }
 
-        for (GameObject o : level.getAllObjects()) {
-            if (o instanceof DiverObjectModel && ((DiverObjectModel) o).isCarried()) {
-                DiverObjectModel d_obj = (DiverObjectModel) o;
 
-                canvas.draw(d_obj.getTexture(), d_obj.getColor(), d_obj.origin.x, d_obj.origin.y,
-                        cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + d_obj.getDrawSymbolPos().x,
-                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f + d_obj.getDrawSymbolPos().y,
-                        d_obj.getAngle(), d_obj.getDrawSymbolScale().x, d_obj.getDrawSymbolScale().y);
-            }
-        }
+//        for (GameObject o : level.getAllObjects()) {
+//            if (o instanceof DiverObjectModel && ((DiverObjectModel) o).isCarried()) {
+//                DiverObjectModel d_obj = (DiverObjectModel) o;
+//
+//                canvas.draw(d_obj.getTexture(), d_obj.getColor(), d_obj.origin.x, d_obj.origin.y,
+//                        cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + d_obj.getDrawSymbolPos().x,
+//                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f + d_obj.getDrawSymbolPos().y,
+//                        d_obj.getAngle(), d_obj.getDrawSymbolScale().x, d_obj.getDrawSymbolScale().y);
+//            }
+//        }
+
         canvas.end();
 
         if (debug) {
@@ -1045,14 +1054,16 @@ public class GameController implements Screen, ContactListener {
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
 
-        collisionController.startDiverToObstacle(fix1, fix2, level.getDiver());
+        collisionController.startDiverToObstacle(fix1, fix2, level.getDiver(), monsterController);
         if (listener != null) {
             reach_target = collisionController.getWinState(body1, body2, level.getDiver());
+
         }
 
 //        collisionController.addDiverSensorTouching(level.getDiver(), fix1, fix2);
         collisionController.startDiverItemCollision(body1, body2);
         collisionController.startDiverDoorCollision(body1, body2);
+        collisionController.startMonsterWallCollision(body1, body2);
         collisionController.startDiverDeadBodyCollision(body1, body2);
         float d = collisionController.startDiverHazardCollision(fix1, fix2, level.getDiver());
         if (d != 0)
@@ -1079,6 +1090,7 @@ public class GameController implements Screen, ContactListener {
 
         collisionController.endDiverToObstacle(fix1, fix2, level.getDiver());
         collisionController.endDiverDeadBodyCollision(body1, body2);
+        collisionController.endMonsterWallCollision(body1, body2);
         collisionController.removeDiverSensorTouching(level.getDiver(), fix1, fix2);
         collisionController.endDiverItemCollision(body1, body2);
 

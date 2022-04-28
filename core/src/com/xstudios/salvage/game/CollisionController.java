@@ -73,7 +73,6 @@ public class CollisionController {
         if ((diver.getSensorNameLeft().equals(fd2) && diver != bd1) ||
                 (diver.getSensorNameLeft().equals(fd1) && diver != bd2)) {
 
-
             if (diver != bd1)
                 diver.removeTouching(diver.getSensorNameLeft(), bd1);
             else
@@ -88,6 +87,7 @@ public class CollisionController {
                 diver.removeTouching(diver.getSensorNameRight(), bd2);
 
         }
+
     }
 
     /**
@@ -96,6 +96,7 @@ public class CollisionController {
      * @param b1 one of the colliding bodies
      * @param b2 the other of the colliding bodies
      */
+
     public void startDiverItemCollision(Body b1, Body b2) {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof ItemModel) {
             ((ItemModel) b2.getUserData()).setTouched(true);
@@ -134,6 +135,7 @@ public class CollisionController {
             putDown(diver, item);
             item.setTouched(false);
         }
+
     }
 
     /**
@@ -142,9 +144,11 @@ public class CollisionController {
      * @param diver diver object
      * @param door  door currently colliding with
      */
+
     public static boolean attemptUnlock(DiverModel diver, Door door) {
         if (diver.getItem() != null) {
             if (diver.getItem().getID() == door.getID() || diver.getItem().getItemType() == ItemModel.ItemType.DEAD_BODY) {
+
                 return true;
             }
         }
@@ -231,6 +235,53 @@ public class CollisionController {
     }
 
     /**
+     * Handles the possible tentacle spawn points
+     *
+     * @param b1 one of the colliding bodies
+     * @param b2 the other of the colliding bodies
+     */
+    public void startMonsterWallCollision(Body b1, Body b2) {
+        Object fd1 = b1.getUserData();
+        Object fd2 = b2.getUserData();
+        if (b1.getUserData() instanceof Wall &&
+                b2.getUserData() instanceof Monster) {
+            Wall wall = (Wall) b1.getUserData();
+            Monster monster = (Monster) b2.getUserData();
+            monster.addLocation(wall);
+
+        }
+        if (b1.getUserData() instanceof Monster &&
+                b2.getUserData() instanceof Wall) {
+            Monster monster = (Monster) b1.getUserData();
+            Wall wall = (Wall) b2.getUserData();
+            monster.addLocation(wall);
+        }
+    }
+
+    /**
+     * Handles the possible tentacle spawn points
+     *
+     * @param b1 one of the colliding bodies
+     * @param b2 the other of the colliding bodies
+     */
+    public void endMonsterWallCollision(Body b1, Body b2) {
+        Object fd1 = b1.getUserData();
+        Object fd2 = b2.getUserData();
+        if (b1.getUserData() instanceof Wall &&
+                b2.getUserData() instanceof Monster) {
+            Wall wall = (Wall) b1.getUserData();
+            Monster monster = (Monster) b2.getUserData();
+            monster.removeLocation(wall);
+        }
+        if (b1.getUserData() instanceof Monster &&
+                b2.getUserData() instanceof Wall) {
+            Monster monster = (Monster) b1.getUserData();
+            Wall wall = (Wall) b2.getUserData();
+            monster.removeLocation(wall);
+        }
+    }
+
+    /**
      * Checks if the diver's ending contact with the item
      *
      * @param diver diver object
@@ -253,7 +304,7 @@ public class CollisionController {
      * @param diver
      */
 
-    public void startDiverToObstacle(Fixture f1, Fixture f2, DiverModel diver) {
+    public void startDiverToObstacle(Fixture f1, Fixture f2, DiverModel diver, MonsterController monsterController) {
         Body b1 = f1.getBody();
         Body b2 = f2.getBody();
         Object fd1 = f1.getUserData();
@@ -261,12 +312,21 @@ public class CollisionController {
 
 
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
+
             diver.setTouchedWall((Wall) b2.getUserData());
             diver.setTouchingObstacle(true);
+
+            //AudioController.getInstance().wall_collision(diver.getForce());
+            monsterController.wallCollision();
+            AudioController.getInstance().wood_collision(diver.getForce());
+
         }
         if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
             diver.setTouchedWall((Wall) b1.getUserData());
+
             ((DiverModel) b2.getUserData()).setTouchingObstacle(true);
+            monsterController.wallCollision();
+            AudioController.getInstance().wood_collision(diver.getForce());
         }
 
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall &&
@@ -323,8 +383,10 @@ public class CollisionController {
 
     }
 
+
     public static float staticHazardCollision(DiverModel diver, HazardModel hazard) {
         System.out.println("Hazard Contact: " + hazard.getOxygenDrain());
+
         if (!diver.getStunned()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());

@@ -929,7 +929,7 @@ public abstract class GObject {
         bodyinfo = new BodyDef();
         bodyinfo.awake  = true;
         bodyinfo.allowSleep = true;
-        bodyinfo.gravityScale = 1.0f;
+        bodyinfo.gravityScale = 0f;
         bodyinfo.position.set(x,y);
         bodyinfo.fixedRotation = false;
         // Objects are physics objects unless otherwise noted

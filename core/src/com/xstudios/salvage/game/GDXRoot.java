@@ -109,9 +109,11 @@ public class GDXRoot extends Game implements ScreenListener {
     @Override
     public void exitScreen(Screen screen, int exitCode) {
 
+
         System.out.println("CAMERA: " + cameraController.getCameraPosition2D().toString());
 //        cameraController.setCameraPosition(720.0f, 450.0f - 50);
         cameraController.setCameraPosition(640.0f, 360.0f);
+
         if (screen == loading) {
             directory = loading.getAssets();
             if (exitCode == 0) {
@@ -125,9 +127,6 @@ public class GDXRoot extends Game implements ScreenListener {
         } else if (screen == controller) {
             if (exitCode <= 1) {
                 game_over_controller.create();
-                if (directory == null) {
-                    System.out.println("DIRECTORY IS NULL!");
-                }
                 game_over_controller.gatherAssets(directory);
                 game_over_controller.setCanvas(canvas);
                 game_over_controller.setTextPos(

@@ -400,7 +400,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println("clicked " + screenX + " " + screenY);
         if (pressState >= 5) {
             return true;
         }
