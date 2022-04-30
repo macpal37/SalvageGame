@@ -13,21 +13,13 @@
  */
 package com.xstudios.salvage.game;
 
-import java.util.*;
-
 import static com.badlogic.gdx.math.MathUtils.random;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.xstudios.salvage.game.models.DiverModel;
-import com.xstudios.salvage.game.models.Monster;
-import com.xstudios.salvage.game.models.Tentacle;
-import com.xstudios.salvage.util.FilmStrip;
+import com.xstudios.salvage.game.models.*;
 import com.xstudios.salvage.util.PooledList;
-import com.xstudios.salvage.game.models.Wall;
-import com.badlogic.gdx.graphics.Texture;
+
+import java.util.ArrayList;
 
 /**
  * InputController corresponding to AI control.
@@ -69,8 +61,11 @@ public class MonsterController {
     private float tick;
 
 
+    private int MAX_INVINCIBILITY = 50;
 
     private PooledList<Vector2> targetLocations;
+
+    private ArrayList<Tentacle> tentacles = new ArrayList<>();
 
 
     /**
@@ -83,6 +78,7 @@ public class MonsterController {
         targetLocations = new PooledList<>();
         targetLocations.push(monster.getPosition());
         tick = 0;
+        state = FSMState.IDLE;
     }
 
 
@@ -104,30 +100,37 @@ public class MonsterController {
         // Add initialization code as necessary
         float aggrivation = monster.getAggrivation();
 //        System.out.println(aggrivation);
-        if (aggrivation > 6.0f)  {
-            state = FSMState.AGGRIVATED;
-        }
-        else {
-            state = FSMState.IDLE;
-        }
+//        if (aggrivation > 6.0f && monster.getInvincibilityTime() <= 0)  {
+//            state = FSMState.AGGRIVATED;
+//            monster.setInvincibilityTime(MAX_INVINCIBILITY);
+//        }
+//        else {
+//            monster.reduceInvincibilityTime();
+//            state = FSMState.IDLE;
+//        }
         // Next state depends on current state.
         switch (state) {
 
             case IDLE:
                 if (aggrivation > 6.0f)  {
                     state = FSMState.AGGRIVATED;
+                    monster.setAggressiveLength(MAX_INVINCIBILITY);
                 }
                 break;
 
             case AGGRIVATED:
-                if (aggrivation <= 6.0f)  {
+                if (aggrivation <= 6.0f || monster.getAggressiveLength() <= 0)  {
+//                    monster.reduceInvincibilityTime();
                     state = FSMState.IDLE;
+                } else {
+                    monster.reduceAggressiveLength();
                 }
                 break;
 
-            case ATTACK:
-                state = FSMState.AGGRIVATED;
-                break;
+                //TODO: doesn't seem like the attack state is being used so commenting it out to avoid confusion
+//            case ATTACK:
+//                state = FSMState.AGGRIVATED;
+//                break;
 
             default:
                 // Unknown or unhandled state, should never get here
@@ -163,8 +166,12 @@ public class MonsterController {
             monster.setAggrivation(aggrivation);
             }
         }
+        for (FlareModel flare : diver.getFlares()){
+
+        }
         monster.moveMonster(diver.getPosition());
         changeStateIfApplicable();
+//        System.out.println(state);
 
         float goal_x = diver.getX() + diver.getVX();
         float goal_y = diver.getY() + diver.getVY();

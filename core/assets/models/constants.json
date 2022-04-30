@@ -15,6 +15,7 @@
 		"friction": 0.0,
 		"maxspeed": 13.0,
 		"max_oxygen": 150,
+		"invincible_time": 200,
 		"drift_maxspeed": 0.70,
 		"jump_force": 5.5,
 		"jump_cool": 30,

@@ -217,6 +217,22 @@ public class CollisionController {
         Body b2 = f2.getBody();
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
+//        try {
+//            System.out.println("IS DIVER? " + (b1.getUserData() instanceof DiverModel));
+//            System.out.println("FILTER HAZARD DATA FOR BODY 1 -> group " + b1.getFixtureList().get(0).getFilterData().groupIndex
+//                    + " mask " + b1.getFixtureList().get(0).getFilterData().maskBits
+//                    + " category " + b1.getFixtureList().get(0).getFilterData().categoryBits);
+//        } catch (Exception e) {
+//            System.out.println("didnt have a fixture list oops");
+//        }
+//        try {
+//            System.out.println("IS DIVER? " + (b2.getUserData() instanceof DiverModel));
+//            System.out.println("FILTER DATA FOR BODY 2 -> group " + b2.getFixtureList().get(0).getFilterData().groupIndex
+//                    + " mask " + b2.getFixtureList().get(0).getFilterData().maskBits
+//                    + " category " + b2.getFixtureList().get(0).getFilterData().categoryBits);        } catch (Exception e) {
+//            System.out.println("didnt have a fixture list oops");
+//        }
+
         // if the diver is touching a hazard (excluding the extra sensors)
         if (b1.getUserData() instanceof DiverModel &&
                 diver.getDiverCollisionBox().equals(fd1) &&
@@ -310,6 +326,21 @@ public class CollisionController {
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
 
+//        try {
+//            System.out.println("IS DIVER? " + (b1.getUserData() instanceof DiverModel));
+//            System.out.println("FILTER DATA FOR BODY 1 -> group " + b1.getFixtureList().get(0).getFilterData().groupIndex
+//                    + " mask " + b1.getFixtureList().get(0).getFilterData().maskBits
+//                    + " category " + b1.getFixtureList().get(0).getFilterData().categoryBits);
+//        } catch (Exception e) {
+//            System.out.println("didnt have a fixture list oops");
+//        }
+//        try {
+//            System.out.println("IS DIVER? " + (b2.getUserData() instanceof DiverModel));
+//            System.out.println("FILTER DATA FOR BODY 2 -> group " + b2.getFixtureList().get(0).getFilterData().groupIndex
+//                    + " mask " + b2.getFixtureList().get(0).getFilterData().maskBits
+//                    + " category " + b2.getFixtureList().get(0).getFilterData().categoryBits);        } catch (Exception e) {
+//            System.out.println("didnt have a fixture list oops");
+//        }
 
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
 
@@ -382,15 +413,46 @@ public class CollisionController {
         return false;
 
     }
+    /**
+     * Handles diver collision with hazards
+     *
+     * @param f1 one of the colliding fixtures
+     * @param f2 the other of the colliding fixtures
+     */
+    public void endDiverHazardCollision(Fixture f1, Fixture f2, DiverModel diver) {
+        Body b1 = f1.getBody();
+        Body b2 = f2.getBody();
+        Object fd1 = f1.getUserData();
+        Object fd2 = f2.getUserData();
+//        System.out.println("END DIVER HAZ COLLISION");
+        // if the diver is touching a hazard (excluding the extra sensors)
+        if (b1.getUserData() instanceof DiverModel &&
+                diver.getDiverCollisionBox().equals(fd1) &&
+                b2.getUserData() instanceof HazardModel) {
+            diver.setChangeLightFilter(true);
+            System.out.println("CHANGE LIGHT FILTER TRUE");
+        }
+        if (b2.getUserData() instanceof DiverModel &&
+                diver.getDiverCollisionBox().equals(fd2) &&
+                b1.getUserData() instanceof HazardModel) {
+            diver.setChangeLightFilter(true);
+            System.out.println("CHANGE LIGHT FILTER TRUE");
+        }
+    }
 
 
     public static float staticHazardCollision(DiverModel diver, HazardModel hazard) {
-        System.out.println("Hazard Contact: " + hazard.getOxygenDrain());
-
-        if (!diver.getStunned()) {
+//        System.out.println("Hazard Contact: " + hazard.getOxygenDrain());
+        System.out.println("START HAZARD COLLISION");
+        if (!diver.getStunned() && !diver.isInvincible()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
+            diver.resetInvincibleTime();
         }
+        diver.setChangeLightFilter(false);
+//        else {
+//            diver.setChangeLightFilter(true);
+//        }
 
         return hazard.getOxygenDrain();
 
