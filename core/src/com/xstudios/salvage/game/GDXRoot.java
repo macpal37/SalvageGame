@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
@@ -17,17 +16,12 @@ public class GDXRoot extends Game implements ScreenListener {
 	private LoadingMode loading;
 	/** List of all WorldControllers */
 	private GameController controller;
-
 	private GameOverController game_over_controller;
-
 	private MenuController menu_controller;
-
 	private CameraController cameraController;
-
 	private LevelSelectController level_select_controller;
-
 	private Player player;
-
+	// The currently playing level?
 	private int current;
 
 	/**
@@ -52,6 +46,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		level_select_controller = new LevelSelectController();
 		level_select_controller.setCameraController(cameraController, canvas.getWidth(), canvas.getHeight());
 
+		// this class will listen for function calls from each screen controller
 		loading.setScreenListener(this);
 		controller.setScreenListener(this);
 		game_over_controller.setScreenListener(this);
@@ -101,6 +96,22 @@ public class GDXRoot extends Game implements ScreenListener {
 		cameraController.resize(width,height);
 	}
 
+	/**
+	 * Exit Codes (not sure if there is a better way to do this with enums)
+	 *
+	 * Loading Screen
+	 * - 0: go to menu controller
+	 * In Game
+	 * - 2: go to menu controller
+	 * - anything else: go to game over controller and set win/loss screen
+	 * Game Over
+	 * - 0: go to game controller
+	 * - 1: go to menu controller
+	 * - 2:
+	 *
+	 * @param screen   The screen requesting to exit
+	 * @param exitCode The state of the screen upon exit
+	 */
 	@Override
 	public void exitScreen(Screen screen, int exitCode) {
 		if (screen == loading) {
@@ -163,7 +174,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				menu_controller.setActive();
 				setScreen(menu_controller);
 			}
-			if(exitCode == 2){
+			if (exitCode == 2){
 				System.out.println("current: " + current);
 				if(current > 1){
 					game_over_controller.dispose();
