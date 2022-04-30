@@ -22,7 +22,6 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
-import static jdk.internal.org.jline.utils.Colors.s;
 
 public class Player {
     private boolean mute;

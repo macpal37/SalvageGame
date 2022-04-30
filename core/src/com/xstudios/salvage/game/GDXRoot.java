@@ -107,7 +107,9 @@ public class GDXRoot extends Game implements ScreenListener {
 			System.out.println("loading");
 			directory = loading.getAssets();
 			player = new Player(directory);
-			Pixmap pm = new Pixmap(Gdx.files.internal("core/assets/ui/cursor.png"));
+			// set the cursor. We don't use the asset directory because it doesn't have
+			// built in support for Pixmaps
+			Pixmap pm = new Pixmap(Gdx.files.internal("ui/cursor.png"));
 			Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
 			pm.dispose();
 			if (exitCode == 0) {
