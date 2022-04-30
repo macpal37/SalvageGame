@@ -6,10 +6,8 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
-import com.xstudios.salvage.util.PooledList;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -23,6 +21,7 @@ public class Monster extends GameObject {
     private CircleShape radialPresence;
     private FilmStrip tentacleSprite;
     private ArrayList<Wall> targetLocations;
+    private int invincibility_time = 0;
 
     /**
      * A cache value for the fixture (for resizing)
@@ -39,7 +38,7 @@ public class Monster extends GameObject {
         setName("monster");
 
         tentacles = new LinkedList<Wall>();
-        targetLocations = new ArrayList<Wall>();;
+        targetLocations = new ArrayList<Wall>();
     }
 
     @Override
@@ -126,6 +125,18 @@ public class Monster extends GameObject {
         return aggrivation;
     }
 
+    public void setAggressiveLength(int i) {
+        invincibility_time = i;
+    }
+
+    public int getAggressiveLength() {
+        return invincibility_time;
+    }
+
+
+    public void reduceAggressiveLength() {
+        invincibility_time--;
+    }
 
 }
 

@@ -41,6 +41,8 @@ public class FlareModel extends DiverObjectModel {
     public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
     Color item_color;
 
+    private CircleShape radialPresence;
+
     public FlareModel(JsonValue data) {
         this(0, 0, data);
     }
@@ -169,6 +171,13 @@ public class FlareModel extends DiverObjectModel {
         origin.set(texture.getRegionWidth() / 2.0f, texture.getRegionHeight() / 2.0f);
     }
 
+    public float getLightRadius() {
+        if(isActivated) {
+            return light.getDistance();
+        } else {
+            return 0;
+        }
+    }
 
     public int tick = 0;
 

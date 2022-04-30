@@ -107,9 +107,9 @@ public class GDXRoot extends Game implements ScreenListener {
 			System.out.println("loading");
 			directory = loading.getAssets();
 			player = new Player(directory);
-			Pixmap pm = new Pixmap(Gdx.files.internal("core/assets/ui/cursor.png"));
-			Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
-			pm.dispose();
+//			Pixmap pm = new Pixmap(Gdx.files.internal("ui/cursor.png"));
+//			Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
+//			pm.dispose();
 			if (exitCode == 0) {
 				controller.setCameraPositionNormal();
 				menu_controller.dispose();

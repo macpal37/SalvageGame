@@ -37,14 +37,17 @@ public class Tentacle extends GameObject {
     private int frame = 0;
     private int life = 0;
     private int change = 0;
+    private int animation_length = 16;
 
     private Wall spawnWall;
 
-    public Tentacle(Wall wall) {
+    public Tentacle(Wall wall, float len) {
         this(wall.getTentacleSpawnPosition().x, wall.getTentacleSpawnPosition().y);
         spawnWall = wall;
         spawnWall.setHasTentcle(true);
         setAngle(wall.getTentacleRotation() / 180 * (float) Math.PI);
+//        animation_length = (int)(len*16/10);
+        System.out.println("LENGTH " + len);
     }
 
     public Tentacle() {
@@ -226,22 +229,26 @@ public class Tentacle extends GameObject {
         pivot.set(x, y);
     }
 
+    public void setAnimationLength(int l) {
+        animation_length = l;
+    }
 
     @Override
     public void draw(GameCanvas canvas) {
         update();
 
         tick++;
+        int grow_rate = 10;
         if (frame == 30) {
             frame = -1;
 
         }
-        if (startGrowing && frame < 16) {
-            if (tick % 5 == 0) {
+        if (startGrowing && frame < animation_length) {
+            if (tick % grow_rate == 0) {
                 frame++;
             }
         } else if (!startGrowing && frame > 0) {
-            if (tick % 5 == 0) {
+            if (tick % grow_rate == 0) {
                 frame++;
             }
         }

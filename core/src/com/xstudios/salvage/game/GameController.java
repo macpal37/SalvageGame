@@ -246,6 +246,14 @@ public class GameController implements Screen, ContactListener {
 
     private PointLight wallShine;
 
+    private short no_hazard_collision_mask = 0x0004;
+    private short no_hazard_collision_category = 0x0002;
+    private short no_hazard_collision_group = 1;
+
+    private short hazard_collision_mask = 0x000c;
+    private short hazard_collision_category = 0x0002;
+    private short hazard_collision_group = 1;
+
 
     // ======================= CONSTRUCTORS =================================
 
@@ -576,6 +584,8 @@ public class GameController implements Screen, ContactListener {
         if (input.getHorizontal() != 0 || input.getVertical() != 0) {
             level.getDiver().setFacingDir(input.getHorizontal(), input.getVertical());
         }
+        level.getDiver().reduceInvincibleTime();
+        System.out.println("invincible time " + level.getDiver().getInvincibleTime());
 
         // set latching and boosting attributesf
         // latch onto obstacle when key pressed and close to an obstacle
@@ -749,7 +759,8 @@ public class GameController implements Screen, ContactListener {
         while (tentacles.size() > 0) {
             Wall add_wall = tentacles.poll();
             if (add_wall.canSpawnTentacle() && add_wall != null) {
-                Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+
+                Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
                 addQueuedObject(t);
                 AudioController.getInstance().roar();
             }
@@ -795,14 +806,26 @@ public class GameController implements Screen, ContactListener {
 
 
         updateGameState();
-        System.out.println("GAME STATE: " + game_state);
 
         //deal with hazard stun
 
-
+        if(level.getDiver().isInvincible()) {
+            level.getDiver().setHazardInvincibilityFilter();
+//            light.setContactFilter(no_hazard_collision_category, no_hazard_collision_group, no_hazard_collision_mask);
+        } else {
+            level.getDiver().setHazardCollisionFilter();
+//            light.setContactFilter(hazard_collision_category, hazard_collision_group, hazard_collision_mask);
+        }
+//        if(level.getDiver().getChangeLightFilter()){
+//            System.out.println("CHANGE LIGHT FILTER");
+//            light.setContactFilter(hazard_collision_category, hazard_collision_group, hazard_collision_mask);
+//        } else {
+//            System.out.println("CHANGE LIGHT FILTER to no hazard collisions");
+//            light.setContactFilter(no_hazard_collision_category, no_hazard_collision_group, no_hazard_collision_mask);
+//        }
 //        System.out.println("STUN: " + level.getDiver().getStunCooldown());
         if (level.getDiver().getStunCooldown() > 0) {
-            System.out.println("PAIN: " + hostileOxygenDrain);
+//            System.out.println("PAIN: " + hostileOxygenDrain);
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
             level.getDiver().setStunCooldown(level.getDiver().getStunCooldown() - 1);
 
@@ -811,6 +834,8 @@ public class GameController implements Screen, ContactListener {
             level.getDiver().setStunned(false);
             hostileOxygenDrain = 0.0f;
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
+//            level.getDiver().setHazardCollisionFilter();
+            System.out.println("SETTING STUNNED TO FALSE");
         }
 
 
@@ -993,16 +1018,6 @@ public class GameController implements Screen, ContactListener {
                             1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()),
                             0.5f
                     );
-//=======
-//                canvas.draw(hud, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
-//                        cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/20f);
-//                canvas.draw(oxygen, cameraController.getCameraPosition2D().x - canvas.getWidth()/4f - canvas.getWidth()/75f,
-//                        cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/17f);
-//
-//                if(diver.carryingItem()){
-//                    canvas.draw(keys, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + canvas.getWidth()/75f,
-//                            cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
-//>>>>>>> 1f2874d1b128178aab85035061183b24aaf3766d
                 }
 
 
@@ -1067,42 +1082,15 @@ public class GameController implements Screen, ContactListener {
                 canvas.draw(main_menu, tint, main_menu.getRegionWidth() / 2, main_menu.getRegionHeight(),
                         cameraController.getCameraPosition2D().x, cameraController.getCameraPosition2D().y - main_menu.getRegionHeight() / 2,
                         0, 0.7f, 0.7f);
-            case WIN_GAME:
-                System.out.println("TEXT POS" +
-                        cameraController.getCameraPosition2D().x + " " +
-                        cameraController.getCameraPosition2D().y);
-//                canvas.drawText("you win! Press R to restart",
-//                        displayFont,
-//                        cameraController.getCameraPosition2D().x - 100,
-//                        cameraController.getCameraPosition2D().y );
-                break;
-//            case LOSE_GAME:
-//                canvas.drawText("you lose :( Press R to restart",
-//                        displayFont,
-//                        cameraController.getCameraPosition2D().x - 100,
-//                        cameraController.getCameraPosition2D().y );
-//            break;
-        }
 
-//        for (GameObject o : level.getAllObjects()) {
-//            if (o instanceof DiverObjectModel && ((DiverObjectModel) o).isCarried()) {
-//                DiverObjectModel d_obj = (DiverObjectModel) o;
-//
-//                canvas.draw(d_obj.getTexture(), d_obj.getColor(), d_obj.origin.x, d_obj.origin.y,
-//                        cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + d_obj.getDrawSymbolPos().x,
-//                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f + d_obj.getDrawSymbolPos().y,
-//                        d_obj.getAngle(), d_obj.getDrawSymbolScale().x, d_obj.getDrawSymbolScale().y);
-//            }
-//        }
+        }
 
         canvas.end();
 
         if (debug) {
             canvas.beginDebug();
             for (GameObject obj : level.getAllObjects()) {
-//                if (!(obj instanceof Wall)) {
                 obj.drawDebug(canvas);
-//                }
             }
             canvas.endDebug();
         }
@@ -1254,6 +1242,7 @@ public class GameController implements Screen, ContactListener {
         collisionController.endMonsterWallCollision(body1, body2);
         collisionController.removeDiverSensorTouching(level.getDiver(), fix1, fix2);
         collisionController.endDiverItemCollision(body1, body2);
+        collisionController.endDiverHazardCollision(fix1, fix2, level.getDiver());
 
     }
 

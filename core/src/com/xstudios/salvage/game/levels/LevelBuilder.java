@@ -199,13 +199,13 @@ public class LevelBuilder {
 
     public float div = 25f;
 
-    public Tentacle createTentcle(Wall w, FilmStrip sprite, Vector2 scale) {
+    public Tentacle createTentcle(float agg_level, Wall w, FilmStrip sprite, Vector2 scale) {
 
         float tScale = 3f / 2;
         if (w.canSpawnTentacle()) {
 
 
-            Tentacle t = new Tentacle(w);
+            Tentacle t = new Tentacle(w,agg_level);
             t.setScale(1, 1);
             JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_tile.json"));
             HazardModel[] boxes = new HazardModel[4];
