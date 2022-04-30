@@ -119,8 +119,9 @@ public class Tentacle extends GameObject {
 
         releaseFixtures();
 
-        for (HazardModel hm : collisionBoxes)
+        for (HazardModel hm : collisionBoxes) {
             hm.createFixtures();
+        }
 
         markDirty(false);
     }

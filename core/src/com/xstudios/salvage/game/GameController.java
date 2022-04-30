@@ -1214,6 +1214,7 @@ public class GameController implements Screen, ContactListener {
         collisionController.startDiverDoorCollision(body1, body2);
         collisionController.startMonsterWallCollision(body1, body2);
         collisionController.startDiverDeadBodyCollision(body1, body2);
+        collisionController.startFlareTentacleCollision(body1, body2);
         float d = collisionController.startDiverHazardCollision(fix1, fix2, level.getDiver());
         if (d != 0)
             hostileOxygenDrain = d;

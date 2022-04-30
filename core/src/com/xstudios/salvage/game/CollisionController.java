@@ -457,4 +457,39 @@ public class CollisionController {
         return hazard.getOxygenDrain();
 
     }
+
+
+    /**
+     * Handles the possible tentacle spawn points
+     *
+     * @param b1 one of the colliding bodies
+     * @param b2 the other of the colliding bodies
+     */
+    public void startFlareTentacleCollision(Body b1, Body b2) {
+        Object fd1 = b1.getUserData();
+        Object fd2 = b2.getUserData();
+
+        // TODO: this really does not work
+        if (b1.getUserData() instanceof FlareModel &&
+                b2.getUserData() instanceof HazardModel) {
+            FlareModel flare = (FlareModel) b1.getUserData();
+            HazardModel t = (HazardModel) b2.getUserData();
+            System.out.println("USER DATA: " + t.getBody().getUserData());
+            if(t.isTentacle()) {
+                t.getTentacle().despawn();
+                System.out.println("DESPAWNING??????????");
+            }
+        }
+        if (b1.getUserData() instanceof HazardModel &&
+                b2.getUserData() instanceof FlareModel) {
+            FlareModel flare = (FlareModel) b2.getUserData();
+            HazardModel t = (HazardModel) b1.getUserData();
+            System.out.println("USER DATA: " + t.getBody().getUserData());
+            if(t.isTentacle()) {
+                t.getTentacle().despawn();
+                System.out.println("DESPAWNING??????????");
+            }
+        }
+    }
+
 }
