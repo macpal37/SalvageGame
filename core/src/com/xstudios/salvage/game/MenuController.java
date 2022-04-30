@@ -83,10 +83,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     protected Texture level_editor;
 
     /**
-     * The width of the progress bar
-     */
-    private int width;
-    /**
      * The y-coordinate of the center of the progress bar
      */
     private int centerY;
@@ -119,21 +115,18 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      *
      * @return true if the player is ready to go
      */
-    public boolean isReady() {
-        return pressState == 2;
-    }
+    private int width;
+    private int height;
 
     public MenuController() {
         // Load the next two images immediately.
 
         pressState = 0;
+        width = Gdx.graphics.getWidth();
+        height = Gdx.graphics.getHeight();
+
 
         Gdx.input.setInputProcessor(this);
-
-        // Let ANY connected controller start the game.
-        for (XBoxController controller : Controllers.get().getXBoxControllers()) {
-            controller.addListener(this);
-        }
     }
 
     public void setActive() {
@@ -166,22 +159,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         select_level = null;
     }
 
-//    public boolean pointer(int x, int y, int width, int height){
-//        int pX = Gdx.input.getX();
-//        int pY = Gdx.input.getY();
-//        // Flip to match graphics coordinates
-//        pY = canvas.getHeight() - pY;
-//
-//        float widthR = BUTTON_SCALE * scale * width/ 2.0f;
-//        float heightR = BUTTON_SCALE * scale * height/ 2.0f;
-//        float dist =
-//                (pX - x) * (pX - x) + (pY - y) * (pY - y);
-//        if (dist < widthR * heightR) {
-//            return true;
-//        }
-//        return false;
-//    }
-
     public boolean pointer1(int x, int y, int width, int height, float scale) {
         float pX = Gdx.input.getX();
         float pY = Gdx.input.getY();
@@ -205,31 +182,12 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      */
     private void draw() {
         canvas.begin();
-        canvas.draw(background, Color.WHITE, 0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.draw(
-                title,
-                Color.WHITE,
-                title.getWidth() / 2,
-                title.getHeight() / 2,
-                centerX,
-                centerY + 2 * centerY,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
-        Color tint = (pointer1(centerX, centerY + centerY, select_level.getWidth() / 2,
-                select_level.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                select_level,
-                tint,
-                select_level.getWidth() / 2,
-                select_level.getHeight() / 2,
-                centerX,
-                centerY + centerY,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
-        tint = (pointer1(centerX,
-                centerY + centerY / 2, level_editor.getWidth() / 2,
+        canvas.draw(background, Color.WHITE, 0, 0, width, height);
+        System.out.println("width: " + width +  " height: " + height);
+        canvas.draw(title, Color.WHITE, title.getWidth() / 2, title.getHeight() / 2, width/2, height - height/4, 0, scale, scale);
+        Color tint = (pointer1(width/2, height/2, select_level.getWidth() / 2, select_level.getHeight() / 2, scale) ? Color.GRAY : Color.WHITE);
+        canvas.draw(select_level, tint, select_level.getWidth() / 2, select_level.getHeight() / 2, width/2, height/2, 0, scale, scale);
+        tint = (pointer1(centerX, centerY + centerY / 2, level_editor.getWidth() / 2,
                 level_editor.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
         canvas.draw(
                 level_editor,
@@ -300,11 +258,13 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         float sx = ((float) width) / STANDARD_WIDTH;
         float sy = ((float) height) / STANDARD_HEIGHT;
         scale = (sx < sy ? sx : sy);
-
-        this.width = (int) (BAR_WIDTH_RATIO * width);
-        centerY = (int) (BAR_HEIGHT_RATIO * height);
-        centerX = width / 2;
-        heightY = height;
+        this.width = width;
+        this.height = height;
+        System.out.println("resize");
+//        this.width = (int) (BAR_WIDTH_RATIO * width);
+//        centerY = (int) (BAR_HEIGHT_RATIO * height);
+//        centerX = width / 2;
+//        heightY = height;
     }
 
     /**
