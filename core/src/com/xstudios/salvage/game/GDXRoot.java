@@ -229,7 +229,8 @@ public class GDXRoot extends Game implements ScreenListener {
 			} else {
 				System.out.println("exitCode= " + exitCode);
 				current = exitCode - 1;
-				if(current > 1) {
+				// if you specify a level that exceeds the max number of levels, crashes the game
+				if(current > 5) {
 					controller.setCameraPositionNormal();
 					menu_controller.dispose();
 					menu_controller.gatherAssets(directory);
