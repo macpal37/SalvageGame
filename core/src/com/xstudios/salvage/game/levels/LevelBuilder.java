@@ -14,7 +14,6 @@ import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.models.*;
 
 import com.xstudios.salvage.util.FilmStrip;
-
 import java.util.ArrayList;
 
 public class LevelBuilder {
@@ -198,7 +197,7 @@ public class LevelBuilder {
         if (w.canSpawnTentacle()) {
 
 
-            Tentacle t = new Tentacle(w,agg_level);
+            Tentacle t = new Tentacle(w, agg_level);
             t.setScale(1, 1);
             JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_tile.json"));
             HazardModel[] boxes = new HazardModel[4];
@@ -279,7 +278,7 @@ public class LevelBuilder {
                     }
                 }
             }
-            
+
 
             t.initShape(boxes);
             t.setBodyType(BodyDef.BodyType.StaticBody);

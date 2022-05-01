@@ -3,12 +3,10 @@ package com.xstudios.salvage.game.models;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.ShortArray;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -206,10 +204,9 @@ public class Tentacle extends GameObject {
     }
 
     public Wall getDead() {
-        if (frame == -1){
+        if (frame == -1) {
             return spawnWall;
-        }
-        else{
+        } else {
             return null;
         }
     }

@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
-import com.xstudios.salvage.assets.GifDecoder;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
@@ -511,7 +510,7 @@ public class DiverModel extends GameObject {
     }
 
     public void reduceInvincibleTime() {
-        if(invincible_time > 0) {
+        if (invincible_time > 0) {
             invincible_time--;
         }
     }
@@ -1355,7 +1354,7 @@ public class DiverModel extends GameObject {
         changeLightFilter = b;
     }
 
-    public boolean getChangeLightFilter(){
+    public boolean getChangeLightFilter() {
         return changeLightFilter;
     }
     /**
