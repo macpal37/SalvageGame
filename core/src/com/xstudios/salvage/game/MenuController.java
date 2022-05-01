@@ -61,8 +61,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     private boolean active;
 
     public MenuController() {
-        Gdx.input.setInputProcessor( this );
-
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
 
@@ -121,7 +119,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
             if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
                 c = Color.GRAY;
-                if(Gdx.input.isTouched()) clicked = true;
+                if(Gdx.input.justTouched()) clicked = true;
             }
         }
         canvas.draw(t, c, ox, oy, x, y, 0, scale, scale);
@@ -229,6 +227,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      */
     public void hide() {
         // Useless if called in outside animation loop
+        Gdx.input.setInputProcessor(null);
         active = false;
     }
 
@@ -255,7 +254,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return true;
+        return false;
     }
 
 

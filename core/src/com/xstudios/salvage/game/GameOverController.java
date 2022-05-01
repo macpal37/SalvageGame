@@ -1,6 +1,5 @@
 package com.xstudios.salvage.game;
 
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
@@ -9,37 +8,26 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
 public class GameOverController implements Screen, InputProcessor {
-    private Stage stage;
-    /** Listener that will update the player mode when we are done */
+
     private ScreenListener listener;
-    /** Whether or not this is an active controller */
+
     private boolean active;
 
-    /** Reference to the game canvas */
     protected GameCanvas canvas;
 
-    /** Background Texture */
     protected TextureRegion background;
     protected Texture main_menu;
     protected Texture try_again_next;
     protected Texture title;
-    /** The font for giving messages to the player */
-    public static BitmapFont displayFont;
 
     private boolean restart_game;
     private boolean exit_home;
     private boolean next_level;
-
     private boolean display_win;
 
     private int width;
@@ -51,7 +39,7 @@ public class GameOverController implements Screen, InputProcessor {
 
     private float scale;
 
-    CameraController camera;
+    private CameraController camera;
 
     public GameOverController() {
         active = false;

@@ -5,19 +5,10 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
-import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
-import com.xstudios.salvage.util.Controllers;
 import com.xstudios.salvage.util.ScreenListener;
-import com.xstudios.salvage.util.XBoxController;
-
-import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -34,54 +25,31 @@ import java.util.ArrayList;
  * loading screen.
  */
 public class LevelSelectController implements Screen, InputProcessor, ControllerListener {
-    // There are TWO asset managers.  One to load the loading screen.  The other to load the "assets
 
     private static int STANDARD_WIDTH = 1280;
-    /**
-     * Standard window height (for scaling)
-     */
+
     private static int STANDARD_HEIGHT = 720;
 
-    /**
-     * Height of the progress bar
-     */
     private static float BUTTON_SCALE = 0.75f;
 
-    /**
-     * Reference to GameCanvas created by the root
-     */
     private GameCanvas canvas;
-    /**
-     * Listener that will update the player mode when we are done
-     */
+
     private ScreenListener listener;
 
-    /**
-     * Background Texture
-     */
     private Texture main_menu;
     private Texture background;
     private Texture level;
     private Texture line;
+    private Texture lock;
 
-    /**
-     * The width of the progress bar
-     */
     private int width;
     private int height;
-    private int level_clicked;
-
-    boolean press_main_menu;
-
     private float scale;
 
+    private int level_clicked;
+    boolean press_main_menu;
     private ArrayList<Texture> level_list;
 
-
-
-    /**
-     * Whether or not this player mode is still active
-     */
     private boolean active;
 
     private CameraController camera;
@@ -90,16 +58,12 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     private int total_levels;
 
-    private Texture lock;
-
     public LevelSelectController() {
-        Gdx.input.setInputProcessor(this);
-        // Let ANY connected controller start the game".
-
+        level_list = new ArrayList<>();
         level_clicked = 0;
+
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
-        level_list = new ArrayList<>();
     }
 
     public void setActive() {
@@ -186,7 +150,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
             }
             if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
                 c = Color.GRAY;
-                if(Gdx.input.isTouched()) clicked = true;
+                if(Gdx.input.justTouched()) clicked = true;
             }
         }
         canvas.draw(t, c, ox, oy, x, height - y, angle, scale, scale);
@@ -248,7 +212,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         if (active) {
             draw();
             camera.render();
-            // We are ready, notify our listener
+
             if (press_main_menu && listener != null) {
                 camera.setCameraPosition(width/2, height/2);
                 camera.render();
@@ -279,6 +243,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         camera.resize(this.width, this.height);
         camera.render();
     }
+
     public void pause() {
         // TODO Auto-generated method stub
 
@@ -292,9 +257,8 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         Gdx.input.setInputProcessor(this);
         active = true;
     }
-
     public void hide() {
-        // Useless if called in outside animation loop
+        Gdx.input.setInputProcessor(null);
         active = false;
     }
 
@@ -321,7 +285,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return true;
+        return false;
     }
     /**
      * Called when a finger was lifted or a mouse button was released.

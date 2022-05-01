@@ -35,7 +35,7 @@ import com.xstudios.salvage.util.ScreenListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class GameController implements Screen, ContactListener {
+public class GameController implements Screen, ContactListener, InputProcessor {
     // Assets
     /**
      * The texture for diver
@@ -83,11 +83,11 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion keys;
 
     //pause
-    protected TextureRegion pause_screen;
-    protected TextureRegion black_spot;
-    protected TextureRegion resume;
-    protected TextureRegion restart;
-    protected TextureRegion main_menu;
+    protected Texture pause_screen;
+    protected Texture black_spot;
+    protected Texture resume;
+    protected Texture restart;
+    protected Texture main_menu;
 
     /** The font for giving messages to the player */
 
@@ -229,10 +229,7 @@ public class GameController implements Screen, ContactListener {
     // TODO: when we add other screens we can actually implement code to support pausing and quitting
     private state game_state;
     private boolean pause;
-    boolean resume_game;
-    boolean restart_game;
     boolean exit_home;
-    boolean clicked;
 
 
     private LevelBuilder levelBuilder;
@@ -252,8 +249,6 @@ public class GameController implements Screen, ContactListener {
                 new Vector2(0, DEFAULT_GRAVITY));
         level = 0;
         pause = false;
-        resume_game= false;
-        restart_game = false;
         exit_home = false;
     }
 
@@ -337,7 +332,7 @@ public class GameController implements Screen, ContactListener {
     }
 
     public void setCameraPositionNormal(){
-        cameraController.setCameraPosition(cameraController.getCameraWidth()/2, cameraController.getCameraHeight()/2);
+        cameraController.setCameraPosition(canvas.getWidth()/2, canvas.getHeight()/2);
         cameraController.render();
     }
 
@@ -406,10 +401,7 @@ public class GameController implements Screen, ContactListener {
         world = null;
         canvas = null;
         pause = false;
-        resume_game = false;
-        restart_game = false;
         exit_home = false;
-        clicked = false;
         audioController.dispose();
     }
 
@@ -449,11 +441,11 @@ public class GameController implements Screen, ContactListener {
         keys = new TextureRegion(directory.getEntry( "keys", Texture.class ));
 
         //pause
-        pause_screen = new TextureRegion(directory.getEntry( "pause", Texture.class ));
-        black_spot = new TextureRegion(directory.getEntry( "black_spot", Texture.class ));
-        resume = new TextureRegion(directory.getEntry( "resume", Texture.class ));
-        restart = new TextureRegion(directory.getEntry( "restart", Texture.class ));
-        main_menu = new TextureRegion(directory.getEntry( "main_menu_pause", Texture.class ));
+        pause_screen = directory.getEntry( "pause", Texture.class);
+        black_spot = directory.getEntry( "black_spot", Texture.class);
+        resume = directory.getEntry( "resume", Texture.class);
+        restart = directory.getEntry( "restart", Texture.class);
+        main_menu = directory.getEntry( "main_menu_pause", Texture.class);
     }
 
     /**
@@ -499,10 +491,7 @@ public class GameController implements Screen, ContactListener {
     public void reset() {
         game_state = state.PLAYING;
         pause = false;
-        resume_game = false;
-        restart_game = false;
         exit_home = false;
-        clicked = false;
         Vector2 gravity = new Vector2(world.getGravity());
         for (GameObject obj : objects) {
             obj.deactivatePhysics(world);
@@ -633,6 +622,7 @@ public class GameController implements Screen, ContactListener {
             game_state = state.LOSE_GAME;
         }
         else if(pause) game_state = state.PAUSE;
+        else if(!pause) game_state = state.PLAYING;
     }
 
 
@@ -871,43 +861,7 @@ public class GameController implements Screen, ContactListener {
         }
     }
 
-    public boolean pointer1(int x, int y, int width, int height, float scale) {
-        int pX = Gdx.input.getX();
-        int pY = Gdx.input.getY();
-        System.out.println("touched: " + Gdx.input.isTouched());
-        // Flip to match graphics coordinates
-        y = canvas.getHeight() - y;
-        float y1 = (float)y - (int)(360 - cameraController.getCameraPosition2D().y);
-        float x1 = (float)x - (int)(640 - cameraController.getCameraPosition2D().x);
-        float w = scale * width;
-        float h = scale * height;
 
-        System.out.println("pointer: " + pX + " " + pY);
-        if((x1 + w > pX && x1 - w < pX) && (y1 + h > pY && y1 - h < pY)){
-            if(Gdx.input.isTouched()) clicked = true;
-            return true;
-        }
-        return false;
-    }
-
-//    public boolean pointer2(int x, int y, int width, int height, float scale) {
-//        int pX = Gdx.input.getX();
-//        int pY = Gdx.input.getY();
-//        // Flip to match graphics coordinates
-//        y = canvas.getHeight() - y;
-//        float y1 = (float)y - (int)(360 - cameraController.getCameraPosition2D().y);
-//        float x1 = (float)x - (int)(640 - cameraController.getCameraPosition2D().x);
-//        float w = scale * width;
-//        float h = scale * height;
-//
-//        System.out.println("pointer: " + pX + " " + pY);
-//        if((x1 + w > pX && x1 - w < pX) && (y1 + h > pY && y1 - h < pY)){
-//            if(Gdx.input.isTouched())
-//                System.out.println("touch");
-//                return true;
-//        }
-//        return false;
-//    }
 
     /**
      * Draw the physics objects to the canvas
@@ -917,21 +871,41 @@ public class GameController implements Screen, ContactListener {
      * <p>
      * The method draws all objects in the order that they were added.
      *
-     * @param dt Number of seconds since last animation frame
      */
+
+    public boolean help_draw (Texture t, float x, float y, boolean tint) {
+        int ox = t.getWidth()/2;
+        int oy = t.getHeight()/2;
+        Color c = Color.WHITE;
+        boolean clicked = false;
+
+        if(tint) {
+            int pX = Gdx.input.getX();
+            int pY = Gdx.input.getY();
+            float y1 =  (canvas.getHeight() - y) - (int) (360 - cameraController.getCameraPosition2D().y);
+            float x1 =  x - (int) (640 - cameraController.getCameraPosition2D().x);
+            float w = 0.7f * ox;
+            float h = 0.7f * oy;
+
+            System.out.println("pointer: " + pX + " " + pY);
+            if ((x1 + w > pX && x1 - w < pX) && (y1 + h > pY && y1 - h < pY)) {
+                c = Color.GRAY;
+                if (Gdx.input.justTouched()) clicked = true;
+            }
+        }
+        canvas.draw(t, c, ox, oy, x, y, 0, 0.7f, 0.7f);
+        return clicked;
+    }
+
     public void draw(float dt) {
         canvas.clear();
-
-
         canvas.begin();
-
 
         // draw game objects
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0, 4, 4);
         for (GameObject obj : objects) {
             obj.draw(canvas);
         }
-
 
         canvas.end();
         if (!debug)
@@ -956,55 +930,36 @@ public class GameController implements Screen, ContactListener {
                 }
 
                 canvas.drawText(
-
                         "Oxygen Level: " + (int) diver.getOxygenLevel(),
                         displayFont,
                         cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + 50,
                         cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f + 50);
                 break;
+
             case PAUSE:
                 setCameraPositionNormal();
-                System.out.println("pause state");
-                canvas.draw(pause_screen, Color.WHITE, cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f,
-                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f, canvas.getWidth(), canvas.getHeight());
-                canvas.draw(black_spot, Color.WHITE, cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f,
-                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f - canvas.getHeight()/4f,
-                        black_spot.getRegionWidth(), black_spot.getRegionHeight());
+                cameraController.render();
+                float cX = cameraController.getCameraPosition2D().x;
+                float cY = cameraController.getCameraPosition2D().y;
 
-                Color tint = (pointer1((int)cameraController.getCameraPosition2D().x, (int)cameraController.getCameraPosition2D().y + main_menu.getRegionHeight() + main_menu.getRegionHeight() / 2,
-                        resume.getRegionWidth() / 2, resume.getRegionHeight() / 2, 0.7f) ? Color.GRAY : Color.WHITE);
-                canvas.draw(resume, tint, resume.getRegionWidth() / 2, resume.getRegionHeight(), cameraController.getCameraPosition2D().x,
-                        cameraController.getCameraPosition2D().y + main_menu.getRegionHeight() + main_menu.getRegionHeight() / 2, 0, 0.7f, 0.7f);
-                if(clicked) resume();
-                tint = (pointer1((int)cameraController.getCameraPosition2D().x, (int)cameraController.getCameraPosition2D().y
-                                + main_menu.getRegionHeight() / 2, restart.getRegionWidth() / 2,
-                        restart.getRegionHeight() / 2, 0.7f) ? Color.GRAY : Color.WHITE);
-                canvas.draw(restart, tint, restart.getRegionWidth() / 2, resume.getRegionHeight(),
-                        cameraController.getCameraPosition2D().x, cameraController.getCameraPosition2D().y
-                                + main_menu.getRegionHeight() / 2, 0, 0.7f, 0.7f);
-                if(clicked) reset();
-                tint = (pointer1((int)cameraController.getCameraPosition2D().x, (int)cameraController.getCameraPosition2D().y - main_menu.getRegionHeight() / 2
-                                , main_menu.getRegionWidth() / 2,
-                        main_menu.getRegionHeight() / 2, 0.7f) ? Color.GRAY : Color.WHITE);
-                canvas.draw(main_menu, tint, main_menu.getRegionWidth() / 2, main_menu.getRegionHeight(),
-                        cameraController.getCameraPosition2D().x, cameraController.getCameraPosition2D().y - main_menu.getRegionHeight() / 2,
-                        0, 0.7f, 0.7f);
-                if(clicked) exit_home = true;
+                System.out.println("camera coordintes: " + cX + " " + cY);
+                System.out.println("pause state");
+                canvas.draw(pause_screen, Color.WHITE, cX - canvas.getWidth() / 2f,
+                        cY - canvas.getHeight() / 2f, canvas.getWidth(), canvas.getHeight());
+
+                canvas.draw(black_spot, Color.WHITE, cX - canvas.getWidth() / 2f,
+                        cY - canvas.getHeight() / 2f - canvas.getHeight()/4f,
+                        black_spot.getWidth(), black_spot.getHeight());
+
+                if(help_draw(resume, cX, cY + main_menu.getHeight(), true)) resume();
+                if(help_draw(restart, cX, cY, true)) reset();
+                exit_home = help_draw(main_menu, cX, cY - main_menu.getHeight(), true);
+
             case WIN_GAME:
                 System.out.println("TEXT POS" +
                         cameraController.getCameraPosition2D().x + " " +
                         cameraController.getCameraPosition2D().y);
-//                canvas.drawText("you win! Press R to restart",
-//                        displayFont,
-//                        cameraController.getCameraPosition2D().x - 100,
-//                        cameraController.getCameraPosition2D().y );
                 break;
-//            case LOSE_GAME:
-//                canvas.drawText("you lose :( Press R to restart",
-//                        displayFont,
-//                        cameraController.getCameraPosition2D().x - 100,
-//                        cameraController.getCameraPosition2D().y );
-//            break;
         }
         for (GameObject o : objects) {
             if (o instanceof DiverObjectModel && ((DiverObjectModel) o).isCarried()) {
@@ -1059,7 +1014,6 @@ public class GameController implements Screen, ContactListener {
                 postUpdate(delta);
             }
             draw(delta);
-            //draw(delta);
             if (game_state == state.WIN_GAME) {
                 listener.exitScreen(this, 0);
             } else if (game_state == state.LOSE_GAME) {
@@ -1102,6 +1056,7 @@ public class GameController implements Screen, ContactListener {
      */
     public void show() {
         // Useless if called in outside animation loop
+        Gdx.input.setInputProcessor(this);
         active = true;
     }
 
@@ -1109,7 +1064,7 @@ public class GameController implements Screen, ContactListener {
      * Called when this screen is no longer the current screen for a Game.
      */
     public void hide() {
-        // Useless if called in outside animation loop
+        Gdx.input.setInputProcessor(null);
         active = false;
     }
 
@@ -1335,5 +1290,150 @@ public class GameController implements Screen, ContactListener {
     public Rectangle getWorldBounds() {
         return bounds;
     }
+
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return true;
+    }
+    /**
+     * Called when a finger was lifted or a mouse button was released.
+     *
+     * This method checks to see if the play button is currently pressed down. If so,
+     * it signals the that the player is ready to go.
+     *
+     * @param screenX the x-coordinate of the mouse on the screen
+     * @param screenY the y-coordinate of the mouse on the screen
+     * @param pointer the button or touch finger number
+     * @return whether to hand the event to other listeners.
+     */
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return true;
+    }
+
+    /**
+     * Called when a button on the Controller was pressed.
+     *
+     * The buttonCode is controller specific. This listener only supports the start
+     * button on an X-Box controller.  This outcome of this method is identical to
+     * pressing (but not releasing) the play button.
+     *
+     * @param controller The game controller
+     * @param buttonCode The button pressed
+     * @return whether to hand the event to other listeners.
+     */
+    public boolean buttonDown (Controller controller, int buttonCode) {
+        return true;
+    }
+
+    /**
+     * Called when a button on the Controller was released.
+     *
+     * The buttonCode is controller specific. This listener only supports the start
+     * button on an X-Box controller.  This outcome of this method is identical to
+     * releasing the the play button after pressing it.
+     *
+     * @param controller The game controller
+     * @param buttonCode The button pressed
+     * @return whether to hand the event to other listeners.
+     */
+    public boolean buttonUp (Controller controller, int buttonCode) {
+        return true;
+    }
+
+    // UNSUPPORTED METHODS FROM InputProcessor
+
+    /**
+     * Called when a key is pressed (UNSUPPORTED)
+     *
+     * @param keycode the key pressed
+     * @return whether to hand the event to other listeners.
+     */
+    public boolean keyDown(int keycode) {
+        return true;
+    }
+
+    /**
+     * Called when a key is typed (UNSUPPORTED)
+     *
+     * @return whether to hand the event to other listeners.
+     */
+    public boolean keyTyped(char character) {
+        return true;
+    }
+
+    /**
+     * Called when a key is released (UNSUPPORTED)
+     *
+     * @param keycode the key released
+     * @return whether to hand the event to other listeners.
+     */
+    public boolean keyUp(int keycode) {
+        return true;
+    }
+
+    /**
+     * Called when the mouse was moved without any buttons being pressed. (UNSUPPORTED)
+     *
+     * @param screenX the x-coordinate of the mouse on the screen
+     * @param screenY the y-coordinate of the mouse on the screen
+     * @return whether to hand the event to other listeners.
+     */
+    public boolean mouseMoved(int screenX, int screenY) {
+        return true;
+    }
+
+    /**
+     * Called when the mouse wheel was scrolled. (UNSUPPORTED)
+     *
+     * @param dx the amount of horizontal scroll
+     * @param dy the amount of vertical scroll
+     *
+     * @return whether to hand the event to other listeners.
+     */
+    public boolean scrolled(float dx, float dy) {
+        return true;
+    }
+
+    /**
+     * Called when the mouse or finger was dragged. (UNSUPPORTED)
+     *
+     * @param screenX the x-coordinate of the mouse on the screen
+     * @param screenY the y-coordinate of the mouse on the screen
+     * @param pointer the button or touch finger number
+     * @return whether to hand the event to other listeners.
+     */
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return true;
+    }
+
+    // UNSUPPORTED METHODS FROM ControllerListener
+
+    /**
+     * Called when a controller is connected. (UNSUPPORTED)
+     *
+     * @param controller The game controller
+     */
+    public void connected (Controller controller) {}
+
+    /**
+     * Called when a controller is disconnected. (UNSUPPORTED)
+     *
+     * @param controller The game controller
+     */
+    public void disconnected (Controller controller) {}
+
+    /**
+     * Called when an axis on the Controller moved. (UNSUPPORTED)
+     *
+     * The axisCode is controller specific. The axis value is in the range [-1, 1].
+     *
+     * @param controller The game controller
+     * @param axisCode 	The axis moved
+     * @param value 	The axis value, -1 to 1
+     * @return whether to hand the event to other listeners.
+     */
+    public boolean axisMoved (Controller controller, int axisCode, float value) {
+        return true;
+    }
+
 
 }

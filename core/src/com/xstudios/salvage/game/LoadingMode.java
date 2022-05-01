@@ -1,19 +1,13 @@
 package com.xstudios.salvage.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.controllers.Controller;
-import com.badlogic.gdx.controllers.ControllerListener;
-import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.xstudios.salvage.assets.AssetDirectory;
-import com.xstudios.salvage.util.Controllers;
 import com.xstudios.salvage.util.ScreenListener;
-import com.xstudios.salvage.util.XBoxController;
 
 /**
  * Class that provides a loading screen for the state of the game.
@@ -37,20 +31,10 @@ public class LoadingMode implements Screen {
     private Texture background;
     private Texture tentacles;
 
-    // statusBar is a "texture atlas." Break it up into parts.
-    /** Left cap to the status background (grey region) */
-    private TextureRegion statusBkgLeft;
-    /** Middle portion of the status background (grey region) */
-    private TextureRegion statusBkgMiddle;
-    /** Right cap to the status background (grey region) */
-    private TextureRegion statusBkgRight;
-
     /** Standard window size (for scaling) */
     private static int STANDARD_WIDTH = 1280;
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = 720;
-    /** Ratio of the bar width to the screen */
-    private static float BAR_WIDTH_RATIO = 0.66f;
 
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
