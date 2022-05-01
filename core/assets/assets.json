@@ -24,8 +24,8 @@
     "keys" : "models/key.png",
     "level_editor": "ui/level_editor.png",
     "models:diver": "models/diver.png",
-"models:diver_swimming": "models/diver_swimming.png",
-        "models:dust": "models/dust.png",
+    "models:diver_swimming": "models/diver_swimming.png",
+    "models:dust": "models/dust.png",
     "background:ocean":"background/background1.png",
     "background:game_over":"background/game_over.png",
     "background:menu":"background/menu_background.png",
@@ -50,7 +50,20 @@
       "file": "models/door.png",
       "wrapU": "repeated",
       "wrapV": "repeated"
-    }
+    },
+    "1": "ui/levels/Michael.png",
+    "2": "ui/levels/Daphne.png",
+    "3": "ui/levels/Eric.png",
+    "4": "ui/levels/Ryder.png",
+    "5": "ui/levels/victor.png",
+    "6": "ui/levels/Miriam.png",
+    "7": "ui/levels/Mika.png",
+    "8": "ui/levels/Jess.png",
+    "9": "ui/levels/Eric.png",
+    "10": "ui/levels/Jason.png",
+    "11": "ui/levels/Davis.png",
+    "12": "ui/levels/Tyler.png"
+
   },
   "jsons"  : {
     "models:constants":  "models/constants.json",

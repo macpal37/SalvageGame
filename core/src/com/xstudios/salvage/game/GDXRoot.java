@@ -30,6 +30,8 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	private int current;
 
+	private int total_levels;
+
 	/**
 	 * Called when the Application is first created.
 	 *
@@ -45,6 +47,8 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		controller = new GameController();
 		controller.setCameraController(cameraController);
+
+		total_levels = controller.getTotalLevels();
 
 		game_over_controller = new GameOverController();
 		game_over_controller.setCameraController(cameraController);
@@ -144,6 +148,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			//menu >> level select
 			if (exitCode == 0) {
 				level_select_controller.setLocked(player.getLevel());
+				level_select_controller.setTotalLevels(total_levels);
 				level_select_controller.dispose();
 				level_select_controller.gatherAssets(directory);
 				level_select_controller.setCanvas(canvas);
@@ -197,7 +202,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			//game over >> next level, will be main menu if no new level
 			if(exitCode == 2){
 				//main menu instead
-				if(current >= controller.getTotalLevels())
+				if(current >= total_levels)
 					set_menu(canvas, directory);
 
 				//next level

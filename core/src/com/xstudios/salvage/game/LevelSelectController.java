@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.Controllers;
 import com.xstudios.salvage.util.ScreenListener;
@@ -73,6 +75,10 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     private float scale;
 
+    private ArrayList<Texture> level_list;
+
+
+
     /**
      * Whether or not this player mode is still active
      */
@@ -82,6 +88,8 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     private int locked;
 
+    private int total_levels;
+
     public LevelSelectController() {
         Gdx.input.setInputProcessor(this);
         // Let ANY connected controller start the game".
@@ -89,6 +97,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         level_clicked = 0;
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
+        level_list = new ArrayList<>();
     }
 
     public void setActive() {
@@ -111,10 +120,18 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         main_menu = directory.getEntry("main_menu", Texture.class);
         level = directory.getEntry("level", Texture.class);
         line = directory.getEntry("line", Texture.class);
+        for(int i = 1; i < 13; i++){
+            level_list.add(directory.getEntry(Integer.toString(i), Texture.class));
+        }
     }
+
 
     public void setLocked(int level){
         locked = level;
+    }
+
+    public void setTotalLevels(int level){
+        total_levels = level;
     }
     /**
      * Called when this screen should release all resources.
@@ -127,7 +144,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         level_clicked = 0;
     }
 
-    private boolean help_draw(Texture t, int x, int y, boolean tint, int level){
+    private boolean help_draw(Texture t, int x, int y, boolean tint, int level, Texture t1){
         int ox = t.getWidth()/2;
         int oy = t.getHeight()/2;
         Color c = Color.WHITE;
@@ -144,6 +161,10 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                     c = Color.GRAY;
                     canvas.draw(t, c, ox, oy, x, height - y, 0, scale, scale);
                     return false;
+                }
+                else{
+                    if(t1 != null)
+                        t = t1;
                 }
             }
             if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
@@ -167,19 +188,19 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         canvas.draw(background, Color.WHITE, 0, -1 * height * 2,
                 width,  height * 3);
 
-        press_main_menu = help_draw(main_menu, width/7,height/7, true, 0);
+        press_main_menu = help_draw(main_menu, width/7,height/7, true, 0, null);
 
         Boolean[] levels = {
-                help_draw(level, width/6, height/2, true, 1),
-                help_draw(level, width/2, height/4, true, 2),
-                help_draw(level, width - width/6, height/4, true, 3),
-                help_draw(level, width - width/5, height - height/4, true, 4),
-                help_draw(level, width/2, height - height/3, true, 5),
-                help_draw(level, width/5, height , true, 6),
-                help_draw(level, width/2, height + height/6, true, 7),
-                help_draw(level, width - width/5, height + height/4, true, 8),
-                help_draw(level, width - width/3, 2 * height - height/3, true, 9),
-                help_draw(level, width/4, 2 * height - height/2, true, 10)};
+                help_draw(level, width/6, height/2, true, 1, level_list.get(0)),
+                help_draw(level, width/2, height/4, true, 2, level_list.get(1)),
+                help_draw(level, width - width/6, height/4, true, 3,  level_list.get(2)),
+                help_draw(level, width - width/5, height - height/4, true, 4,  level_list.get(3)),
+                help_draw(level, width/2, height - height/3, true, 5,  level_list.get(4)),
+                help_draw(level, width/5, height , true, 6,  level_list.get(5)),
+                help_draw(level, width/2, height + height/6, true, 7,  level_list.get(6)),
+                help_draw(level, width - width/5, height + height/4, true, 8,  level_list.get(7)),
+                help_draw(level, width - width/3, 2 * height - height/3, true, 9,  level_list.get(8)),
+                help_draw(level, width/4, 2 * height - height/2, true, 10,  level_list.get(9))};
 
         for(int i = 0; i < levels.length; i++){
             if(levels[i])
