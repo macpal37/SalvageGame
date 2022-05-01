@@ -211,8 +211,24 @@ public class GameController implements Screen, ContactListener {
     /**
      * ================================LEVELS=================================
      */
+
+    /** Summary of levels
+     * asher_1 - swim to end goal
+     * asher_2 - teach kickpoints
+     * t_easy_1 - teach hitting hazards, keys, and explore to find body
+     * t_easy_2 - introduce monster disturbance
+     * beta_1 - teach hazards and flares
+     * beta_2 - teach doors, keys, flares, longer level requires tracing back steps
+     * beta_3 - monster disturbance
+     * beta_5 - kick points and monster disturbance
+     *
+     * level1 - retracing steps and avoiding hazards
+     * level4 - insanely hard key level
+     */
     // Beta Release Setup
+//    private String[] levels = {"asher_1", "asher_2", "t_easy_1", "t_easy_2", "beta_1", "beta_2", "beta_3", "beta_5"};
     private String[] levels = {"beta_0", "beta_1", "beta_2", "beta_3", "beta_5"};
+//    private String[] levels = {"t_easy_1", "t_easy_2", "beta_1", "beta_2", "beta_3"};
 
 //    private String[] levels = {"test_level", "level1", "level3"};
 
@@ -651,7 +667,8 @@ public class GameController implements Screen, ContactListener {
 
         if (!level.getDiver().getStunned()) {
             // decrease oxygen from movement
-            if (Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) {
+            if ((Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) &&
+                    level.getDiver().getLinearVelocity().len() > 0) {
                 level.getDiver().changeOxygenLevel(activeOxygenRate);
                 // TODO: faster oxygen drain while carrying the body
             } else {
