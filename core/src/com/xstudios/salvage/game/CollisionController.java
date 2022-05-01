@@ -471,24 +471,24 @@ public class CollisionController {
 
         // TODO: this really does not work
         if (b1.getUserData() instanceof FlareModel &&
-                b2.getUserData() instanceof HazardModel) {
+                b2.getUserData() instanceof Tentacle) {
             FlareModel flare = (FlareModel) b1.getUserData();
             HazardModel t = (HazardModel) b2.getUserData();
             System.out.println("USER DATA: " + t.getBody().getUserData());
-            if(t.isTentacle()) {
-                t.getTentacle().despawn();
-                System.out.println("DESPAWNING??????????");
-            }
+//            if(t.isTentacle()) {
+//                t.getTentacle().despawn();
+//                System.out.println("DESPAWNING??????????");
+//            }
         }
-        if (b1.getUserData() instanceof HazardModel &&
+        if (b1.getUserData() instanceof Tentacle &&
                 b2.getUserData() instanceof FlareModel) {
             FlareModel flare = (FlareModel) b2.getUserData();
             HazardModel t = (HazardModel) b1.getUserData();
             System.out.println("USER DATA: " + t.getBody().getUserData());
-            if(t.isTentacle()) {
-                t.getTentacle().despawn();
-                System.out.println("DESPAWNING??????????");
-            }
+//            if(t.isTentacle()) {
+//                t.getTentacle().despawn();
+//                System.out.println("DESPAWNING??????????");
+//            }
         }
     }
 

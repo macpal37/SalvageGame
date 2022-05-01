@@ -80,7 +80,15 @@ public class LevelModel {
             tentacles.add((Tentacle) obj);
         }
     }
-
+    /**
+     * remove objects to the list of all objects and the category lists they correspond to
+     */
+    public void removeObject(GameObject obj) {
+        objects.remove(obj);
+        if(obj instanceof Tentacle){
+            tentacles.remove((Tentacle) obj);
+        }
+    }
     public void dispose() {
         // TODO: do we need to clear all of the arrays?
         getAboveObjects().clear();
