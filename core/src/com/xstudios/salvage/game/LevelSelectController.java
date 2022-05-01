@@ -90,6 +90,8 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     private int total_levels;
 
+    private Texture lock;
+
     public LevelSelectController() {
         Gdx.input.setInputProcessor(this);
         // Let ANY connected controller start the game".
@@ -120,6 +122,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         main_menu = directory.getEntry("main_menu", Texture.class);
         level = directory.getEntry("level", Texture.class);
         line = directory.getEntry("line", Texture.class);
+        lock = directory.getEntry("lock", Texture.class);
         for(int i = 1; i < 13; i++){
             level_list.add(directory.getEntry(Integer.toString(i), Texture.class));
         }
@@ -160,6 +163,8 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 if(level > locked) {
                     c = Color.GRAY;
                     canvas.draw(t, c, ox, oy, x, height - y, 0, scale, scale);
+                    canvas.draw(lock, Color.WHITE, lock.getWidth()/2 + lock.getWidth()/20, lock.getHeight(),
+                            x, height - y, 0, scale * 0.2f, scale *0.2f);
                     return false;
                 }
                 else{

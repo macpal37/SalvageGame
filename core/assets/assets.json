@@ -51,6 +51,7 @@
       "wrapU": "repeated",
       "wrapV": "repeated"
     },
+    "lock" : "ui/lock.png",
     "1": "ui/levels/Michael.png",
     "2": "ui/levels/Daphne.png",
     "3": "ui/levels/Eric.png",
