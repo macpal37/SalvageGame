@@ -973,25 +973,23 @@ public class GameController implements Screen, ContactListener {
 
                 Color tint = (pointer1((int)cameraController.getCameraPosition2D().x, (int)cameraController.getCameraPosition2D().y + main_menu.getRegionHeight() + main_menu.getRegionHeight() / 2,
                         resume.getRegionWidth() / 2, resume.getRegionHeight() / 2, 0.7f) ? Color.GRAY : Color.WHITE);
-                if(clicked) resume();
                 canvas.draw(resume, tint, resume.getRegionWidth() / 2, resume.getRegionHeight(), cameraController.getCameraPosition2D().x,
                         cameraController.getCameraPosition2D().y + main_menu.getRegionHeight() + main_menu.getRegionHeight() / 2, 0, 0.7f, 0.7f);
-
+                if(clicked) resume();
                 tint = (pointer1((int)cameraController.getCameraPosition2D().x, (int)cameraController.getCameraPosition2D().y
                                 + main_menu.getRegionHeight() / 2, restart.getRegionWidth() / 2,
                         restart.getRegionHeight() / 2, 0.7f) ? Color.GRAY : Color.WHITE);
-                if(clicked) reset();
                 canvas.draw(restart, tint, restart.getRegionWidth() / 2, resume.getRegionHeight(),
                         cameraController.getCameraPosition2D().x, cameraController.getCameraPosition2D().y
                                 + main_menu.getRegionHeight() / 2, 0, 0.7f, 0.7f);
-
+                if(clicked) reset();
                 tint = (pointer1((int)cameraController.getCameraPosition2D().x, (int)cameraController.getCameraPosition2D().y - main_menu.getRegionHeight() / 2
                                 , main_menu.getRegionWidth() / 2,
                         main_menu.getRegionHeight() / 2, 0.7f) ? Color.GRAY : Color.WHITE);
-                if(clicked) exit_home = true;
                 canvas.draw(main_menu, tint, main_menu.getRegionWidth() / 2, main_menu.getRegionHeight(),
                         cameraController.getCameraPosition2D().x, cameraController.getCameraPosition2D().y - main_menu.getRegionHeight() / 2,
                         0, 0.7f, 0.7f);
+                if(clicked) exit_home = true;
             case WIN_GAME:
                 System.out.println("TEXT POS" +
                         cameraController.getCameraPosition2D().x + " " +

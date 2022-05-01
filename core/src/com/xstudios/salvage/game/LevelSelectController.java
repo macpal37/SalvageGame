@@ -128,7 +128,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         }
     }
 
-
     public void setLocked(int level){
         locked = level;
     }
@@ -136,15 +135,21 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     public void setTotalLevels(int level){
         total_levels = level;
     }
-    /**
-     * Called when this screen should release all resources.
-     */
+
     public void dispose() {
         background = null;
         main_menu = null;
         level = null;
         line = null;
         level_clicked = 0;
+    }
+
+    private void help_draw_line(int x, int y, int level, float angle){
+        help_draw(line, x, y, false, level, null, angle, true);
+    }
+
+    private boolean help_draw_level(int x, int y, int l){
+        return help_draw(level, x, y, true, l, level_list.get(l - 1), 0, false);
     }
 
     private boolean help_draw(Texture t, int x, int y, boolean tint, int level, Texture t1, float angle, boolean line){
@@ -187,45 +192,38 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         canvas.draw(t, c, ox, oy, x, height - y, angle, scale, scale);
         return clicked;
     }
-    /**
-     * Draw the status of this player mode.
-     *
-     * We prefer to separate update and draw from one another as separate methods, instead
-     * of using the single render() method that LibGDX does.  We will talk about why we
-     * prefer this in lecture.
-     */
+
     private void draw() {
         canvas.clear();
         canvas.begin();
-        canvas.draw(background, Color.WHITE, 0, -1 * height * 2,
-                width,  height * 3);
+        canvas.draw(background, Color.WHITE, 0, -1 * height * 2, width,  height * 3);
 
         //menu
         press_main_menu = help_draw(main_menu, width/7,height/7, true, 0, null, 0, false);
 
         //lines
-        help_draw(line, width/3, height/2, false, 2, null, 0.8f, true);
-        help_draw(line, width - width/3, height/3, false, 3, null, 0.2f, true);
-        help_draw(line, width - width/7, height/2, false, 4, null, -1.5f, true);
-        help_draw(line, width - width/3, height - height/5, false, 5, null, 0, true);
-        help_draw(line, width/3, height - height/6, false, 6, null, 1f, true);
-        help_draw(line, width/5, height + height/4, false, 7, null, -1f, true);
-        help_draw(line, width/3, height + height/3, false, 8, null, 1f, true);
-        help_draw(line, width - width/3, height + height/4, false, 9, null, 0, true);
-        help_draw(line, width - width/4, height + height/2, false, 10, null, 1f, true);
+        help_draw_line(width/3, height/2, 2, 0.8f);
+        help_draw_line(width - width/3, height/3, 3, 0.2f);
+        help_draw_line(width - width/7, height/2, 4, -1.5f);
+        help_draw_line(width - width/3, height - height/5, 5, 0);
+        help_draw_line(width/3, height - height/6, 6, 1f);
+        help_draw_line(width/5, height + height/4, 7, -1f);
+        help_draw_line(width/3, height + height/3, 8, 1f);
+        help_draw_line(width - width/3, height + height/4, 9, 0);
+        help_draw_line(width - width/4, height + height/2, 10, 1f);
 
         //levels
         Boolean[] levels = {
-                help_draw(level, width/6, height/2, true, 1, level_list.get(0), 0, false),
-                help_draw(level, width/2, height/4, true, 2, level_list.get(1), 0, false),
-                help_draw(level, width - width/6, height/4, true, 3,  level_list.get(2), 0, false),
-                help_draw(level, width - width/5, height - height/4, true, 4,  level_list.get(3), 0, false),
-                help_draw(level, width/2, height - height/3, true, 5,  level_list.get(4), 0, false),
-                help_draw(level, width/5, height , true, 6,  level_list.get(5), 0, false),
-                help_draw(level, width/4, 2 * height - height/2, true, 7,  level_list.get(6), 0, false),
-                help_draw(level, width/2, height + height/6, true, 8,  level_list.get(7), 0, false),
-                help_draw(level, width - width/5, height + height/4, true, 9,  level_list.get(8), 0, false),
-                help_draw(level, width - width/3, 2 * height - height/3, true, 10,  level_list.get(9), 0, false),};
+                help_draw_level(width/6, height/2, 1),
+                help_draw_level(width/2, height/4, 2),
+                help_draw_level(width - width/6, height/4, 3),
+                help_draw_level(width - width/5, height - height/4, 4),
+                help_draw_level(width/2, height - height/3, 5),
+                help_draw_level(width/5, height, 6),
+                help_draw_level(width/4, 2 * height - height/2, 7),
+                help_draw_level(width/2, height + height/6, 8),
+                help_draw_level(width - width/5, height + height/4, 9),
+                help_draw_level(width - width/3, 2 * height - height/3, 10)};
 
         //clicked level
         for(int i = 0; i < levels.length; i++){
