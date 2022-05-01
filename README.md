@@ -20,18 +20,14 @@ drop (Q):
 
 Players drops object they have in their inventory.
 
-kick (hold SPACE + arrow key, then release SPACE):
+kick (hold SPACE, set direction with arrow key, then release SPACE):
 
 Player is able to kick off a platform and launch themselves at an angle aimed by the arrow key.
 
-ping (E):
+drop flare (F):
 
-Player releases a ping which shows the direction of the body.
+Player lights and drops a flare which illuminates the darkness for a period of time.
 
-reset level (O):
+Pause (ESC):
 
-resets the level, and sends the player to the start.
-
-return to level select (ESC):
-
-Return to level select screen.
+Pauses the game. Pressing ESC again will resume gameplay, while clicking on the restart or main menu buttons will return you to the respective screens.
