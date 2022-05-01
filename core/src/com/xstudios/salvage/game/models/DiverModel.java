@@ -9,13 +9,12 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
-import com.xstudios.salvage.assets.GifDecoder;
+
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
-import com.xstudios.salvage.util.PooledList;
-import sun.security.x509.OtherName;
+
 
 import java.util.ArrayList;
 

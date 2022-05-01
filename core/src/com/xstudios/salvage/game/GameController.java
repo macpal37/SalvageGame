@@ -632,7 +632,7 @@ public class GameController implements Screen, ContactListener {
             door.setActive(!door.getUnlock(level.getDiver().getItem()));
         }
 
-        rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
+//        rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
 
 
         switch (game_state) {
