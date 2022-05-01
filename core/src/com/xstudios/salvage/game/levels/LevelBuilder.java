@@ -279,7 +279,6 @@ public class LevelBuilder {
                 }
             }
 
-
             t.initShape(boxes);
             t.setBodyType(BodyDef.BodyType.StaticBody);
             t.setDensity(0);
