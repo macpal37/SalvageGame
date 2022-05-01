@@ -472,11 +472,15 @@ public class CollisionController {
         if (b1.getBody().getUserData() instanceof FlareModel &&
                 b2.getUserData() instanceof Tentacle) {
             FlareModel flare = (FlareModel) b1.getUserData();
+            Tentacle t = (Tentacle) b2.getUserData();
+            t.setStartGrowing(false);
             System.out.println("we got a flare folks");
 //            }
         }
         if (b1.getUserData() instanceof Tentacle &&
                 b2.getBody().getUserData() instanceof FlareModel) {
+            Tentacle t = (Tentacle) b1.getUserData();
+            t.setStartGrowing(false);
             System.out.println("we got a flare folks");
         }
     }
