@@ -2,18 +2,18 @@ package com.xstudios.salvage.game;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
-import com.badlogic.gdx.Game;
+
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
+
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Array;
+
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.audio.AudioController;
@@ -26,7 +26,7 @@ import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 
-import java.util.ArrayList;
+
 import java.util.Iterator;
 import java.util.Queue;
 

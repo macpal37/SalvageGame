@@ -6,7 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -21,23 +21,39 @@ import com.xstudios.salvage.util.ScreenListener;
 public class GameOverController implements Screen, ApplicationListener {
     private Skin skin;
     private Stage stage;
-    /** Listener that will update the player mode when we are done */
+    /**
+     * Listener that will update the player mode when we are done
+     */
     private ScreenListener listener;
-    /** Whether or not this is an active controller */
+    /**
+     * Whether or not this is an active controller
+     */
     private boolean active;
 
-    /** The actual assets to be loaded */
+    /**
+     * The actual assets to be loaded
+     */
     private AssetDirectory assets;
-    /** Reference to the game canvas */
+    /**
+     * Reference to the game canvas
+     */
     protected GameCanvas canvas;
 
-    /** The boundary of the world */
+    /**
+     * The boundary of the world
+     */
     protected Rectangle bounds;
-    /** The world scale */
+    /**
+     * The world scale
+     */
     protected Vector2 scale;
-    /** Background Texture */
+    /**
+     * Background Texture
+     */
     protected TextureRegion background;
-    /** The font for giving messages to the player */
+    /**
+     * The font for giving messages to the player
+     */
     public static BitmapFont displayFont;
 
     private boolean restart_game;
@@ -51,7 +67,7 @@ public class GameOverController implements Screen, ApplicationListener {
     public GameOverController(Rectangle bounds) {
         active = false;
         this.bounds = bounds;
-        this.scale = new Vector2(1,1);
+        this.scale = new Vector2(1, 1);
         restart_game = false;
         exit_home = false;
     }
@@ -65,11 +81,11 @@ public class GameOverController implements Screen, ApplicationListener {
 
         button.setWidth(200f);
         button.setHeight(20f);
-        button.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 10f);
+        button.setPosition(Gdx.graphics.getWidth() / 2 - 100f, Gdx.graphics.getHeight() / 2 - 10f);
 
-        button.addListener(new ClickListener(){
+        button.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y){
+            public void clicked(InputEvent event, float x, float y) {
                 restart_game = true;
             }
         });
@@ -86,7 +102,7 @@ public class GameOverController implements Screen, ApplicationListener {
 
     @Override
     public void render() {
-        if(active) {
+        if (active) {
             canvas.begin();
             stage.draw();
             canvas.end();
@@ -129,15 +145,16 @@ public class GameOverController implements Screen, ApplicationListener {
 
     /**
      * Sets the ScreenListener for this mode
-     *
+     * <p>
      * The ScreenListener will respond to requests to quit.
      */
     public void setScreenListener(ScreenListener listener) {
         this.listener = listener;
     }
+
     /**
      * Sets the canvas associated with this controller
-     *
+     * <p>
      * The canvas is shared across all controllers.  Setting this value will compute
      * the drawing scale from the canvas size.
      *
@@ -145,27 +162,27 @@ public class GameOverController implements Screen, ApplicationListener {
      */
     public void setCanvas(GameCanvas canvas) {
         this.canvas = canvas;
-        this.scale.x = canvas.getWidth()/bounds.getWidth();
-        this.scale.y = canvas.getHeight()/bounds.getHeight();
-        x_pos_text = canvas.getWidth()/2f;
-        y_pos_text = canvas.getHeight()/2f;
+        this.scale.x = canvas.getWidth() / bounds.getWidth();
+        this.scale.y = canvas.getHeight() / bounds.getHeight();
+        x_pos_text = canvas.getWidth() / 2f;
+        y_pos_text = canvas.getHeight() / 2f;
     }
 
     public void draw(float dt) {
         canvas.clear();
 
         canvas.begin();
-        canvas.draw(background, Color.DARK_GRAY,background.getRegionWidth()/2f,background.getRegionHeight()/2f,0,0,0,4,4);
+        canvas.draw(background, Color.DARK_GRAY, background.getRegionWidth() / 2f, background.getRegionHeight() / 2f, 0, 0, 0, 4, 4);
 
         // draw game objects
-         if(display_win) {
-             canvas.drawText(
-                     "you win",
-                     displayFont, x_pos_text-50,y_pos_text+150);
-         } else {
+        if (display_win) {
+            canvas.drawText(
+                    "you win",
+                    displayFont, x_pos_text - 50, y_pos_text + 150);
+        } else {
             canvas.drawText(
                     "you lose",
-                    displayFont, x_pos_text-50,y_pos_text+150);
+                    displayFont, x_pos_text - 50, y_pos_text + 150);
         }
         canvas.end();
     }
@@ -173,7 +190,7 @@ public class GameOverController implements Screen, ApplicationListener {
     public void gatherAssets(AssetDirectory directory) {
         displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
 
-        background =  new TextureRegion(directory.getEntry( "background:game_over", Texture.class ));
+        background = new TextureRegion(directory.getEntry("background:game_over", Texture.class));
     }
 
     public void setWin(boolean w) {

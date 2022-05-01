@@ -1,9 +1,8 @@
 package com.xstudios.salvage.game.levels;
 
-import com.badlogic.gdx.physics.box2d.BodyDef;
+
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.JsonValue;
-import com.xstudios.salvage.game.GObject;
+
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.game.models.DeadBodyModel;
 import com.xstudios.salvage.game.models.DiverModel;
@@ -11,8 +10,7 @@ import com.xstudios.salvage.game.models.Door;;
 import com.xstudios.salvage.game.models.GoalDoor;
 import com.xstudios.salvage.game.models.HazardModel;
 import com.xstudios.salvage.game.models.ItemModel;
-import com.xstudios.salvage.game.models.Wall;
-import com.xstudios.salvage.util.FilmStrip;
+
 import com.xstudios.salvage.util.PooledList;
 
 import java.util.ArrayList;
@@ -76,7 +74,7 @@ public class LevelModel {
         } else if (obj instanceof ItemModel) {
         } else if (obj instanceof GoalDoor) {
             goalArea.add((GoalDoor) obj);
-       
+
         }
     }
 

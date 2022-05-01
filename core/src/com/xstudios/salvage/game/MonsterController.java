@@ -13,21 +13,15 @@
  */
 package com.xstudios.salvage.game;
 
-import java.util.*;
 
-import static com.badlogic.gdx.math.MathUtils.random;
-
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
+
 import com.xstudios.salvage.game.models.DiverModel;
 import com.xstudios.salvage.game.models.Monster;
-import com.xstudios.salvage.game.models.Tentacle;
-import com.xstudios.salvage.util.FilmStrip;
+
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.game.models.Wall;
-import com.badlogic.gdx.graphics.Texture;
+
 
 /**
  * InputController corresponding to AI control.
@@ -69,7 +63,6 @@ public class MonsterController {
     private float tick;
 
 
-
     private PooledList<Vector2> targetLocations;
 
 
@@ -104,23 +97,22 @@ public class MonsterController {
         // Add initialization code as necessary
         float aggrivation = monster.getAggrivation();
         System.out.println(aggrivation);
-        if (aggrivation > 6.0f)  {
+        if (aggrivation > 6.0f) {
             state = FSMState.AGGRIVATED;
-        }
-        else {
+        } else {
             state = FSMState.IDLE;
         }
         // Next state depends on current state.
         switch (state) {
 
             case IDLE:
-                if (aggrivation > 6.0f)  {
+                if (aggrivation > 6.0f) {
                     state = FSMState.AGGRIVATED;
                 }
                 break;
 
             case AGGRIVATED:
-                if (aggrivation <= 6.0f)  {
+                if (aggrivation <= 6.0f) {
                     state = FSMState.IDLE;
                 }
                 break;
@@ -158,9 +150,9 @@ public class MonsterController {
     public void update(float aggrivationDrain, DiverModel diver) {
         tick++;
         if (tick % 50 == 0) {
-            if (monster.getAggrivation() > 0.0f){
-            float aggrivation = monster.getAggrivation() - 0.5f;
-            monster.setAggrivation(aggrivation);
+            if (monster.getAggrivation() > 0.0f) {
+                float aggrivation = monster.getAggrivation() - 0.5f;
+                monster.setAggrivation(aggrivation);
             }
         }
         monster.moveMonster(diver.getPosition());
@@ -173,27 +165,27 @@ public class MonsterController {
 
             case AGGRIVATED:
                 if (tick % 250 == 0) {
-                        float best_distance = 10000.0f;
-                        float temp_distance = 0.0f;
-                        Wall final_loc = null;
-                        for (Wall wall : monster.getSpawnLocations()) {
-                            if (wall.canSpawnTentacle()) {
-                                Vector2 location = wall.getPosition();
-                                temp_distance = (float) Math.sqrt(
-                                        Math.pow((double) (goal_x - location.x), 2) +
-                                                Math.pow((double) (goal_y - location.y), 2)
-                                );
-                                if (temp_distance < best_distance) {
-                                    best_distance = temp_distance;
-                                    final_loc = wall;
-                                }
+                    float best_distance = 10000.0f;
+                    float temp_distance = 0.0f;
+                    Wall final_loc = null;
+                    for (Wall wall : monster.getSpawnLocations()) {
+                        if (wall.canSpawnTentacle()) {
+                            Vector2 location = wall.getPosition();
+                            temp_distance = (float) Math.sqrt(
+                                    Math.pow((double) (goal_x - location.x), 2) +
+                                            Math.pow((double) (goal_y - location.y), 2)
+                            );
+                            if (temp_distance < best_distance) {
+                                best_distance = temp_distance;
+                                final_loc = wall;
                             }
                         }
-                        if (final_loc != null) {
-                            //System.out.println(final_loc);
-                            monster.addTentacle(final_loc);
-                            //monster.setAggrivation(0.0f);
-                        }
+                    }
+                    if (final_loc != null) {
+                        //System.out.println(final_loc);
+                        monster.addTentacle(final_loc);
+                        //monster.setAggrivation(0.0f);
+                    }
                 }
                 break;
             default:
