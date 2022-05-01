@@ -11,16 +11,18 @@ import com.xstudios.salvage.game.GameObject;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.xstudios.salvage.util.FilmStrip;
 
+import java.util.ArrayList;
+
 public class Tentacle extends GameObject {
     /**
      * Shape information for this physics object
      */
-    protected PolygonShape[][] shapes;
+    protected PolygonShape[] shapes;
 
     /**
      * Shape information for this physics object
      */
-    protected Fixture[][] geoms;
+    protected ArrayList<Fixture[]> geoms = new ArrayList<>();
     /**
      * Cache of the polygon vertices (for resizing)
      */
@@ -276,6 +278,10 @@ public class Tentacle extends GameObject {
     public boolean activatePhysics(World world) {
         for (HazardModel hm : collisionBoxes) {
             hm.activatePhysics(world);
+
+            for(int i = 0; i < hm.getFixtureList().length; i++) {
+                hm.getFixtureList()[i].setUserData(this);
+            }
             hm.setActive(false);
         }
 

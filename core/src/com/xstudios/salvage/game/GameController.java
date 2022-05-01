@@ -585,7 +585,7 @@ public class GameController implements Screen, ContactListener {
             level.getDiver().setFacingDir(input.getHorizontal(), input.getVertical());
         }
         level.getDiver().reduceInvincibleTime();
-        System.out.println("invincible time " + level.getDiver().getInvincibleTime());
+//        System.out.println("invincible time " + level.getDiver().getInvincibleTime());
 
         // set latching and boosting attributesf
         // latch onto obstacle when key pressed and close to an obstacle
@@ -835,7 +835,7 @@ public class GameController implements Screen, ContactListener {
             hostileOxygenDrain = 0.0f;
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
 //            level.getDiver().setHazardCollisionFilter();
-            System.out.println("SETTING STUNNED TO FALSE");
+//            System.out.println("SETTING STUNNED TO FALSE");
         }
 
 
@@ -1214,7 +1214,7 @@ public class GameController implements Screen, ContactListener {
         collisionController.startDiverDoorCollision(body1, body2);
         collisionController.startMonsterWallCollision(body1, body2);
         collisionController.startDiverDeadBodyCollision(body1, body2);
-        collisionController.startFlareTentacleCollision(body1, body2);
+        collisionController.startFlareTentacleCollision(fix1, fix2);
         float d = collisionController.startDiverHazardCollision(fix1, fix2, level.getDiver());
         if (d != 0)
             hostileOxygenDrain = d;
