@@ -3,13 +3,12 @@ package com.xstudios.salvage.game.levels;
 
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
+
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
+
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
@@ -18,11 +17,10 @@ import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.models.*;
 
 import com.xstudios.salvage.util.FilmStrip;
-import jdk.internal.misc.OSEnvironment;
+
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.logging.FileHandler;
+
 
 public class LevelBuilder {
     private JsonReader jsonReader;
@@ -205,7 +203,7 @@ public class LevelBuilder {
         if (w.canSpawnTentacle()) {
 
 
-            Tentacle t = new Tentacle(w,agg_level);
+            Tentacle t = new Tentacle(w, agg_level);
             t.setScale(1, 1);
             JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_tile.json"));
             HazardModel[] boxes = new HazardModel[4];
@@ -286,7 +284,7 @@ public class LevelBuilder {
                     }
                 }
             }
-            
+
 
             t.initShape(boxes);
             t.setBodyType(BodyDef.BodyType.StaticBody);
