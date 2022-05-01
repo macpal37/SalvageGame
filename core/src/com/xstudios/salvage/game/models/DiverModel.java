@@ -7,8 +7,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
-
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
@@ -53,6 +53,17 @@ public class DiverModel extends GameObject {
 
     private int diverState = 0;
     private final int DIVER_IMG_FLAT = 6;
+
+    private int invincible_time = 0;
+    private int MAX_INVINCIBLE_TIME;
+
+    private short no_hazard_collision_mask = 0x004;
+    private short no_hazard_collision_category = 0x002;
+
+    private short hazard_collision_mask = -1;
+    private short hazard_collision_category = 0x002;
+
+    private ArrayList<FixtureDef> diver_fixtures;
 
     public void addFilmStrip(FilmStrip value) {
         value.setFrame(DIVER_IMG_FLAT);
@@ -172,6 +183,13 @@ public class DiverModel extends GameObject {
      */
     private boolean active_flare;
 
+    /**
+     * used to indicate whether the diver is colliding with the monster
+     * if the diver is colliding with the monster, then set it to true so that we can change the
+     * filter values for the light
+     */
+    private boolean changeLightFilter;
+
     /** Diver Sensor Used to pick up items and open doors*/
 
     /**
@@ -282,6 +300,7 @@ public class DiverModel extends GameObject {
 
         damping = data.getFloat("damping", 0);
         force = data.getFloat("force", 0);
+        MAX_INVINCIBLE_TIME = data.getInt("invincible_time", 20);
 
         dimension = new Vector2();
         sizeCache = new Vector2();
@@ -343,6 +362,7 @@ public class DiverModel extends GameObject {
 
         carrying_body = false;
         dead_body = null;
+        diver_fixtures = new ArrayList<>();
     }
 
     /**
@@ -479,6 +499,24 @@ public class DiverModel extends GameObject {
         }
     }
 
+    public void resetInvincibleTime() {
+        invincible_time = MAX_INVINCIBLE_TIME;
+    }
+
+    public int getInvincibleTime() {
+        return invincible_time;
+    }
+
+    public void reduceInvincibleTime() {
+        if (invincible_time > 0) {
+            invincible_time--;
+        }
+    }
+
+    public boolean isInvincible() {
+        return invincible_time > 0;
+    }
+
     /**
      * set stunned
      */
@@ -568,7 +606,8 @@ public class DiverModel extends GameObject {
         for (FlareModel f : flares) {
             f.activatePhysics(world);
         }
-        System.out.println("WORLD GRAVITY " + world.getGravity());
+
+        diver_fixtures.add(hitboxDef);
         return true;
     }
 
@@ -610,11 +649,49 @@ public class DiverModel extends GameObject {
         // Create the fixture
         fixture.shape = shape;
         fixture.filter.categoryBits = 0x002;
-        fixture.filter.groupIndex = 0x004;
+        fixture.filter.groupIndex = 0x006;
         fixture.filter.maskBits = -1;
         geometry = body.createFixture(fixture);
         geometry.setUserData(getDiverCollisionBox());
         markDirty(false);
+        // so im gonna change the filter category bits
+        // and stuff so the diver can't collide with the monster for a specified amonut of time
+    }
+
+    public void setHazardInvincibilityFilter() {
+        setFilterData(no_hazard_collision_mask, no_hazard_collision_category);
+    }
+
+    public void setHazardCollisionFilter() {
+        setFilterData(hazard_collision_mask, hazard_collision_category);
+    }
+
+    private void setFilterData(short mask, short category) {
+//        if (body == null) {
+//            return;
+//        }
+//
+//        fixture.filter.categoryBits = category;
+//        fixture.filter.maskBits = mask;
+        if (body == null || (mask == fixture.filter.maskBits && category == fixture.filter.categoryBits)) {
+            return;
+        }
+
+//        releaseFixtures();
+        // Create the fixture
+//        fixture.shape = shape;
+//        fixture.filter.categoryBits = category;
+//        fixture.filter.groupIndex = 0x004;
+//        fixture.filter.maskBits = mask;
+        Filter f = new Filter();
+        f.categoryBits = category;
+        f.maskBits = mask;
+        f.groupIndex = 0x006;
+        setFilterData(f);
+//        System.out.println("SET CATEGORY TO "+ fixture.filter.categoryBits + " mask to "+ fixture.filter.maskBits);
+//        geometry = body.createFixture(fixture);
+//        geometry.setUserData(getDiverCollisionBox());
+        markDirty(true);
     }
 
     /**
@@ -1032,7 +1109,7 @@ public class DiverModel extends GameObject {
                 flare_duration++;
                 System.out.println("FLARe IS ACTIVE");
             } else {
-                f.setActivated(false);
+//                f.setActivated(false);
                 f.setCarried(false);
                 f.setX(getX());
                 f.setY(getY());
@@ -1056,6 +1133,10 @@ public class DiverModel extends GameObject {
             carrying_body = true;
 
         }
+    }
+
+    public ArrayList<FlareModel> getFlares() {
+        return flares;
     }
 
     public boolean isBodyContact() {
@@ -1266,6 +1347,14 @@ public class DiverModel extends GameObject {
         return num_flares;
     }
 
+
+    public void setChangeLightFilter(boolean b) {
+        changeLightFilter = b;
+    }
+
+    public boolean getChangeLightFilter() {
+        return changeLightFilter;
+    }
     /**
      * Returns the angle corresponding to the direction of diver's movement
      * <p>

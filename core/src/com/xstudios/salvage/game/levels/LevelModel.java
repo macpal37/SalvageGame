@@ -4,13 +4,7 @@ package com.xstudios.salvage.game.levels;
 import com.badlogic.gdx.utils.Array;
 
 import com.xstudios.salvage.game.GameObject;
-import com.xstudios.salvage.game.models.DeadBodyModel;
-import com.xstudios.salvage.game.models.DiverModel;
-import com.xstudios.salvage.game.models.Door;;
-import com.xstudios.salvage.game.models.GoalDoor;
-import com.xstudios.salvage.game.models.HazardModel;
-import com.xstudios.salvage.game.models.ItemModel;
-
+import com.xstudios.salvage.game.models.*;
 import com.xstudios.salvage.util.PooledList;
 
 import java.util.ArrayList;
@@ -25,6 +19,7 @@ public class LevelModel {
     //    protected ItemModel dead_body;
     protected DeadBodyModel dead_body;
     protected ArrayList<GoalDoor> goalArea = new ArrayList<>();
+    protected ArrayList<Tentacle> tentacles = new ArrayList<>();
 
     private Array<Door> doors = new Array<Door>();
 
@@ -52,6 +47,10 @@ public class LevelModel {
         return doors;
     }
 
+    public ArrayList<Tentacle> getTentacles() {
+        return tentacles;
+    }
+
     public PooledList<GameObject> getAllObjects() {
         return objects;
     }
@@ -74,10 +73,19 @@ public class LevelModel {
         } else if (obj instanceof ItemModel) {
         } else if (obj instanceof GoalDoor) {
             goalArea.add((GoalDoor) obj);
-
+        } else if (obj instanceof Tentacle) {
+            tentacles.add((Tentacle) obj);
         }
     }
-
+    /**
+     * remove objects to the list of all objects and the category lists they correspond to
+     */
+    public void removeObject(GameObject obj) {
+        objects.remove(obj);
+        if(obj instanceof Tentacle){
+            tentacles.remove((Tentacle) obj);
+        }
+    }
     public void dispose() {
         // TODO: do we need to clear all of the arrays?
         getAboveObjects().clear();

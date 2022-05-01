@@ -6,10 +6,8 @@ import box2dLight.RayHandler;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
@@ -18,10 +16,7 @@ import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.models.*;
 
 import com.xstudios.salvage.util.FilmStrip;
-
-
 import java.util.ArrayList;
-
 
 public class LevelBuilder {
     private JsonReader jsonReader;
@@ -198,13 +193,13 @@ public class LevelBuilder {
 
     public float div = 25f;
 
-    public Tentacle createTentcle(Wall w, FilmStrip sprite, Vector2 scale) {
+    public Tentacle createTentcle(float agg_level, Wall w, FilmStrip sprite, Vector2 scale) {
 
         float tScale = 3f / 2;
         if (w.canSpawnTentacle()) {
 
 
-            Tentacle t = new Tentacle(w);
+            Tentacle t = new Tentacle(w, agg_level);
             t.setScale(1, 1);
             JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_tile.json"));
             HazardModel[] boxes = new HazardModel[4];
@@ -285,8 +280,6 @@ public class LevelBuilder {
                     }
                 }
             }
-
-
             t.initShape(boxes);
             t.setBodyType(BodyDef.BodyType.StaticBody);
             t.setDensity(0);

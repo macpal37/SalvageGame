@@ -1,6 +1,5 @@
 package com.xstudios.salvage.desktop;
 
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.xstudios.salvage.game.GDXRoot;

@@ -29,6 +29,7 @@ public class FlareModel extends DiverObjectModel {
 
     private int FLARE_LIGHT_RADIUS = 10;
     private int MIN_LIGHT_RADIUS = 1;
+    private float LIGHT_RADIUS_SCALE = .3f;
 
     private Color light_color;
     private Color white_light;
@@ -40,6 +41,8 @@ public class FlareModel extends DiverObjectModel {
 
     public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
     Color item_color;
+
+    private CircleShape radialPresence;
 
     public FlareModel(JsonValue data) {
         this(0, 0, data);
@@ -142,6 +145,19 @@ public class FlareModel extends DiverObjectModel {
         fixture.shape = shape;
 
         geometry = body.createFixture(fixture);
+
+        // Create the fixture
+        // create a sensor to detect wall collisions
+        FixtureDef monsterDef = new FixtureDef();
+        monsterDef.isSensor = true;
+        // we don't want this fixture to collide, just act as a sensor
+        monsterDef.filter.groupIndex = -1;
+        radialPresence = new CircleShape();
+        radialPresence.setRadius(FLARE_LIGHT_RADIUS * LIGHT_RADIUS_SCALE);
+        monsterDef.shape = radialPresence;
+        Fixture hitboxFixture = body.createFixture(monsterDef);
+        hitboxFixture.setUserData("FlareRadius");
+
         markDirty(false);
     }
 
@@ -169,6 +185,13 @@ public class FlareModel extends DiverObjectModel {
         origin.set(texture.getRegionWidth() / 2.0f, texture.getRegionHeight() / 2.0f);
     }
 
+    public float getLightRadius() {
+        if(isActivated) {
+            return light.getDistance();
+        } else {
+            return 0;
+        }
+    }
 
     public int tick = 0;
 
@@ -235,6 +258,7 @@ public class FlareModel extends DiverObjectModel {
     @Override
     public void drawDebug(GameCanvas canvas) {
         canvas.drawPhysics(shape, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+        canvas.drawPhysics(radialPresence, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
     }
 
     /**

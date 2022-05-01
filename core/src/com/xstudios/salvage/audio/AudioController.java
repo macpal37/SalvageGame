@@ -1,7 +1,6 @@
 package com.xstudios.salvage.audio;
 
 import com.badlogic.gdx.Gdx;
-import com.xstudios.salvage.game.InputController;
 import de.pottgames.tuningfork.*;
 
 

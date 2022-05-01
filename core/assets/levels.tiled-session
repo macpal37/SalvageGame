@@ -1,188 +1,173 @@
 {
-<<<<<<< HEAD
-    "Map/SizeTest": {
-        "height": 4300,
-        "width": 2
-    },
-    "activeFile": "levels/test_level.json",
+    "activeFile": "levels/level1.json",
     "expandedProjectPaths": [
-        ".",
-        "tilesets",
-        "levels",
-        "levels/tilesets",
-        "levels/objects"
+        "levels"
     ],
     "fileStates": {
-        "levels/level0.json": {
-            "scale": 0.75,
+        "levels/beta_0.json": {
+            "scale": 0.7011,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 501.3550135501355,
+                "y": 500.6418485237484
+            }
+        },
+        "levels/beta_1.json": {
+            "scale": 0.4674,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 752.0325203252033,
+                "y": 500.64184852374854
+            }
+        },
+        "levels/beta_2.json": {
+            "scale": 0.28044,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1253.3875338753387,
+                "y": 752.3891028383966
+            }
+        },
+        "levels/beta_3.json": {
+            "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 584.6666666666666,
-                "y": 534.6666666666666
+                "x": 719,
+                "y": 806
+            }
+        },
+        "levels/beta_5.json": {
+            "scale": 0.125,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 420,
+                "y": -96
+            }
+        },
+        "levels/level0.json": {
+            "scale": 0.4674,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 752.0325203252033,
+                "y": 500.64184852374854
             }
         },
         "levels/level1.json": {
-            "scale": 0.5,
-            "selectedLayer": 2,
+            "scale": 0.2337,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 1499,
-                "y": 1000
+                "x": 1504.0650406504067,
+                "y": 1001.2836970474971
             }
         },
         "levels/level2.json": {
-            "scale": 0.33,
+            "scale": 0.175275,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1284.8484848484848,
-                "y": 2121.212121212121
+                "x": 2005.420054200542,
+                "y": 1500.4992155184711
+            }
+        },
+        "levels/level3.json": {
+            "scale": 0.35055,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1002.710027100271,
+                "y": 750.2496077592356
             }
         },
         "levels/level4.json": {
+            "scale": 0.19474999999999998,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1804.878048780488,
+                "y": 801.0269576379974
+            }
+        },
+        "levels/t_easy_1.json": {
+            "scale": 0.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 761,
+                "y": 496
+            }
+        },
+        "levels/t_easy_2.json": {
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 991,
-                "y": 878
-=======
-    "activeFile": "levels/level1.json",
-    "expandedProjectPaths": [
-        "levels/objects",
-        "levels",
-        ".",
-        "levels/tilesets",
-        "tilesets"
-    ],
-    "fileStates": {
-        "levels/level0.json": {
-            "scale": 0.5,
-            "selectedLayer": 0,
-            "viewCenter": {
-                "x": 528,
-                "y": 632
-            }
-        },
-        "levels/level1.json": {
-            "scale": 2,
-            "selectedLayer": 2,
-            "viewCenter": {
-                "x": 893,
-                "y": 649.75
-            }
-        },
-        "levels/level2.json": {
-            "scale": 0.33,
-            "selectedLayer": 0,
-            "viewCenter": {
-                "x": 2372.727272727273,
-                "y": 2612.121212121212
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
-            }
-        },
-        "levels/small_ship.json": {
-            "scale": 0.09143749999999999,
-            "selectedLayer": 0,
-            "viewCenter": {
-                "x": 2006.835269993165,
-                "y": 1503.7593984962407
-<<<<<<< HEAD
+                "x": 597,
+                "y": 620
             }
         },
         "levels/test_level.json": {
-            "scale": 0.75,
-            "selectedLayer": 1,
+            "scale": 0.35055,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 579.3333333333334,
-                "y": 1464
+                "x": 1002.710027100271,
+                "y": 1001.2836970474968
             }
         },
-        "levels/tilesets/id_tiles.json": {
+        "levels/tilesets/old_ship_tileset.json": {
             "scaleInDock": 1
         },
-        "levels/tilesets/old_ship_tileset.json": {
-            "scaleInDock": 1,
-            "scaleInEditor": 0.5
-        },
-        "levels/tilesets/tentacle_tile.json": {
-            "scaleInDock": 1,
-            "scaleInEditor": 0.5
-        },
         "levels/tutorial1.json": {
-            "scale": 0.75,
-            "selectedLayer": 1,
+            "scale": 0.7011,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 210,
-                "y": 638.6666666666666
+                "x": 501.3550135501355,
+                "y": 500.6418485237484
             }
         },
         "levels/tutorial2.json": {
-            "scale": 0.5,
-            "selectedLayer": 1,
+            "scale": 0.4674,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 567,
-                "y": 536
+                "x": 752.0325203252033,
+                "y": 500.64184852374854
             }
         },
         "levels/tutorial3.json": {
-            "scale": 0.75,
-            "selectedLayer": 1,
+            "scale": 0.4674,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 300.6666666666667,
-                "y": 648
+                "x": 752.0325203252033,
+                "y": 500.64184852374854
             }
-=======
-            }
-        },
-        "levels/test_level.json": {
-            "scale": 0.75,
-            "selectedLayer": 1,
-            "viewCenter": {
-                "x": 777.3333333333333,
-                "y": 1656
-            }
-        },
-        "levels/tilesets/id_tiles.json": {
-            "scaleInDock": 1
-        },
-        "levels/tilesets/old_ship_tileset.json": {
-            "scaleInDock": 1,
-            "scaleInEditor": 1
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
         }
     },
-    "last.exportedFilePath": "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels",
-    "map.height": 10,
-    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.lastUsedFormat": "json",
-    "map.tileHeight": 100,
-    "map.tileWidth": 100,
-    "map.width": 15,
     "openFiles": [
-        "levels/level0.json",
-<<<<<<< HEAD
-=======
-        "levels/level1.json",
+        "levels/t_easy_1.json",
+        "levels/t_easy_2.json",
+        "levels/beta_2.json",
+        "levels/beta_5.json",
+        "levels/beta_1.json",
+        "levels/beta_0.json",
+        "levels/beta_3.json",
+        "levels/level3.json",
         "levels/level2.json",
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
-        "levels/tilesets/old_ship_tileset.json",
-        "levels/test_level.json"
+        "levels/tutorial1.json",
+        "levels/tutorial2.json",
+        "levels/tutorial3.json",
+        "levels/test_level.json",
+        "levels/level0.json",
+        "levels/level1.json",
+        "levels/level4.json"
     ],
-    "project": "",
+    "project": "levels.tiled-project",
     "recentFiles": [
-<<<<<<< HEAD
-        "levels/level1.json",
-        "levels/test_level.json",
-        "levels/tilesets/old_ship_tileset.json",
-        "levels/level0.json",
+        "levels/t_easy_1.json",
+        "levels/t_easy_2.json",
+        "levels/beta_2.json",
+        "levels/beta_5.json",
+        "levels/beta_1.json",
+        "levels/beta_0.json",
+        "levels/beta_3.json",
+        "levels/level3.json",
         "levels/level2.json",
-        "levels/level4.json",
-        "levels/tilesets/tentacle_tile.json",
-=======
-        "levels/level0.json",
-        "levels/test_level.json",
-        "levels/tilesets/old_ship_tileset.json",
-        "levels/level2.json",
-        "levels/level1.json",
->>>>>>> 1e6c6b6dfeae2a7403f79cee3c8a396b4343570c
-        "levels/small_ship.json"
+        "levels/tutorial1.json",
+        "levels/tutorial2.json",
+        "levels/tutorial3.json"
     ]
 }

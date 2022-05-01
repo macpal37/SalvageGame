@@ -2,6 +2,7 @@ package com.xstudios.salvage.game.models;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.xstudios.salvage.game.GameCanvas;
 
@@ -47,14 +48,19 @@ public class HazardModel extends Wall {
         releaseFixtures();
 
         for (int ii = 0; ii < shapes.length; ii++) {
-//            fixture.filter.categoryBits = 0x002;
-//            fixture.filter.groupIndex = 0x004;
+            fixture.filter.categoryBits = 0x008; //0x003
+            fixture.filter.groupIndex = 0x004;
             fixture.filter.maskBits = -1;
             fixture.shape = shapes[ii];
             geoms[ii] = body.createFixture(fixture);
+            System.out.println("IN HAZARD CREATE FIXTURES");
         }
 
         markDirty(false);
+    }
+
+    public Fixture[] getFixtureList() {
+        return geoms;
     }
 
     public HazardModel(float[] points) {

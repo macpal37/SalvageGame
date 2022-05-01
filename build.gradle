@@ -56,6 +56,7 @@ project(":desktop") {
             exclude group: 'com.badlogicgames.gdx', module: 'gdx-backend-lwjgl'
         }
     }
+
 }
 
 project(":core") {
@@ -72,5 +73,6 @@ project(":core") {
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
         implementation "com.github.Hangman:TuningFork:2.0.1"
+
     }
 }
