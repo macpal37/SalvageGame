@@ -1,17 +1,7 @@
 {
 	"textures": {
-        "background": "loading/black.png",
-		"play": "loading/play.png",
-        "progress": {
-            "file":      "loading/progressbar.png",
-            "atlas":     {
-                "background" : [16,   0, 216, 30],
-                "backleft"   : [0,    0,  15, 30],
-                "backright"  : [384,  0, 400, 30],
-                "foreground" : [16,  40, 216, 70],
-                "foreleft"   : [0,   40,  16, 70],
-                "foreright"  : [384, 40, 400, 70]
-            }
-        }
-	}
+        "background": "loading/loading_screen.png",
+        "progress": "loading/progressbar.png"
+    }
 }
+

@@ -35,6 +35,7 @@ public class LoadingMode implements Screen {
 
     /** Background texture for start-up */
     private Texture background;
+    private Texture tentacles;
 
     // statusBar is a "texture atlas." Break it up into parts.
     /** Left cap to the status background (grey region) */
@@ -44,12 +45,10 @@ public class LoadingMode implements Screen {
     /** Right cap to the status background (grey region) */
     private TextureRegion statusBkgRight;
 
-    /** Default budget for asset loader (do nothing but load 60 fps) */
-    private static int DEFAULT_BUDGET = 15;
     /** Standard window size (for scaling) */
-    private static int STANDARD_WIDTH = 800;
+    private static int STANDARD_WIDTH = 1280;
     /** Standard window height (for scaling) */
-    private static int STANDARD_HEIGHT = 700;
+    private static int STANDARD_HEIGHT = 720;
     /** Ratio of the bar width to the screen */
     private static float BAR_WIDTH_RATIO = 0.66f;
 
@@ -58,8 +57,8 @@ public class LoadingMode implements Screen {
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
 
-    /** The width of the progress bar */
     private int width;
+    private int height;
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
 
@@ -110,14 +109,14 @@ public class LoadingMode implements Screen {
         background = internal.getEntry("background", Texture.class);
         background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-        // Break up the status bar texture into regions
-        statusBkgLeft = internal.getEntry("progress.backleft", TextureRegion.class);
-        statusBkgRight = internal.getEntry("progress.backright", TextureRegion.class);
-        statusBkgMiddle = internal.getEntry("progress.background", TextureRegion.class);
+        tentacles = internal.getEntry("progress", Texture.class);
 
         // No progress so far.
         progress = 0;
         done = false;
+
+        width = Gdx.graphics.getWidth();
+        height = Gdx.graphics.getHeight();
 
         // Start loading the real assets
         assets = new AssetDirectory(file);
@@ -163,9 +162,16 @@ public class LoadingMode implements Screen {
      */
     private void draw() {
         canvas.begin();
-        canvas.draw(background, 0, 0);
+        canvas.draw(background, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (done == false) drawProgress(canvas);
         canvas.end();
+    }
+
+    private void help_draw(Texture t, int x, int y){
+        int ox = t.getWidth()/2;
+        int oy = t.getHeight()/2;
+        Color c = Color.WHITE;
+        canvas.draw(t, c, ox, oy, x, y, 0, scale, scale);
     }
 
     /**
@@ -177,40 +183,8 @@ public class LoadingMode implements Screen {
      * @param canvas The drawing context
      */
     private void drawProgress(GameCanvas canvas) {
-        canvas.draw(
-                statusBkgLeft,
-                Color.WHITE,
-                0,
-                0,
-                scale * statusBkgLeft.getRegionWidth(),
-                scale * statusBkgLeft.getRegionHeight());
         if (progress > 0) {
-            float span =
-                    progress
-                            * (width - scale * (statusBkgLeft.getRegionWidth() + statusBkgRight.getRegionWidth()))
-                            / 2.0f;
-            canvas.draw(
-                    statusBkgRight,
-                    Color.WHITE,
-                    scale * statusBkgLeft.getRegionWidth() + span,
-                    0,
-                    scale * statusBkgRight.getRegionWidth(),
-                    scale * statusBkgRight.getRegionHeight());
-            canvas.draw(
-                    statusBkgMiddle,
-                    Color.WHITE,
-                    scale * statusBkgLeft.getRegionWidth(),
-                    0,
-                    span,
-                    scale * statusBkgMiddle.getRegionHeight());
-        } else {
-            canvas.draw(
-                    statusBkgRight,
-                    Color.WHITE,
-                    scale * statusBkgLeft.getRegionWidth(),
-                    0,
-                    scale * statusBkgRight.getRegionWidth(),
-                    scale * statusBkgRight.getRegionHeight());
+            help_draw(tentacles, width/2, -1 * height/2 + (int)(progress * height));
         }
     }
 
@@ -248,9 +222,11 @@ public class LoadingMode implements Screen {
         // Compute the drawing scale
         float sx = ((float) width) / STANDARD_WIDTH;
         float sy = ((float) height) / STANDARD_HEIGHT;
-        scale = (sx < sy ? sx : sy);
 
-        this.width = (int) (BAR_WIDTH_RATIO * width);
+        this.width = width;
+        this.height = height;
+
+        scale = (sx < sy ? sx : sy);
     }
 
     /**

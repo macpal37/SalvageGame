@@ -5,41 +5,29 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
-import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
-public class GameOverController implements Screen, ApplicationListener, InputProcessor {
-    private Skin skin;
+public class GameOverController implements Screen, InputProcessor {
     private Stage stage;
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
     /** Whether or not this is an active controller */
     private boolean active;
 
-    /** The actual assets to be loaded */
-    private AssetDirectory assets;
     /** Reference to the game canvas */
     protected GameCanvas canvas;
 
-    /** The boundary of the world */
-    protected Rectangle bounds;
-    /** The world scale */
-    protected Vector2 scale;
     /** Background Texture */
     protected TextureRegion background;
     protected Texture main_menu;
@@ -54,56 +42,32 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
 
     private boolean display_win;
 
-    private float x_pos_text;
-    private float y_pos_text;
+    private int width;
+    private int height;
 
-    public GameOverController(Rectangle bounds) {
+    private static int STANDARD_WIDTH = 1280;
+
+    private static int STANDARD_HEIGHT = 720;
+
+    private float scale;
+
+    CameraController camera;
+
+    public GameOverController() {
         active = false;
-        this.bounds = bounds;
-        this.scale = new Vector2(1,1);
         restart_game = false;
         exit_home = false;
         next_level = false;
+
+        width = Gdx.graphics.getWidth();
+        height = Gdx.graphics.getHeight();
     }
 
-    @Override
-    public void create() {
-
-        TextureRegion imageTR = new TextureRegion(try_again_next);
-        TextureRegionDrawable imageTRD = new TextureRegionDrawable(imageTR);
-        ImageButton button = new ImageButton(imageTRD);
-        stage = new Stage();
-
-        button.setWidth(try_again_next.getWidth());
-        button.setHeight(try_again_next.getHeight());
-        button.setPosition(87, 66);
-
-        button.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if(display_win) next_level = true;
-                else restart_game = true;
-            }
-        });
-        stage.addActor(button);
-
-        TextureRegion imageTR1 = new TextureRegion(main_menu);
-        TextureRegionDrawable imageTRD1 = new TextureRegionDrawable(imageTR1);
-        ImageButton button1 = new ImageButton(imageTRD1);
-
-        button1.setWidth(main_menu.getWidth());
-        button1.setHeight(main_menu.getHeight());
-        button1.setPosition(780, 66);
-
-        button1.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                exit_home = true;
-            }
-        });
-        stage.addActor(button1);
-
-        Gdx.input.setInputProcessor(stage);
+    public void setCameraController(CameraController cameraController) {
+        this.camera = cameraController;
+        camera.setCameraPosition(width/2, height/2);
+        camera.setBounds(width/2, height/2, width, height);
+        camera.render();
     }
 
     @Override
@@ -113,32 +77,16 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
         next_level = false;
     }
 
-    @Override
     public void render() {
         if(active) {
-            canvas.begin();
-            stage.draw();
-
-            Color tint = pointer1(87, 66, try_again_next.getWidth() , try_again_next.getHeight()) ? Color.GRAY : Color.WHITE;
-            canvas.draw(try_again_next, tint, 0, 0, 87, 66, 0, 1, 1);
-
-            tint = pointer1(780, 66, main_menu.getWidth(), main_menu.getHeight()) ? Color.GRAY : Color.WHITE;
-            canvas.draw(main_menu, tint, 0, 0,780,66, 0, 1, 1);
-
-            canvas.end();
-            // We are are ready, notify our listener
-            if (restart_game && listener != null) {
+            if (restart_game && listener != null)
                 listener.exitScreen(this, 0);
-            }
 
-            if(exit_home && listener != null){
+            if(exit_home && listener != null)
                 listener.exitScreen(this, 1);
-            }
 
-            if(next_level && listener != null){
+            if(next_level && listener != null)
                 listener.exitScreen(this, 2);
-            }
-            // can do this with different exit codes to indicate which screen to switch to
         }
     }
 
@@ -155,6 +103,14 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
 
     @Override
     public void resize(int width, int height) {
+        // Compute the drawing scale
+        float sx = ((float)width)/STANDARD_WIDTH;
+        float sy = ((float)height)/STANDARD_HEIGHT;
+        scale = sx < sy ? sx : sy;
+        this.width = width;
+        this.height = height;
+        camera.resize(this.width, this.height);
+        camera.render();
     }
 
     @Override
@@ -169,7 +125,6 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
     public void hide() {
         active = false;
     }
-
 
     /**
      * Sets the ScreenListener for this mode
@@ -189,39 +144,45 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
      */
     public void setCanvas(GameCanvas canvas) {
         this.canvas = canvas;
-        this.scale.x = canvas.getWidth()/bounds.getWidth();
-        this.scale.y = canvas.getHeight()/bounds.getHeight();
-        x_pos_text = canvas.getWidth()/2f;
-        y_pos_text = canvas.getHeight()/2f;
     }
-    public boolean pointer1(int x, int y, int w, int h) {
-        int pX = Gdx.input.getX();
-        int pY = Gdx.input.getY();
-        // Flip to match graphics coordinates
-        y = canvas.getHeight() - y;
 
-        if((x + w > pX && x < pX) && (y > pY && y - h < pY)){
-            return true;
+    private boolean help_draw(Texture t, int x, int y, boolean tint){
+        int ox = t.getWidth()/2;
+        int oy = t.getHeight()/2;
+        Color c = Color.WHITE;
+        boolean clicked = false;
+        if(tint){
+            int pX = Gdx.input.getX();
+            int pY = Gdx.input.getY();
+            // Flip to match graphics coordinates
+            int flip_y = canvas.getHeight() - y;
+            float w = scale * ox;
+            float h = scale * oy;
+
+            if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
+                c = Color.GRAY;
+                if(Gdx.input.isTouched()) clicked = true;
+            }
         }
-        return false;
+        canvas.draw(t, c, ox, oy, x, y, 0, scale, scale);
+        return clicked;
     }
-
-    public boolean pointer() {
-        int pX = Gdx.input.getX();
-        int pY = Gdx.input.getY();
-        //System.out.println("x: " + pX + " y: " + (Gdx.graphics.getHeight() - pY));
-        return false;
-    }
-
 
     public void draw(float dt) {
         canvas.clear();
 
         canvas.begin();
-        pointer();
-        canvas.draw(background, Color.WHITE,0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.draw(title, Color.WHITE, title.getWidth()/2, title.getHeight()/2, Gdx.graphics.getWidth()/2,
-                625, 0,1, 1);
+
+        canvas.draw(background, Color.WHITE,0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        help_draw(title, width/2, height - height/7, false);
+        exit_home = help_draw(main_menu, width/6, height/9, true);
+
+        boolean which = help_draw(try_again_next, width - width/6, height/9, true);
+        if(display_win)
+            next_level = which;
+        else
+            restart_game = which;
+
         canvas.end();
     }
 
@@ -241,6 +202,8 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
     public void setWin(boolean w) {
         display_win = w;
     }
+
+    public boolean getWin(){ return display_win;}
 
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         return true;

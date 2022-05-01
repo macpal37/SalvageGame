@@ -131,4 +131,10 @@ public class CameraController {
     public float getCameraHeight() {
         return viewport.getScreenHeight();
     }
+
+    public void setCameraDimensions(int width, int height){
+        viewport.setScreenWidth(width);
+        viewport.setScreenHeight(height);
+    }
 }
+

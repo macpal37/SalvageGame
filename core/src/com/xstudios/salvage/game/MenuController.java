@@ -5,17 +5,10 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
-import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.xstudios.salvage.assets.AssetDirectory;
-import com.xstudios.salvage.util.Controllers;
 import com.xstudios.salvage.util.ScreenListener;
-import com.xstudios.salvage.util.XBoxController;
 
 /**
  * Class that provides a loading screen for the state of the game.
@@ -35,21 +28,11 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     /** Background texture for start-up */
     private Texture background;
 
-    private ScrollPane scroll;
-    private Actor widget;
-
-    /** Default budget for asset loader (do nothing but load 60 fps) */
-    private static int DEFAULT_BUDGET = 15;
-    /** Standard window size (for scaling) */
-    private static int STANDARD_WIDTH  = 800;
-    /** Standard window height (for scaling) */
-    private static int STANDARD_HEIGHT = 700;
-    /** Ratio of the bar width to the screen */
-    private static float BAR_WIDTH_RATIO  = 0.66f;
-    /** Ration of the bar height to the screen */
-    private static float BAR_HEIGHT_RATIO = 0.25f;
     /** Height of the progress bar */
     private static float BUTTON_SCALE  = 0.75f;
+    private static int STANDARD_WIDTH = 1280;
+    /** Standard window height (for scaling) */
+    private static int STANDARD_HEIGHT = 720;
 
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
@@ -62,44 +45,37 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     protected Texture select_level;
     protected Texture level_editor;
 
-    /** The width of the progress bar */
+    private boolean press_quit;
+    private boolean press_select_level;
+    private boolean press_level_editor;
+
     private int width;
-    /** The y-coordinate of the center of the progress bar */
-    private int centerY;
-    /** The x-coordinate of the center of the progress bar */
-    private int centerX;
-    /** The height of the canvas window (necessary since sprite origin != screen origin) */
-    private int heightY;
+    private int height;
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
 
-    /** The current state of the play button */
-    private int pressState;
+    CameraController camera;
 
 
     /** Whether or not this player mode is still active */
     private boolean active;
 
-    /**
-     * Returns true if all assets are loaded and the player is ready to go.
-     *
-     * @return true if the player is ready to go
-     */
-    public boolean isReady() {
-        return pressState == 2;
-    }
-
     public MenuController() {
-        // Load the next two images immediately.
-
-        pressState = 0;
-
         Gdx.input.setInputProcessor( this );
 
-        // Let ANY connected controller start the game.
-        for (XBoxController controller : Controllers.get().getXBoxControllers()) {
-            controller.addListener( this );
-        }
+        width = Gdx.graphics.getWidth();
+        height = Gdx.graphics.getHeight();
+
+        press_select_level = false;
+        press_level_editor = false;
+        press_quit = false;
+    }
+
+    public void setCameraController(CameraController cameraController) {
+        this.camera = cameraController;
+        camera.setCameraPosition(width/2, height/2);
+        camera.setBounds(width/2, height/2, width, height);
+        camera.render();
     }
 
     public void setActive(){
@@ -118,106 +94,52 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         select_level = directory.getEntry("select_level", Texture.class);
     }
 
-    /**
-     * Called when this screen should release all resources.
-     */
     public void dispose(){
-        pressState = 0;
         background = null;
         active = false;
         title = null;
         quit = null;
         level_editor = null;
         select_level = null;
+        press_select_level = false;
+        press_level_editor = false;
+        press_quit = false;
     }
 
-//    public boolean pointer(int x, int y, int width, int height){
-//        int pX = Gdx.input.getX();
-//        int pY = Gdx.input.getY();
-//        // Flip to match graphics coordinates
-//        pY = canvas.getHeight() - pY;
-//
-//        float widthR = BUTTON_SCALE * scale * width/ 2.0f;
-//        float heightR = BUTTON_SCALE * scale * height/ 2.0f;
-//        float dist =
-//                (pX - x) * (pX - x) + (pY - y) * (pY - y);
-//        if (dist < widthR * heightR) {
-//            return true;
-//        }
-//        return false;
-//    }
+    private boolean help_draw(Texture t, int x, int y, boolean tint){
+        int ox = t.getWidth()/2;
+        int oy = t.getHeight()/2;
+        Color c = Color.WHITE;
+        boolean clicked = false;
+        if(tint){
+            int pX = Gdx.input.getX();
+            int pY = Gdx.input.getY();
+            // Flip to match graphics coordinates
+            int flip_y = canvas.getHeight() - y;
+            float w = scale * ox;
+            float h = scale * oy;
 
-    public boolean pointer1(int x, int y, int width, int height, float scale) {
-        int pX = Gdx.input.getX();
-        int pY = Gdx.input.getY();
-        // Flip to match graphics coordinates
-        y = canvas.getHeight() - y;
-        float w = scale * width;
-        float h = scale * height;
-
-        if((x + w > pX && x - w < pX) && (y + h > pY && y - h < pY)){
-            return true;
+            if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
+                c = Color.GRAY;
+                if(Gdx.input.isTouched()) clicked = true;
+            }
         }
-        return false;
+        canvas.draw(t, c, ox, oy, x, y, 0, scale, scale);
+        return clicked;
     }
-    /**
-     * Draw the status of this player mode.
-     *
-     * We prefer to separate update and draw from one another as separate methods, instead
-     * of using the single render() method that LibGDX does.  We will talk about why we
-     * prefer this in lecture.
-     */
+
     private void draw() {
         canvas.begin();
-        canvas.draw(background, Color.WHITE, 0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.draw(
-                title,
-                Color.WHITE,
-                title.getWidth() / 2,
-                title.getHeight() / 2,
-                centerX,
-                centerY + 2 * centerY,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
-        Color tint = (pointer1(centerX, centerY + centerY, select_level.getWidth() / 2,
-                select_level.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                select_level,
-                tint,
-                select_level.getWidth() / 2,
-                select_level.getHeight() / 2,
-                centerX,
-                centerY + centerY,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
-        tint = (pointer1(centerX,
-                centerY + centerY/2, level_editor.getWidth() / 2,
-                level_editor.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                level_editor,
-                tint,
-                level_editor.getWidth() / 2,
-                level_editor.getHeight() / 2,
-                centerX,
-                centerY + centerY/2,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
-        tint = (pointer1(centerX,
-                centerY,quit.getWidth() / 2,
-                quit.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                quit,
-                tint,
-                quit.getWidth() / 2,
-                quit.getHeight() / 2,
-                centerX,
-                centerY,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
+
+        canvas.draw(background, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        help_draw(title, width/2, height - height/3, false);
+
+        press_select_level = help_draw(select_level, width/2, height/2, true);
+
+        press_level_editor = help_draw(level_editor, width/2, height/2 - height/10, true);
+
+        press_quit = help_draw(quit, width/2, height/2 - height/5, true);
 
         canvas.end();
     }
@@ -236,14 +158,13 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         if (active) {
             draw();
 
-            // We are are ready, notify our listener
-            if (pressState == 4 && listener != null) {
+            if (press_select_level && listener != null) {
                 listener.exitScreen(this, 0);
             }
-            if (pressState == 5 && listener != null) {
+            if (press_level_editor && listener != null) {
                 listener.exitScreen(this, 1);
             }
-            if (pressState == 6 && listener != null) {
+            if (press_quit && listener != null) {
                 listener.exitScreen(this, 2);
             }
         }
@@ -262,12 +183,15 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         // Compute the drawing scale
         float sx = ((float)width)/STANDARD_WIDTH;
         float sy = ((float)height)/STANDARD_HEIGHT;
-        scale = (sx < sy ? sx : sy);
+        scale = BUTTON_SCALE * (sx < sy ? sx : sy);
+        this.width = width;
+        this.height = height;
+        camera.resize(this.width, this.height);
+        camera.render();
+    }
 
-        this.width = (int)(BAR_WIDTH_RATIO*width);
-        centerY = (int)(BAR_HEIGHT_RATIO*height);
-        centerX = width/2;
-        heightY = height;
+    public void setDefaultCamera(){
+        camera.setCameraPosition(width/2, height/2);
     }
 
     /**
@@ -331,34 +255,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (pressState >= 4) {
-            return true;
-        }
-
-        // Flip to match graphics coordinates
-        screenY = heightY - screenY;
-
-        // TODO: Fix scaling
-        if (pointer1(centerX, centerY + centerY, select_level.getWidth() / 2,
-                select_level.getHeight() / 2, BUTTON_SCALE * scale)) {
-            pressState = 1;
-            return false;
-        }
-
-        if (pointer1(centerX,
-                centerY + centerY/2, level_editor.getWidth() / 2,
-                level_editor.getHeight() / 2, BUTTON_SCALE * scale)) {
-            pressState = 2;
-            return false;
-        }
-
-        if (pointer1(centerX,
-                centerY,quit.getWidth() / 2,
-                quit.getHeight() / 2, BUTTON_SCALE * scale)) {
-            pressState = 3;
-            return false;
-        }
-        return false;
+        return true;
     }
 
 
@@ -374,10 +271,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (pressState >= 1) {
-            pressState = pressState + 3;
-            return false;
-        }
         return true;
     }
 
@@ -393,13 +286,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @return whether to hand the event to other listeners.
      */
     public boolean buttonDown (Controller controller, int buttonCode) {
-        if (pressState == 0) {
-            ControllerMapping mapping = controller.getMapping();
-            if (mapping != null && buttonCode == mapping.buttonStart ) {
-                pressState = 1;
-                return false;
-            }
-        }
         return true;
     }
 
@@ -415,13 +301,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @return whether to hand the event to other listeners.
      */
     public boolean buttonUp (Controller controller, int buttonCode) {
-        if (pressState == 1) {
-            ControllerMapping mapping = controller.getMapping();
-            if (mapping != null && buttonCode == mapping.buttonStart ) {
-                pressState = 2;
-                return false;
-            }
-        }
         return true;
     }
 
@@ -459,7 +338,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     /**
      * Called when the mouse was moved without any buttons being pressed. (UNSUPPORTED)
      *
-     * @param screenX the x-coordinate of the mouse on the screen
+     * @param screenX the x-coordinate of the mouse on the
      * @param screenY the y-coordinate of the mouse on the screen
      * @return whether to hand the event to other listeners.
      */

@@ -46,8 +46,11 @@ public class GDXRoot extends Game implements ScreenListener {
 		controller = new GameController();
 		controller.setCameraController(cameraController);
 
-		game_over_controller = new GameOverController(controller.getWorldBounds());
+		game_over_controller = new GameOverController();
+		game_over_controller.setCameraController(cameraController);
+
 		menu_controller = new MenuController();
+		menu_controller.setCameraController(cameraController);
 
 		level_select_controller = new LevelSelectController();
 		level_select_controller.setCameraController(cameraController, canvas.getWidth(), canvas.getHeight());
@@ -75,8 +78,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas.dispose();
 		canvas = null;
 
-		// Unload all of the resources
-		// Unload all of the resources
 		if (directory != null) {
 			directory.unloadAssets();
 			directory.dispose();
@@ -101,90 +102,46 @@ public class GDXRoot extends Game implements ScreenListener {
 		cameraController.resize(width,height);
 	}
 
+	public void set_menu(GameCanvas canvas, AssetDirectory directory){
+		menu_controller.dispose();
+		menu_controller.setDefaultCamera();
+		menu_controller.gatherAssets(directory);
+		menu_controller.setCanvas(canvas);
+		menu_controller.setActive();
+		setScreen(menu_controller);
+	}
+
+	public void set_game(GameCanvas canvas, AssetDirectory directory){
+		controller.setLevel(current);
+		controller.gatherAssets(directory);
+		controller.setCanvas(canvas);
+		controller.reset();
+		setScreen(controller);
+	}
+
 	@Override
 	public void exitScreen(Screen screen, int exitCode) {
+		//LOADING
 		if (screen == loading) {
 			System.out.println("loading");
 			directory = loading.getAssets();
+			loading.dispose();
+			loading = null;
+
+			//players get their shit
 			player = new Player(directory);
+
+			//set up the cursor
 			Pixmap pm = new Pixmap(Gdx.files.internal("core/assets/ui/cursor.png"));
 			Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
 			pm.dispose();
-			if (exitCode == 0) {
-				controller.setCameraPositionNormal();
-				menu_controller.dispose();
-				menu_controller.gatherAssets(directory);
-				menu_controller.setCanvas(canvas);
-				menu_controller.setActive();
-				setScreen(menu_controller);
-			}
-			loading.dispose();
-			loading = null;
-		} else if (screen == controller) {
-			if(exitCode == 2){
-				controller.setCameraPositionNormal();
-				menu_controller.dispose();
-				menu_controller.gatherAssets(directory);
-				menu_controller.setCanvas(canvas);
-				menu_controller.setActive();
-				setScreen(menu_controller);
-			}
-			else {
-				System.out.println("controller");
-				System.out.println(exitCode);
-				System.out.println("this happened");
-				controller.setCameraPositionNormal();
-				game_over_controller.dispose();
-				if (directory == null) {
-					System.out.println("DIRECTORY IS NULL!");
-				}
-				game_over_controller.setWin(exitCode == 0);
-				game_over_controller.gatherAssets(directory);
-				game_over_controller.create();
-				game_over_controller.setCanvas(canvas);
-				setScreen(game_over_controller);
-			}
 
-		} else if (screen == game_over_controller) {
-			System.out.println("game_over_controller");
-			if (exitCode == 0) {
-				controller.setCanvas(canvas);
-				controller.reset();
-
-				setScreen(controller);
-			}
-			if (exitCode == 1) {
-				controller.setCameraPositionNormal();
-				menu_controller.dispose();
-				menu_controller.gatherAssets(directory);
-				menu_controller.setCanvas(canvas);
-				menu_controller.setActive();
-				setScreen(menu_controller);
-			}
-			if(exitCode == 2){
-				System.out.println("current: " + current);
-				if(current > 0){
-					game_over_controller.dispose();
-					controller.setCameraPositionNormal();
-					menu_controller.dispose();
-					menu_controller.gatherAssets(directory);
-					menu_controller.setCanvas(canvas);
-					menu_controller.setActive();
-					setScreen(menu_controller);
-				}
-				else {
-					current++;
-					if (player.getLevel() == current) player.nextLevel();
-					player.save();
-					controller.setLevel(current);
-					controller.gatherAssets(directory);
-					controller.setCanvas(canvas);
-					controller.reset();
-
-					setScreen(controller);
-				}
-			}
-		} else if (screen == menu_controller) {
+			//loading >> menu
+			set_menu(canvas, directory);
+		}
+		//MENU
+		else if (screen == menu_controller) {
+			//menu >> level select
 			if (exitCode == 0) {
 				level_select_controller.setLocked(player.getLevel());
 				level_select_controller.dispose();
@@ -193,44 +150,80 @@ public class GDXRoot extends Game implements ScreenListener {
 				level_select_controller.setActive();
 				setScreen(level_select_controller);
 			}
-			if (exitCode == 1) {
-				controller.gatherAssets(directory);
-				controller.setCanvas(canvas);
-				controller.reset();
 
-				setScreen(controller);
-			}
+			//menu >> level editor; will change to setting
+			if (exitCode == 1)
+				set_game(canvas, directory);
+
+			//menu >> quit
 			if (exitCode == 2) {
 				player.save();
 				Gdx.app.exit();
 			}
+		}
+		//GAME
+		else if (screen == controller) {
+			//pause >> menu
+			if (exitCode == 2)
+				set_menu(canvas, directory);
 
-		} else if (screen == level_select_controller) {
-			if (exitCode == 0) {
+			//game >> game over
+			else {
 				controller.setCameraPositionNormal();
-				menu_controller.dispose();
-				menu_controller.gatherAssets(directory);
-				menu_controller.setCanvas(canvas);
-				menu_controller.setActive();
-				setScreen(menu_controller);
-			} else {
-				System.out.println("exitCode= " + exitCode);
+				game_over_controller.dispose();
+				game_over_controller.setWin(exitCode == 0);
+				game_over_controller.gatherAssets(directory);
+				game_over_controller.setCanvas(canvas);
+				setScreen(game_over_controller);
+			}
+		}
+		//GAME OVER
+		else if (screen == game_over_controller) {
+			//game over >> restart
+			if (exitCode == 0)
+				set_game(canvas, directory);
+
+			//if won update level
+			if(game_over_controller.getWin()){
+				current++;
+				if(player.getLevel() == current)
+					player.nextLevel();
+			}
+
+			//game over >> main menu
+			if (exitCode == 1)
+				set_menu(canvas, directory);
+
+			//game over >> next level, will be main menu if no new level
+			if(exitCode == 2){
+				//main menu instead
+				if(current >= controller.getTotalLevels())
+					set_menu(canvas, directory);
+
+				//next level
+				else
+					set_game(canvas, directory);
+			}
+		}
+
+		//LEVEL SELECT
+		else if (screen == level_select_controller) {
+			//level select >> main menu
+			if (exitCode == 0)
+				set_menu(canvas, directory);
+
+			//level select >> levels
+			else {
 				current = exitCode - 1;
-				if(current > 1) {
-					controller.setCameraPositionNormal();
-					menu_controller.dispose();
-					menu_controller.gatherAssets(directory);
-					menu_controller.setCanvas(canvas);
-					menu_controller.setActive();
-					setScreen(menu_controller);
-				}
-				else {
-					controller.setLevel(exitCode - 1);
-					controller.gatherAssets(directory);
-					controller.setCanvas(canvas);
-					controller.reset();
-					setScreen(controller);
-				}
+
+				//go to menu instead
+				if(current > controller.getTotalLevels() - 1)
+					set_menu(canvas, directory);
+
+				//go to levels
+				else
+					set_game(canvas, directory);
+
 			}
 		}
 	}

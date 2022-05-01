@@ -43,6 +43,8 @@ public class Player {
 
     public void nextLevel(){
         level++;
+        save();
+
     }
 
     public void setVolume(int v){

@@ -257,6 +257,10 @@ public class GameController implements Screen, ContactListener {
         exit_home = false;
     }
 
+    public int getTotalLevels(){
+        return levels.length;
+    }
+
     /**
      * Creates a new game world
      * <p>
@@ -333,7 +337,7 @@ public class GameController implements Screen, ContactListener {
     }
 
     public void setCameraPositionNormal(){
-        cameraController.setCameraPosition(640, 360);
+        cameraController.setCameraPosition(cameraController.getCameraWidth()/2, cameraController.getCameraHeight()/2);
         cameraController.render();
     }
 
@@ -367,6 +371,7 @@ public class GameController implements Screen, ContactListener {
     }
 
     /**
+     * Sets the canvas associated with this controller
      * Sets the canvas associated with this controller
      * <p>
      * The canvas is shared across all controllers.  Setting this value will compute
@@ -1058,9 +1063,9 @@ public class GameController implements Screen, ContactListener {
             draw(delta);
             //draw(delta);
             if (game_state == state.WIN_GAME) {
-                listener.exitScreen(this, 1);
-            } else if (game_state == state.LOSE_GAME) {
                 listener.exitScreen(this, 0);
+            } else if (game_state == state.LOSE_GAME) {
+                listener.exitScreen(this, 1);
             }
             else if (exit_home == true && listener != null){
                 listener.exitScreen(this, 2);
