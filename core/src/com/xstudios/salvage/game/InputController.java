@@ -277,7 +277,7 @@ public class InputController {
         // Give priority to gamepad results
         resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
         debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
-        menuPressed = (secondary && menuPressed) || (Gdx.input.isKeyPressed(Keys.ESCAPE));
+//        menuPressed = (secondary && menuPressed) || (Gdx.input.isKeyPressed(Keys.ESCAPE));
 
         kickOffPressed = (secondary && kickOffPrevious) || (Gdx.input.isKeyPressed(Keys.SPACE));
 
@@ -287,7 +287,7 @@ public class InputController {
 
         pingPressed = (secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.E);
 
-        pausePressed = (secondary && pausePressed) || Gdx.input.isKeyPressed(Keys.C);
+        pausePressed = (secondary && pausePressed) || Gdx.input.isKeyPressed(Keys.ESCAPE);
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);
