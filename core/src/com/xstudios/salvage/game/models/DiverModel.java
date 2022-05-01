@@ -1,10 +1,8 @@
 package com.xstudios.salvage.game.models;
 
 import box2dLight.RayHandler;
-import com.badlogic.gdx.Gdx;
+
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -15,7 +13,7 @@ import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
-import com.xstudios.salvage.util.PooledList;
+
 
 import java.util.ArrayList;
 

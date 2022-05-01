@@ -59,7 +59,6 @@ public class MonsterController {
      */
     private float tick;
 
-
     private int MAX_INVINCIBILITY = 50;
 
     private PooledList<Vector2> targetLocations;
@@ -98,15 +97,7 @@ public class MonsterController {
     private void changeStateIfApplicable() {
         // Add initialization code as necessary
         float aggrivation = monster.getAggrivation();
-//        System.out.println(aggrivation);
-//        if (aggrivation > 6.0f && monster.getInvincibilityTime() <= 0)  {
-//            state = FSMState.AGGRIVATED;
-//            monster.setInvincibilityTime(MAX_INVINCIBILITY);
-//        }
-//        else {
-//            monster.reduceInvincibilityTime();
-//            state = FSMState.IDLE;
-//        }
+
         // Next state depends on current state.
         switch (state) {
 

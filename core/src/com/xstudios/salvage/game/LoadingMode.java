@@ -1,11 +1,9 @@
 package com.xstudios.salvage.game;
 
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.controllers.Controller;
-import com.badlogic.gdx.controllers.ControllerListener;
-import com.badlogic.gdx.controllers.ControllerMapping;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -28,46 +26,61 @@ import com.xstudios.salvage.util.XBoxController;
  */
 public class LoadingMode implements Screen {
     // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
-    /** Internal assets for this loading screen */
+    /**
+     * Internal assets for this loading screen
+     */
     private AssetDirectory internal;
-    /** The actual assets to be loaded */
+    /**
+     * The actual assets to be loaded
+     */
     private AssetDirectory assets;
 
-    /** Background texture for start-up */
+    /**
+     * Background texture for start-up
+     */
     private Texture background;
     private Texture tentacles;
-
-    // statusBar is a "texture atlas." Break it up into parts.
-    /** Left cap to the status background (grey region) */
-    private TextureRegion statusBkgLeft;
-    /** Middle portion of the status background (grey region) */
-    private TextureRegion statusBkgMiddle;
-    /** Right cap to the status background (grey region) */
-    private TextureRegion statusBkgRight;
 
     /** Standard window size (for scaling) */
     private static int STANDARD_WIDTH = 1280;
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = 720;
-    /** Ratio of the bar width to the screen */
-    private static float BAR_WIDTH_RATIO = 0.66f;
 
-    /** Reference to GameCanvas created by the root */
+    /**
+     * Default budget for asset loader (do nothing but load 60 fps)
+     */
+    private static int DEFAULT_BUDGET = 15;
+
+    /**
+     * Reference to GameCanvas created by the root
+     */
     private GameCanvas canvas;
-    /** Listener that will update the player mode when we are done */
+    /**
+     * Listener that will update the player mode when we are done
+     */
     private ScreenListener listener;
+
 
     private int width;
     private int height;
-    /** Scaling factor for when the student changes the resolution. */
+
+    /**
+     * Scaling factor for when the student changes the resolution.
+     */
     private float scale;
 
-    /** Current progress (0 to 1) of the asset manager */
+    /**
+     * Current progress (0 to 1) of the asset manager
+     */
     private float progress;
-    /** The amount of time to devote to loading assets (as opposed to on screen hints, etc.) */
+    /**
+     * The amount of time to devote to loading assets (as opposed to on screen hints, etc.)
+     */
     private int budget;
 
-    /** Whether or not this player mode is still active */
+    /**
+     * Whether or not this player mode is still active
+     */
     private boolean active;
     private boolean done;
 
@@ -84,6 +97,19 @@ public class LoadingMode implements Screen {
     }
 
     /**
+<<<<<<< HEAD
+=======
+     * Creates a LoadingMode with the default budget, size and position.
+     *
+     * @param file   The asset directory to load in the background
+     * @param canvas The game canvas to draw to
+     */
+    public LoadingMode(String file, GameCanvas canvas) {
+        this(file, canvas, DEFAULT_BUDGET);
+    }
+
+    /**
+>>>>>>> origin/beta_merge
      * Creates a LoadingMode with the default size and position.
      *
      * <p>The budget is the number of milliseconds to spend loading assets each animation frame. This
@@ -91,7 +117,7 @@ public class LoadingMode implements Screen {
      * if the budget is 10, you have 6 milliseconds to do something else. This is how game companies
      * animate their loading screens.
      *
-     * @param file The asset directory to load in the background
+     * @param file   The asset directory to load in the background
      * @param canvas The game canvas to draw to
      * @param millis The loading budget in milliseconds
      */
@@ -189,6 +215,7 @@ public class LoadingMode implements Screen {
     }
 
     // ADDITIONAL SCREEN METHODS
+
     /**
      * Called when the Screen should render itself.
      *
@@ -215,7 +242,7 @@ public class LoadingMode implements Screen {
      * <p>This can happen at any point during a non-paused state but will never happen before a call
      * to show().
      *
-     * @param width The new width in pixels
+     * @param width  The new width in pixels
      * @param height The new height in pixels
      */
     public void resize(int width, int height) {
@@ -250,11 +277,15 @@ public class LoadingMode implements Screen {
 
     }
 
-    /** Called when this screen becomes the current screen for a Game. */
+    /**
+     * Called when this screen becomes the current screen for a Game.
+     */
     public void show() {
     }
 
-    /** Called when this screen is no longer the current screen for a Game. */
+    /**
+     * Called when this screen is no longer the current screen for a Game.
+     */
     public void hide() {
         // Useless if called in outside animation loop
     }

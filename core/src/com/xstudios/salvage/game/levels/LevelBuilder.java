@@ -2,6 +2,8 @@ package com.xstudios.salvage.game.levels;
 
 
 import box2dLight.RayHandler;
+
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -278,7 +280,6 @@ public class LevelBuilder {
                     }
                 }
             }
-
             t.initShape(boxes);
             t.setBodyType(BodyDef.BodyType.StaticBody);
             t.setDensity(0);
