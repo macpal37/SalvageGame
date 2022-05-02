@@ -106,14 +106,13 @@ public class CameraController {
         return cameraPosition2D;
     }
 
-
     public void translate(float x, float y){
         if(cameraPosition.x+x<bounds.width && cameraPosition.x+x>bounds.x
         && cameraPosition.y+y<bounds.height && cameraPosition.y+y>bounds.y){
             updatePosition(x,y);
         }
-
     }
+
     private void updatePosition(float x, float y){
         cameraPosition.add(x, y,0);
         camera.position.set(cameraPosition);
@@ -130,11 +129,6 @@ public class CameraController {
     }
     public float getCameraHeight() {
         return viewport.getScreenHeight();
-    }
-
-    public void setCameraDimensions(int width, int height){
-        viewport.setScreenWidth(width);
-        viewport.setScreenHeight(height);
     }
 }
 

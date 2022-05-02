@@ -240,7 +240,6 @@ public class LoadingMode implements Screen {
 
     /** Called when this screen is no longer the current screen for a Game. */
     public void hide() {
-        // Useless if called in outside animation loop
     }
 }
 

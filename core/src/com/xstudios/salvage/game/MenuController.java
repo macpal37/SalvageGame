@@ -40,14 +40,14 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     private ScreenListener listener;
 
     /** Background Texture */
-    protected Texture title;
     protected Texture quit;
     protected Texture select_level;
-    protected Texture level_editor;
+    protected Texture setting;
+    protected Texture tentacles;
 
     private boolean press_quit;
     private boolean press_select_level;
-    private boolean press_level_editor;
+    private boolean press_setting;
 
     private int width;
     private int height;
@@ -65,7 +65,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         height = Gdx.graphics.getHeight();
 
         press_select_level = false;
-        press_level_editor = false;
+        press_setting = false;
         press_quit = false;
     }
 
@@ -86,21 +86,20 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
     public void gatherAssets(AssetDirectory directory) {
         background =  directory.getEntry( "background:menu", Texture.class );
-        title = directory.getEntry("title", Texture.class);
         quit = directory.getEntry("quit", Texture.class);
-        level_editor = directory.getEntry("level_editor", Texture.class);
+        setting = directory.getEntry("setting", Texture.class);
         select_level = directory.getEntry("select_level", Texture.class);
+        tentacles = directory.getEntry("screen_tentacles", Texture.class);
     }
 
     public void dispose(){
         background = null;
         active = false;
-        title = null;
         quit = null;
-        level_editor = null;
+        setting = null;
         select_level = null;
         press_select_level = false;
-        press_level_editor = false;
+        press_setting = false;
         press_quit = false;
     }
 
@@ -114,15 +113,15 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
             int pY = Gdx.input.getY();
             // Flip to match graphics coordinates
             int flip_y = canvas.getHeight() - y;
-            float w = scale * ox;
-            float h = scale * oy;
+            float w = 0.75f * scale * ox;
+            float h = 0.75f * scale * oy;
 
             if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
                 c = Color.GRAY;
                 if(Gdx.input.justTouched()) clicked = true;
             }
         }
-        canvas.draw(t, c, ox, oy, x, y, 0, scale, scale);
+        canvas.draw(t, c, ox, oy, x, y, 0, 0.7f *  scale, 0.7f * scale);
         return clicked;
     }
 
@@ -130,14 +129,13 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         canvas.begin();
 
         canvas.draw(background, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        canvas.draw(tentacles, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        help_draw(title, width/2, height - height/3, false);
+        press_select_level = help_draw(select_level, width/3, height - height/3 - height/12, true);
 
-        press_select_level = help_draw(select_level, width/2, height/2, true);
+        press_setting = help_draw(setting, width/3, height/2 - height/10, true);
 
-        press_level_editor = help_draw(level_editor, width/2, height/2 - height/10, true);
-
-        press_quit = help_draw(quit, width/2, height/2 - height/5, true);
+        press_quit = help_draw(quit, width/3, height/6 + height/20, true);
 
         canvas.end();
     }
@@ -159,7 +157,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
             if (press_select_level && listener != null) {
                 listener.exitScreen(this, 0);
             }
-            if (press_level_editor && listener != null) {
+            if (press_setting && listener != null) {
                 listener.exitScreen(this, 1);
             }
             if (press_quit && listener != null) {
