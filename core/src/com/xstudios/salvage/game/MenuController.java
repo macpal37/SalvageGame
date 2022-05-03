@@ -49,6 +49,8 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     private boolean press_select_level;
     private boolean press_setting;
 
+    private boolean release;
+
     private int width;
     private int height;
     /** Scaling factor for when the student changes the resolution. */
@@ -67,6 +69,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         press_select_level = false;
         press_setting = false;
         press_quit = false;
+        release = false;
     }
 
     public void setCameraController(CameraController cameraController) {
@@ -101,6 +104,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         press_select_level = false;
         press_setting = false;
         press_quit = false;
+        release = false;
     }
 
     private boolean help_draw(Texture t, int x, int y, boolean tint){
@@ -118,7 +122,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
             if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
                 c = Color.GRAY;
-                if(Gdx.input.justTouched()) clicked = true;
+                if(Gdx.input.isTouched()) clicked = true;
             }
         }
         canvas.draw(t, c, ox, oy, x, y, 0, 0.7f *  scale, 0.7f * scale);
@@ -153,16 +157,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     public void render(float delta) {
         if (active) {
             draw();
-
-            if (press_select_level && listener != null) {
-                listener.exitScreen(this, 0);
-            }
-            if (press_setting && listener != null) {
-                listener.exitScreen(this, 1);
-            }
-            if (press_quit && listener != null) {
-                listener.exitScreen(this, 2);
-            }
         }
     }
 
@@ -252,7 +246,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
+        return true;
     }
 
 
@@ -268,6 +262,15 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if(press_select_level) {
+            listener.exitScreen(this, 0);
+        }
+        if(press_setting){
+            listener.exitScreen(this, 1);
+        }
+        if(press_quit){
+            listener.exitScreen(this, 2);
+        }
         return true;
     }
 

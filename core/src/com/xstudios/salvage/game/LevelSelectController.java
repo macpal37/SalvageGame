@@ -47,7 +47,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     private float scale;
 
     private int level_clicked;
-    boolean press_main_menu;
+    private int press_main_menu;
     private ArrayList<Texture> level_list;
 
     private boolean active;
@@ -61,6 +61,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     public LevelSelectController() {
         level_list = new ArrayList<>();
         level_clicked = 0;
+        press_main_menu = 0;
 
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
@@ -106,6 +107,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         level = null;
         line = null;
         level_clicked = 0;
+        press_main_menu = 0;
     }
 
     private void help_draw_line(int x, int y, int level, float angle){
@@ -139,8 +141,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 if(level > locked) {
                     c = Color.GRAY;
                     canvas.draw(t, c, ox, oy, x, height - y, 0, scale, scale);
-                    canvas.draw(lock, Color.WHITE, lock.getWidth()/2 + lock.getWidth()/20, lock.getHeight(),
-                            x, height - y, 0, scale * 0.2f, scale *0.2f);
                     return false;
                 }
                 else{
@@ -150,7 +150,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
             }
             if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
                 c = Color.GRAY;
-                if(Gdx.input.justTouched()) clicked = true;
+                if(Gdx.input.isTouched()) clicked = true;
             }
         }
         canvas.draw(t, c, ox, oy, x, height - y, angle, scale, scale);
@@ -163,7 +163,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         canvas.draw(background, Color.WHITE, 0, -1 * height * 2, width,  height * 3);
 
         //menu
-        press_main_menu = help_draw(main_menu, width/7,height/7, true, 0, null, 0, false);
+        press_main_menu = help_draw(main_menu, width/7,height/7, true, 0, null, 0, false) ? 1 : 0;
 
         //lines
         help_draw_line(width/3, height/2, 2, 0.8f);
@@ -211,16 +211,11 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     public void render(float delta) {
         if (active) {
             draw();
-            camera.render();
-
-            if (press_main_menu && listener != null) {
-                camera.setCameraPosition(width/2, height/2);
-                camera.render();
-                listener.exitScreen(this, 0);
-            }
-            if (level_clicked >= 1  && listener != null) {
-                listener.exitScreen(this, level_clicked);
-            }
+//            if (press_main_menu) {
+//                camera.setCameraPosition(width/2, height/2);
+//                camera.render();
+//                listener.exitScreen(this, 0);
+//            }
         }
     }
 
@@ -298,7 +293,14 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @param pointer the button or touch finger number
      * @return whether to hand the event to other listeners.
      */
+    int num;
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if(press_main_menu == 1){
+            listener.exitScreen(this, 0);
+        }
+        if (level_clicked >= 1) {
+            listener.exitScreen(this, level_clicked);
+        }
         return true;
     }
 
