@@ -221,8 +221,11 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 
 			//game over >> main menu
-			if (exitCode == 1)
+			if (exitCode == 1) {
+				controller.reset();
+				game_over_controller.dispose();
 				set_menu(canvas, directory);
+			}
 
 			//game over >> next level, will be main menu if no new level
 			if(exitCode == 2){
