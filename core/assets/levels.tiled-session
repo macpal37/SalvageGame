@@ -1,7 +1,8 @@
 {
-    "activeFile": "levels/level1.json",
+    "activeFile": "levels/tilesets/tentacle_tile.json",
     "expandedProjectPaths": [
-        "levels"
+        "levels",
+        "levels/tilesets"
     ],
     "fileStates": {
         "levels/beta_0.json": {
@@ -56,7 +57,7 @@
             "scale": 0.2337,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1497.646555412923,
+                "x": 1501.9255455712453,
                 "y": 1003.4231921266583
             }
         },
@@ -109,7 +110,12 @@
             }
         },
         "levels/tilesets/old_ship_tileset.json": {
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/tilesets/tentacle_tile.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "levels/tutorial1.json": {
             "scale": 0.7011,
@@ -153,7 +159,9 @@
         "levels/test_level.json",
         "levels/level0.json",
         "levels/level1.json",
-        "levels/level4.json"
+        "levels/level4.json",
+        "levels/tilesets/tentacle_tile.json",
+        "levels/tilesets/old_ship_tileset.json"
     ],
     "project": "levels.tiled-project",
     "recentFiles": [

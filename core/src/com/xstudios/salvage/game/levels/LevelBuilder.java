@@ -194,20 +194,17 @@ public class LevelBuilder {
 
     public float div = 25f;
 
-    public Tentacle createTentcle(float agg_level, Wall w, FilmStrip sprite, Vector2 scale) {
+    public Tentacle createTentcle(float agg_level, float tentacleScale, Wall w, FilmStrip sprite) {
 
-        float tScale = 3f / 2;
+        float tScale = 2f / 3;
         if (w.canSpawnTentacle()) {
 
 
             Tentacle t = new Tentacle(w, agg_level);
-            t.setScale(1, 1);
+            t.setScale(tentacleScale, tentacleScale);
             JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_tile.json"));
             HazardModel[] boxes = new HazardModel[4];
             int tCount = 0;
-
-//            Vector2 dif = new Vector2(0, 0);
-
             float tileHieght = tileset.getFloat("tileheight");
 
             for (JsonValue tileJson : tileset.get("tiles")) {
@@ -222,16 +219,10 @@ public class LevelBuilder {
                         y = round(o.getFloat("y"));
                         t.setPivot((-x * t.getScale().x) * (float) Math.cos(t.getAngle())
                                         + (tileHieght - y) * t.getScale().y * (float) Math.sin(t.getAngle())
-
-
                                 , (-(tileHieght - y) * t.getScale().y) * (float) Math.cos(t.getAngle()) +
 
                                         (-x * t.getScale().x) * (float) Math.sin(t.getAngle())
                         );
-//                        dif.set(x / div, tileHieght / div - (y / div)
-
-
-//                        );
 
                     } else {
                         x = round(o.getFloat("x")) / div;
@@ -241,34 +232,29 @@ public class LevelBuilder {
 
 
                             for (JsonValue point : o.get("polygon")) {
-                                float vx = (round(point.getFloat("x")) / div) + x
-
-
-//                                        - dif.y * (float) Math.cos(t.getAngle())
-//                                        - ((dif.x) * 2 * ((Math.sin(t.getAngle()) >= 0) ? 0 : 1)
-                                        ;
+                                float vx = (round(point.getFloat("x")) / div) + x;
 
                                 float vy = -((round(point.getFloat("y")) / div) + y
-//                                        - ((dif.x) * 2 * ((Math.sin(t.getAngle()) >= 0) ? 0 : 1))
-//                                        - ((dif.x) * 2 * (float) Math.cos(t.getAngle()))
-//                                        - ((dif.x) * 2 * ((Math.cos(t.getAngle()) >= 0) ? 1 : 0))
-//                                        + ((dif.x) * 2 * ((Math.cos(t.getAngle()) < 0) ? 1 : 0))
-//
-
-//                                        +(float) (tileHieght / div * Math.cos(t.getAngle()))
 
                                 );
-                                verticies.add(vx / tScale);
-                                verticies.add(vy / tScale);
+                                verticies.add(vx * (tScale * t.getScale().x));
+                                verticies.add(vy * (tScale * t.getScale().y));
                             }
                         }
                         float[] verts = new float[verticies.size()];
                         int index = 0;
                         for (int i = 0; i < verticies.size(); i++)
                             verts[index++] = verticies.get(i);
-                        HazardModel hazard = new HazardModel(verts, w.getX() + w.getTentacleSpawnPosition().x / div, w.getY() + (tileHieght / div - w.getTentacleSpawnPosition().y / div));
+                        float dx = -(50 / div * (float) Math.sin(t.getAngle()))
+                                - (50 / div * (float) Math.cos(t.getAngle()));
+                        float dy = (50 / div * (float) Math.cos(t.getAngle()))
+                                - (50 / div * (float) Math.sin(t.getAngle()));
+                        HazardModel hazard = new HazardModel(verts,
+                                w.getTentacleSpawnPosition().x + (dx * (t.getScale().x))
+                                , w.getTentacleSpawnPosition().y + (dy * (t.getScale().y))
+                        );
+
                         hazard.setAngle(t.getAngle());
-//                        hazard.setAngle(0);
                         hazard.setOxygenDrain(-0.1f);
                         hazard.setStunDuration(60);
                         hazard.setBodyType(BodyDef.BodyType.StaticBody);
@@ -288,7 +274,7 @@ public class LevelBuilder {
             t.setDensity(0);
             t.setFriction(0.4f);
             t.setRestitution(0.1f);
-            t.setDrawScale(scale);
+            t.setDrawScale(drawScale);
             t.setFilmStrip(sprite);
             t.setStartGrowing(true);
             t.setMaxLifeSpan(300);
@@ -328,8 +314,8 @@ public class LevelBuilder {
 
                     if (o.getString("name").equals("SpawnLocation")) {
                         rotation = o.getFloat("rotation");
-                        spawnX = round(o.getFloat("x")) / div;
-                        spawnY = (100 - round(o.getFloat("y"))) / div;
+                        spawnX = o.getFloat("x") / div;
+                        spawnY = (100 - o.getFloat("y")) / div;
                     } else {
                         x = round(o.getFloat("x")) / div;
                         y = round(o.getFloat("y")) / div;

@@ -766,7 +766,7 @@ public class GameController implements Screen, ContactListener {
             Wall add_wall = tentacles.poll();
             if (add_wall.canSpawnTentacle() && add_wall != null) {
 
-                Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+                Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), 1f, add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30));
                 addQueuedObject(t);
                 AudioController.getInstance().roar();
             }
@@ -781,11 +781,11 @@ public class GameController implements Screen, ContactListener {
 //        }
 
         //** ADDING TENTACLES TO WalL!
-        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
-            Wall w = level.getDiver().getTouchedWall();
-            Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), w, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
-            addQueuedObject(t);
-        }
+//        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
+//            Wall w = level.getDiver().getTouchedWall();
+//            Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), 1f, w, new FilmStrip(monsterTenctacle, 1, 30, 30));
+//            addQueuedObject(t);
+//        }
 
 
         switch (game_state) {
