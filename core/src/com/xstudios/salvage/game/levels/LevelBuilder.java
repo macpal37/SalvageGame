@@ -16,6 +16,7 @@ import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.models.*;
 
 import com.xstudios.salvage.util.FilmStrip;
+
 import java.util.ArrayList;
 
 public class LevelBuilder {
@@ -205,7 +206,7 @@ public class LevelBuilder {
             HazardModel[] boxes = new HazardModel[4];
             int tCount = 0;
 
-            Vector2 dif = new Vector2(0, 0);
+//            Vector2 dif = new Vector2(0, 0);
 
             float tileHieght = tileset.getFloat("tileheight");
 
@@ -227,10 +228,10 @@ public class LevelBuilder {
 
                                         (-x * t.getScale().x) * (float) Math.sin(t.getAngle())
                         );
-                        dif.set(x / div, tileHieght / div - (2 * y / div)
+//                        dif.set(x / div, tileHieght / div - (y / div)
 
 
-                        );
+//                        );
 
                     } else {
                         x = round(o.getFloat("x")) / div;
@@ -244,11 +245,12 @@ public class LevelBuilder {
 
 
 //                                        - dif.y * (float) Math.cos(t.getAngle())
-                                        - ((dif.x) * 2 * ((Math.sin(t.getAngle()) >= 0) ? 0 : 1));
+//                                        - ((dif.x) * 2 * ((Math.sin(t.getAngle()) >= 0) ? 0 : 1)
+                                        ;
 
                                 float vy = -((round(point.getFloat("y")) / div) + y
-                                        - ((dif.x) * 2 * ((Math.sin(t.getAngle()) >= 0) ? 0 : 1))
-                                        - ((dif.x) * 2 * (float) Math.cos(t.getAngle()))
+//                                        - ((dif.x) * 2 * ((Math.sin(t.getAngle()) >= 0) ? 0 : 1))
+//                                        - ((dif.x) * 2 * (float) Math.cos(t.getAngle()))
 //                                        - ((dif.x) * 2 * ((Math.cos(t.getAngle()) >= 0) ? 1 : 0))
 //                                        + ((dif.x) * 2 * ((Math.cos(t.getAngle()) < 0) ? 1 : 0))
 //
@@ -264,8 +266,9 @@ public class LevelBuilder {
                         int index = 0;
                         for (int i = 0; i < verticies.size(); i++)
                             verts[index++] = verticies.get(i);
-                        HazardModel hazard = new HazardModel(verts, w.getX(), w.getY());
+                        HazardModel hazard = new HazardModel(verts, w.getX() + w.getTentacleSpawnPosition().x / div, w.getY() + (tileHieght / div - w.getTentacleSpawnPosition().y / div));
                         hazard.setAngle(t.getAngle());
+//                        hazard.setAngle(0);
                         hazard.setOxygenDrain(-0.1f);
                         hazard.setStunDuration(60);
                         hazard.setBodyType(BodyDef.BodyType.StaticBody);
