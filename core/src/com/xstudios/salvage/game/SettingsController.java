@@ -130,6 +130,7 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
         this.canvas = canvas;
     }
 
+    //gathers assets
     public void gatherAssets(AssetDirectory directory) {
         background =  directory.getEntry( "background:settings", Texture.class );
         settings = directory.getEntry("settings", Texture.class);
@@ -142,6 +143,7 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
         box = directory.getEntry("slider", Texture.class);
     }
 
+    //dispose
     public void dispose(){
         background = null;
         active = false;
@@ -157,10 +159,14 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
         segment = 0;
     }
 
+    //helps in the draw function
     private boolean help_draw(Texture t, int x, int y, boolean tint){
         Color c = Color.WHITE;
         boolean clicked = false;
+
+        //if tint is true, then the image can be changed color(interactive)
         if(tint){
+            //mouse position
             int pX = Gdx.input.getX();
             int pY = Gdx.input.getY();
             // Flip to match graphics coordinates
@@ -168,11 +174,14 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
             float w = scale * t.getWidth();
             float h = scale * t.getHeight();
 
+            //if true, then image tint is gray
             if((x + w >= pX && x <= pX) && (flip_y >= pY && flip_y - h <= pY)){
                 c = Color.GRAY;
+                //if true(touched), then clicked is true
                 if(Gdx.input.isTouched()) clicked = true;
             }
         }
+        //draws
         canvas.draw(t, c, 0, 0, x, y, 0, scale, scale);
         return clicked;
     }

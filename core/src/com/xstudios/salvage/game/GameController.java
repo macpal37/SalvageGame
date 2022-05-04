@@ -731,6 +731,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
                 if(input.isPause()){
                     resume();
                 }
+                updatePlayingState();
                 break;
         }
         updateGameState();
