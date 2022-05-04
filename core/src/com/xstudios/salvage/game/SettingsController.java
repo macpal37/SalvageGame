@@ -81,10 +81,12 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
     private boolean active;
 
     public SettingsController() {
+
+
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
 
-        int segment = (width/2 - width/9 - width/14)/4;
+        segment = (width/2 - width/9 - width/14)/4;
 
         press_menu = false;
         press_reset = false;
@@ -96,10 +98,12 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
         tick2 = 2;
     }
 
+    //sets audioController
     public void setAudio(AudioController a){
         audio = a;
     }
 
+    //sets Player
     public void setPlayer(Player player){
         this.player = player;
         music_volume = player.getMusic();
@@ -108,6 +112,7 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
         tick2 = sound_effects_volume;
     }
 
+    //sets CameraController
     public void setCameraController(CameraController cameraController) {
         this.camera = cameraController;
         camera.setCameraPosition(width/2, height/2);
@@ -115,10 +120,12 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
         camera.render();
     }
 
+    //sets active
     public void setActive(){
         active = true;
     }
 
+    //sets canvas
     public void setCanvas(GameCanvas canvas){
         this.canvas = canvas;
     }
