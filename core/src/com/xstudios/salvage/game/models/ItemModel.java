@@ -12,38 +12,49 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
+import com.xstudios.salvage.util.FilmStrip;
 
-import static com.xstudios.salvage.game.models.ItemType.DEAD_BODY;
-import static com.xstudios.salvage.game.models.ItemType.KEY;
 
 public class ItemModel extends DiverObjectModel {
 
-    /** Type of item*/
+    public enum ItemType {
+        KEY,
+        TNT,
+        DEAD_BODY
+    }
+
+    /**
+     * Type of item
+     */
     private ItemType item_type;
 
-    /** The current horizontal movement of the item */
+    /**
+     * The current horizontal movement of the item
+     */
     private Vector2 movement;
 
     private Light light;
 
-    public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
+
+    public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.YELLOW, Color.CYAN};
+
     Color item_color;
 
 
-    public ItemModel(float x, float y, JsonValue data, ItemType item_type){
+    public ItemModel(float x, float y, JsonValue data, ItemType item_type) {
 
-        super(x,y,data);
+        super(x, y, data);
 
         this.item_type = item_type;
 
         try {
             item_color = COLOR_OPTIONS[getID()];
-        } catch (Exception e){
+        } catch (Exception e) {
             item_color = Color.WHITE;
         }
-        drawSymbolPos.add(data.getFloat("symbol_dist", 50.0f), 0);
         setName(item_type + "" + getID());
         movement = new Vector2();
+//        light_color = new Color(1f,0.5f,0.5f,0.5f);
     }
 
 
@@ -54,12 +65,14 @@ public class ItemModel extends DiverObjectModel {
         setName(item_type + "" + id);
     }
 
-    public void initLight(RayHandler rayHandler){
+    public void initLight(RayHandler rayHandler) {
 
-            light =  new PointLight(rayHandler,100, new Color(1f,0.5f,0.5f,0.5f),2,getX(),getY());
+
+        light = new PointLight(rayHandler, 100, new Color(225 / 255f, 185 / 255f, 80 / 255f, 0.2f), 5, getX(), getY());
+
         Filter f = new Filter();
         f.categoryBits = 0x0002;
-        f.maskBits =0x0004;
+        f.maskBits = 0x0004;
         f.groupIndex = 1;
         light.setContactFilter(f);
         light.setSoft(true);
@@ -70,9 +83,10 @@ public class ItemModel extends DiverObjectModel {
     public Color getColor() {
         return ItemModel.COLOR_OPTIONS[getID()];
     }
+
     /**
      * Release the fixtures for this body, resetting the shape
-     *
+     * <p>
      * This is the primary method to override for custom physics objects
      */
     protected void releaseFixtures() {
@@ -107,40 +121,62 @@ public class ItemModel extends DiverObjectModel {
 
     /**
      * Sets the object texture for drawing purposes.
-     *
+     * <p>
      * In order for drawing to work properly, you MUST set the drawScale.
      * The drawScale converts the physics units to pixels.
      *
-     * @param value  the object texture for drawing purposes.
+     * @param value the object texture for drawing purposes.
      */
     public void setTexture(TextureRegion value) {
         texture = value;
-        origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
+        origin.set(texture.getRegionWidth() / 2.0f, texture.getRegionHeight() / 2.0f);
     }
 
+    private FilmStrip spriteSheet;
+
+    private int startingFrame = 0;
+
+    public int getFrame() {
+        return spriteSheet.getFrame();
+
+    }
+
+    public void setFilmStrip(FilmStrip value) {
+        spriteSheet = value;
+        spriteSheet.setFrame(startingFrame);
+    }
+
+    int tick = 0;
 
     @Override
     public void draw(GameCanvas canvas) {
         if (texture != null) {
-            if(!carried){
-                canvas.draw(texture, ItemModel.COLOR_OPTIONS[getID()], origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.5f, 0.5f);
+            if (!carried) {
+
+                if (tick % 15 == 0) {
+                    int frame = spriteSheet.getFrame();
+                    frame++;
+                    if (frame >= spriteSheet.getSize())
+                        frame = 0;
+                    spriteSheet.setFrame(frame);
+                }
+                canvas.draw(spriteSheet, ItemModel.COLOR_OPTIONS[getID()], origin.x * 2, origin.y * 2, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
             }
-            if(!carried&&isTouched){
-                canvas.drawText("Press q",GameController.displayFont,(getX()-getWidth()*1.25f) * drawScale.x, (getY()+getHeight()*1.5f)  * drawScale.y);
-                light.setPosition(getX(),getY());
+            if (!carried && isTouched) {
+                canvas.drawText("Press q", GameController.displayFont, (getX() - getWidth() * 1.25f) * drawScale.x, (getY() + getHeight() * 1.5f) * drawScale.y);
+                light.setPosition(getX(), getY());
                 light.setActive(true);
-            }else{
+            } else {
                 light.setActive(false);
             }
 
-          }
+        }
     }
-
 
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-        canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        canvas.drawPhysics(shape, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
     }
 
     /**
@@ -148,15 +184,15 @@ public class ItemModel extends DiverObjectModel {
      */
     protected void resize(float width, float height) {
         // Make the box with the center in the center
-        vertices[0] = -width/2.0f;
-        vertices[1] = -height/2.0f;
-        vertices[2] = -width/2.0f;
-        vertices[3] =  height/2.0f;
-        vertices[4] =  width/2.0f;
-        vertices[5] =  height/2.0f;
-        vertices[6] =  width/2.0f;
-        vertices[7] = -height/2.0f;
-        shape.setAsBox(width,height);
+        vertices[0] = -width / 2.0f;
+        vertices[1] = -height / 2.0f;
+        vertices[2] = -width / 2.0f;
+        vertices[3] = height / 2.0f;
+        vertices[4] = width / 2.0f;
+        vertices[5] = height / 2.0f;
+        vertices[6] = width / 2.0f;
+        vertices[7] = -height / 2.0f;
+        shape.setAsBox(width, height);
     }
 
     public void applyForce() {
@@ -165,7 +201,7 @@ public class ItemModel extends DiverObjectModel {
         }
         forceCache.x = getHorizontalMovement();
         forceCache.y = getVerticalMovement();
-        body.applyForce(forceCache,getPosition(),true);
+        body.applyForce(forceCache, getPosition(), true);
         setHorizontalMovement(0);
         setVerticalMovement(0);
     }
@@ -190,7 +226,7 @@ public class ItemModel extends DiverObjectModel {
 
     /**
      * Returns left/right movement of this character.
-     *
+     * <p>
      * This is the result of input times dude force.
      *
      * @return left/right movement of this character.
@@ -201,7 +237,7 @@ public class ItemModel extends DiverObjectModel {
 
     /**
      * Returns up/down movement of this character.
-     *
+     * <p>
      * This is the result of input times dude force.
      *
      * @return left/right movement of this character.
@@ -225,21 +261,4 @@ public class ItemModel extends DiverObjectModel {
     }
 
 
-//    public void setCarried(boolean b) {
-//        carried = b;
-//
-//    }
-//
-//    public boolean isCarried() {
-//        return carried;
-//    }
-//
-//
-//    public boolean isTouched() {
-//        return isTouched;
-//    }
-//
-//    public void setTouched(boolean touched) {
-//        isTouched = touched;
-//    }
 }

@@ -14,7 +14,11 @@
 		"density": 0.1,
 		"friction": 0.0,
 		"maxspeed": 13.0,
+<<<<<<< HEAD
 		"max_oxygen": 2,
+=======
+		"max_oxygen": 150,
+>>>>>>> beta_merge
 		"drift_maxspeed": 0.70,
 		"jump_force": 5.5,
 		"jump_cool": 30,
@@ -22,7 +26,9 @@
 		"sensor": {
 			"shrink" : 0.6,
 			"width" : 1
-		}
+		},
+		"num_flares" : 3,
+		"flare_duration": 175
 	},
 	"dead_body" : {
 		"pos": [-5, 10.0],

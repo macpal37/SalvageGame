@@ -92,6 +92,7 @@ nb-configuration.xml
 
 ## Gradle
 
+
 /local.properties
 .gradle/
 gradle-app.setting
@@ -113,3 +114,9 @@ Thumbs.db
 /ios/xcode/native/
 /ios/IOSLauncher.app
 /ios/IOSLauncher.app.dSYM
+
+#Extra
+/core/assets/levels.tiled-session
+core/assets/levels.tiled-session
+*.tiled-session
+core/assets/levels.tiled-session

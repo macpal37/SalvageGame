@@ -1,5 +1,10 @@
 package com.xstudios.salvage.game.models;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.xstudios.salvage.game.GameCanvas;
+
 public class HazardModel extends Wall {
     /**
      * the amount of oxygen that this hazard drains per frame
@@ -42,8 +47,8 @@ public class HazardModel extends Wall {
         releaseFixtures();
 
         for (int ii = 0; ii < shapes.length; ii++) {
-            fixture.filter.categoryBits = 0x002;
-            fixture.filter.groupIndex = 0x004;
+//            fixture.filter.categoryBits = 0x002;
+//            fixture.filter.groupIndex = 0x004;
             fixture.filter.maskBits = -1;
             fixture.shape = shapes[ii];
             geoms[ii] = body.createFixture(fixture);
@@ -60,5 +65,30 @@ public class HazardModel extends Wall {
         super(points, x, y);
     }
 
+    public Vector2 scale = new Vector2(1, 1);
+
+    public void setScale(float x, float y) {
+        scale.set(x, y);
+    }
+
+    @Override
+    public void drawDebug(GameCanvas canvas) {
+
+        for (PolygonShape tri : shapes) {
+            if (isActive())
+                canvas.drawPhysics(tri, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+            else
+                canvas.drawPhysics(tri, Color.RED, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+        }
+
+    }
+
+    public void draw(GameCanvas canvas) {
+        if (texture != null && !invisible) {
+            canvas.draw(region, Color.WHITE, origin.x, origin.y, getX() * drawScale.x - origin.x, getY() * drawScale.y - origin.y, getAngle(), scale.x * 1.10f, scale.y);
+
+        }
+
+    }
 
 }

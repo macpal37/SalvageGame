@@ -1,0 +1,22 @@
+{
+    "automappingRulesFile": "",
+    "commands": [
+        {
+            "arguments": "",
+            "command": "",
+            "enabled": true,
+            "name": "Tiled",
+            "saveBeforeExecute": true,
+            "shortcut": null,
+            "showOutput": true,
+            "workingDirectory": ""
+        }
+    ],
+    "extensionsPath": "extensions",
+    "folders": [
+        "levels"
+    ],
+    "objectTypesFile": "levels/objects/diver_properties.json",
+    "propertyTypes": [
+    ]
+}
