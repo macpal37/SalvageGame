@@ -1,5 +1,12 @@
 {
   "textures": {
+    "bar" : "ui/bar.png",
+    "slider" : "ui/slider.png",
+    "reset" : "ui/reset.png",
+    "sound_effects" : "ui/sound_effects.png",
+    "music" : "ui/music.png",
+    "menu" : "ui/settings_menu.png",
+    "settings": "ui/settings.png",
     "cursor" : "ui/cursor.png",
     "main_menu_pause" : "ui/main_menu_pause.png",
     "restart" : "ui/restart.png",
@@ -26,6 +33,7 @@
     "models:diver": "models/diver.png",
     "models:diver_swimming": "models/diver_swimming.png",
     "models:dust": "models/dust.png",
+    "background:settings": "background/settings_background.png",
     "background:ocean":"background/background1.png",
     "background:game_over":"background/game_over.png",
     "background:menu":"background/menu_background.png",

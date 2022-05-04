@@ -26,6 +26,8 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	private LevelSelectController level_select_controller;
 
+	private SettingsController settings_controller;
+
 	private Player player;
 
 	private int current;
@@ -43,12 +45,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		current = 0;
 		cameraController = new CameraController(32,18);
 		canvas = new GameCanvas(cameraController);
-		loading = new LoadingMode("assets.json", canvas, 1);
-
-		controller = new GameController();
-		controller.setCameraController(cameraController);
-
-		total_levels = controller.getTotalLevels();
+		loading = new LoadingMode("assets.json", canvas, 1, cameraController);
 
 		game_over_controller = new GameOverController();
 		game_over_controller.setCameraController(cameraController);
@@ -56,14 +53,17 @@ public class GDXRoot extends Game implements ScreenListener {
 		menu_controller = new MenuController();
 		menu_controller.setCameraController(cameraController);
 
+		settings_controller = new SettingsController();
+		settings_controller.setCameraController(cameraController);
+
 		level_select_controller = new LevelSelectController();
 		level_select_controller.setCameraController(cameraController, canvas.getWidth(), canvas.getHeight());
 
 		loading.setScreenListener(this);
-		controller.setScreenListener(this);
 		game_over_controller.setScreenListener(this);
 		menu_controller.setScreenListener(this);
 		level_select_controller.setScreenListener(this);
+		settings_controller.setScreenListener(this);
 
 		setScreen(loading);
 
@@ -132,8 +132,16 @@ public class GDXRoot extends Game implements ScreenListener {
 			loading.dispose();
 			loading = null;
 
-			//players get their shit
 			player = new Player(directory);
+
+			//game controller setup
+			controller = new GameController(player);
+			controller.setCameraController(cameraController);
+			total_levels = controller.getTotalLevels();
+			controller.setScreenListener(this);
+
+			settings_controller.setPlayer(player);
+			settings_controller.setAudio(controller.getAudio());
 
 			//set up the cursor
 			Pixmap pm = new Pixmap(Gdx.files.internal("core/assets/ui/cursor.png"));
@@ -156,9 +164,14 @@ public class GDXRoot extends Game implements ScreenListener {
 				setScreen(level_select_controller);
 			}
 
-			//menu >> level editor; will change to setting
-			if (exitCode == 1)
-				set_game(canvas, directory);
+			//menu >> setting
+			if (exitCode == 1){
+				settings_controller.dispose();
+				settings_controller.gatherAssets(directory);
+				settings_controller.setCanvas(canvas);
+				settings_controller.setActive();
+				setScreen(settings_controller);
+			}
 
 			//menu >> quit
 			if (exitCode == 2) {
@@ -166,15 +179,25 @@ public class GDXRoot extends Game implements ScreenListener {
 				Gdx.app.exit();
 			}
 		}
+		//Setting
+		else if (screen == settings_controller){
+
+			//settings >> menu
+			if(exitCode == 0){
+				set_menu(canvas, directory);
+			}
+
+		}
 		//GAME
 		else if (screen == controller) {
 			//pause >> menu
-			if (exitCode == 2)
+			if (exitCode == 2) {
+				controller.reset();
 				set_menu(canvas, directory);
+			}
 
 			//game >> game over
 			else {
-				controller.setCameraPositionNormal();
 				game_over_controller.dispose();
 				game_over_controller.setWin(exitCode == 0);
 				game_over_controller.gatherAssets(directory);
@@ -197,11 +220,13 @@ public class GDXRoot extends Game implements ScreenListener {
 
 			//game over >> main menu
 			if (exitCode == 1)
+				controller.reset();
 				set_menu(canvas, directory);
 
 			//game over >> next level, will be main menu if no new level
 			if(exitCode == 2){
 				//main menu instead
+				controller.reset();
 				if(current >= total_levels)
 					set_menu(canvas, directory);
 
@@ -228,7 +253,6 @@ public class GDXRoot extends Game implements ScreenListener {
 				//go to levels
 				else
 					set_game(canvas, directory);
-
 			}
 		}
 	}

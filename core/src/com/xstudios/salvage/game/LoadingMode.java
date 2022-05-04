@@ -41,6 +41,8 @@ public class LoadingMode implements Screen {
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
 
+
+
     private int width;
     private int height;
     /** Scaling factor for when the student changes the resolution. */
@@ -54,6 +56,8 @@ public class LoadingMode implements Screen {
     /** Whether or not this player mode is still active */
     private boolean active;
     private boolean done;
+
+    private CameraController camera;
 
     /**
      * Returns the asset directory produced by this loading screen
@@ -79,10 +83,11 @@ public class LoadingMode implements Screen {
      * @param canvas The game canvas to draw to
      * @param millis The loading budget in milliseconds
      */
-    public LoadingMode(String file, GameCanvas canvas, int millis) {
+    public LoadingMode(String file, GameCanvas canvas, int millis, CameraController camera) {
         this.canvas = canvas;
         budget = millis;
         // Compute the dimensions from the canvas
+        this.camera = camera;
         resize(canvas.getWidth(), canvas.getHeight());
 
         // We need these files loaded immediately
@@ -110,6 +115,10 @@ public class LoadingMode implements Screen {
 
     public void setScreenListener(ScreenListener listener) {
         this.listener = listener;
+    }
+
+    public void setCameraController(CameraController camera){
+        this.camera = camera;
     }
 
     /** Called when this screen should release all resources. */
@@ -204,13 +213,13 @@ public class LoadingMode implements Screen {
      */
     public void resize(int width, int height) {
         // Compute the drawing scale
-        float sx = ((float) width) / STANDARD_WIDTH;
-        float sy = ((float) height) / STANDARD_HEIGHT;
-
+        float sx = ((float)width)/STANDARD_WIDTH;
+        float sy = ((float)height)/STANDARD_HEIGHT;
+        scale = (sx < sy ? sx : sy);
         this.width = width;
         this.height = height;
-
-        scale = (sx < sy ? sx : sy);
+        camera.getCamera().setToOrtho(false, width, height);
+        camera.getCamera().update();
     }
 
     /**

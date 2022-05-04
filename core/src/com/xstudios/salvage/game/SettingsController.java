@@ -8,6 +8,7 @@ import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.xstudios.salvage.assets.AssetDirectory;
+import com.xstudios.salvage.audio.AudioController;
 import com.xstudios.salvage.util.ScreenListener;
 
 /**
@@ -23,7 +24,7 @@ import com.xstudios.salvage.util.ScreenListener;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class MenuController implements Screen, InputProcessor, ControllerListener {
+public class SettingsController implements Screen, InputProcessor, ControllerListener {
     // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
     /** Background texture for start-up */
     private Texture background;
@@ -40,16 +41,31 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     private ScreenListener listener;
 
     /** Background Texture */
-    protected Texture quit;
-    protected Texture select_level;
-    protected Texture setting;
+    protected Texture menu;
+    protected Texture reset;
+    protected Texture settings;
     protected Texture tentacles;
+    protected Texture music;
+    protected Texture sound_effects;
 
-    private boolean press_quit;
-    private boolean press_select_level;
-    private boolean press_setting;
+    protected Texture line;
+    protected Texture box;
 
-    private boolean release;
+    private boolean press_menu;
+    private boolean press_reset;
+
+    private boolean music_box;
+    private boolean sound_effects_box;
+
+    private int music_volume;
+    private int sound_effects_volume;
+
+    private int tick1;
+    private int tick2;
+
+    private int segment;
+
+    Player player;
 
     private int width;
     private int height;
@@ -58,18 +74,38 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
     CameraController camera;
 
+    AudioController audio;
+
 
     /** Whether or not this player mode is still active */
     private boolean active;
 
-    public MenuController() {
+    public SettingsController() {
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
 
-        press_select_level = false;
-        press_setting = false;
-        press_quit = false;
-        release = false;
+        int segment = (width/2 - width/9 - width/14)/4;
+
+        press_menu = false;
+        press_reset = false;
+
+        music_box = false;
+        sound_effects_box = false;
+
+        tick1 = 2;
+        tick2 = 2;
+    }
+
+    public void setAudio(AudioController a){
+        audio = a;
+    }
+
+    public void setPlayer(Player player){
+        this.player = player;
+        music_volume = player.getMusic();
+        tick1 = music_volume;
+        sound_effects_volume = player.getSoundEffects();
+        tick2 = sound_effects_volume;
     }
 
     public void setCameraController(CameraController cameraController) {
@@ -88,28 +124,33 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     }
 
     public void gatherAssets(AssetDirectory directory) {
-        background =  directory.getEntry( "background:menu", Texture.class );
-        quit = directory.getEntry("quit", Texture.class);
-        setting = directory.getEntry("setting", Texture.class);
-        select_level = directory.getEntry("select_level", Texture.class);
+        background =  directory.getEntry( "background:settings", Texture.class );
+        settings = directory.getEntry("settings", Texture.class);
+        menu = directory.getEntry("menu", Texture.class);
+        music = directory.getEntry("music", Texture.class);
+        sound_effects = directory.getEntry("sound_effects", Texture.class);
+        reset = directory.getEntry("reset", Texture.class);
         tentacles = directory.getEntry("screen_tentacles", Texture.class);
+        line = directory.getEntry("bar", Texture.class);
+        box = directory.getEntry("slider", Texture.class);
     }
 
     public void dispose(){
         background = null;
         active = false;
-        quit = null;
-        setting = null;
-        select_level = null;
-        press_select_level = false;
-        press_setting = false;
-        press_quit = false;
-        release = false;
+        menu = null;
+        settings = null;
+        music = null;
+        sound_effects = null;
+        reset = null;
+        line = null;
+        box = null;
+        press_menu = false;
+        press_reset= false;
+        segment = 0;
     }
 
     private boolean help_draw(Texture t, int x, int y, boolean tint){
-        int ox = t.getWidth()/2;
-        int oy = t.getHeight()/2;
         Color c = Color.WHITE;
         boolean clicked = false;
         if(tint){
@@ -117,15 +158,15 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
             int pY = Gdx.input.getY();
             // Flip to match graphics coordinates
             int flip_y = canvas.getHeight() - y;
-            float w = 0.7f * scale * ox;
-            float h = 0.7f * scale * oy;
+            float w = scale * t.getWidth();
+            float h = scale * t.getHeight();
 
-            if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
+            if((x + w >= pX && x <= pX) && (flip_y >= pY && flip_y - h <= pY)){
                 c = Color.GRAY;
                 if(Gdx.input.isTouched()) clicked = true;
             }
         }
-        canvas.draw(t, c, ox, oy, x, y, 0, 0.7f *  scale, 0.7f * scale);
+        canvas.draw(t, c, 0, 0, x, y, 0, scale, scale);
         return clicked;
     }
 
@@ -135,11 +176,29 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         canvas.draw(background, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         canvas.draw(tentacles, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        press_select_level = help_draw(select_level, width/3, height - height/3 - height/12, true);
+        press_menu = help_draw(menu, width/30, height - height/12, true);
 
-        press_setting = help_draw(setting, width/3, height/2 - height/10, true);
+        help_draw(settings, width/14, height - height/4 - height/20, false);
 
-        press_quit = help_draw(quit, width/3, height/6 + height/20, true);
+        help_draw(music, width/14, height - height/4 - height/20 - height/10, false);
+
+        help_draw(line, width/14, height - height/2, false);
+
+        if(music_box == false) {
+            music_box = help_draw(box, width/14 + segment * tick1, height - height / 2 - height / 24, true);
+        }
+        else help_draw(box, width / 14 + segment * tick1, height - height / 2 - height / 24, true);
+
+        help_draw(sound_effects, width/14, height/2 - height/7, false);
+
+        help_draw(line, width/14, height/2 - height/5 - height/20, false);
+
+        if(sound_effects_box == false) {
+            sound_effects_box = help_draw(box, width/14 + segment * tick2, height / 2 - height / 5 - height / 11, true);
+        }
+        else help_draw(box, width/14 + segment * tick2, height / 2 - height / 5 - height / 11, true);
+
+        press_reset = help_draw(reset, width/14, height/7 - height/20, true);
 
         canvas.end();
     }
@@ -157,7 +216,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     public void render(float delta) {
         if (active) {
             draw();
-
         }
     }
 
@@ -172,18 +230,16 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      */
     public void resize(int width, int height) {
         // Compute the drawing scale
-
         float sx = ((float)width)/STANDARD_WIDTH;
         float sy = ((float)height)/STANDARD_HEIGHT;
-        scale = BUTTON_SCALE * (sx < sy ? sx : sy);
+        scale = 0.75f * (sx < sy ? sx : sy);
         this.width = width;
         this.height = height;
+        camera.resize(this.width, this.height);
         camera.getCamera().setToOrtho(false, width, height);
         camera.getCamera().update();
-    }
 
-    public void setDefaultCamera(){
-        camera.setCameraPosition(width/2, height/2);
+        segment = (int)(line.getWidth() * scale)/4;
     }
 
     /**
@@ -251,7 +307,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         return true;
     }
 
-
     /**
      * Called when a finger was lifted or a mouse button was released.
      *
@@ -264,15 +319,24 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if(press_select_level) {
+        if(press_reset){
+            player.setLevel(1);
+            tick1 = 2;
+            tick2 = 2;
+        }
+        if(music_box) music_box = false;
+        if(sound_effects_box) sound_effects_box = false;
+        if(press_menu) {
             listener.exitScreen(this, 0);
         }
-        else if(press_setting){
-            listener.exitScreen(this, 1);
-        }
-        else if(press_quit){
-            listener.exitScreen(this, 2);
-        }
+
+        player.setMusic(tick1);
+        player.setSoundEffects(tick2);
+        player.save();
+
+        audio.setMusic((float)tick1);
+        audio.setSoundEffects((float)tick2);
+
         return true;
     }
 
@@ -300,6 +364,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      *
      * @param controller The game controller
      * @param buttonCode The button pressed
+     * @return whether to hand the event to other listeners.
      * @return whether to hand the event to other listeners.
      */
     public boolean buttonUp (Controller controller, int buttonCode) {
@@ -369,6 +434,21 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        int total = segment * 5;
+        int max = screenX - width/14;
+        int start = width/14;
+        int ticks = max/segment;
+        if(music_box){
+            if(max >= start && max <= total)
+                tick1 = (ticks <= 4) ? ticks : 4;
+        }
+        audio.setMusic((float) tick1);
+        if(sound_effects_box){
+            if(max >= start && max <= total)
+                tick2 = (ticks <= 4) ? ticks : 4;
+        }
+        audio.setSoundEffects((float)tick2);
+
         return true;
     }
 

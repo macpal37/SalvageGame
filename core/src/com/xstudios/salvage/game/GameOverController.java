@@ -1,6 +1,7 @@
 package com.xstudios.salvage.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
@@ -29,6 +30,8 @@ public class GameOverController implements Screen, InputProcessor {
     private boolean exit_home;
     private boolean next_level;
     private boolean display_win;
+
+    private int index;
 
     private int width;
     private int height;
@@ -67,19 +70,20 @@ public class GameOverController implements Screen, InputProcessor {
 
     public void render() {
         if(active) {
-            if (restart_game && listener != null)
-                listener.exitScreen(this, 0);
-
-            if(exit_home && listener != null)
-                listener.exitScreen(this, 1);
-
-            if(next_level && listener != null)
-                listener.exitScreen(this, 2);
+//            if (restart_game && listener != null)
+//                listener.exitScreen(this, 0);
+//
+//            if(exit_home && listener != null)
+//                listener.exitScreen(this, 1);
+//
+//            if(next_level && listener != null)
+//                listener.exitScreen(this, 2);
         }
     }
 
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(this);
         active = true;
     }
 
@@ -94,11 +98,12 @@ public class GameOverController implements Screen, InputProcessor {
         // Compute the drawing scale
         float sx = ((float)width)/STANDARD_WIDTH;
         float sy = ((float)height)/STANDARD_HEIGHT;
-        scale = sx < sy ? sx : sy;
+        scale = (sx < sy ? sx : sy);
         this.width = width;
         this.height = height;
         camera.resize(this.width, this.height);
-        camera.render();
+        camera.getCamera().setToOrtho(false, width, height);
+        camera.getCamera().update();
     }
 
     @Override
@@ -161,6 +166,7 @@ public class GameOverController implements Screen, InputProcessor {
 
         canvas.begin();
 
+        index = 5;
         canvas.draw(background, Color.WHITE,0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         help_draw(title, width/2, height - height/7, false);
         exit_home = help_draw(main_menu, width/6, height/9, true);
@@ -210,6 +216,15 @@ public class GameOverController implements Screen, InputProcessor {
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (restart_game)
+            listener.exitScreen(this, 0);
+
+        else if(exit_home)
+            listener.exitScreen(this, 1);
+
+        else if(next_level)
+            listener.exitScreen(this, 2);
+
         return true;
     }
     /**

@@ -191,6 +191,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      * The world scale
      */
     protected Vector2 scale;
+
     /**
      * The symbol scale
      */
@@ -230,7 +231,10 @@ public class GameController implements Screen, ContactListener, InputProcessor {
     private state game_state;
     private boolean pause;
     boolean exit_home;
+    boolean press_resume;
+    boolean press_restart;
 
+    private Player player;
 
     private LevelBuilder levelBuilder;
 
@@ -244,12 +248,14 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      * with the Box2d coordinates.  The bounds are in terms of the Box2d
      * world, not the screen.
      */
-    protected GameController() {
+    protected GameController(Player player) {
         this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
-                new Vector2(0, DEFAULT_GRAVITY));
+                new Vector2(0, DEFAULT_GRAVITY), player);
         level = 0;
         pause = false;
         exit_home = false;
+        press_restart = false;
+        press_resume = false;
     }
 
     public int getTotalLevels(){
@@ -267,8 +273,8 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      * @param height  The height in Box2d coordinates
      * @param gravity The downward gravity
      */
-    protected GameController(float width, float height, float gravity) {
-        this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
+    protected GameController(float width, float height, float gravity, Player player) {
+        this(new Rectangle(0, 0, width, height), new Vector2(0, gravity), player);
     }
 
 
@@ -287,7 +293,8 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      * @param bounds  The game bounds in Box2d coordinates
      * @param gravity The gravitational force on this Box2d world
      */
-    protected GameController(Rectangle bounds, Vector2 gravity) {
+    protected GameController(Rectangle bounds, Vector2 gravity, Player player) {
+        this.player = player;
         world = new World(gravity.scl(1), false);
         this.bounds = new Rectangle(bounds);
         this.scale = new Vector2(1, 1);
@@ -319,8 +326,8 @@ public class GameController implements Screen, ContactListener, InputProcessor {
 
         wallShine.setContactFilter(f2);
         light.setContactFilter(f);
-        audioController = new AudioController(100.0f);
-        audioController.intialize();
+        audioController = new AudioController(100.0f, (float)this.player.getMusic(), (float)this.player.getSoundEffects());
+        audioController.initialize();
         collisionController = new CollisionController();
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
@@ -331,11 +338,6 @@ public class GameController implements Screen, ContactListener, InputProcessor {
 
     }
 
-    public void setCameraPositionNormal(){
-        cameraController.setCameraPosition(canvas.getWidth()/2, canvas.getHeight()/2);
-        cameraController.render();
-    }
-
     /**
      * Returns true if this is the active screen
      *
@@ -343,6 +345,10 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      */
     public boolean isActive() {
         return active;
+    }
+
+    public AudioController getAudio(){
+        return audioController;
     }
 
     public void setLevel(int l) {
@@ -402,7 +408,10 @@ public class GameController implements Screen, ContactListener, InputProcessor {
         canvas = null;
         pause = false;
         exit_home = false;
+        press_restart = false;
+        press_resume = false;
         audioController.dispose();
+        player = null;
     }
 
     /**
@@ -881,16 +890,15 @@ public class GameController implements Screen, ContactListener, InputProcessor {
 
         if(tint) {
             int pX = Gdx.input.getX();
-            int pY = Gdx.input.getY();
-            float y1 =  (canvas.getHeight() - y) - (int) (360 - cameraController.getCameraPosition2D().y);
-            float x1 =  x - (int) (640 - cameraController.getCameraPosition2D().x);
+            int pY = Gdx.graphics.getHeight() - Gdx.input.getY();
+            float y1 =  y + (int)(Gdx.graphics.getHeight()/2 - cameraController.getCameraPosition2D().y);
+            float x1 =  x + (int) (Gdx.graphics.getWidth()/2 - cameraController.getCameraPosition2D().x);
             float w = 0.7f * ox;
             float h = 0.7f * oy;
 
-            System.out.println("pointer: " + pX + " " + pY);
             if ((x1 + w > pX && x1 - w < pX) && (y1 + h > pY && y1 - h < pY)) {
                 c = Color.GRAY;
-                if (Gdx.input.justTouched()) clicked = true;
+                if (Gdx.input.isTouched()) clicked = true;
             }
         }
         canvas.draw(t, c, ox, oy, x, y, 0, 0.7f, 0.7f);
@@ -911,54 +919,46 @@ public class GameController implements Screen, ContactListener, InputProcessor {
         if (!debug)
             rayHandler.updateAndRender();
         canvas.begin();
+        canvas.draw(hud, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
+                cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/20f);
+        canvas.draw(oxygen, cameraController.getCameraPosition2D().x - canvas.getWidth()/4f - canvas.getWidth()/75f,
+                cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/17f);
+
+        if(diver.carryingItem()){
+            canvas.draw(keys, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + canvas.getWidth()/75f,
+                    cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
+        }
+        if(diver.hasBody()){
+            canvas.draw(deadBodyTexture, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
+                    cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
+        }
+
+        canvas.drawText(
+                "Oxygen Level: " + (int) diver.getOxygenLevel(),
+                displayFont,
+                cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + 50,
+                cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f + 50);
 
         switch (game_state) {
             case PLAYING:
-
-                canvas.draw(hud, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
-                        cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/20f);
-                canvas.draw(oxygen, cameraController.getCameraPosition2D().x - canvas.getWidth()/4f - canvas.getWidth()/75f,
-                        cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/17f);
-
-                if(diver.carryingItem()){
-                    canvas.draw(keys, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + canvas.getWidth()/75f,
-                            cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
-                }
-                if(diver.hasBody()){
-                    canvas.draw(deadBodyTexture, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
-                            cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
-                }
-
-                canvas.drawText(
-                        "Oxygen Level: " + (int) diver.getOxygenLevel(),
-                        displayFont,
-                        cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + 50,
-                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f + 50);
                 break;
 
             case PAUSE:
-                setCameraPositionNormal();
-                cameraController.render();
                 float cX = cameraController.getCameraPosition2D().x;
                 float cY = cameraController.getCameraPosition2D().y;
+                if(Gdx.input.justTouched()) {
+                    System.out.println("x: " + cX + " y: " + cY);
+                    System.out.println(Gdx.input.getX() + " " + Gdx.input.getY());
+                }
 
-                System.out.println("camera coordintes: " + cX + " " + cY);
-                System.out.println("pause state");
                 canvas.draw(pause_screen, Color.WHITE, cX - canvas.getWidth() / 2f,
                         cY - canvas.getHeight() / 2f, canvas.getWidth(), canvas.getHeight());
 
-                canvas.draw(black_spot, Color.WHITE, cX - canvas.getWidth() / 2f,
-                        cY - canvas.getHeight() / 2f - canvas.getHeight()/4f,
-                        black_spot.getWidth(), black_spot.getHeight());
-
-                if(help_draw(resume, cX, cY + main_menu.getHeight(), true)) resume();
-                if(help_draw(restart, cX, cY, true)) reset();
+                press_resume = help_draw(resume, cX, cY + main_menu.getHeight(), true);
+                press_restart = help_draw(restart, cX, cY, true);
                 exit_home = help_draw(main_menu, cX, cY - main_menu.getHeight(), true);
 
             case WIN_GAME:
-                System.out.println("TEXT POS" +
-                        cameraController.getCameraPosition2D().x + " " +
-                        cameraController.getCameraPosition2D().y);
                 break;
         }
         for (GameObject o : objects) {
@@ -985,7 +985,6 @@ public class GameController implements Screen, ContactListener, InputProcessor {
 
     }
 
-
     /**
      * Called when the Screen is resized.
      * <p>
@@ -996,7 +995,8 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      * @param height The new height in pixels
      */
     public void resize(int width, int height) {
-        // IGNORE FOR NOW
+        cameraController.getCamera().setToOrtho(false, width, height);
+        cameraController.getCamera().update();
     }
 
     /**
@@ -1018,9 +1018,6 @@ public class GameController implements Screen, ContactListener, InputProcessor {
                 listener.exitScreen(this, 0);
             } else if (game_state == state.LOSE_GAME) {
                 listener.exitScreen(this, 1);
-            }
-            else if (exit_home == true && listener != null){
-                listener.exitScreen(this, 2);
             }
         }
     }
@@ -1306,6 +1303,18 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+         if (exit_home){
+            listener.exitScreen(this, 2);
+         }
+         if(press_restart){
+             press_restart = false;
+             reset();
+         }
+         if(press_resume){
+             press_resume = false;
+             resume();
+         }
+
         return true;
     }
 

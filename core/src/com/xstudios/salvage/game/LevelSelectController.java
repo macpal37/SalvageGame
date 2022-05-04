@@ -47,7 +47,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     private float scale;
 
     private int level_clicked;
-    private int press_main_menu;
+    private boolean press_main_menu;
     private ArrayList<Texture> level_list;
 
     private boolean active;
@@ -61,7 +61,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     public LevelSelectController() {
         level_list = new ArrayList<>();
         level_clicked = 0;
-        press_main_menu = 0;
+        press_main_menu = false;
 
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
@@ -107,7 +107,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         level = null;
         line = null;
         level_clicked = 0;
-        press_main_menu = 0;
+        press_main_menu = false;
     }
 
     private void help_draw_line(int x, int y, int level, float angle){
@@ -163,7 +163,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         canvas.draw(background, Color.WHITE, 0, -1 * height * 2, width,  height * 3);
 
         //menu
-        press_main_menu = help_draw(main_menu, width/7,height/7, true, 0, null, 0, false) ? 1 : 0;
+        press_main_menu = help_draw(main_menu, width/7,height/7, true, 0, null, 0, false);
 
         //lines
         help_draw_line(width/3, height/2, 2, 0.8f);
@@ -235,8 +235,8 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         scale = BUTTON_SCALE * (sx < sy ? sx : sy);
         this.width = width;
         this.height = height;
-        camera.resize(this.width, this.height);
-        camera.render();
+        camera.getCamera().setToOrtho(false, width, height);
+        camera.getCamera().update();
     }
 
     public void pause() {
@@ -293,12 +293,12 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @param pointer the button or touch finger number
      * @return whether to hand the event to other listeners.
      */
-    int num;
+
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if(press_main_menu == 1){
+        if(press_main_menu){
             listener.exitScreen(this, 0);
         }
-        if (level_clicked >= 1) {
+        else if (level_clicked >= 1) {
             listener.exitScreen(this, level_clicked);
         }
         return true;
@@ -385,12 +385,14 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @return whether to hand the event to other listeners.
      */
     public boolean scrolled(float dx, float dy) {
+        System.out.println("scrolled");
         float y = camera.getCameraPosition2D().y;
         if((y + dy * 40.0f  > height/2  && dy > 0) || (y + dy * 40.0f < (-1 * height))  && dy < 0) {
             camera.setCameraPosition(width/2, camera.getCameraPosition2D().y);
         }
         else
             camera.setCameraPosition(width/2, camera.getCameraPosition2D().y + dy * 40.0f);
+        camera.render();
         return true;
     }
 
