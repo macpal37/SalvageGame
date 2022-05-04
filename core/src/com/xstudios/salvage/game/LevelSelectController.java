@@ -175,6 +175,8 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         help_draw_line(width/3, height + height/3, 8, 1f);
         help_draw_line(width - width/3, height + height/4, 9, 0);
         help_draw_line(width - width/4, height + height/2, 10, 1f);
+        help_draw_line(width/2, 2 * height - height/6, 11, 0.7f);
+        help_draw_line(width/2 + width/12, 2 * height + height/10, 12, -0.2f);
 
         //levels
         Boolean[] levels = {
@@ -187,7 +189,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 help_draw_level(width/4, 2 * height - height/2, 7),
                 help_draw_level(width/2, height + height/6, 8),
                 help_draw_level(width - width/5, height + height/4, 9),
-                help_draw_level(width - width/3, 2 * height - height/3, 10)};
+                help_draw_level(width - width/3, 2 * height - height/3, 10),
+                help_draw_level(width/2 - width/12, 2 * height - height/10, 11),
+                help_draw_level(width - width/4, 2 * height + height/5, 12)};
 
         //clicked level
         for(int i = 0; i < levels.length; i++){
@@ -211,11 +215,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     public void render(float delta) {
         if (active) {
             draw();
-//            if (press_main_menu) {
-//                camera.setCameraPosition(width/2, height/2);
-//                camera.render();
-//                listener.exitScreen(this, 0);
-//            }
         }
     }
 

@@ -216,6 +216,8 @@ public class GameOverController implements Screen, InputProcessor {
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        System.out.println("touchup in gameover");
+        System.out.println("restart game: " + restart_game);
         if (restart_game)
             listener.exitScreen(this, 0);
 

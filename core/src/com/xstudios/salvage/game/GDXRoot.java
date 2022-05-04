@@ -192,7 +192,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		else if (screen == controller) {
 			//pause >> menu
 			if (exitCode == 2) {
-				controller.reset();
 				set_menu(canvas, directory);
 			}
 
@@ -208,7 +207,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		//GAME OVER
 		else if (screen == game_over_controller) {
 			//game over >> restart
+			System.out.println("in gameover");
 			if (exitCode == 0)
+				System.out.println("restart");
 				set_game(canvas, directory);
 
 			//if won update level
@@ -220,13 +221,11 @@ public class GDXRoot extends Game implements ScreenListener {
 
 			//game over >> main menu
 			if (exitCode == 1)
-				controller.reset();
 				set_menu(canvas, directory);
 
 			//game over >> next level, will be main menu if no new level
 			if(exitCode == 2){
 				//main menu instead
-				controller.reset();
 				if(current >= total_levels)
 					set_menu(canvas, directory);
 

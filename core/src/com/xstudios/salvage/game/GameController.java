@@ -217,6 +217,8 @@ public class GameController implements Screen, ContactListener, InputProcessor {
 
     private TextureRegion test;
 
+    float scale1;
+
 
     private enum state {
         PLAYING,
@@ -893,15 +895,15 @@ public class GameController implements Screen, ContactListener, InputProcessor {
             int pY = Gdx.graphics.getHeight() - Gdx.input.getY();
             float y1 =  y + (int)(Gdx.graphics.getHeight()/2 - cameraController.getCameraPosition2D().y);
             float x1 =  x + (int) (Gdx.graphics.getWidth()/2 - cameraController.getCameraPosition2D().x);
-            float w = 0.7f * ox;
-            float h = 0.7f * oy;
+            float w = scale1 * ox;
+            float h = scale1 * oy;
 
             if ((x1 + w > pX && x1 - w < pX) && (y1 + h > pY && y1 - h < pY)) {
                 c = Color.GRAY;
                 if (Gdx.input.isTouched()) clicked = true;
             }
         }
-        canvas.draw(t, c, ox, oy, x, y, 0, 0.7f, 0.7f);
+        canvas.draw(t, c, ox, oy, x, y, 0, scale1, scale1);
         return clicked;
     }
 
@@ -919,10 +921,6 @@ public class GameController implements Screen, ContactListener, InputProcessor {
         if (!debug)
             rayHandler.updateAndRender();
         canvas.begin();
-        canvas.draw(hud, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
-                cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/20f);
-        canvas.draw(oxygen, cameraController.getCameraPosition2D().x - canvas.getWidth()/4f - canvas.getWidth()/75f,
-                cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/17f);
 
         if(diver.carryingItem()){
             canvas.draw(keys, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + canvas.getWidth()/75f,
@@ -954,9 +952,9 @@ public class GameController implements Screen, ContactListener, InputProcessor {
                 canvas.draw(pause_screen, Color.WHITE, cX - canvas.getWidth() / 2f,
                         cY - canvas.getHeight() / 2f, canvas.getWidth(), canvas.getHeight());
 
-                press_resume = help_draw(resume, cX, cY + main_menu.getHeight(), true);
+                press_resume = help_draw(resume, cX, cY + canvas.getHeight()/10, true);
                 press_restart = help_draw(restart, cX, cY, true);
-                exit_home = help_draw(main_menu, cX, cY - main_menu.getHeight(), true);
+                exit_home = help_draw(main_menu, cX, cY - canvas.getHeight()/10, true);
 
             case WIN_GAME:
                 break;
@@ -995,6 +993,9 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      * @param height The new height in pixels
      */
     public void resize(int width, int height) {
+        float sx = ((float)width)/1280;
+        float sy = ((float)height)/720;
+        scale1 = 0.75f * (sx < sy ? sx : sy);
         cameraController.getCamera().setToOrtho(false, width, height);
         cameraController.getCamera().update();
     }
