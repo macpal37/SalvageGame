@@ -3,6 +3,7 @@ package com.xstudios.salvage.desktop;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.xstudios.salvage.game.GDXRoot;
+import org.lwjgl.glfw.GLFW;
 
 
 public class DesktopLauncher {
@@ -11,7 +12,7 @@ public class DesktopLauncher {
         // Resolution 16:9
         config.setWindowedMode(1280, 720);
         config.disableAudio(true);
-//        config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+        GLFW.glfwInit();
 
         new Lwjgl3Application(new GDXRoot(), config);
     }
