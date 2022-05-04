@@ -50,14 +50,14 @@ public class AudioController {
     }
 
     public void setMusic(float v){
-        music.setVolume(v/4 * 0.4f);
-        music_volume = v;
+        music_volume = v/4;
+        music.setVolume(music_volume * 0.4f);
     }
 
     public void setSoundEffects(float s){
-        bubbles.setVolume(s/4 * 0.4f);
-        oxygen_alarm.setVolume(s/4 * 0.4f);
-        sound_effects_volume = s;
+        sound_effects_volume = s/4;
+        bubbles.setVolume(sound_effects_volume * 0.4f);
+        oxygen_alarm.setVolume(sound_effects_volume * 0.4f);
     }
 
 

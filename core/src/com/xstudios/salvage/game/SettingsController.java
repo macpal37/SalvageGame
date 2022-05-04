@@ -239,7 +239,7 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
         camera.getCamera().setToOrtho(false, width, height);
         camera.getCamera().update();
 
-        segment = (int)(line.getWidth() * scale)/4;
+        segment = (int)((line.getWidth() - box.getWidth()/2) * scale)/4;
     }
 
     /**
@@ -324,6 +324,7 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
             tick1 = 2;
             tick2 = 2;
         }
+
         if(music_box) music_box = false;
         if(sound_effects_box) sound_effects_box = false;
         if(press_menu) {
