@@ -66,7 +66,6 @@ public class CameraController {
 
     public void setBounds(int x, int y, int width, int height) {
         bounds = new Rectangle(x - width / 2, y - height / 2, width / 2, height / 2);
-        setCameraPosition(0, 0);
     }
 
     public void setCameraSpeed(float speed) {
@@ -77,17 +76,9 @@ public class CameraController {
         return cameraSpeed;
     }
 
-<<<<<<< HEAD
     public void resize (int width, int height){
         viewport.update(width,height);
         setCameraPosition((float)width/2,(float)height/2);
-=======
-    public void resize(int width, int height) {
-
-        viewport.update(width, height);
-        setCameraPosition((float) width / 2, (float) height / 2);
->>>>>>> beta_merge
-
     }
 
 
@@ -116,47 +107,19 @@ public class CameraController {
         return cameraPosition2D;
     }
 
-<<<<<<< HEAD
-    public void translate(float x, float y){
-        if(cameraPosition.x+x<bounds.width && cameraPosition.x+x>bounds.x
-        && cameraPosition.y+y<bounds.height && cameraPosition.y+y>bounds.y){
-            updatePosition(x,y);
-=======
-
-    public void translate(float x, float y) {
-        if (cameraPosition.x + x < bounds.width && cameraPosition.x + x > bounds.x
-                && cameraPosition.y + y < bounds.height && cameraPosition.y + y > bounds.y) {
-            updatePosition(x, y);
->>>>>>> beta_merge
-        }
-    }
-
-<<<<<<< HEAD
-    private void updatePosition(float x, float y){
-        cameraPosition.add(x, y,0);
-        camera.position.set(cameraPosition);
-    }
-
     public void setViewport(int width, int height){
         viewport.update(width, height);
     }
-=======
+
     private void updatePosition(float x, float y) {
         cameraPosition.add(x, y, 0);
         camera.position.set(cameraPosition);
-    }
-
->>>>>>> beta_merge
-    public void setSmoothSpeed(float smoothSpeed) {
-        this.smoothSpeed = smoothSpeed;
     }
 
     public float getSmoothSpeed() {
         return smoothSpeed;
     }
 
-<<<<<<< HEAD
-=======
     public float getCameraWidth() {
         return viewport.getScreenWidth();
     }
@@ -164,6 +127,5 @@ public class CameraController {
     public float getCameraHeight() {
         return viewport.getScreenHeight();
     }
->>>>>>> beta_merge
 }
 

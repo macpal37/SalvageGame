@@ -31,6 +31,7 @@ public class Player {
     JsonValue json;
 
     public Player(AssetDirectory directory){
+        System.out.println("inside the player directory");
         json = directory.getEntry("player", JsonValue.class);
         sound_effects = json.getInt("sound_effects", 2);
         music = json.getInt("music", 2);

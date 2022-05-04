@@ -30,34 +30,27 @@
     "oxygen_depleted": "ui/oxygen_depleted.png",
     "oxygen_text": "ui/oxygen_text.png",
 
+
+    "setting": "ui/setting.png",
+
     "key_hud": "ui/key_hud.png",
     "flare_hud": "ui/flare.png",
     "body_hud": "ui/body_hud.png",
     "oxygen" : "ui/oxygen.png",
     "keys" : "models/key.png",
-<<<<<<< HEAD
-    "setting": "ui/setting.png",
-    "models:diver": "models/diver.png",
-    "models:diver_swimming": "models/diver_swimming.png",
-    "models:dust": "models/dust.png",
-    "background:settings": "background/settings_background.png",
-    "background:ocean":"background/background1.png",
-    "background:game_over":"background/game_over.png",
-    "background:menu":"background/menu_background.png",
-    "background:level_select":"background/level_select_background.png",
-=======
     "models:wooden_wall" : "models/wooden_wall.png",
-     "models:wooden_chair1" : "models/A_broken_chair_1.png",
-     "models:wooden_chair2" : "models/A_broken_chair_2.png",
-     "models:wooden_table" : "models/A_broken_table_1.png",
+    "models:wooden_chair1" : "models/A_broken_chair_1.png",
+    "models:wooden_chair2" : "models/A_broken_chair_2.png",
+    "models:wooden_table" : "models/A_broken_table_1.png",
 
     "level_editor": "ui/level_editor.png",
 
 
-        "background:ocean":"background/background1.png",
-        "background:game_over":"background/game_over.png",
-        "background:menu":"background/menu_background.png",
-        "background:level_select":"background/level_select_background.png",
+    "background:ocean":"background/background1.png",
+    "background:game_over":"background/game_over.png",
+    "background:menu":"background/menu_background.png",
+    "background:level_select":"background/level_select_background.png",
+    "background:settings":"background/settings_background.png",
 
     "models:diver": "models/diver.png",
     "models:diver_swimming": "models/diver_swimming.png",
@@ -68,9 +61,8 @@
 
     "models:barrel": "models/barrel.png",
     "models:crate": "models/crate.png",
-        "models:flare_animation": "models/flare_animation.png",
+    "models:flare_animation": "models/flare_animation.png",
 
->>>>>>> beta_merge
     "models:key": "models/key.png",
     "models:key_animation": "models/key_glowing.png",
     "models:ping": "models/ping.png",
@@ -80,12 +72,12 @@
     "models:door_closed": "models/door_locked.png",
     "models:hazard": "models/hazard_nails.png",
 
-      "models:kitchen1": "models/kitchen1.png",
-      "models:kitchen2": "models/kitchen2.png",
-      "models:kitchen3": "models/kitchen3.png",
-      "models:kitchen4": "models/kitchen4.png",
-      "models:kitchen5": "models/kitchen5.png",
-      "models:monster1": "models/monster_animation1.png",
+    "models:kitchen1": "models/kitchen1.png",
+    "models:kitchen2": "models/kitchen2.png",
+    "models:kitchen3": "models/kitchen3.png",
+    "models:kitchen4": "models/kitchen4.png",
+    "models:kitchen5": "models/kitchen5.png",
+    "models:monster1": "models/monster_animation1.png",
 
 
     "levels:tilesets:old_ship_tileset":"levels/tilesets/old_ship_tileset.png",
@@ -95,15 +87,9 @@
       "wrapU":"repeated",
       "wrapV": "repeated"
     },
-     "hazard": {
-          "file":"models/hazard_texture.png",
-          "wrapU":"repeated",
-          "wrapV": "repeated"
-<<<<<<< HEAD
-        },
-    "door": {
-      "file": "models/door.png",
-      "wrapU": "repeated",
+    "hazard": {
+      "file":"models/hazard_texture.png",
+      "wrapU":"repeated",
       "wrapV": "repeated"
     },
     "lock" : "ui/lock.png",
@@ -119,9 +105,6 @@
     "10": "ui/levels/Eric.png",
     "11": "ui/levels/Davis.png",
     "12": "ui/levels/Tyler.png"
-=======
-        }
->>>>>>> beta_merge
 
   },
   "jsons"  : {

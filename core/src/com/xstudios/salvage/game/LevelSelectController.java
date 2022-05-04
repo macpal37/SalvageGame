@@ -54,17 +54,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     private CameraController camera;
 
-<<<<<<< HEAD
     private int locked;
 
     private int total_levels;
-=======
-    /**
-     * Returns true if all assets are loaded and the player is ready to go.
-     *
-     * @return true if the player is ready to go
-     */
->>>>>>> beta_merge
 
     public LevelSelectController() {
         level_list = new ArrayList<>();
@@ -85,17 +77,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
     public void setCameraController(CameraController cameraController, int w, int h) {
         this.camera = cameraController;
-<<<<<<< HEAD
         camera.setCameraPosition(width/2, height/2);
         camera.setBounds(width/2, height/2, width, height);
         camera.render();
-=======
-        cameraController.setBounds(0, 0, 5400 * 2 / 5, 3035 * 2 / 5);
-    }
-
-    public void readjustCamera() {
-        camera.setCameraPosition(640.0f, 360.0f);
->>>>>>> beta_merge
     }
 
     public void gatherAssets(AssetDirectory directory) {
@@ -130,7 +114,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         help_draw(line, x, y, false, level, null, angle, true);
     }
 
-<<<<<<< HEAD
     private boolean help_draw_level(int x, int y, int l){
         return help_draw(level, x, y, true, l, level_list.get(l - 1), 0, false);
     }
@@ -146,19 +129,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
                 canvas.draw(t, c, ox, oy, x, height - y, angle, scale, scale);
                 return true;
             }
-=======
-    public boolean pointer1(int x, int y, int width, int height, float scale) {
-        int pX = Gdx.input.getX();
-        int pY = Gdx.input.getY();
-        // Flip to match graphics coordinates
-        y = canvas.getHeight() - y;
-        float y1 = (float) y - (int) (360 - camera.getCameraPosition2D().y);
-        float w = scale * width;
-        float h = scale * height;
-
-        if ((x + w > pX && x - w < pX) && (y1 + h > pY && y1 - h < pY)) {
-            return true;
->>>>>>> beta_merge
         }
         if(tint){
             int pX = Gdx.input.getX();
@@ -187,7 +157,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         return clicked;
     }
 
-<<<<<<< HEAD
     private void draw() {
         canvas.clear();
         canvas.begin();
@@ -229,91 +198,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
             if(levels[i])
                 level_clicked = i + 1;
         }
-=======
-    /**
-     * Draw the status of this player mode.
-     * <p>
-     * We prefer to separate update and draw from one another as separate methods, instead
-     * of using the single render() method that LibGDX does.  We will talk about why we
-     * prefer this in lecture.
-     */
-    private void draw() {
-        canvas.clear();
-        canvas.begin();
-        canvas.draw(background, Color.WHITE, 0, -1 * (background.getWidth() / 2 + background.getWidth() / 5), canvas.getWidth(), background.getWidth());
-
-        Color tint = (pointer1(15, canvas.getHeight() * 7 / 8, main_menu.getWidth(),
-                main_menu.getHeight(), 0.7f) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                main_menu,
-                tint,
-                0,
-                0,
-                15,
-                canvas.getHeight() * 7 / 8,
-                0,
-                0.7f,
-                0.7f);
-        canvas.draw(
-                line,
-                Color.WHITE,
-                level.getWidth() / 2,
-                level.getHeight() / 2,
-                centerX / 3 + centerX / 4,
-                2 * centerY,
-                0,
-                1,
-                1);
-        canvas.draw(
-                line,
-                Color.WHITE,
-                level.getWidth() / 2,
-                level.getHeight() / 2,
-                centerX + centerX / 2,
-                2 * centerY + centerY / 3,
-                0,
-                -1,
-                1);
-        //testing
-        tint = (pointer1(centerX / 3, 2 * centerY, level.getWidth() / 2,
-                level.getHeight() / 2, 1) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                level,
-                tint,
-                level.getWidth() / 2,
-                level.getHeight() / 2,
-                centerX / 3,
-                2 * centerY,
-                0,
-                1,
-                1);
-        tint = (pointer1(centerX,
-                centerY, level.getWidth() / 2,
-                level.getHeight() / 2, 1) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                level,
-                tint,
-                level.getWidth() / 2,
-                level.getHeight() / 2,
-                centerX,
-                centerY,
-                0,
-                1,
-                1);
-        tint = (pointer1(centerX + centerX / 2 + centerX / 6,
-                2 * centerY + centerY / 2, level.getWidth() / 2,
-                level.getHeight() / 2, 1) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                level,
-                tint,
-                level.getWidth() / 2,
-                level.getHeight() / 2,
-                centerX + centerX / 2 + centerX / 6,
-                2 * centerY + centerY / 2,
-                0,
-                1,
-                1);
->>>>>>> beta_merge
 
         canvas.end();
     }
@@ -333,26 +217,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
 
         if (active) {
             draw();
-<<<<<<< HEAD
-=======
-            camera.render();
-
-            // We are ready, notify our listener
-            if (pressState == 101 && listener != null) {
-                camera.setCameraPosition(640, 360);
-                camera.render();
-                listener.exitScreen(this, 0);
-            }
-            if (pressState == 102 && listener != null) {
-                listener.exitScreen(this, 1);
-            }
-            if (pressState == 103 && listener != null) {
-                listener.exitScreen(this, 2);
-            }
-            if (pressState == 104 && listener != null) {
-                listener.exitScreen(this, 3);
-            }
->>>>>>> beta_merge
         }
     }
 
@@ -367,7 +231,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      */
     public void resize(int width, int height) {
         // Compute the drawing scale
-<<<<<<< HEAD
         float sx = ((float)width)/STANDARD_WIDTH;
         float sy = ((float)height)/STANDARD_HEIGHT;
         scale = BUTTON_SCALE * (sx < sy ? sx : sy);
@@ -377,37 +240,20 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         camera.getCamera().update();
     }
 
-=======
-        float sx = ((float) width) / STANDARD_WIDTH;
-        float sy = ((float) height) / STANDARD_HEIGHT;
-        scale = (sx < sy ? sx : sy);
-
-        this.width = (int) (BAR_WIDTH_RATIO * width);
-        centerY = (int) (BAR_HEIGHT_RATIO * height);
-        centerX = width / 2;
-        heightY = height;
-    }
-
     /**
      * Called when the Screen is paused.
      * <p>
      * This is usually when it's not active or visible on screen. An Application is
      * also paused before it is destroyed.
      */
->>>>>>> beta_merge
     public void pause() {
         // TODO Auto-generated method stub
-
     }
-<<<<<<< HEAD
-=======
-
     /**
      * Called when the Screen is resumed from a paused state.
      * <p>
      * This is usually when it regains focus.
      */
->>>>>>> beta_merge
     public void resume() {
         // TODO Auto-generated method stub
 
@@ -446,32 +292,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-<<<<<<< HEAD
-=======
-        if (pressState >= 5) {
-            return true;
-        }
-        if (pointer1(15, canvas.getHeight() * 7 / 8, main_menu.getWidth(),
-                main_menu.getHeight(), 0.7f)) {
-            pressState = 1;
-        }
-        if (pointer1(centerX / 3, 2 * centerY, level.getWidth() / 2,
-                level.getHeight() / 2, 1)) {
-            pressState = 2;
-        }
-        if (pointer1(centerX,
-                centerY, level.getWidth() / 2,
-                level.getHeight() / 2, 1)) {
-            pressState = 3;
-        }
-        if (pointer1(935, 378, level.getWidth() / 2,
-                level.getHeight() / 2, 1)) {
-            pressState = 4;
-        }
-
->>>>>>> beta_merge
-        return false;
+        return true;
     }
+
     /**
      * Called when a finger was lifted or a mouse button was released.
      * <p>
@@ -485,18 +308,12 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      */
 
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-<<<<<<< HEAD
-        if(press_main_menu){
+        if(press_main_menu)
             listener.exitScreen(this, 0);
-        }
-        else if (level_clicked >= 1) {
+
+        else if (level_clicked >= 1)
             listener.exitScreen(this, level_clicked);
-=======
-        if (pressState >= 1) {
-            pressState = pressState + 100;
-            return false;
->>>>>>> beta_merge
-        }
+
         return true;
     }
 
@@ -511,18 +328,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
-<<<<<<< HEAD
     public boolean buttonDown (Controller controller, int buttonCode) {
-=======
-    public boolean buttonDown(Controller controller, int buttonCode) {
-        if (pressState == 0) {
-            ControllerMapping mapping = controller.getMapping();
-            if (mapping != null && buttonCode == mapping.buttonStart) {
-                pressState = 1;
-                return false;
-            }
-        }
->>>>>>> beta_merge
         return true;
     }
 
@@ -537,18 +343,8 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
-<<<<<<< HEAD
+
     public boolean buttonUp (Controller controller, int buttonCode) {
-=======
-    public boolean buttonUp(Controller controller, int buttonCode) {
-        if (pressState == 1) {
-            ControllerMapping mapping = controller.getMapping();
-            if (mapping != null && buttonCode == mapping.buttonStart) {
-                pressState = 2;
-                return false;
-            }
-        }
->>>>>>> beta_merge
         return true;
     }
 
@@ -602,21 +398,14 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
      * @return whether to hand the event to other listeners.
      */
     public boolean scrolled(float dx, float dy) {
-        System.out.println("scrolled");
         float y = camera.getCameraPosition2D().y;
-<<<<<<< HEAD
         if((y + dy * 40.0f  > height/2  && dy > 0) || (y + dy * 40.0f < (-1 * height))  && dy < 0) {
             camera.setCameraPosition(width/2, camera.getCameraPosition2D().y);
         }
         else
             camera.setCameraPosition(width/2, camera.getCameraPosition2D().y + dy * 40.0f);
         camera.render();
-=======
-        if ((y + dy * 40.0f > canvas.getHeight() / 2 && dy > 0) || (y + dy * 40.0f < (-1 * (background.getHeight() / (2.8))) && dy < 0)) {
-            camera.setCameraPosition(640, camera.getCameraPosition2D().y);
-        } else
-            camera.setCameraPosition(640, camera.getCameraPosition2D().y + dy * 40.0f);
->>>>>>> beta_merge
+
         return true;
     }
 

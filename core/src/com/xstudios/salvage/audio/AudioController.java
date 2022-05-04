@@ -20,19 +20,14 @@ public class AudioController {
     private StreamedSoundSource music;
     private StreamedSoundSource bubbles;
     private SoundBuffer background_roar;
-    //    private float max_oxygen;
     private int ticks;
 
-<<<<<<< HEAD
     private float sound_effects_volume;
     private float music_volume;
 
-    public AudioController(float initial_oxygen, float se, float m){
+    public AudioController(float se, float m){
         sound_effects_volume = se/4;
         music_volume = m/4;
-=======
-    private AudioController() {
->>>>>>> beta_merge
         audio = Audio.init();
         SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("audio/heartbeat.wav"));
         SoundBuffer oxygen_alarm_wav = WaveLoader.load(Gdx.files.internal("audio/oxygen_alarm.wav"));
@@ -47,38 +42,26 @@ public class AudioController {
         heartbeat.setLooping(true);
         bubbles.setLooping(true);
         oxygen_alarm.setLooping(true);
-<<<<<<< HEAD
         music.setVolume(0.4f * music_volume);
         bubbles.setVolume(0.4f * sound_effects_volume);
         oxygen_alarm.setVolume(0.4f * sound_effects_volume);
-        max_oxygen = initial_oxygen;
         ticks = 0;
     }
 
-    public void initialize(){
-=======
-        music.setVolume(0.2f);
-        bubbles.setVolume(0.4f);
-        oxygen_alarm.setVolume(0.4f);
-        ticks = 0;
-    }
-
-    public static AudioController getInstance() {
+    public static AudioController getInstance(float se, float m) {
         if (theController == null) {
-            theController = new AudioController();
+            theController = new AudioController(se, m);
         }
         return theController;
     }
 
     public void initialize() {
->>>>>>> beta_merge
         music.play();
         bubbles.play();
         heartbeat.play();
         heartbeat.setVolume(0.0f);
     }
 
-<<<<<<< HEAD
     public void setMusic(float v){
         music_volume = v/4;
         music.setVolume(music_volume * 0.4f);
@@ -90,26 +73,6 @@ public class AudioController {
         oxygen_alarm.setVolume(sound_effects_volume * 0.4f);
     }
 
-
-    public void update(float oxygen){
-        if (ticks > 750){
-            double rand = Math.random();
-            if (rand > 0.5){
-                float roar_volume = (float)(1.15 - rand);
-                audio.play(background_roar, roar_volume * sound_effects_volume);
-            }
-            ticks = 0;
-        }
-        ticks++;
-
-        float volume = (max_oxygen-oxygen)/max_oxygen;
-        heartbeat.setVolume((volume-0.1f) * sound_effects_volume);
-
-        if (((oxygen/max_oxygen) < 0.25f) && !oxygen_alarm.isPlaying()){
-            float oxygen_volume = 0.4f + ((25.0f - oxygen)/50.0f);
-            oxygen_alarm.setVolume(oxygen_volume * sound_effects_volume);
-=======
-
     public void update(float oxygen, float max_oxygen) {
 
         ticks++;
@@ -120,7 +83,6 @@ public class AudioController {
         if (((oxygen / max_oxygen) < 0.25f) && !oxygen_alarm.isPlaying()) {
             float oxygen_volume = 0.4f + ((25.0f - oxygen) / 50.0f);
             oxygen_alarm.setVolume(oxygen_volume);
->>>>>>> beta_merge
             oxygen_alarm.play();
 
         }
@@ -134,17 +96,16 @@ public class AudioController {
 
     public void wood_collision(float force) {
         //float volume = (force)/20.f;
-        audio.play(wood_collision, 0.05f);
+        audio.play(wood_collision, 0.05f * sound_effects_volume);
     }
 
     public void roar() {
         double rand = Math.random();
         float roar_volume = (float) (0.8);
-        audio.play(background_roar, roar_volume);
+        audio.play(background_roar, roar_volume * sound_effects_volume);
     }
 
     public void reset() {
-
         oxygen_alarm.stop();
         heartbeat.stop();
     }

@@ -5,7 +5,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
@@ -251,5 +250,3 @@ public class LoadingMode implements Screen {
     public void hide() {
     }
 }
-
-

@@ -2,30 +2,19 @@ package com.xstudios.salvage.game;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
-<<<<<<< HEAD
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-=======
-import com.badlogic.gdx.Game;
->>>>>>> beta_merge
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
-import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.audio.AudioController;
@@ -38,19 +27,13 @@ import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Queue;
 
-<<<<<<< HEAD
 public class GameController implements Screen, ContactListener, InputProcessor {
-=======
-public class GameController implements Screen, ContactListener {
 
     public int Level = 0;
 
-
->>>>>>> beta_merge
     // Assets
     JsonValue constants;
     /**
@@ -72,20 +55,12 @@ public class GameController implements Screen, ContactListener {
     private Vector3 tempProjectedHud;
     private Vector3 tempProjectedOxygen;
 
-<<<<<<< HEAD
     //pause
     protected Texture pause_screen;
     protected Texture black_spot;
     protected Texture resume;
     protected Texture restart;
     protected Texture main_menu;
-
-    /** The font for giving messages to the player */
-=======
-    /**
-     * The font for giving messages to the player
-     */
->>>>>>> beta_merge
 
     public static BitmapFont displayFont;
 
@@ -94,24 +69,6 @@ public class GameController implements Screen, ContactListener {
      */
     float hostileOxygenDrain = 0.0f;
 
-
-    // Models to be updated
-//    protected DiverModel level.getDiver();
-//
-//    protected ItemModel key;
-//    //    protected ItemModel dead_body;
-//    protected DeadBodyModel dead_body;
-
-//    protected ArrayList<GoalDoor> goalArea = new ArrayList<>();
-//
-//    private Array<Door> doors = new Array<Door>();
-//
-//    /**
-//     * All the objects in the world.
-//     */
-//    protected PooledList<GameObject> objects = new PooledList<GameObject>();
-//
-//    protected PooledList<GameObject> aboveObjects = new PooledList<GameObject>();
     /**
      * Queue for adding objects
      */
@@ -170,8 +127,6 @@ public class GameController implements Screen, ContactListener {
     /**
      * The default value of gravity (going down)
      */
-
-//    protected static final float DEFAULT_GRAVITY = -0.01f;//-4.9f;
 
     protected static final float DEFAULT_GRAVITY = -1f;
 
@@ -260,6 +215,8 @@ public class GameController implements Screen, ContactListener {
 
     private PointLight wallShine;
 
+    AudioController audio;
+
 
     // ======================= CONSTRUCTORS =================================
 
@@ -272,9 +229,7 @@ public class GameController implements Screen, ContactListener {
      */
     protected GameController(Player player) {
         this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
-<<<<<<< HEAD
                 new Vector2(0, DEFAULT_GRAVITY), player);
-        level = 0;
         pause = false;
         exit_home = false;
         press_restart = false;
@@ -283,10 +238,6 @@ public class GameController implements Screen, ContactListener {
 
     public int getTotalLevels(){
         return levels.length;
-=======
-                new Vector2(0, DEFAULT_GRAVITY));
-        curr_level = 0;
->>>>>>> beta_merge
     }
 
     /**
@@ -319,14 +270,10 @@ public class GameController implements Screen, ContactListener {
      * @param bounds  The game bounds in Box2d coordinates
      * @param gravity The gravitational force on this Box2d world
      */
-<<<<<<< HEAD
+
     protected GameController(Rectangle bounds, Vector2 gravity, Player player) {
-        this.player = player;
-=======
-    protected GameController(Rectangle bounds, Vector2 gravity) {
         this.tempProjectedHud = new Vector3(0, 0, 0);
         this.tempProjectedOxygen = new Vector3(0, 0, 0);
->>>>>>> beta_merge
         world = new World(gravity.scl(1), false);
         this.bounds = new Rectangle(bounds);
         this.scale = new Vector2(1, 1);
@@ -340,9 +287,6 @@ public class GameController implements Screen, ContactListener {
         forceCache = new Vector2(0, 0);
         rayHandler = new RayHandler(world);
         rayHandler.setAmbientLight(.015f);
-//        rayHandlerFlare = new RayHandler(world);
-//        rayHandlerFlare.setAmbientLight(1f);
-//        RayHandler.useDiffuseLight(true);
 
         light = new PointLight(rayHandler, 100, Color.BLACK, 15, 0, 0);
         wallShine = new PointLight(rayHandler, 100, Color.BLUE, 8, 0, 0);
@@ -363,14 +307,11 @@ public class GameController implements Screen, ContactListener {
 
         wallShine.setContactFilter(f2);
         light.setContactFilter(f);
-<<<<<<< HEAD
-        audioController = new AudioController(100.0f, (float)this.player.getMusic(), (float)this.player.getSoundEffects());
-        audioController.initialize();
-=======
-//        audioController = new AudioController(100.0f);
-        AudioController.getInstance().initialize();
->>>>>>> beta_merge
+
+        audio = AudioController.getInstance((float)player.getMusic(), (float)player.getSoundEffects());
+        audio.initialize();
         collisionController = new CollisionController();
+        collisionController.setAudio(audio);
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
 
@@ -392,7 +333,7 @@ public class GameController implements Screen, ContactListener {
     }
 
     public AudioController getAudio(){
-        return audioController;
+        return audio;
     }
 
     public void setLevel(int l) {
@@ -413,6 +354,10 @@ public class GameController implements Screen, ContactListener {
     public void setCameraController(CameraController cameraController) {
         this.cameraController = cameraController;
         cameraController.setBounds(0, 0, 5400 * 2 / 5, 3035 * 2 / 5);
+    }
+
+    public void setDefaultPosition(){
+        cameraController.setCameraPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
     }
 
     /**
@@ -441,24 +386,18 @@ public class GameController implements Screen, ContactListener {
         addQueue.clear();
         world.dispose();
         rayHandler.dispose();
-//        rayHandlerFlare.dispose();
-
         level.dispose();
         addQueue = null;
         bounds = null;
         scale = null;
         world = null;
         canvas = null;
-<<<<<<< HEAD
         pause = false;
         exit_home = false;
         press_restart = false;
         press_resume = false;
-        audioController.dispose();
+        audio.dispose();
         player = null;
-=======
-//        audioController.dispose();
->>>>>>> beta_merge
     }
 
     Texture plantAnimation;
@@ -553,7 +492,7 @@ public class GameController implements Screen, ContactListener {
         level.getAllObjects().clear();
         level.getAboveObjects().clear();
         addQueue.clear();
-        AudioController.getInstance().reset();
+        audio.reset();
         populateLevel();
     }
 
@@ -585,15 +524,13 @@ public class GameController implements Screen, ContactListener {
     private void updateGameState() {
         if (level.getDiver().getOxygenLevel() <= 0) {
             game_state = state.LOSE_GAME;
-        }
-<<<<<<< HEAD
-        else if(pause) game_state = state.PAUSE;
-        else if(!pause) game_state = state.PLAYING;
-=======
-        if (reach_target) {
+        } else if (reach_target) {
             game_state = state.WIN_GAME;
+        } else if(pause) {
+            game_state = state.PAUSE;
+        } else {
+            game_state = state.PLAYING;
         }
->>>>>>> beta_merge
     }
 
 
@@ -601,18 +538,14 @@ public class GameController implements Screen, ContactListener {
     private void updatePlayingState() {
         // apply movement
         InputController input = InputController.getInstance();
-<<<<<<< HEAD
+
         if(input.isPause()){
             pause();
         }
-        diver.setHorizontalMovement(input.getHorizontal() * diver.getForce());
-        diver.setVerticalMovement(input.getVertical() * diver.getForce());
-=======
-        if (input.isPause()) pause();
+
         level.getDiver().setHorizontalMovement(input.getHorizontal() * level.getDiver().getForce());
         level.getDiver().setVerticalMovement(input.getVertical() * level.getDiver().getForce());
 
->>>>>>> beta_merge
 
         // stop boosting when player has slowed down enough
         if (level.getDiver().getLinearVelocity().len() < 15 && level.getDiver().isBoosting()) {
@@ -699,7 +632,7 @@ public class GameController implements Screen, ContactListener {
 
         // update audio according to oxygen level
 
-        AudioController.getInstance().update(level.getDiver().getOxygenLevel(), level.getDiver().getMaxOxygen());
+        audio.update(level.getDiver().getOxygenLevel(), level.getDiver().getMaxOxygen());
 
 
         if (level.getDiver().getBody() != null && !pause) {
@@ -718,12 +651,6 @@ public class GameController implements Screen, ContactListener {
 
         cameraController.render();
     }
-
-    public void setPause(boolean pause) {
-        this.pause = pause;
-    }
-
-    public boolean pause;
 
     /**
      * Returns whether to process the update loop
@@ -777,53 +704,23 @@ public class GameController implements Screen, ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-<<<<<<< HEAD
-        for (Door door : doors) {
-            door.setActive(!door.getUnlock(diver.getItem()));
-=======
         for (Door door : level.getDoors()) {
-
             door.setActive(!door.getUnlock(level.getDiver().getItem()));
->>>>>>> beta_merge
         }
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
-//        rayHandlerFlare.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
-
-        //monsterController.update(level.getDiver());
-
 
         monsterController.update(hostileOxygenDrain, level.getDiver());
         Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
-//        Wall add_wall = tentacles.poll();
-//        if (add_wall != null && add_wall.canSpawnTentacle()) {
-//            Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
-//            addQueuedObject(t);
-//        }
+
         while (tentacles.size() > 0) {
             Wall add_wall = tentacles.poll();
             if (add_wall.canSpawnTentacle() && add_wall != null) {
                 Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
                 addQueuedObject(t);
-                AudioController.getInstance().roar();
+                audio.roar();
             }
         }
-//        for (Tentacle t : monsterController.getMonster().getTentacles()) {
-//            Wall w = t.getSpawnWall();
-//            System.out.println(w);
-//            if (w.canSpawnTentacle()) {
-//                t = levelBuilder.createTentcle(t, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
-//                addQueuedObject(t);
-//            }
-//        }
-
-        //** ADDING TENTACLES TO WalL!
-//        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
-//            Wall w = level.getDiver().getTouchedWall();
-//            Tentacle t = levelBuilder.createTentcle(w, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
-//            addQueuedObject(t);
-//        }
-
 
         switch (game_state) {
             case PLAYING:
@@ -835,25 +732,9 @@ public class GameController implements Screen, ContactListener {
                     resume();
                 }
                 break;
-            // could be useful later but currently just has updates for PLAYING state
-//            case WIN_GAME:
-//
-//            break;
-//            case LOSE_GAME:
-//
-//            break;
         }
-
-
-        // apply movement
-
-
         updateGameState();
 
-        //deal with hazard stun
-
-
-//        System.out.println("STUN: " + level.getDiver().getStunCooldown());
         if (level.getDiver().getStunCooldown() > 0) {
             System.out.println("PAIN: " + hostileOxygenDrain);
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
@@ -922,12 +803,6 @@ public class GameController implements Screen, ContactListener {
         }
     }
 
-<<<<<<< HEAD
-
-=======
-    int tick = 0;
->>>>>>> beta_merge
-
     /**
      * Draw the physics objects to the canvas
      * <p>
@@ -961,13 +836,11 @@ public class GameController implements Screen, ContactListener {
         return clicked;
     }
 
+    int tick = 0;
+
     public void draw(float dt) {
         tick++;
         canvas.clear();
-<<<<<<< HEAD
-=======
-
->>>>>>> beta_merge
         canvas.begin();
 
         // draw game objects
@@ -987,19 +860,13 @@ public class GameController implements Screen, ContactListener {
 
             obj.draw(canvas);
         }
-<<<<<<< HEAD
-
-=======
         level.getDiver().draw(canvas);
->>>>>>> beta_merge
+
         canvas.end();
         if (!debug) {
             rayHandler.updateAndRender();
-//            rayHandlerFlare.updateAndRender();
         }
         canvas.begin();
-<<<<<<< HEAD
-=======
 
         switch (game_state) {
             case PLAYING:
@@ -1078,32 +945,11 @@ public class GameController implements Screen, ContactListener {
                 }
 
                 break;
->>>>>>> beta_merge
-
-        if(diver.carryingItem()){
-            canvas.draw(keys, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f + canvas.getWidth()/75f,
-                    cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
-        }
-        if(diver.hasBody()){
-            canvas.draw(deadBodyTexture, cameraController.getCameraPosition2D().x - canvas.getWidth()/2f,
-                    cameraController.getCameraPosition2D().y + canvas.getHeight()/3f + canvas.getHeight()/50f);
-        }
-
-<<<<<<< HEAD
-        canvas.drawText(
-                "Oxygen Level: " + (int) diver.getOxygenLevel(),
-                displayFont,
-                cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + 50,
-                cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f + 50);
-
-        switch (game_state) {
-            case PLAYING:
-                break;
 
             case PAUSE:
                 float cX = cameraController.getCameraPosition2D().x;
                 float cY = cameraController.getCameraPosition2D().y;
-                if(Gdx.input.justTouched()) {
+                if (Gdx.input.justTouched()) {
                     System.out.println("x: " + cX + " y: " + cY);
                     System.out.println(Gdx.input.getX() + " " + Gdx.input.getY());
                 }
@@ -1111,29 +957,13 @@ public class GameController implements Screen, ContactListener {
                 canvas.draw(pause_screen, Color.WHITE, cX - canvas.getWidth() / 2f,
                         cY - canvas.getHeight() / 2f, canvas.getWidth(), canvas.getHeight());
 
-                press_resume = help_draw(resume, cX, cY + canvas.getHeight()/10, true);
+                press_resume = help_draw(resume, cX, cY + canvas.getHeight() / 10, true);
                 press_restart = help_draw(restart, cX, cY, true);
-                exit_home = help_draw(main_menu, cX, cY - canvas.getHeight()/10, true);
+                exit_home = help_draw(main_menu, cX, cY - canvas.getHeight() / 10, true);
 
             case WIN_GAME:
                 break;
-        }
-        for (GameObject o : objects) {
-            if (o instanceof DiverObjectModel && ((DiverObjectModel) o).isCarried()) {
-                DiverObjectModel d_obj = (DiverObjectModel) o;
-=======
->>>>>>> beta_merge
-
-//        for (GameObject o : level.getAllObjects()) {
-//            if (o instanceof DiverObjectModel && ((DiverObjectModel) o).isCarried()) {
-//                DiverObjectModel d_obj = (DiverObjectModel) o;
-//
-//                canvas.draw(d_obj.getTexture(), d_obj.getColor(), d_obj.origin.x, d_obj.origin.y,
-//                        cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f + d_obj.getDrawSymbolPos().x,
-//                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f + d_obj.getDrawSymbolPos().y,
-//                        d_obj.getAngle(), d_obj.getDrawSymbolScale().x, d_obj.getDrawSymbolScale().y);
-//            }
-//        }
+            }
 
         canvas.end();
 
@@ -1146,8 +976,8 @@ public class GameController implements Screen, ContactListener {
             }
             canvas.endDebug();
         }
-
     }
+
 
     /**
      * Called when the Screen is resized.

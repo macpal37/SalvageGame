@@ -29,42 +29,11 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * Background texture for start-up
      */
     private Texture background;
-
-<<<<<<< HEAD
     /** Height of the progress bar */
     private static float BUTTON_SCALE  = 0.75f;
     private static int STANDARD_WIDTH = 1280;
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = 720;
-=======
-    private ScrollPane scroll;
-    private Actor widget;
-
-    /**
-     * Default budget for asset loader (do nothing but load 60 fps)
-     */
-    private static int DEFAULT_BUDGET = 15;
-    /**
-     * Standard window size (for scaling)
-     */
-    private static int STANDARD_WIDTH = 800;
-    /**
-     * Standard window height (for scaling)
-     */
-    private static int STANDARD_HEIGHT = 700;
-    /**
-     * Ratio of the bar width to the screen
-     */
-    private static float BAR_WIDTH_RATIO = 0.66f;
-    /**
-     * Ration of the bar height to the screen
-     */
-    private static float BAR_HEIGHT_RATIO = 0.25f;
-    /**
-     * Height of the progress bar
-     */
-    private static float BUTTON_SCALE = 0.75f;
->>>>>>> beta_merge
 
     /**
      * Reference to GameCanvas created by the root
@@ -75,14 +44,10 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      */
     private ScreenListener listener;
 
-<<<<<<< HEAD
-    /** Background Texture */
-=======
     /**
      * Background Texture
      */
     protected Texture title;
->>>>>>> beta_merge
     protected Texture quit;
     protected Texture select_level;
     protected Texture setting;
@@ -94,44 +59,18 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
     private boolean release;
 
-<<<<<<< HEAD
     private int width;
     private int height;
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
 
     CameraController camera;
-=======
-    /**
-     * The y-coordinate of the center of the progress bar
-     */
-    private int centerY;
-    /**
-     * The x-coordinate of the center of the progress bar
-     */
-    private int centerX;
-    /**
-     * The height of the canvas window (necessary since sprite origin != screen origin)
-     */
-    private int heightY;
-    /**
-     * Scaling factor for when the student changes the resolution.
-     */
-    private float scale;
-
-    /**
-     * The current state of the play button
-     */
-    private int pressState;
->>>>>>> beta_merge
-
 
     /**
      * Whether or not this player mode is still active
      */
     private boolean active;
 
-<<<<<<< HEAD
     public MenuController() {
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
@@ -144,28 +83,9 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
     public void setCameraController(CameraController cameraController) {
         this.camera = cameraController;
-        camera.setCameraPosition(width/2, height/2);
-        camera.setBounds(width/2, height/2, width, height);
+        camera.setCameraPosition(width / 2, height / 2);
+        camera.setBounds(width / 2, height / 2, width, height);
         camera.render();
-=======
-    /**
-     * Returns true if all assets are loaded and the player is ready to go.
-     *
-     * @return true if the player is ready to go
-     */
-    private int width;
-    private int height;
-
-    public MenuController() {
-        // Load the next two images immediately.
-
-        pressState = 0;
-        width = Gdx.graphics.getWidth();
-        height = Gdx.graphics.getHeight();
-
-
-        Gdx.input.setInputProcessor(this);
->>>>>>> beta_merge
     }
 
     public void setActive() {
@@ -177,27 +97,15 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     }
 
     public void gatherAssets(AssetDirectory directory) {
-<<<<<<< HEAD
-        background =  directory.getEntry( "background:menu", Texture.class );
-=======
         background = directory.getEntry("background:menu", Texture.class);
         title = directory.getEntry("title", Texture.class);
->>>>>>> beta_merge
         quit = directory.getEntry("quit", Texture.class);
         setting = directory.getEntry("setting", Texture.class);
         select_level = directory.getEntry("select_level", Texture.class);
         tentacles = directory.getEntry("screen_tentacles", Texture.class);
     }
 
-<<<<<<< HEAD
     public void dispose(){
-=======
-    /**
-     * Called when this screen should release all resources.
-     */
-    public void dispose() {
-        pressState = 0;
->>>>>>> beta_merge
         background = null;
         active = false;
         quit = null;
@@ -209,13 +117,12 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         release = false;
     }
 
-<<<<<<< HEAD
     private boolean help_draw(Texture t, int x, int y, boolean tint){
         int ox = t.getWidth()/2;
         int oy = t.getHeight()/2;
         Color c = Color.WHITE;
         boolean clicked = false;
-        if(tint){
+        if(tint) {
             int pX = Gdx.input.getX();
             int pY = Gdx.input.getY();
             // Flip to match graphics coordinates
@@ -223,28 +130,15 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
             float w = 0.7f * scale * ox;
             float h = 0.7f * scale * oy;
 
-            if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
+            if ((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)) {
                 c = Color.GRAY;
-                if(Gdx.input.isTouched()) clicked = true;
+                if (Gdx.input.isTouched()) clicked = true;
             }
-=======
-    public boolean pointer1(int x, int y, int width, int height, float scale) {
-        float pX = Gdx.input.getX();
-        float pY = Gdx.input.getY();
-        // Flip to match graphics coordinates
-        y = canvas.getHeight() - y;
-        float w = scale * width;
-        float h = scale * height;
-
-        if ((x + w > pX && x - w < pX) && (y + h > pY && y - h < pY)) {
-            return true;
->>>>>>> beta_merge
         }
         canvas.draw(t, c, ox, oy, x, y, 0, 0.7f *  scale, 0.7f * scale);
         return clicked;
     }
 
-<<<<<<< HEAD
     private void draw() {
         canvas.begin();
 
@@ -256,47 +150,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         press_setting = help_draw(setting, width/3, height/2 - height/10, true);
 
         press_quit = help_draw(quit, width/3, height/6 + height/20, true);
-=======
-    /**
-     * Draw the status of this player mode.
-     * <p>
-     * We prefer to separate update and draw from one another as separate methods, instead
-     * of using the single render() method that LibGDX does.  We will talk about why we
-     * prefer this in lecture.
-     */
-    private void draw() {
-        canvas.begin();
-        canvas.draw(background, Color.WHITE, 0, 0, width, height);
-        System.out.println("width: " + width +  " height: " + height);
-        canvas.draw(title, Color.WHITE, title.getWidth() / 2, title.getHeight() / 2, width/2, height - height/4, 0, scale, scale);
-        Color tint = (pointer1(width/2, height/2, select_level.getWidth() / 2, select_level.getHeight() / 2, scale) ? Color.GRAY : Color.WHITE);
-        canvas.draw(select_level, tint, select_level.getWidth() / 2, select_level.getHeight() / 2, width/2, height/2, 0, scale, scale);
-        tint = (pointer1(centerX, centerY + centerY / 2, level_editor.getWidth() / 2,
-                level_editor.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                level_editor,
-                tint,
-                level_editor.getWidth() / 2,
-                level_editor.getHeight() / 2,
-                centerX,
-                centerY + centerY / 2,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
-        tint = (pointer1(centerX,
-                centerY, quit.getWidth() / 2,
-                quit.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                quit,
-                tint,
-                quit.getWidth() / 2,
-                quit.getHeight() / 2,
-                centerX,
-                centerY,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
->>>>>>> beta_merge
 
         canvas.end();
     }
@@ -315,7 +168,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     public void render(float delta) {
         if (active) {
             draw();
-
         }
     }
 
@@ -329,9 +181,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @param height The new height in pixels
      */
     public void resize(int width, int height) {
-        // Compute the drawing scale
-<<<<<<< HEAD
-
         float sx = ((float)width)/STANDARD_WIDTH;
         float sy = ((float)height)/STANDARD_HEIGHT;
         scale = BUTTON_SCALE * (sx < sy ? sx : sy);
@@ -341,21 +190,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         camera.getCamera().update();
     }
 
-    public void setDefaultCamera(){
-        camera.setCameraPosition(width/2, height/2);
-=======
-        float sx = ((float) width) / STANDARD_WIDTH;
-        float sy = ((float) height) / STANDARD_HEIGHT;
-        scale = (sx < sy ? sx : sy);
-        this.width = width;
-        this.height = height;
-        System.out.println("resize");
-//        this.width = (int) (BAR_WIDTH_RATIO * width);
-//        centerY = (int) (BAR_HEIGHT_RATIO * height);
-//        centerX = width / 2;
-//        heightY = height;
->>>>>>> beta_merge
-    }
 
     /**
      * Called when the Screen is paused.
@@ -420,39 +254,8 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-<<<<<<< HEAD
         return true;
-=======
-        if (pressState >= 4) {
-            return true;
-        }
-
-        // Flip to match graphics coordinates
-        screenY = heightY - screenY;
-
-        // TODO: Fix scaling
-        if (pointer1(centerX, centerY + centerY, select_level.getWidth() / 2,
-                select_level.getHeight() / 2, BUTTON_SCALE * scale)) {
-            pressState = 1;
-        }
-
-        if (pointer1(centerX,
-                centerY + centerY / 2, level_editor.getWidth() / 2,
-                level_editor.getHeight() / 2, BUTTON_SCALE * scale)) {
-            pressState = 2;
-            return false;
-        }
-
-        if (pointer1(centerX,
-                centerY, quit.getWidth() / 2,
-                quit.getHeight() / 2, BUTTON_SCALE * scale)) {
-            pressState = 3;
-            return false;
-        }
-        return false;
->>>>>>> beta_merge
     }
-
 
     /**
      * Called when a finger was lifted or a mouse button was released.
@@ -489,18 +292,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
-<<<<<<< HEAD
     public boolean buttonDown (Controller controller, int buttonCode) {
-=======
-    public boolean buttonDown(Controller controller, int buttonCode) {
-        if (pressState == 0) {
-            ControllerMapping mapping = controller.getMapping();
-            if (mapping != null && buttonCode == mapping.buttonStart) {
-                pressState = 1;
-                return false;
-            }
-        }
->>>>>>> beta_merge
         return true;
     }
 
@@ -515,18 +307,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
-<<<<<<< HEAD
     public boolean buttonUp (Controller controller, int buttonCode) {
-=======
-    public boolean buttonUp(Controller controller, int buttonCode) {
-        if (pressState == 1) {
-            ControllerMapping mapping = controller.getMapping();
-            if (mapping != null && buttonCode == mapping.buttonStart) {
-                pressState = 2;
-                return false;
-            }
-        }
->>>>>>> beta_merge
         return true;
     }
 
