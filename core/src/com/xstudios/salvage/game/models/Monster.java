@@ -20,7 +20,8 @@ public class Monster extends GameObject {
     private float aggrivation = 0.0f;
     private final float RADIUS = 7;
     private CircleShape radialPresence;
-    private FilmStrip tentacleSprite;
+    private FilmStrip tentacleAttackSprite;
+    private FilmStrip tentacleIdleSprite;
     private ArrayList<Wall> targetLocations;
     private int invincibility_time = 0;
 
@@ -82,9 +83,15 @@ public class Monster extends GameObject {
     private int startingFrame = 0;
 
 
-    public void setTentacleSprite(FilmStrip value) {
-        tentacleSprite = value;
-        tentacleSprite.setFrame(11);
+    public void setAttackTentacleSprite(FilmStrip value) {
+        tentacleAttackSprite = value;
+        tentacleAttackSprite.setFrame(11);
+    }
+
+    public void setIdleTentacleSprite(FilmStrip value) {
+        tentacleIdleSprite = value;
+        tentacleIdleSprite.setFrame(11);
+        // TODO: why 11
     }
 
 
@@ -102,7 +109,7 @@ public class Monster extends GameObject {
     
     public void spawnTenctacle(DiverModel diver) {
         Tentacle tentacle = new Tentacle(diver.getX(), diver.getY());
-        tentacle.setFilmStrip(tentacleSprite.copy());
+        tentacle.setFilmStrip(tentacleAttackSprite.copy());
     }
 
     public void addTentacle(Wall wall) {
@@ -119,6 +126,8 @@ public class Monster extends GameObject {
     public void removeLocation(Wall location) {targetLocations.remove(location); }
 
     public Queue<Wall> getTentacles() { return tentacles; }
+
+    public Queue<Wall> getIdleTentacles() { return idle_tentacles; }
 
     public ArrayList<Wall> getSpawnLocations() { return targetLocations; }
 

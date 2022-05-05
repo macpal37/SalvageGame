@@ -65,7 +65,7 @@ public class MonsterController {
 
     private ArrayList<Tentacle> tentacles = new ArrayList<>();
 
-    private float aggrivation_threshold = 6.0f;
+    private float aggrivation_threshold = 16.0f;
 
     /**
      * Creates an AIController for the ship with the given id.
@@ -87,8 +87,8 @@ public class MonsterController {
 
     public void wallCollision() {
         float agg = monster.getAggrivation();
-        if (agg < 7.0f) {
-            monster.setAggrivation(agg + 1.0f);
+        if (agg < aggrivation_threshold) {
+            monster.setAggrivation(agg + 3f);
         }
     }
 
@@ -151,9 +151,10 @@ public class MonsterController {
      */
     public void update(float aggrivationDrain, DiverModel diver) {
         tick++;
+        System.out.println("AGGRIVATION " + monster.getAggrivation());
         if (tick % 50 == 0) {
             if (monster.getAggrivation() > 0.0f) {
-                float aggrivation = monster.getAggrivation() - 0.5f;
+                float aggrivation = monster.getAggrivation() - .2f;
                 monster.setAggrivation(aggrivation);
             }
         }

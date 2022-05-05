@@ -40,13 +40,17 @@ public class Tentacle extends GameObject {
     private int total_frames = 30;
 
     private Wall spawnWall;
+    private int animation_length;
 
     public Tentacle(Wall wall, float len) {
         this(wall.getTentacleSpawnPosition().x, wall.getTentacleSpawnPosition().y);
         spawnWall = wall;
         spawnWall.setHasTentcle(true);
         setAngle(wall.getTentacleRotation() / 180 * (float) Math.PI);
-//        animation_length = (int)(len*16/10);
+        System.out.println("length " + len);
+        extend_frame_length = Math.min(extend_frame_length,(int)(len));
+//        setStartGrowing(false);
+        System.out.println("extend frame length: " + extend_frame_length);
         System.out.println("LENGTH " + len);
     }
 
@@ -145,8 +149,10 @@ public class Tentacle extends GameObject {
     public void update() {
         life++;
 
-        if (life > maxLifeSpan && startGrowing) {
-            setStartGrowing(false);
+//        if (life > maxLifeSpan && startGrowing) {
+        System.out.println("frame " + frame + " max life span " + extend_frame_length);
+        if (frame >= extend_frame_length && life > maxLifeSpan && startGrowing) {
+                setStartGrowing(false);
         }
 
         if (frame == 1) {
@@ -182,7 +188,8 @@ public class Tentacle extends GameObject {
      */
     public void setStartGrowing(boolean startGrowing) {
         this.startGrowing = startGrowing;
-        if(!startGrowing && frame < extend_frame_length) {
+        System.out.println("start growing: " + startGrowing + " frame " + frame + " total frame " + extend_frame_length);
+        if(!startGrowing && frame <= extend_frame_length) {
             frame = total_frames - frame;
         }
     }

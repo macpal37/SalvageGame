@@ -43,7 +43,8 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion background;
 
 
-    protected Texture monsterTenctacle;
+    protected Texture monsterAttackTenctacle;
+    protected Texture monsterIdleTenctacle;
     protected Texture flareAnimation;
     protected TextureRegion hud;
     protected TextureRegion oxygen;
@@ -468,7 +469,8 @@ public class GameController implements Screen, ContactListener {
         keyHud = new TextureRegion(directory.getEntry("key_hud", Texture.class));
         flareHud = new TextureRegion(directory.getEntry("flare_hud", Texture.class));
         oxygen = new TextureRegion(directory.getEntry("oxygen", Texture.class));
-        monsterTenctacle = directory.getEntry("models:monster1", Texture.class);
+        monsterAttackTenctacle = directory.getEntry("models:monster1", Texture.class);
+        monsterIdleTenctacle = directory.getEntry("models:monster2", Texture.class);
         plantAnimation = directory.getEntry("models:plant", Texture.class);
 
         //pause
@@ -549,7 +551,8 @@ public class GameController implements Screen, ContactListener {
             addObject(obj);
         }
         monster = new Monster(level.getDiver().getX(), level.getDiver().getY());
-        monster.setTentacleSprite(new FilmStrip(monsterTenctacle, 1, 30, 30));
+        monster.setAttackTentacleSprite(new FilmStrip(monsterAttackTenctacle, 1, 30, 30));
+        monster.setIdleTentacleSprite(new FilmStrip(monsterIdleTenctacle, 5, 5, 23));
         monster.setDrawScale(scale);
         monster.setName("Monster");
         monsterController = new MonsterController(monster);
@@ -757,6 +760,7 @@ public class GameController implements Screen, ContactListener {
 
         monsterController.update(hostileOxygenDrain, level.getDiver());
         Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
+        Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
 //        Wall add_wall = tentacles.poll();
 //        if (add_wall != null && add_wall.canSpawnTentacle()) {
 //            Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
@@ -766,9 +770,18 @@ public class GameController implements Screen, ContactListener {
             Wall add_wall = tentacles.poll();
             if (add_wall.canSpawnTentacle() && add_wall != null) {
 
-                Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), 1f, add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30));
+                Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), .6f, add_wall, new FilmStrip(monsterAttackTenctacle, 1, 30, 30));
                 addQueuedObject(t);
                 AudioController.getInstance().roar();
+            }
+        }
+        while (idle_tentacles.size() > 0) {
+            Wall add_wall = idle_tentacles.poll();
+            if (add_wall.canSpawnTentacle() && add_wall != null) {
+
+                Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), 1f, add_wall, new FilmStrip(monsterIdleTenctacle, 5, 5, 23));
+                addQueuedObject(t);
+//                AudioController.getInstance().roar();
             }
         }
 //        for (Tentacle t : monsterController.getMonster().getTentacles()) {
