@@ -66,6 +66,10 @@ public class MonsterController {
     private ArrayList<Tentacle> tentacles = new ArrayList<>();
 
 
+    public boolean isMonsterActive() {
+        return monster.isActive();
+    }
+
     /**
      * Creates an AIController for the ship with the given id.
      *
@@ -85,31 +89,34 @@ public class MonsterController {
     }
 
     public void wallCollision() {
-        float agg = monster.getAggrivation();
-        if (agg < 7.0f) {
-            monster.setAggrivation(agg + 1.0f);
+        if (monster != null) {
+            float agg = monster.getAggravation();
+            if (agg < monster.getAggroLevel() + 1) {
+                monster.setAggravation(agg + monster.getAggravationRate());
+            }
         }
+
     }
 
     /**
-     * Change the state of the monster based on aggrivation levels
+     * Change the state of the monster based on aggravation levels
      */
     private void changeStateIfApplicable() {
         // Add initialization code as necessary
-        float aggrivation = monster.getAggrivation();
+        float aggravation = monster.getAggravation();
 
         // Next state depends on current state.
         switch (state) {
 
             case IDLE:
-                if (aggrivation > 6.0f) {
+                if (aggravation > monster.getAggroLevel()) {
                     state = FSMState.AGGRIVATED;
                     monster.setAggressiveLength(MAX_INVINCIBILITY);
                 }
                 break;
 
             case AGGRIVATED:
-                if (aggrivation <= 6.0f || monster.getAggressiveLength() <= 0) {
+                if (aggravation <= monster.getAggroLevel() || monster.getAggressiveLength() <= 0) {
 //                    monster.reduceInvincibilityTime();
                     state = FSMState.IDLE;
                 } else {
@@ -146,14 +153,14 @@ public class MonsterController {
 
 
     /**
-     * Change the state of the monster based on aggrivation levels
+     * Change the state of the monster based on aggravation levels
      */
-    public void update(float aggrivationDrain, DiverModel diver) {
+    public void update(float aggravationDrain, DiverModel diver) {
         tick++;
         if (tick % 50 == 0) {
-            if (monster.getAggrivation() > 0.0f) {
-                float aggrivation = monster.getAggrivation() - 0.5f;
-                monster.setAggrivation(aggrivation);
+            if (monster.getAggravation() > 0.0f) {
+                float aggravation = monster.getAggravation() - 0.5f;
+                monster.setAggravation(aggravation);
             }
         }
         for (FlareModel flare : diver.getFlares()) {
@@ -189,7 +196,7 @@ public class MonsterController {
                     if (final_loc != null) {
                         //System.out.println(final_loc);
                         monster.addTentacle(final_loc);
-                        //monster.setAggrivation(0.0f);
+                        //monster.setAggravation(0.0f);
                     }
                 }
                 break;
