@@ -65,6 +65,7 @@ public class MonsterController {
 
     private ArrayList<Tentacle> tentacles = new ArrayList<>();
 
+    private float aggrivation_threshold = 6.0f;
 
     /**
      * Creates an AIController for the ship with the given id.
@@ -102,14 +103,14 @@ public class MonsterController {
         switch (state) {
 
             case IDLE:
-                if (aggrivation > 6.0f) {
+                if (aggrivation > aggrivation_threshold) {
                     state = FSMState.AGGRIVATED;
                     monster.setAggressiveLength(MAX_INVINCIBILITY);
                 }
                 break;
 
             case AGGRIVATED:
-                if (aggrivation <= 6.0f || monster.getAggressiveLength() <= 0) {
+                if (aggrivation <= aggrivation_threshold || monster.getAggressiveLength() <= 0) {
 //                    monster.reduceInvincibilityTime();
                     state = FSMState.IDLE;
                 } else {
@@ -156,9 +157,7 @@ public class MonsterController {
                 monster.setAggrivation(aggrivation);
             }
         }
-        for (FlareModel flare : diver.getFlares()) {
 
-        }
         monster.moveMonster(diver.getPosition());
         changeStateIfApplicable();
 //        System.out.println(state);
@@ -168,6 +167,21 @@ public class MonsterController {
 
         switch (state) {
 
+            case IDLE:
+                if (tick % 250 == 0) {
+                    Wall final_loc = null;
+                    for (Wall wall : monster.getSpawnLocations()) {
+                        if (wall.canSpawnTentacle()) {
+                            final_loc = wall;
+                        }
+                    }
+                    if (final_loc != null) {
+                        //System.out.println(final_loc);
+                        monster.addIdleTentacle(final_loc);
+                        //monster.setAggrivation(0.0f);
+                    }
+                }
+                break;
             case AGGRIVATED:
                 if (tick % 250 == 0) {
                     float best_distance = 10000.0f;

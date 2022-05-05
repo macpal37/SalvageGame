@@ -484,4 +484,101 @@ public class CollisionController {
         }
     }
 
+
+    /**
+     * Used to tell if the diver and flare are in range of each other
+     *
+     * @param b1
+     * @param b2
+     */
+
+    public void startDiverFlare(Body b1, Body b2) {
+
+        if(b1.getUserData() instanceof FlareModel) {
+            if(b2.getUserData() instanceof DiverModel) {
+                FlareModel f = (FlareModel) b1.getUserData();
+
+                f.turnOffLight(.33f, 1f);
+                System.out.println("FLARE DIVER");
+
+            }
+        } else if(b2.getUserData() instanceof FlareModel) {
+            if(b1.getUserData() instanceof DiverModel) {
+                FlareModel f = (FlareModel) b2.getUserData();
+                f.turnOffLight(.33f, 1f);
+                System.out.println("FLARE DIVER");
+
+            }
+        }
+    }
+
+
+    /**
+     * Used to tell if the diver and flare are in range of each other
+     *
+     * @param b1
+     * @param b2
+     */
+
+    public void endDiverFlare(Body b1, Body b2) {
+
+        if(b1.getUserData() instanceof FlareModel) {
+            if(b2.getUserData() instanceof DiverModel) {
+                FlareModel f = (FlareModel) b1.getUserData();
+                f.turnOnLight();
+            }
+        } else if(b2.getUserData() instanceof FlareModel) {
+            if(b1.getUserData() instanceof DiverModel) {
+                FlareModel f = (FlareModel) b2.getUserData();
+                f.turnOnLight();
+            }
+        }
+    }
+
+
+    /**
+     * Used to tell if the diver and flare are in range of each other
+     *
+     * @param b1
+     * @param b2
+     */
+
+    public void startFlareFlare(Body b1, Body b2) {
+
+        if(b1.getUserData() instanceof FlareModel) {
+            if(b2.getUserData() instanceof FlareModel) {
+                FlareModel f = (FlareModel) b1.getUserData();
+
+                f.turnOffLight(.4f, .8f);
+                FlareModel f2 = (FlareModel) b2.getUserData();
+
+                f2.turnOffLight(.4f, .8f);
+                System.out.println("FLARE Flare");
+
+            }
+        }
+    }
+
+
+    /**
+     * Used to tell if the diver and flare are in range of each other
+     *
+     * @param b1
+     * @param b2
+     */
+
+    public void endFlareFlare(Body b1, Body b2) {
+
+        if(b1.getUserData() instanceof FlareModel) {
+            if(b2.getUserData() instanceof FlareModel) {
+                FlareModel f = (FlareModel) b1.getUserData();
+                f.turnOnLight();
+
+                FlareModel f2 = (FlareModel) b2.getUserData();
+
+                f2.turnOnLight();
+                System.out.println("end flare flare");
+            }
+        }
+    }
 }

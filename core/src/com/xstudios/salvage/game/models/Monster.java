@@ -16,6 +16,7 @@ public class Monster extends GameObject {
     private float maxAggression = 100;
     public float agression = 0.0f;
     private Queue<Wall> tentacles;
+    private Queue<Wall> idle_tentacles;
     private float aggrivation = 0.0f;
     private final float RADIUS = 7;
     private CircleShape radialPresence;
@@ -38,6 +39,7 @@ public class Monster extends GameObject {
         setName("monster");
 
         tentacles = new LinkedList<Wall>();
+        idle_tentacles = new LinkedList<>();
         targetLocations = new ArrayList<Wall>();
     }
 
@@ -105,6 +107,9 @@ public class Monster extends GameObject {
 
     public void addTentacle(Wall wall) {
         tentacles.add(wall);
+    }
+    public void addIdleTentacle(Wall wall) {
+        idle_tentacles.add(wall);
     }
 
     public Wall getNextTentacle() { return tentacles.poll(); }

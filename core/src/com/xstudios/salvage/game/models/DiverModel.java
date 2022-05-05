@@ -1107,7 +1107,7 @@ public class DiverModel extends GameObject {
                 f.setX(getX());
                 f.setY(getY());
                 flare_duration++;
-                System.out.println("FLARe IS ACTIVE");
+//                System.out.println("FLARe IS ACTIVE");
             } else {
 //                f.setActivated(false);
                 f.setCarried(false);
