@@ -1,6 +1,7 @@
 package com.xstudios.salvage.game.levels;
 
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 import com.xstudios.salvage.game.GameObject;
@@ -22,6 +23,17 @@ public class LevelModel {
     protected ArrayList<Tentacle> tentacles = new ArrayList<>();
 
     private Array<Door> doors = new Array<Door>();
+
+
+    public Rectangle getMapBounds() {
+        return mapBounds;
+    }
+
+    public void setMapBounds(Rectangle mapBounds) {
+        this.mapBounds = mapBounds;
+    }
+
+    public Rectangle mapBounds;
 
     /**
      * All the objects in the world.
@@ -77,15 +89,17 @@ public class LevelModel {
             tentacles.add((Tentacle) obj);
         }
     }
+
     /**
      * remove objects to the list of all objects and the category lists they correspond to
      */
     public void removeObject(GameObject obj) {
         objects.remove(obj);
-        if(obj instanceof Tentacle){
+        if (obj instanceof Tentacle) {
             tentacles.remove((Tentacle) obj);
         }
     }
+
     public void dispose() {
         // TODO: do we need to clear all of the arrays?
         getAboveObjects().clear();

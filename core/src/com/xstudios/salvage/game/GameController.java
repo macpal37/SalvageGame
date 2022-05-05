@@ -745,14 +745,14 @@ public class GameController implements Screen, ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+
+        System.out.println("Bounds: " + level.getMapBounds().toString());
+
         for (Door door : level.getDoors()) {
             door.setActive(!door.getUnlock(level.getDiver().getItem()));
         }
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
-//        rayHandlerFlare.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
-
-        //monsterController.update(level.getDiver());
 
 
         monsterController.update(hostileOxygenDrain, level.getDiver());
@@ -959,11 +959,10 @@ public class GameController implements Screen, ContactListener {
         // draw game objects
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0, 4, 4);
 
-        for (GameObject obj : level.getAllObjects()) {
-            if (obj instanceof Tentacle) {
-//                System.out.println("YeAH TENTACLE!!!");
-            }
+//        for (GameObject obj : level.getAllObjects()) {
+        for (int i = level.getAllObjects().size() - 1; i >= 0; i--) {
 
+            GameObject obj = level.getAllObjects().get(i);
             if (!(obj instanceof DiverModel))
                 if (!(obj instanceof DecorModel))
                     obj.draw(canvas);

@@ -5,6 +5,16 @@ left is to bring them home. Armed with an oxygen tank and a sonar pinger, search
 remains, avoiding obstacles and terrors all the while. Kick off walls, swim, navigate with sonar pings, but hurry…you’re
 running out of air!
 
+# IMPORTANT
+
+If you are using a mac, run the game using command line typing:
+
+```
+java -XstartOnFirstThread -jar SalvageGame.jar
+```
+
+Otherwise it will not run.
+
 ## CONTROLS
 
 movement (arrow key):
@@ -30,4 +40,5 @@ Player lights and drops a flare which illuminates the darkness for a period of t
 
 Pause (ESC):
 
-Pauses the game. Pressing ESC again will resume gameplay, while clicking on the restart or main menu buttons will return you to the respective screens.
+Pauses the game. Pressing ESC again will resume gameplay, while clicking on the restart or main menu buttons will return
+you to the respective screens.
