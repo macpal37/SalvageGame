@@ -51,9 +51,9 @@ public class HazardModel extends Wall {
             fixture.filter.categoryBits = 0x008; //0x003
             fixture.filter.groupIndex = 0x004;
             fixture.filter.maskBits = -1;
+
             fixture.shape = shapes[ii];
             geoms[ii] = body.createFixture(fixture);
-            System.out.println("IN HAZARD CREATE FIXTURES");
         }
 
         markDirty(false);

@@ -7,6 +7,7 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonReader;
@@ -381,7 +382,7 @@ public class LevelBuilder {
         JsonValue constants = directory.getEntry("models:constants", JsonValue.class);
         int width = map.getInt("width");
         int height = map.getInt("height");
-
+        level.setMapBounds(new Rectangle(0, 0, (width * 100) / 32f, (height * 100) / 32f));
 
         int tileSize = map.getInt("tileheight");
         float div = 25f;

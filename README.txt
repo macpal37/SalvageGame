@@ -1,5 +1,15 @@
 README ------------------------------------------------------------------------------------------------------
 
+# IMPORTANT
+
+If you are using a mac, run the game using command line typing:
+
+```
+java -XstartOnFirstThread -jar SalvageGame.jar
+```
+
+Otherwise it will not run.
+
 CONTROLS
 
 movement (arrow key):
