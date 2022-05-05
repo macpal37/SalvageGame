@@ -233,18 +233,18 @@ public class CollisionController {
 //        }
 
         // if the diver is touching a hazard (excluding the extra sensors)
-//        if (b1.getUserData() instanceof DiverModel &&
-//                diver.getDiverCollisionBox().equals(fd1) &&
-//                b2.getUserData() instanceof HazardModel) {
-//            HazardModel hazard = (HazardModel) b2.getUserData();
-//            return staticHazardCollision(diver, hazard);
-//        }
-//        if (b2.getUserData() instanceof DiverModel &&
-//                diver.getDiverCollisionBox().equals(fd2) &&
-//                b1.getUserData() instanceof HazardModel) {
-//            HazardModel hazard = (HazardModel) b1.getUserData();
-//            return staticHazardCollision(diver, hazard);
-//        }
+        if (b1.getUserData() instanceof DiverModel &&
+                diver.getDiverCollisionBox().equals(fd1) &&
+                b2.getUserData() instanceof HazardModel) {
+            HazardModel hazard = (HazardModel) b2.getUserData();
+            return staticHazardCollision(diver, hazard);
+        }
+        if (b2.getUserData() instanceof DiverModel &&
+                diver.getDiverCollisionBox().equals(fd2) &&
+                b1.getUserData() instanceof HazardModel) {
+            HazardModel hazard = (HazardModel) b1.getUserData();
+            return staticHazardCollision(diver, hazard);
+        }
         // return 0 if not colliding
         return 0;
     }
@@ -359,10 +359,12 @@ public class CollisionController {
             AudioController.getInstance().wood_collision(diver.getForce());
         }
 
-        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall &&
+        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall
+                && !(fd2 instanceof Tentacle) &&
                 diver.getDiverCollisionBox().equals(fd1)) {
             AudioController.getInstance().wall_collision(diver.getForce());
-        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall &&
+        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall
+                && !(fd1 instanceof Tentacle) &&
                 diver.getDiverCollisionBox().equals(fd2)) {
             AudioController.getInstance().wall_collision(diver.getForce());
         }

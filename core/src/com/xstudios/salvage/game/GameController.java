@@ -248,6 +248,7 @@ public class GameController implements Screen, ContactListener {
     private LevelModel level;
 
     private PointLight light;
+    private Color stun_color;
     private RayHandler rayHandler;
 
     private PointLight wallShine;
@@ -329,6 +330,8 @@ public class GameController implements Screen, ContactListener {
 //        rayHandlerFlare = new RayHandler(world);
 //        rayHandlerFlare.setAmbientLight(1f);
 //        RayHandler.useDiffuseLight(true);
+
+        stun_color = new Color(1f, 0.15f, 0.15f, .3f);//Color.BLACK;
 
         light = new PointLight(rayHandler, 100, Color.BLACK, 15, 0, 0);
         wallShine = new PointLight(rayHandler, 100, Color.BLUE, 8, 0, 0);
@@ -555,7 +558,7 @@ public class GameController implements Screen, ContactListener {
         monster.setIdleTentacleSprite(new FilmStrip(monsterIdleTenctacle, 5, 5, 23));
         monster.setDrawScale(scale);
         monster.setName("Monster");
-        monsterController = new MonsterController(monster);
+        monsterController = new MonsterController(monster, bounds);
         level.addObject(monster);
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
@@ -847,19 +850,69 @@ public class GameController implements Screen, ContactListener {
 //            System.out.println("PAIN: " + hostileOxygenDrain);
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
             level.getDiver().setStunCooldown(level.getDiver().getStunCooldown() - 1);
-
+//            changeToStunLight();
+                System.out.println("STUN COLOR");
+                System.out.println(Color.BLACK.r + " " + Color.BLACK.g + " "+ Color.BLACK.b + " "+ Color.BLACK.a + " ");
+//            }
+//            else {
+//                light.setColor(Color.BLACK);
+//            }
         } else {
-
+//            changeToNormalLight();
             level.getDiver().setStunned(false);
             hostileOxygenDrain = 0.0f;
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
 //            level.getDiver().setHazardCollisionFilter();
 //            System.out.println("SETTING STUNNED TO FALSE");
         }
+        if(level.getDiver().isInvincible()){
+            changeToStunLight();
+        } else {
+            changeToNormalLight();
+        }
 
 
     }
 
+    public void changeToStunLight() {
+        float curr_a =light.getColor().a;
+        float curr_r = light.getColor().r;
+        float curr_g = light.getColor().g;
+        float curr_b = light.getColor().b;
+        if (curr_a > stun_color.a) {
+            curr_a -= .01f;
+        }
+        if (curr_r < stun_color.r) {
+            curr_r += .01f;
+        }
+        if (curr_g < stun_color.g) {
+            curr_g += .01f;
+        }
+        if (curr_b < stun_color.b) {
+            curr_b += .01f;
+        }
+        light.setColor(new Color(curr_r, curr_g, curr_b, curr_a));
+    }
+
+    public void changeToNormalLight() {
+        float curr_a =light.getColor().a;
+        float curr_r = light.getColor().r;
+        float curr_g = light.getColor().g;
+        float curr_b = light.getColor().b;
+        if (curr_a < Color.BLACK.a) {
+            curr_a += .01f;
+        }
+        if (curr_r > Color.BLACK.r) {
+            curr_r -= .01f;
+        }
+        if (curr_g > Color.BLACK.g) {
+            curr_g -= .01f;
+        }
+        if (curr_b > Color.BLACK.b) {
+            curr_b -= .01f;
+        }
+        light.setColor(new Color(curr_r, curr_g, curr_b, curr_a));
+    }
     /**
      * Processes physics
      * <p>
