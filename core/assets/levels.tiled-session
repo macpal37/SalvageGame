@@ -1,138 +1,144 @@
 {
-    "activeFile": "levels/level1.json",
+    "activeFile": "levels/tilesets/tentacle_tile.json",
     "expandedProjectPaths": [
-        "levels"
+        "levels",
+        "levels/tilesets"
     ],
     "fileStates": {
         "levels/beta_0.json": {
             "scale": 0.7011,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 501.3550135501355,
-                "y": 500.6418485237484
+                "x": 499.2155184709742,
+                "y": 499.92868349736125
             }
         },
         "levels/beta_1.json": {
             "scale": 0.4674,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 752.0325203252033,
-                "y": 500.64184852374854
+                "x": 748.8232777064615,
+                "y": 501.7115960633291
             }
         },
         "levels/beta_2.json": {
             "scale": 0.28044,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1253.3875338753387,
-                "y": 752.3891028383966
+                "x": 1248.0387961774354,
+                "y": 750.6061902724289
             }
         },
         "levels/beta_3.json": {
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 719,
-                "y": 806
+                "x": 1000,
+                "y": 749
             }
         },
         "levels/beta_5.json": {
             "scale": 0.125,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 420,
-                "y": -96
+                "x": 1304,
+                "y": 756
             }
         },
         "levels/level0.json": {
             "scale": 0.4674,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 752.0325203252033,
-                "y": 500.64184852374854
+                "x": 748.8232777064615,
+                "y": 501.7115960633291
             }
         },
         "levels/level1.json": {
             "scale": 0.2337,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1504.0650406504067,
-                "y": 1001.2836970474971
+                "x": 1501.9255455712453,
+                "y": 1003.4231921266583
             }
         },
         "levels/level2.json": {
             "scale": 0.175275,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2005.420054200542,
-                "y": 1500.4992155184711
+                "x": 1996.8620738838968,
+                "y": 1503.3518756240194
             }
         },
         "levels/level3.json": {
             "scale": 0.35055,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1002.710027100271,
-                "y": 750.2496077592356
+                "x": 998.4310369419484,
+                "y": 751.6759378120097
             }
         },
         "levels/level4.json": {
             "scale": 0.19474999999999998,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1804.878048780488,
-                "y": 801.0269576379974
+                "x": 1797.175866495507,
+                "y": 803.594351732991
             }
         },
         "levels/t_easy_1.json": {
             "scale": 0.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 761,
-                "y": 496
+                "x": 700,
+                "y": 499
             }
         },
         "levels/t_easy_2.json": {
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 597,
-                "y": 620
+                "x": 750,
+                "y": 501
             }
         },
         "levels/test_level.json": {
             "scale": 0.35055,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1002.710027100271,
-                "y": 1001.2836970474968
+                "x": 998.4310369419484,
+                "y": 999.8573669947225
             }
         },
         "levels/tilesets/old_ship_tileset.json": {
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/tilesets/tentacle_tile.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "levels/tutorial1.json": {
             "scale": 0.7011,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 501.3550135501355,
-                "y": 500.6418485237484
+                "x": 499.2155184709742,
+                "y": 499.92868349736125
             }
         },
         "levels/tutorial2.json": {
             "scale": 0.4674,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 752.0325203252033,
-                "y": 500.64184852374854
+                "x": 748.8232777064615,
+                "y": 501.7115960633291
             }
         },
         "levels/tutorial3.json": {
             "scale": 0.4674,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 752.0325203252033,
-                "y": 500.64184852374854
+                "x": 748.8232777064615,
+                "y": 501.7115960633291
             }
         }
     },
@@ -153,7 +159,9 @@
         "levels/test_level.json",
         "levels/level0.json",
         "levels/level1.json",
-        "levels/level4.json"
+        "levels/level4.json",
+        "levels/tilesets/tentacle_tile.json",
+        "levels/tilesets/old_ship_tileset.json"
     ],
     "project": "levels.tiled-project",
     "recentFiles": [

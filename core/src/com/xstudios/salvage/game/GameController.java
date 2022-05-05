@@ -203,7 +203,8 @@ public class GameController implements Screen, ContactListener {
      * ================================LEVELS=================================
      */
 
-    /** Summary of levels
+    /**
+     * Summary of levels
      * asher_1 - swim to end goal
      * asher_2 - teach kickpoints
      * t_easy_1 - teach hitting hazards, keys, and explore to find body
@@ -212,16 +213,13 @@ public class GameController implements Screen, ContactListener {
      * beta_2 - teach doors, keys, flares, longer level requires tracing back steps
      * beta_3 - monster disturbance
      * beta_5 - kick points and monster disturbance
-     *
+     * <p>
      * level1 - retracing steps and avoiding hazards
      * level4 - insanely hard key level
      */
     // Beta Release Setup
-//    private String[] levels = {"asher_1", "asher_2", "t_easy_1", "t_easy_2", "beta_1", "beta_2", "beta_3", "beta_5"};
-    private String[] levels = {"beta_0", "beta_1", "beta_2", "beta_3", "beta_5"};
-//    private String[] levels = {"t_easy_1", "t_easy_2", "beta_1", "beta_2", "beta_3"};
+    private String[] levels = {"test_level", "beta_1", "beta_2", "beta_3", "beta_5"};
 
-//    private String[] levels = {"test_level", "level1", "level3"};
 
     private int curr_level;
 
@@ -276,7 +274,7 @@ public class GameController implements Screen, ContactListener {
                 new Vector2(0, DEFAULT_GRAVITY));
         curr_level = 0;
         pause = false;
-        resume_game= false;
+        resume_game = false;
         restart_game = false;
         exit_home = false;
     }
@@ -364,7 +362,7 @@ public class GameController implements Screen, ContactListener {
 
     }
 
-    public void setCameraPositionNormal(){
+    public void setCameraPositionNormal() {
         cameraController.setCameraPosition(640, 360);
         cameraController.render();
     }
@@ -474,11 +472,11 @@ public class GameController implements Screen, ContactListener {
         plantAnimation = directory.getEntry("models:plant", Texture.class);
 
         //pause
-        pause_screen = new TextureRegion(directory.getEntry( "pause", Texture.class ));
-        black_spot = new TextureRegion(directory.getEntry( "black_spot", Texture.class ));
-        resume = new TextureRegion(directory.getEntry( "resume", Texture.class ));
-        restart = new TextureRegion(directory.getEntry( "restart", Texture.class ));
-        main_menu = new TextureRegion(directory.getEntry( "main_menu_pause", Texture.class ));
+        pause_screen = new TextureRegion(directory.getEntry("pause", Texture.class));
+        black_spot = new TextureRegion(directory.getEntry("black_spot", Texture.class));
+        resume = new TextureRegion(directory.getEntry("resume", Texture.class));
+        restart = new TextureRegion(directory.getEntry("restart", Texture.class));
+        main_menu = new TextureRegion(directory.getEntry("main_menu_pause", Texture.class));
     }
 
     /**
@@ -567,13 +565,12 @@ public class GameController implements Screen, ContactListener {
             game_state = state.LOSE_GAME;
         } else if (reach_target) {
             game_state = state.WIN_GAME;
-        } else if(pause) {
+        } else if (pause) {
             game_state = state.PAUSE;
         } else {
             game_state = state.PLAYING;
         }
     }
-
 
 
     private void updatePlayingState() {
@@ -769,7 +766,7 @@ public class GameController implements Screen, ContactListener {
             Wall add_wall = tentacles.poll();
             if (add_wall.canSpawnTentacle() && add_wall != null) {
 
-                Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+                Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), 1f, add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30));
                 addQueuedObject(t);
                 AudioController.getInstance().roar();
             }
@@ -786,7 +783,7 @@ public class GameController implements Screen, ContactListener {
         //** ADDING TENTACLES TO WalL!
 //        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
 //            Wall w = level.getDiver().getTouchedWall();
-//            Tentacle t = levelBuilder.createTentcle(w, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+//            Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), 1f, w, new FilmStrip(monsterTenctacle, 1, 30, 30));
 //            addQueuedObject(t);
 //        }
 
@@ -797,7 +794,7 @@ public class GameController implements Screen, ContactListener {
                 break;
             case PAUSE:
                 InputController input = InputController.getInstance();
-                if(input.isPause()){
+                if (input.isPause()) {
                     resume();
                 }
                 break;
@@ -818,7 +815,7 @@ public class GameController implements Screen, ContactListener {
 
         //deal with hazard stun
 
-        if(level.getDiver().isInvincible()) {
+        if (level.getDiver().isInvincible()) {
             level.getDiver().setHazardInvincibilityFilter();
 //            light.setContactFilter(no_hazard_collision_category, no_hazard_collision_group, no_hazard_collision_mask);
         } else {
@@ -904,20 +901,21 @@ public class GameController implements Screen, ContactListener {
     }
 
     int tick = 0;
+
     public boolean pointer1(int x, int y, int width, int height, float scale) {
         int pX = Gdx.input.getX();
         int pY = Gdx.input.getY();
         System.out.println("touched: " + Gdx.input.isTouched());
         // Flip to match graphics coordinates
         y = canvas.getHeight() - y;
-        float y1 = (float)y - (int)(360 - cameraController.getCameraPosition2D().y);
-        float x1 = (float)x - (int)(640 - cameraController.getCameraPosition2D().x);
+        float y1 = (float) y - (int) (360 - cameraController.getCameraPosition2D().y);
+        float x1 = (float) x - (int) (640 - cameraController.getCameraPosition2D().x);
         float w = scale * width;
         float h = scale * height;
 
         System.out.println("pointer: " + pX + " " + pY);
-        if((x1 + w > pX && x1 - w < pX) && (y1 + h > pY && y1 - h < pY)){
-            if(Gdx.input.isTouched()) clicked = true;
+        if ((x1 + w > pX && x1 - w < pX) && (y1 + h > pY && y1 - h < pY)) {
+            if (Gdx.input.isTouched()) clicked = true;
             return true;
         }
         return false;
@@ -1068,11 +1066,11 @@ public class GameController implements Screen, ContactListener {
                         cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f, canvas.getWidth(), canvas.getHeight());
                 canvas.draw(black_spot, Color.WHITE,
                         cameraController.getCameraPosition2D().x - canvas.getWidth() / 2f,
-                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f - canvas.getHeight()/4f,
+                        cameraController.getCameraPosition2D().y - canvas.getHeight() / 2f - canvas.getHeight() / 4f,
                         black_spot.getRegionWidth(), black_spot.getRegionHeight());
 
-                Color tint = (pointer1((int)cameraController.getCameraPosition2D().x,
-                        (int)cameraController.getCameraPosition2D().y + main_menu.getRegionHeight() + main_menu.getRegionHeight() / 2,
+                Color tint = (pointer1((int) cameraController.getCameraPosition2D().x,
+                        (int) cameraController.getCameraPosition2D().y + main_menu.getRegionHeight() + main_menu.getRegionHeight() / 2,
                         resume.getRegionWidth() / 2, resume.getRegionHeight() / 2, 0.7f) ? Color.GRAY : Color.WHITE);
 //                if(clicked) resume();
 //                canvas.draw(resume, tint,
@@ -1082,12 +1080,12 @@ public class GameController implements Screen, ContactListener {
 //                        cameraController.getCameraPosition2D().y + main_menu.getRegionHeight() + main_menu.getRegionHeight() / 2,
 //                        0, 0.7f, 0.7f);
 
-                tint = (pointer1((int)cameraController.getCameraPosition2D().x,
-                        (int)cameraController.getCameraPosition2D().y
+                tint = (pointer1((int) cameraController.getCameraPosition2D().x,
+                        (int) cameraController.getCameraPosition2D().y
                                 + main_menu.getRegionHeight() / 2,
                         restart.getRegionWidth() / 2,
                         restart.getRegionHeight() / 2, 0.7f) ? Color.GRAY : Color.WHITE);
-                if(clicked) reset();
+                if (clicked) reset();
                 canvas.draw(restart, tint,
                         restart.getRegionWidth() / 2,
                         resume.getRegionHeight(),
@@ -1095,11 +1093,11 @@ public class GameController implements Screen, ContactListener {
                         cameraController.getCameraPosition2D().y
                                 + main_menu.getRegionHeight() / 2, 0, 0.7f, 0.7f);
 
-                tint = (pointer1((int)cameraController.getCameraPosition2D().x,
-                        (int)cameraController.getCameraPosition2D().y - main_menu.getRegionHeight() / 2
-                                , main_menu.getRegionWidth() / 2,
+                tint = (pointer1((int) cameraController.getCameraPosition2D().x,
+                        (int) cameraController.getCameraPosition2D().y - main_menu.getRegionHeight() / 2
+                        , main_menu.getRegionWidth() / 2,
                         main_menu.getRegionHeight() / 2, 0.7f) ? Color.GRAY : Color.WHITE);
-                if(clicked) exit_home = true;
+                if (clicked) exit_home = true;
                 canvas.draw(main_menu, tint,
                         main_menu.getRegionWidth() / 2,
                         main_menu.getRegionHeight(),
@@ -1155,8 +1153,7 @@ public class GameController implements Screen, ContactListener {
                 listener.exitScreen(this, 0);
             } else if (game_state == state.LOSE_GAME) {
                 listener.exitScreen(this, 1);
-            }
-            else if (exit_home == true && listener != null){
+            } else if (exit_home == true && listener != null) {
                 listener.exitScreen(this, 2);
             }
         }
