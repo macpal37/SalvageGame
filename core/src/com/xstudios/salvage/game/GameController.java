@@ -699,6 +699,7 @@ public class GameController extends ScreenController implements ContactListener 
                 if(input.isPause()){
                     resume();
                 }
+                updatePlayingState();
                 break;
         }
         updateGameState();

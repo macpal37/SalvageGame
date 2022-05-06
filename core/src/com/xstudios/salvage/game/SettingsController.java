@@ -56,10 +56,12 @@ public class SettingsController extends ScreenController implements ControllerLi
     AudioController audio;
 
     public SettingsController() {
+
+
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
 
-        int segment = (width/2 - width/9 - width/14)/4;
+        segment = (width/2 - width/9 - width/14)/4;
 
         press_menu = false;
         press_reset = false;
@@ -71,10 +73,12 @@ public class SettingsController extends ScreenController implements ControllerLi
         tick2 = 2;
     }
 
+    //sets audioController
     public void setAudio(AudioController a){
         audio = a;
     }
 
+    //sets Player
     public void setPlayer(Player player){
         this.player = player;
         music_volume = player.getMusic();
@@ -83,6 +87,7 @@ public class SettingsController extends ScreenController implements ControllerLi
         tick2 = sound_effects_volume;
     }
 
+    //sets CameraController
     public void setCameraController(CameraController cameraController) {
         this.camera = cameraController;
         camera.setCameraPosition(width/2, height/2);
@@ -102,6 +107,7 @@ public class SettingsController extends ScreenController implements ControllerLi
         box = directory.getEntry("slider", Texture.class);
     }
 
+    //dispose
     public void dispose(){
         background = null;
         active = false;
@@ -117,10 +123,14 @@ public class SettingsController extends ScreenController implements ControllerLi
         segment = 0;
     }
 
+    //helps in the draw function
     private boolean help_draw(Texture t, int x, int y, boolean tint){
         Color c = Color.WHITE;
         boolean clicked = false;
+
+        //if tint is true, then the image can be changed color(interactive)
         if(tint){
+            //mouse position
             int pX = Gdx.input.getX();
             int pY = Gdx.input.getY();
             // Flip to match graphics coordinates
@@ -128,11 +138,14 @@ public class SettingsController extends ScreenController implements ControllerLi
             float w = scale * t.getWidth();
             float h = scale * t.getHeight();
 
+            //if true, then image tint is gray
             if((x + w >= pX && x <= pX) && (flip_y >= pY && flip_y - h <= pY)){
                 c = Color.GRAY;
+                //if true(touched), then clicked is true
                 if(Gdx.input.isTouched()) clicked = true;
             }
         }
+        //draws
         canvas.draw(t, c, 0, 0, x, y, 0, scale, scale);
         return clicked;
     }

@@ -80,23 +80,31 @@ public class GameOverController extends ScreenController {
     }
 
     private boolean help_draw(Texture t, int x, int y, boolean tint){
+        //gets the origin of the texture to draw, here it is the middle of the texture
         int ox = t.getWidth()/2;
         int oy = t.getHeight()/2;
         Color c = Color.WHITE;
         boolean clicked = false;
+
+        //tint is true, then the image is interactable
         if(tint){
+            //gets the location of the mouse coordinates
             int pX = Gdx.input.getX();
             int pY = Gdx.input.getY();
             // Flip to match graphics coordinates
             int flip_y = canvas.getHeight() - y;
+            //find width and height of the texture with scale
             float w = scale * ox;
             float h = scale * oy;
 
+            //if pointer is in the texture area, then tint is gray
             if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
                 c = Color.GRAY;
+                //if clicked, clicked = true
                 if(Gdx.input.isTouched()) clicked = true;
             }
         }
+        //draw everything
         canvas.draw(t, c, ox, oy, x, y, 0, scale, scale);
         return clicked;
     }
@@ -106,12 +114,19 @@ public class GameOverController extends ScreenController {
 
         canvas.begin();
 
-        index = 5;
+        //draws background
         canvas.draw(background, Color.WHITE,0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        //draws title
         help_draw(title, width/2, height - height/7, false);
+
+        //draws MAIN MENU and checks if clicked
         exit_home = help_draw(main_menu, width/6, height/9, true);
 
+        //draws TRY AGAIN or NEXT LEVEL and checks if clicked
         boolean which = help_draw(try_again_next, width - width/6, height/9, true);
+
+        //if display_win, then next_level is true, else restart_game is true
         if(display_win)
             next_level = which;
         else
@@ -157,14 +172,15 @@ public class GameOverController extends ScreenController {
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        System.out.println("touchup in gameover");
-        System.out.println("restart game: " + restart_game);
+        //if clicked on restart_game, then exit to controller
         if (restart_game)
             listener.exitScreen(this, 0);
 
+        //if clicked on exit_home, then exit to menu
         else if(exit_home)
             listener.exitScreen(this, 1);
 
+        //if clicked on next_level, then exit to next_level
         else if(next_level)
             listener.exitScreen(this, 2);
 
