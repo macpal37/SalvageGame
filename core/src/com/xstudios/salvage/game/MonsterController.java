@@ -98,8 +98,8 @@ public class MonsterController {
         targetLocations.push(monster.getPosition());
         tick = 0;
         state = FSMState.IDLE;
-        target_pos = new Vector2();
-        curr_pos = new Vector2();
+        target_pos = new Vector2();//new Vector2(bounds.x / 2, bounds.y/2);
+        curr_pos = new Vector2();//new Vector2(bounds.x / 2, bounds.y/2);
         this.bounds = bounds;
     }
 
@@ -191,7 +191,8 @@ public class MonsterController {
             }
         }
 
-        monster.moveMonster(diver.getPosition());
+//        monster.moveMonster(diver.getPosition());
+        monster.moveMonster(curr_pos);
         changeStateIfApplicable();
 //        System.out.println(state);
 
@@ -201,14 +202,16 @@ public class MonsterController {
         switch (state) {
 
             case IDLE:
-                if (tick % 250 == 0) {
+                if (tick % 10 == 0) {
                     if(curr_pos.dst(target_pos) <  MAX_TARGET_DIST){
                         Random rand = new Random();
                         float xpos = rand.nextFloat()*RAND_DIST_RANGE;
                         float ypos = rand.nextFloat()*RAND_DIST_RANGE;
                         target_pos = diver.getPosition().cpy().add(xpos, ypos);
+                        System.out.println("////////////////////////////////////////////////////");
                     } else {
                         curr_pos = (target_pos.cpy().sub(curr_pos).nor()).add(curr_pos);
+                        System.out.println("uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
                     }
                     if(monster.getIdleTentacles().size() < MAX_IDLE_TENTACLES) {
                         Wall final_loc = null;
@@ -254,7 +257,9 @@ public class MonsterController {
 
         }
 
-
+        System.out.println("CURR_POS " + curr_pos);
+        System.out.println("TARGET POS " + target_pos);
+        System.out.println("DIVER POS " + diver.getPosition());
     }
 
 

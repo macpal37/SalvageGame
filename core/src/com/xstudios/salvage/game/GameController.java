@@ -558,7 +558,7 @@ public class GameController implements Screen, ContactListener {
         monster.setIdleTentacleSprite(new FilmStrip(monsterIdleTenctacle, 5, 5, 23));
         monster.setDrawScale(scale);
         monster.setName("Monster");
-        monsterController = new MonsterController(monster, bounds);
+        monsterController = new MonsterController(monster, getWorldBounds());
         level.addObject(monster);
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
