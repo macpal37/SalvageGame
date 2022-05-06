@@ -13,16 +13,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.xstudios.salvage.assets.AssetDirectory;
-import com.xstudios.salvage.game.models.DiverModel;
-import com.xstudios.salvage.game.models.GoalDoor;
 
-import java.io.BufferedWriter;
-import java.io.Writer;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
-
-import static jdk.internal.org.jline.utils.Colors.s;
 
 public class Player {
     private int sound_effects;

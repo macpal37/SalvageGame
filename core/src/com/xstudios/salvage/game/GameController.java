@@ -30,9 +30,7 @@ import com.xstudios.salvage.util.ScreenListener;
 import java.util.Iterator;
 import java.util.Queue;
 
-public class GameController implements Screen, ContactListener, InputProcessor {
-
-    public int Level = 0;
+public class GameController extends ScreenController implements ContactListener {
 
     // Assets
     JsonValue constants;
@@ -40,7 +38,6 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      * Ocean Background Texture
      */
     protected TextureRegion background;
-
 
     protected Texture monsterTenctacle;
     protected Texture flareAnimation;
@@ -73,11 +70,6 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      * Queue for adding objects
      */
     protected PooledList<GameObject> addQueue = new PooledList<GameObject>();
-
-    /**
-     * Camera centered on the player
-     */
-    protected CameraController cameraController;
 
     /**
      * manages collisions
@@ -130,16 +122,6 @@ public class GameController implements Screen, ContactListener, InputProcessor {
 
     protected static final float DEFAULT_GRAVITY = -1f;
 
-
-    /**
-     * Reference to the game canvas
-     */
-    protected GameCanvas canvas;
-
-    /**
-     * Listener that will update the player mode when we are done
-     */
-    private ScreenListener listener;
     private Stage stage;
 
     /**
@@ -153,17 +135,13 @@ public class GameController implements Screen, ContactListener, InputProcessor {
     /**
      * The world scale
      */
-    protected Vector2 scale;
+    protected Vector2 world_scale;
 
     /**
      * The symbol scale
      */
     protected Vector2 symbol_scale;
 
-    /**
-     * Whether or not this is an active controller
-     */
-    private boolean active;
     /**
      * Whether or not debug mode is active
      */
@@ -178,16 +156,11 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      * ================================LEVELS=================================
      */
     // Beta Release Setup
-//    private String[] levels = {"beta_0", "beta_1", "beta_3"};
+    private String[] levels = {"beta_0", "beta_1", "beta_2"};
 
-    private String[] levels = {"test_level", "level1", "level3"};
+//    private String[] levels = {"test_level", "level1", "level3"};
 
     private int curr_level;
-
-    private TextureRegion test;
-
-    float scale1;
-
 
     private enum state {
         PLAYING,
@@ -276,7 +249,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
         this.tempProjectedOxygen = new Vector3(0, 0, 0);
         world = new World(gravity.scl(1), false);
         this.bounds = new Rectangle(bounds);
-        this.scale = new Vector2(1, 1);
+        this.world_scale = new Vector2(1, 1);
         this.symbol_scale = new Vector2(.4f, .4f);
         debug = false;
         active = false;
@@ -321,15 +294,9 @@ public class GameController implements Screen, ContactListener, InputProcessor {
 
         game_state = state.PLAYING;
 
-    }
+        width = Gdx.graphics.getWidth();
+        height = Gdx.graphics.getHeight();
 
-    /**
-     * Returns true if this is the active screen
-     *
-     * @return true if this is the active screen
-     */
-    public boolean isActive() {
-        return active;
     }
 
     public AudioController getAudio(){
@@ -352,12 +319,16 @@ public class GameController implements Screen, ContactListener, InputProcessor {
     }
 
     public void setCameraController(CameraController cameraController) {
-        this.cameraController = cameraController;
-        cameraController.setBounds(0, 0, 5400 * 2 / 5, 3035 * 2 / 5);
+//        this.camera = cameraController;
+//        cameraController.setBounds(0, 0, 5400 * 2 / 5, 3035 * 2 / 5);
+        this.camera = cameraController;
+        camera.setCameraPosition(width/2, height/2);
+        camera.setBounds(width/2, height/2, width, height);
+        camera.render();
     }
 
     public void setDefaultPosition(){
-        cameraController.setCameraPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+        this.camera.setCameraPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
     }
 
     /**
@@ -371,8 +342,8 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      */
     public void setCanvas(GameCanvas canvas) {
         this.canvas = canvas;
-        this.scale.x = canvas.getWidth() / bounds.getWidth();
-        this.scale.y = canvas.getHeight() / bounds.getHeight();
+        this.world_scale.x = canvas.getWidth() / bounds.getWidth();
+        this.world_scale.y = canvas.getHeight() / bounds.getHeight();
     }
 
     /**
@@ -389,7 +360,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
         level.dispose();
         addQueue = null;
         bounds = null;
-        scale = null;
+        world_scale = null;
         world = null;
         canvas = null;
         pause = false;
@@ -412,7 +383,6 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      */
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the tiles
-        test = new TextureRegion(directory.getEntry("m", Texture.class));
         levelBuilder.setDirectory(directory);
 
         levelBuilder.gatherAssets(directory);
@@ -484,6 +454,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
         game_state = state.PLAYING;
         pause = false;
         exit_home = false;
+        reach_target = false;
         Vector2 gravity = new Vector2(world.getGravity());
         for (GameObject obj : level.getAllObjects()) {
             obj.deactivatePhysics(world);
@@ -501,8 +472,8 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      * Lays out the game geography.
      */
     private void populateLevel() {
-        cameraController.setZoom(1.0f);
-        levelBuilder.createLevel(levels[curr_level], level, scale, symbol_scale, rayHandler);
+        camera.setZoom(1.0f);
+        levelBuilder.createLevel(levels[curr_level], level, world_scale, symbol_scale, rayHandler);
         pause = false;
 
         // TODO: will this have the same effect as going through each type, casting, then adding?
@@ -511,7 +482,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
         }
         monster = new Monster(level.getDiver().getX(), level.getDiver().getY());
         monster.setTentacleSprite(new FilmStrip(monsterTenctacle, 1, 30, 30));
-        monster.setDrawScale(scale);
+        monster.setDrawScale(world_scale);
         monster.setName("Monster");
         monsterController = new MonsterController(monster);
         level.addObject(monster);
@@ -532,7 +503,6 @@ public class GameController implements Screen, ContactListener, InputProcessor {
             game_state = state.PLAYING;
         }
     }
-
 
 
     private void updatePlayingState() {
@@ -636,7 +606,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
 
 
         if (level.getDiver().getBody() != null && !pause) {
-            cameraController.setCameraPosition(
+            camera.setCameraPosition(
                     level.getDiver().getX() * level.getDiver().getDrawScale().x, level.getDiver().getY() * level.getDiver().getDrawScale().y);
 
             light.setPosition(
@@ -649,7 +619,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
 
         // TODO: why wasnt this in marco's code?
 
-        cameraController.render();
+        camera.render();
     }
 
     /**
@@ -664,7 +634,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      */
     public boolean preUpdate(float dt) {
         InputController input = InputController.getInstance();
-        input.readInput(bounds, scale);
+        input.readInput(bounds, world_scale);
         if (listener == null) {
             return true;
         }
@@ -675,8 +645,8 @@ public class GameController implements Screen, ContactListener, InputProcessor {
 
         }
         if (input.didMenu()) {
-            cameraController.setCameraPosition(640.0f, 360.0f);
-            cameraController.setZoom(1f);
+            camera.setCameraPosition(STANDARD_HEIGHT/2, STANDARD_WIDTH/2);
+            camera.setZoom(1f);
             listener.exitScreen(this, 2);
             pause = true;
         }
@@ -687,9 +657,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
         }
         return true;
 
-
     }
-
 
     int tentacleSpawn = 0;
 
@@ -708,7 +676,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
             door.setActive(!door.getUnlock(level.getDiver().getItem()));
         }
 
-        rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
+        rayHandler.setCombinedMatrix(camera.getCamera().combined.cpy().scl(40f));
 
         monsterController.update(hostileOxygenDrain, level.getDiver());
         Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
@@ -716,7 +684,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
         while (tentacles.size() > 0) {
             Wall add_wall = tentacles.poll();
             if (add_wall.canSpawnTentacle() && add_wall != null) {
-                Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
+                Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), world_scale);
                 addQueuedObject(t);
                 audio.roar();
             }
@@ -822,17 +790,17 @@ public class GameController implements Screen, ContactListener, InputProcessor {
         if(tint) {
             int pX = Gdx.input.getX();
             int pY = Gdx.graphics.getHeight() - Gdx.input.getY();
-            float y1 =  y + (int)(Gdx.graphics.getHeight()/2 - cameraController.getCameraPosition2D().y);
-            float x1 =  x + (int) (Gdx.graphics.getWidth()/2 - cameraController.getCameraPosition2D().x);
-            float w = scale1 * ox;
-            float h = scale1 * oy;
+            float y1 =  y + (int)(Gdx.graphics.getHeight()/2 - camera.getCameraPosition2D().y);
+            float x1 =  x + (int)(Gdx.graphics.getWidth()/2 - camera.getCameraPosition2D().x);
+            float w = scale * ox;
+            float h = scale * oy;
 
             if ((x1 + w > pX && x1 - w < pX) && (y1 + h > pY && y1 - h < pY)) {
                 c = Color.GRAY;
                 if (Gdx.input.isTouched()) clicked = true;
             }
         }
-        canvas.draw(t, c, ox, oy, x, y, 0, scale1, scale1);
+        canvas.draw(t, c, ox, oy, x, y, 0, this.scale, this.scale);
         return clicked;
     }
 
@@ -873,7 +841,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
 
                 tempProjectedHud.x = (float) canvas.getWidth() / 2;
                 tempProjectedHud.y = 0f;
-                tempProjectedHud = cameraController.getCamera().unproject(tempProjectedHud);
+                tempProjectedHud = camera.getCamera().unproject(tempProjectedHud);
 
                 //draw hud background
 
@@ -884,7 +852,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
                 //draw remaining oxygen
                 tempProjectedOxygen.x = (float) canvas.getWidth() / 5.5f;
                 tempProjectedOxygen.y = (45 * canvas.getHeight()) / 1080;
-                tempProjectedOxygen = cameraController.getCamera().unproject(tempProjectedOxygen);
+                tempProjectedOxygen = camera.getCamera().unproject(tempProjectedOxygen);
 
                 if (level.getDiver().getStunCooldown() % 20 > 10) {
 
@@ -933,7 +901,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
                 if (level.getDiver().hasBody()) {
 
                     canvas.draw(bodyHud, Color.WHITE, 0, (float) bodyHud.getRegionHeight() / 2,
-                            tempProjectedHud.x + 50 + (cameraController.getCameraPosition2D().x - tempProjectedOxygen.x),
+                            tempProjectedHud.x + 50 + (camera.getCameraPosition2D().x - tempProjectedOxygen.x),
                             tempProjectedOxygen.y,
                             0.0f, 0.35f, 0.35f);
                 }
@@ -947,19 +915,22 @@ public class GameController implements Screen, ContactListener, InputProcessor {
                 break;
 
             case PAUSE:
-                float cX = cameraController.getCameraPosition2D().x;
-                float cY = cameraController.getCameraPosition2D().y;
+                // camera position tracks the position in game
+                float cX = camera.getCameraPosition2D().x;
+                float cY = camera.getCameraPosition2D().y;
+                System.out.println("cam_x: " + cX + " cam_y: " + cY);
+                System.out.println("canvas width: " + canvas.getWidth() + " canvas height: " + canvas.getHeight());
                 if (Gdx.input.justTouched()) {
-                    System.out.println("x: " + cX + " y: " + cY);
                     System.out.println(Gdx.input.getX() + " " + Gdx.input.getY());
                 }
 
+                // canvas.draw also draws where something is in game
                 canvas.draw(pause_screen, Color.WHITE, cX - canvas.getWidth() / 2f,
                         cY - canvas.getHeight() / 2f, canvas.getWidth(), canvas.getHeight());
-
+                System.out.println("world_scale_x: " + world_scale.x + " world_scale_y: " + world_scale.y + " scale: " + scale);
                 press_resume = help_draw(resume, cX, cY + canvas.getHeight() / 10, true);
                 press_restart = help_draw(restart, cX, cY, true);
-                exit_home = help_draw(main_menu, cX, cY - canvas.getHeight() / 10, true);
+                exit_home = help_draw(main_menu, cX,  cY - canvas.getHeight() / 10, true);
 
             case WIN_GAME:
                 break;
@@ -976,24 +947,6 @@ public class GameController implements Screen, ContactListener, InputProcessor {
             }
             canvas.endDebug();
         }
-    }
-
-
-    /**
-     * Called when the Screen is resized.
-     * <p>
-     * This can happen at any point during a non-paused state but will never happen
-     * before a call to show().
-     *
-     * @param width  The new width in pixels
-     * @param height The new height in pixels
-     */
-    public void resize(int width, int height) {
-        float sx = ((float)width)/1280;
-        float sy = ((float)height)/720;
-        scale1 = 0.75f * (sx < sy ? sx : sy);
-        cameraController.getCamera().setToOrtho(false, width, height);
-        cameraController.getCamera().update();
     }
 
     /**
@@ -1044,33 +997,6 @@ public class GameController implements Screen, ContactListener, InputProcessor {
         updateGameState();
         // TODO Auto-generated method stub
     }
-
-    /**
-     * Called when this screen becomes the current screen for a Game.
-     */
-    public void show() {
-        // Useless if called in outside animation loop
-        Gdx.input.setInputProcessor(this);
-        active = true;
-    }
-
-    /**
-     * Called when this screen is no longer the current screen for a Game.
-     */
-    public void hide() {
-        Gdx.input.setInputProcessor(null);
-        active = false;
-    }
-
-    /**
-     * Sets the ScreenListener for this mode
-     * <p>
-     * The ScreenListener will respond to requests to quit.
-     */
-    public void setScreenListener(ScreenListener listener) {
-        this.listener = listener;
-    }
-
 
     // ================= CONTACT LISTENER METHODS =============================
 

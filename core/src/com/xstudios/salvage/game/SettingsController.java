@@ -1,15 +1,12 @@
 package com.xstudios.salvage.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.audio.AudioController;
-import com.xstudios.salvage.util.ScreenListener;
 
 /**
  * Class that provides a loading screen for the state of the game.
@@ -24,21 +21,10 @@ import com.xstudios.salvage.util.ScreenListener;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class SettingsController implements Screen, InputProcessor, ControllerListener {
+public class SettingsController extends ScreenController implements ControllerListener {
     // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
     /** Background texture for start-up */
     private Texture background;
-
-    /** Height of the progress bar */
-    private static float BUTTON_SCALE  = 0.75f;
-    private static int STANDARD_WIDTH = 1280;
-    /** Standard window height (for scaling) */
-    private static int STANDARD_HEIGHT = 720;
-
-    /** Reference to GameCanvas created by the root */
-    private GameCanvas canvas;
-    /** Listener that will update the player mode when we are done */
-    private ScreenListener listener;
 
     /** Background Texture */
     protected Texture menu;
@@ -67,18 +53,7 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
 
     Player player;
 
-    private int width;
-    private int height;
-    /** Scaling factor for when the student changes the resolution. */
-    private float scale;
-
-    CameraController camera;
-
     AudioController audio;
-
-
-    /** Whether or not this player mode is still active */
-    private boolean active;
 
     public SettingsController() {
         width = Gdx.graphics.getWidth();
@@ -113,14 +88,6 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
         camera.setCameraPosition(width/2, height/2);
         camera.setBounds(width/2, height/2, width, height);
         camera.render();
-    }
-
-    public void setActive(){
-        active = true;
-    }
-
-    public void setCanvas(GameCanvas canvas){
-        this.canvas = canvas;
     }
 
     public void gatherAssets(AssetDirectory directory) {
@@ -184,7 +151,7 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
 
         help_draw(line, width/14, height - height/2, false);
 
-        if(music_box == false) {
+        if(!music_box) {
             music_box = help_draw(box, width/14 + segment * tick1, height - height / 2 - height / 24, true);
         }
         else help_draw(box, width / 14 + segment * tick1, height - height / 2 - height / 24, true);
@@ -193,7 +160,7 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
 
         help_draw(line, width/14, height/2 - height/5 - height/20, false);
 
-        if(sound_effects_box == false) {
+        if(!sound_effects_box) {
             sound_effects_box = help_draw(box, width/14 + segment * tick2, height / 2 - height / 5 - height / 11, true);
         }
         else help_draw(box, width/14 + segment * tick2, height / 2 - height / 5 - height / 11, true);
@@ -229,15 +196,7 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
      * @param height The new height in pixels
      */
     public void resize(int width, int height) {
-        // Compute the drawing scale
-        float sx = ((float)width)/STANDARD_WIDTH;
-        float sy = ((float)height)/STANDARD_HEIGHT;
-        scale = 0.75f * (sx < sy ? sx : sy);
-        this.width = width;
-        this.height = height;
-        camera.resize(this.width, this.height);
-        camera.getCamera().setToOrtho(false, width, height);
-        camera.getCamera().update();
+        super.resize(width, height);
 
         segment = (int)((line.getWidth() - box.getWidth()/2) * scale)/4;
     }
@@ -261,33 +220,6 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
     public void resume() {
         // TODO Auto-generated method stub
 
-    }
-
-    /**
-     * Called when this screen becomes the current screen for a Game.
-     */
-    public void show() {
-        // Useless if called in outside animation loop
-        Gdx.input.setInputProcessor(this);
-        active = true;
-    }
-
-    /**
-     * Called when this screen is no longer the current screen for a Game.
-     */
-    public void hide() {
-        // Useless if called in outside animation loop
-        Gdx.input.setInputProcessor(null);
-        active = false;
-    }
-
-    /**
-     * Sets the ScreenListener for this mode
-     *
-     * The ScreenListener will respond to requests to quit.
-     */
-    public void setScreenListener(ScreenListener listener) {
-        this.listener = listener;
     }
 
     // PROCESSING PLAYER INPUT

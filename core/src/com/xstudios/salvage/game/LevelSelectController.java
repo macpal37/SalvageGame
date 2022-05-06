@@ -24,17 +24,7 @@ import java.util.ArrayList;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class LevelSelectController implements Screen, InputProcessor, ControllerListener {
-
-    private static int STANDARD_WIDTH = 1280;
-
-    private static int STANDARD_HEIGHT = 720;
-
-    private static float BUTTON_SCALE = 0.75f;
-
-    private GameCanvas canvas;
-
-    private ScreenListener listener;
+public class LevelSelectController extends ScreenController implements ControllerListener{
 
     private Texture main_menu;
     private Texture background;
@@ -42,17 +32,9 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     private Texture line;
     private Texture lock;
 
-    private int width;
-    private int height;
-    private float scale;
-
     private int level_clicked;
     private boolean press_main_menu;
     private ArrayList<Texture> level_list;
-
-    private boolean active;
-
-    private CameraController camera;
 
     private int locked;
 
@@ -67,14 +49,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         height = Gdx.graphics.getHeight();
     }
 
-    public void setActive() {
-        active = true;
-    }
-
-    public void setCanvas(GameCanvas canvas) {
-        this.canvas = canvas;
-    }
-
     public void setCameraController(CameraController cameraController, int w, int h) {
         this.camera = cameraController;
         camera.setCameraPosition(width/2, height/2);
@@ -82,6 +56,7 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
         camera.render();
     }
 
+    @Override
     public void gatherAssets(AssetDirectory directory) {
         background = directory.getEntry("background:level_select", Texture.class);
         main_menu = directory.getEntry("main_menu", Texture.class);
@@ -221,26 +196,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     }
 
     /**
-     * Called when the Screen is resized.
-     * <p>
-     * This can happen at any point during a non-paused state but will never happen
-     * before a call to show().
-     *
-     * @param width  The new width in pixels
-     * @param height The new height in pixels
-     */
-    public void resize(int width, int height) {
-        // Compute the drawing scale
-        float sx = ((float)width)/STANDARD_WIDTH;
-        float sy = ((float)height)/STANDARD_HEIGHT;
-        scale = BUTTON_SCALE * (sx < sy ? sx : sy);
-        this.width = width;
-        this.height = height;
-        camera.getCamera().setToOrtho(false, width, height);
-        camera.getCamera().update();
-    }
-
-    /**
      * Called when the Screen is paused.
      * <p>
      * This is usually when it's not active or visible on screen. An Application is
@@ -257,24 +212,6 @@ public class LevelSelectController implements Screen, InputProcessor, Controller
     public void resume() {
         // TODO Auto-generated method stub
 
-    }
-    public void show() {
-        // Useless if called in outside animation loop
-        Gdx.input.setInputProcessor(this);
-        active = true;
-    }
-    public void hide() {
-        Gdx.input.setInputProcessor(null);
-        active = false;
-    }
-
-    /**
-     * Sets the ScreenListener for this mode
-     * <p>
-     * The ScreenListener will respond to requests to quit.
-     */
-    public void setScreenListener(ScreenListener listener) {
-        this.listener = listener;
     }
 
     // PROCESSING PLAYER INPUT

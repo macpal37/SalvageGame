@@ -23,27 +23,12 @@ import com.xstudios.salvage.util.ScreenListener;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class MenuController implements Screen, InputProcessor, ControllerListener {
+public class MenuController extends ScreenController implements ControllerListener {
     // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
     /**
      * Background texture for start-up
      */
     private Texture background;
-    /** Height of the progress bar */
-    private static float BUTTON_SCALE  = 0.75f;
-    private static int STANDARD_WIDTH = 1280;
-    /** Standard window height (for scaling) */
-    private static int STANDARD_HEIGHT = 720;
-
-    /**
-     * Reference to GameCanvas created by the root
-     */
-    private GameCanvas canvas;
-    /**
-     * Listener that will update the player mode when we are done
-     */
-    private ScreenListener listener;
-
     /**
      * Background Texture
      */
@@ -59,17 +44,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
     private boolean release;
 
-    private int width;
-    private int height;
-    /** Scaling factor for when the student changes the resolution. */
-    private float scale;
-
-    CameraController camera;
-
-    /**
-     * Whether or not this player mode is still active
-     */
-    private boolean active;
 
     public MenuController() {
         width = Gdx.graphics.getWidth();
@@ -86,14 +60,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         camera.setCameraPosition(width / 2, height / 2);
         camera.setBounds(width / 2, height / 2, width, height);
         camera.render();
-    }
-
-    public void setActive() {
-        active = true;
-    }
-
-    public void setCanvas(GameCanvas canvas) {
-        this.canvas = canvas;
     }
 
     public void gatherAssets(AssetDirectory directory) {
@@ -171,25 +137,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
         }
     }
 
-    /**
-     * Called when the Screen is resized.
-     * <p>
-     * This can happen at any point during a non-paused state but will never happen
-     * before a call to show().
-     *
-     * @param width  The new width in pixels
-     * @param height The new height in pixels
-     */
-    public void resize(int width, int height) {
-        float sx = ((float)width)/STANDARD_WIDTH;
-        float sy = ((float)height)/STANDARD_HEIGHT;
-        scale = BUTTON_SCALE * (sx < sy ? sx : sy);
-        this.width = width;
-        this.height = height;
-        camera.getCamera().setToOrtho(false, width, height);
-        camera.getCamera().update();
-    }
-
 
     /**
      * Called when the Screen is paused.
@@ -210,33 +157,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     public void resume() {
         // TODO Auto-generated method stub
 
-    }
-
-    /**
-     * Called when this screen becomes the current screen for a Game.
-     */
-    public void show() {
-        // Useless if called in outside animation loop
-        Gdx.input.setInputProcessor(this);
-        active = true;
-    }
-
-    /**
-     * Called when this screen is no longer the current screen for a Game.
-     */
-    public void hide() {
-        // Useless if called in outside animation loop
-        Gdx.input.setInputProcessor(null);
-        active = false;
-    }
-
-    /**
-     * Sets the ScreenListener for this mode
-     * <p>
-     * The ScreenListener will respond to requests to quit.
-     */
-    public void setScreenListener(ScreenListener listener) {
-        this.listener = listener;
     }
 
     // PROCESSING PLAYER INPUT
