@@ -219,7 +219,7 @@ public class GameController implements Screen, ContactListener {
      * level4 - insanely hard key level
      */
     // Beta Release Setup
-    private String[] levels = {"test_level", "beta_1", "beta_2", "beta_3", "beta_5"};
+    private String[] levels = {"beta_0", "beta_1", "beta_2", "beta_3", "beta_5"};
 
 
     private int curr_level;
@@ -296,7 +296,7 @@ public class GameController implements Screen, ContactListener {
         this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
     }
 
-    protected Monster monster;
+//    protected Monster monster;
 
 //    private RayHandler rayHandlerFlare;
 
@@ -553,17 +553,10 @@ public class GameController implements Screen, ContactListener {
         for (GameObject obj : level.getAllObjects()) {
             addObject(obj);
         }
-        monster = new Monster(level.getDiver().getX(), level.getDiver().getY());
-        monster.setAttackTentacleSprite(new FilmStrip(monsterAttackTenctacle, 1, 30, 30));
-        monster.setIdleTentacleSprite(new FilmStrip(monsterIdleTenctacle, 5, 5, 23));
-        monster.setDrawScale(scale);
-        monster.setName("Monster");
-        monsterController = new MonsterController(monster, getWorldBounds());
-        level.addObject(monster);
+        monsterController = new MonsterController(level.getMonster(), getWorldBounds());
+
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
-        addObject(monster);
-
     }
 
     private void updateGameState() {
@@ -752,54 +745,42 @@ public class GameController implements Screen, ContactListener {
      */
     public void update(float dt) {
 
-        System.out.println("Bounds: " + level.getMapBounds().toString());
-
         for (Door door : level.getDoors()) {
             door.setActive(!door.getUnlock(level.getDiver().getItem()));
         }
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
 
+//        System.out.println("isMonsterActive");
+        if (monsterController.isMonsterActive()) {
+            monsterController.update(hostileOxygenDrain, level.getDiver());
+            Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
+            Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
 
-        monsterController.update(hostileOxygenDrain, level.getDiver());
-        Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
-        Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
-//        Wall add_wall = tentacles.poll();
-//        if (add_wall != null && add_wall.canSpawnTentacle()) {
-//            Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
-//            addQueuedObject(t);
-//        }
-        while (tentacles.size() > 0) {
-            Wall add_wall = tentacles.poll();
-            if (add_wall.canSpawnTentacle() && add_wall != null) {
+            while (tentacles.size() > 0) {
+                Wall add_wall = tentacles.poll();
+                if (add_wall.canSpawnTentacle() && add_wall != null) {
 
-                Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), .6f, add_wall, new FilmStrip(monsterAttackTenctacle, 1, 30, 30));
-                addQueuedObject(t);
-                AudioController.getInstance().roar();
+                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), 1f, add_wall, new FilmStrip(monsterAttackTenctacle, 1, 30, 30));
+                    addQueuedObject(t);
+                    AudioController.getInstance().roar();
+                }
             }
-        }
-        while (idle_tentacles.size() > 0) {
-            Wall add_wall = idle_tentacles.poll();
-            if (add_wall.canSpawnTentacle() && add_wall != null) {
+            while (idle_tentacles.size() > 0) {
+                Wall add_wall = idle_tentacles.poll();
+                if (add_wall.canSpawnTentacle() && add_wall != null) {
 
-                Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), 1f, add_wall, new FilmStrip(monsterIdleTenctacle, 5, 5, 23));
-                addQueuedObject(t);
+                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), 1f, add_wall, new FilmStrip(monsterIdleTenctacle, 5, 5, 23));
+                    addQueuedObject(t);
 //                AudioController.getInstance().roar();
+                }
             }
         }
-//        for (Tentacle t : monsterController.getMonster().getTentacles()) {
-//            Wall w = t.getSpawnWall();
-//            System.out.println(w);
-//            if (w.canSpawnTentacle()) {
-//                t = levelBuilder.createTentcle(t, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
-//                addQueuedObject(t);
-//            }
-//        }
 
         //** ADDING TENTACLES TO WalL!
 //        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
 //            Wall w = level.getDiver().getTouchedWall();
-//            Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), 1f, w, new FilmStrip(monsterTenctacle, 1, 30, 30));
+//            Tentacle t = levelBuilder.createTentcle(monster.getAggravation(), 1f, w, new FilmStrip(monsterTenctacle, 1, 30, 30));
 //            addQueuedObject(t);
 //        }
 
@@ -1288,6 +1269,7 @@ public class GameController implements Screen, ContactListener {
 
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
+
 
         collisionController.startDiverToObstacle(fix1, fix2, level.getDiver(), monsterController);
         if (listener != null) {

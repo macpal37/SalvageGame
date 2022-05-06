@@ -32,7 +32,7 @@ public class LevelBuilder {
     protected Texture woodenChair1;
     protected Texture woodenChair2;
     protected Texture woodenTable;
-
+    protected Texture monsterTenctacle;
 
 //    /**
 //     * The texture for Hazard
@@ -123,6 +123,8 @@ public class LevelBuilder {
         plantAnimation = directory.getEntry("models:plant", Texture.class);
         keyAnimation = directory.getEntry("models:key_animation", Texture.class);
 
+        monsterTenctacle = directory.getEntry("models:monster1", Texture.class);
+
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
         keyTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         pingTexture = new TextureRegion(directory.getEntry("models:ping", Texture.class));
@@ -138,7 +140,7 @@ public class LevelBuilder {
     }
 
     enum TileType {
-        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Decor
+        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Decor, Monster
     }
 
     class Tile {
@@ -148,8 +150,6 @@ public class LevelBuilder {
         public float rotation;
         public float[] vertices;
         public TileType tileType;
-        public String modelType;
-
         public int id = 0;
 
         public Tile() {
@@ -311,6 +311,7 @@ public class LevelBuilder {
                 float y = 0;
                 float spawnX = -1, spawnY = -1;
                 float rotation = 0;
+
                 for (JsonValue o : tileJson.get("objectgroup").get("objects")) {
 
                     if (o.getString("name").equals("SpawnLocation")) {
@@ -343,6 +344,7 @@ public class LevelBuilder {
                 tiles[tt].spawnX = spawnX;
                 tiles[tt].spawnY = spawnY;
                 tiles[tt].rotation = rotation;
+
 
             } else {
                 tiles[tt] = tiles[tt] = (new Tile(0, 0, tileSize / div,
@@ -444,8 +446,6 @@ public class LevelBuilder {
              * ===============================================*/
             else {
                 for (JsonValue obj : layer.get("objects")) {
-//                    System.out.println("gid: " + obj.getInt("gid"));
-//                    System.out.println("num tiles : " + tiles.length);
                     Tile tile = tiles[obj.getInt("gid") - 1];
 
                     float sx = obj.getFloat("x") / div;
@@ -575,9 +575,6 @@ public class LevelBuilder {
                                     System.out.println("Unknown Object?");
 
                             }
-
-//                            decor.setAngle((float) Math.PI * 1 / 2f);
-
                             decor.setScale(decor.getScale().x * objectWidth / tileSize, decor.getScale().y * objectHeight / tileSize);
 
                             decor.setAngle(rotation);
@@ -585,6 +582,22 @@ public class LevelBuilder {
                             decor.setSensor(true);
                             decor.setDrawScale(drawScale);
                             gameObjects.add(decor);
+                            break;
+                        case Monster:
+
+                            Monster monster = new Monster(sx, sy, true);
+                            if (obj.get("properties") != null)
+                                for (JsonValue prop : obj.get("properties")) {
+                                    if (prop.getString("name").equals("aggro_rate"))
+                                        monster.setAggravationRate(prop.getInt("value"));
+                                    else if (prop.getString("name").equals("aggro_threshold"))
+                                        monster.setAggroLevel(prop.getInt("value"));
+                                    else if (prop.getString("name").equals("vision_radius"))
+                                        monster.setVisionRadius(prop.getInt("value"));
+
+                                }
+                            gameObjects.add(monster);
+                            break;
                     }
 
 
@@ -698,6 +711,13 @@ public class LevelBuilder {
                 DecorModel dm = (DecorModel) go;
                 level.getAboveObjects().add(dm);
                 level.addObject(dm);
+            } else if (go instanceof Monster) {
+                System.out.println("Is this working?????");
+                Monster monster = (Monster) go;
+                monster.setTentacleSprite(new FilmStrip(monsterTenctacle, 1, 30, 30));
+                monster.setDrawScale(drawScale);
+                monster.setName("Monster");
+                level.addObject(monster);
             }
         }
 

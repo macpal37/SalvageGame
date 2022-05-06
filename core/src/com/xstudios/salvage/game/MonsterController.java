@@ -87,6 +87,10 @@ public class MonsterController {
     private Vector2 target_pos;
     private Vector2 curr_pos;
 
+    public boolean isMonsterActive() {
+        return monster.isActive();
+    }
+
     /**
      * Creates an AIController for the ship with the given id.
      *
@@ -109,24 +113,27 @@ public class MonsterController {
     }
 
     public void wallCollision() {
-        float agg = monster.getAggrivation();
-        if (agg < aggrivation_threshold) {
-            monster.setAggrivation(agg + 3f);
+        if (monster != null) {
+            float agg = monster.getAggravation();
+            if (agg < monster.getAggroLevel() + 1) {
+                monster.setAggravation(agg + monster.getAggravationRate());
+            }
         }
+
     }
 
     /**
-     * Change the state of the monster based on aggrivation levels
+     * Change the state of the monster based on aggravation levels
      */
     private void changeStateIfApplicable() {
         // Add initialization code as necessary
-        float aggrivation = monster.getAggrivation();
+        float aggravation = monster.getAggravation();
 
         // Next state depends on current state.
         switch (state) {
 
             case IDLE:
-                if (aggrivation > aggrivation_threshold) {
+                if (aggravation > monster.getAggroLevel()) {
                     state = FSMState.GONNA_POUNCE;
                     pounce_time = 0;
                 }
@@ -134,14 +141,14 @@ public class MonsterController {
             case GONNA_POUNCE:
                 if (pounce_time > MAX_POUNCE_TIME) {
                     state = FSMState.AGGRIVATED;
-                    monster.setAggressiveLength((int) (MAX_INVINCIBILITY * aggrivation /aggrivation_threshold));
+                    monster.setAggressiveLength((int) (MAX_INVINCIBILITY * aggravation /aggrivation_threshold));
                 } else {
                     pounce_time++;
                 }
                 break;
 
             case AGGRIVATED:
-                if (aggrivation <= aggrivation_threshold || monster.getAggressiveLength() <= 0) {
+                if (aggravation <= monster.getAggroLevel() || monster.getAggressiveLength() <= 0) {
 //                    monster.reduceInvincibilityTime();
                     state = FSMState.IDLE;
                 } else {
@@ -179,15 +186,15 @@ public class MonsterController {
 
 
     /**
-     * Change the state of the monster based on aggrivation levels
+     * Change the state of the monster based on aggravation levels
      */
-    public void update(float aggrivationDrain, DiverModel diver) {
+    public void update(float aggravationDrain, DiverModel diver) {
         tick++;
-        System.out.println("AGGRIVATION " + monster.getAggrivation());
+        System.out.println("AGGRIVATION " + monster.getAggravation());
         if (tick % 50 == 0) {
-            if (monster.getAggrivation() > 0.0f) {
-                float aggrivation = monster.getAggrivation() - .2f;
-                monster.setAggrivation(aggrivation);
+            if (monster.getAggravation() > 0.0f) {
+                float aggravation = monster.getAggravation() - 0.5f;
+                monster.setAggravation(aggravation);
             }
         }
 
@@ -249,7 +256,7 @@ public class MonsterController {
                     if (final_loc != null) {
                         //System.out.println(final_loc);
                         monster.addTentacle(final_loc);
-                        //monster.setAggrivation(0.0f);
+                        //monster.setAggravation(0.0f);
                     }
                 }
                 break;

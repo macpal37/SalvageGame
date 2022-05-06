@@ -190,6 +190,7 @@ public class Tentacle extends GameObject {
         this.startGrowing = startGrowing;
         System.out.println("start growing: " + startGrowing + " frame " + frame + " total frame " + extend_frame_length);
         if(!startGrowing && frame <= extend_frame_length) {
+
             frame = total_frames - frame;
         }
     }
@@ -249,7 +250,7 @@ public class Tentacle extends GameObject {
 
         tick++;
         int grow_rate = 10;
-        if (frame >= 30) {
+        if (frame > 30) {
             frame = -1;
 
         }
@@ -285,7 +286,7 @@ public class Tentacle extends GameObject {
         for (HazardModel hm : collisionBoxes) {
             hm.activatePhysics(world);
 
-            for(int i = 0; i < hm.getFixtureList().length; i++) {
+            for (int i = 0; i < hm.getFixtureList().length; i++) {
                 hm.getFixtureList()[i].setUserData(this);
             }
             hm.setActive(false);

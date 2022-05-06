@@ -16,6 +16,12 @@ public class LevelModel {
      */
     protected DiverModel diver;
 
+    public Monster getMonster() {
+        return monster;
+    }
+
+    protected Monster monster = new Monster(0, 0, false);
+
     protected ItemModel key;
     //    protected ItemModel dead_body;
     protected DeadBodyModel dead_body;
@@ -76,6 +82,10 @@ public class LevelModel {
      */
     public void addObject(GameObject obj) {
         objects.add(obj);
+        if (obj instanceof Monster) {
+            System.out.println("HELLO?????");
+            monster = (Monster) obj;
+        }
         if (obj instanceof Door) {
             doors.add((Door) obj);
         } else if (obj instanceof DiverModel) {
