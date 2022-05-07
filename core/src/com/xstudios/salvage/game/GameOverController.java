@@ -13,13 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
-public class GameOverController implements Screen, InputProcessor {
-
-    private ScreenListener listener;
-
-    private boolean active;
-
-    protected GameCanvas canvas;
+public class GameOverController extends ScreenController {
 
     protected TextureRegion background;
     protected Texture main_menu;
@@ -32,17 +26,6 @@ public class GameOverController implements Screen, InputProcessor {
     private boolean display_win;
 
     private int index;
-
-    private int width;
-    private int height;
-
-    private static int STANDARD_WIDTH = 1280;
-
-    private static int STANDARD_HEIGHT = 720;
-
-    private float scale;
-
-    private CameraController camera;
 
     public GameOverController() {
         active = false;
@@ -63,6 +46,7 @@ public class GameOverController implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
+        active = false;
         exit_home = false;
         restart_game = false;
         next_level = false;
@@ -82,28 +66,9 @@ public class GameOverController implements Screen, InputProcessor {
     }
 
     @Override
-    public void show() {
-        Gdx.input.setInputProcessor(this);
-        active = true;
-    }
-
-    @Override
     public void render(float delta) {
         draw(delta);
         render();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        // Compute the drawing scale
-        float sx = ((float)width)/STANDARD_WIDTH;
-        float sy = ((float)height)/STANDARD_HEIGHT;
-        scale = (sx < sy ? sx : sy);
-        this.width = width;
-        this.height = height;
-        camera.resize(this.width, this.height);
-        camera.getCamera().setToOrtho(false, width, height);
-        camera.getCamera().update();
     }
 
     @Override
@@ -112,31 +77,6 @@ public class GameOverController implements Screen, InputProcessor {
 
     @Override
     public void resume() {
-    }
-
-    @Override
-    public void hide() {
-        active = false;
-    }
-
-    /**
-     * Sets the ScreenListener for this mode
-     *
-     * The ScreenListener will respond to requests to quit.
-     */
-    public void setScreenListener(ScreenListener listener) {
-        this.listener = listener;
-    }
-    /**
-     * Sets the canvas associated with this controller
-     *
-     * The canvas is shared across all controllers.  Setting this value will compute
-     * the drawing scale from the canvas size.
-     *
-     * @param canvas the canvas associated with this controller
-     */
-    public void setCanvas(GameCanvas canvas) {
-        this.canvas = canvas;
     }
 
     private boolean help_draw(Texture t, int x, int y, boolean tint){
@@ -195,6 +135,7 @@ public class GameOverController implements Screen, InputProcessor {
         canvas.end();
     }
 
+    @Override
     public void gatherAssets(AssetDirectory directory) {
         main_menu = directory.getEntry("main_menu", Texture.class);
         if(display_win) {
