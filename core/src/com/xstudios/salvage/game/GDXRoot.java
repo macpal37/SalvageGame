@@ -207,6 +207,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		}
 		//GAME OVER
 		else if (screen == game_over_controller) {
+			game_over_controller.dispose();
 			//game over >> restart
 			System.out.println("in gameover");
 			if (exitCode == 0)
@@ -232,7 +233,6 @@ public class GDXRoot extends Game implements ScreenListener {
 				//main menu instead
 				if(current >= total_levels)
 					set_menu(canvas, directory);
-
 					//next level
 				else
 					set_game(canvas, directory);

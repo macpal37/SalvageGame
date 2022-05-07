@@ -188,7 +188,7 @@ public class SettingsController implements Screen, InputProcessor, ControllerLis
 
     private void draw() {
         canvas.begin();
-
+   
         canvas.draw(background, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         canvas.draw(tentacles, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 

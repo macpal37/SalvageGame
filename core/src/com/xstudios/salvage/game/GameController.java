@@ -484,6 +484,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
         game_state = state.PLAYING;
         pause = false;
         exit_home = false;
+        reach_target = false;
         Vector2 gravity = new Vector2(world.getGravity());
         for (GameObject obj : level.getAllObjects()) {
             obj.deactivatePhysics(world);
@@ -502,7 +503,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      */
     private void populateLevel() {
         cameraController.setZoom(1.0f);
-        levelBuilder.createLevel(levels[curr_level], level, scale, symbol_scale, rayHandler);
+        levelBuilder.createLevel(levels[curr_level], level, scale, new Vector2(0, 0), rayHandler);
         pause = false;
 
         // TODO: will this have the same effect as going through each type, casting, then adding?
@@ -571,7 +572,7 @@ public class GameController implements Screen, ContactListener, InputProcessor {
             int wallX = (int) level.getDiver().getTouchedWall().getPosition().x;
             int wallY = (int) level.getDiver().getTouchedWall().getPosition().y;
             if (Math.abs(level.getDiver().targetAngleY) >= 44) {
-//                if (level.getDiver().getVerticalMovement() != 0) {
+//                if (level.getDiver().getVerticalMovement() != 0)
                 if (playerY > wallY) {
                     level.getDiver().setTargetAngle(-1, 90);
                 } else if (playerY <= wallY) {
@@ -742,7 +743,6 @@ public class GameController implements Screen, ContactListener, InputProcessor {
             level.getDiver().setStunCooldown(level.getDiver().getStunCooldown() - 1);
 
         } else {
-
             level.getDiver().setStunned(false);
             hostileOxygenDrain = 0.0f;
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
@@ -825,15 +825,15 @@ public class GameController implements Screen, ContactListener, InputProcessor {
             int pY = Gdx.graphics.getHeight() - Gdx.input.getY();
             float y1 =  y + (int)(Gdx.graphics.getHeight()/2 - cameraController.getCameraPosition2D().y);
             float x1 =  x + (int) (Gdx.graphics.getWidth()/2 - cameraController.getCameraPosition2D().x);
-            float w = scale1 * ox;
-            float h = scale1 * oy;
+            float w = scale.x * ox;
+            float h = scale.y * oy;
 
             if ((x1 + w > pX && x1 - w < pX) && (y1 + h > pY && y1 - h < pY)) {
                 c = Color.GRAY;
                 if (Gdx.input.isTouched()) clicked = true;
             }
         }
-        canvas.draw(t, c, ox, oy, x, y, 0, scale1, scale1);
+        canvas.draw(t, c, ox, oy, x, y, 0, scale.x, scale.y);
         return clicked;
     }
 
@@ -990,8 +990,8 @@ public class GameController implements Screen, ContactListener, InputProcessor {
      * @param height The new height in pixels
      */
     public void resize(int width, int height) {
-        float sx = ((float)width)/1280;
-        float sy = ((float)height)/720;
+        float sx = ((float) width) / 1280;
+        float sy = ((float) height) / 720;
         scale1 = 0.75f * (sx < sy ? sx : sy);
         cameraController.getCamera().setToOrtho(false, width, height);
         cameraController.getCamera().update();
