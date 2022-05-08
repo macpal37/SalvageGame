@@ -104,6 +104,34 @@ public class Tentacle extends GameObject {
         origin.set(texture.getRegionWidth() / 2.0f, texture.getRegionHeight() / 2.0f);
     }
 
+
+    @Override
+    public void setPosition(Vector2 value) {
+        super.setPosition(value);
+        for (HazardModel hm : collisionBoxes) {
+            if (hm != null)
+                hm.setPosition(value);
+        }
+    }
+
+    @Override
+    public void setPosition(float x, float y) {
+        super.setPosition(x, y);
+        for (HazardModel hm : collisionBoxes) {
+            if (hm != null)
+                hm.setPosition(x, y);
+        }
+    }
+
+    @Override
+    public void setAngle(float value) {
+        super.setAngle(value);
+        for (HazardModel hm : collisionBoxes) {
+            if (hm != null)
+                hm.setAngle(value);
+        }
+    }
+
     public void setFilmStrip(FilmStrip value) {
         tentacleSprite = value;
         tentacleSprite.setFrame(1);
@@ -151,7 +179,7 @@ public class Tentacle extends GameObject {
         if (life > maxLifeSpan && startGrowing) {
 //        System.out.println("frame " + frame + " max life span " + extend_frame_length);
 //        if (frame >= extend_frame_length && frame < total_frames - extend_frame_length && startGrowing) {
-                setStartGrowing(false);
+            setStartGrowing(false);
         }
 //TODO fix the collision boxes thing
         if (frame == 1) {
@@ -265,7 +293,7 @@ public class Tentacle extends GameObject {
         if (frame >= 0) {
             tentacleSprite.setFrame(frame);
             canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x, (getY()) * drawScale.y + pivot.y, getAngle(), scale.x, scale.y);
-            System.out.println("FRAME "+ frame);
+            System.out.println("FRAME " + frame);
 
         }
 
@@ -303,8 +331,6 @@ public class Tentacle extends GameObject {
         for (HazardModel hm : collisionBoxes) {
             hm.deactivatePhysics(world);
         }
-
-
         if (body != null) {
             // Snapshot the values
             setBodyState(body);

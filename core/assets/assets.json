@@ -33,6 +33,8 @@
      "models:wooden_chair2" : "models/A_broken_chair_2.png",
      "models:wooden_table" : "models/A_broken_table_1.png",
   "models:treasure_chest" : "models/treasure_chest.png",
+  "models:treasure_chest_w_key" : "models/treasure_chest_w_key.png",
+   "models:treasure_chest_w_monster" : "models/treasure_chest_w_monster1.png",
     "level_editor": "ui/level_editor.png",
 
 

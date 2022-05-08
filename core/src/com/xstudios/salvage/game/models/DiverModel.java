@@ -13,6 +13,7 @@ import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
+import com.xstudios.salvage.util.PooledList;
 
 
 import java.util.ArrayList;
@@ -44,6 +45,12 @@ public class DiverModel extends GameObject {
 
 
     private ArrayList<FilmStrip> diverSprites;
+
+    public PooledList<TreasureModel> getTreasureChests() {
+        return treasureChests;
+    }
+
+    private PooledList<TreasureModel> treasureChests = new PooledList<>();
 
 
     private int minFlareDist = 5;
@@ -970,7 +977,8 @@ public class DiverModel extends GameObject {
             setMaxSpeed(boostedMaxSpeed);
             setLinearDamping(boostDamping);
             if (movement.y > 0) {
-                targetAngleY = 85;
+//                targetAngleY = 85;
+
             } else if (movement.y < 0) {
                 targetAngleY = -85;
             }
@@ -1307,7 +1315,7 @@ public class DiverModel extends GameObject {
                     } else {
 //                        canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
                     }
-                } */else {
+                } */ else {
                     if (turnFrames > 0 && turnFrames < 5) {
                         if (tick % 4 == 0) {
                             turnFrames--;

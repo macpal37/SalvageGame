@@ -1332,7 +1332,7 @@
                  "value":0
                 }, 
                 {
-                 "name":"has_flare",
+                 "name":"may_contain_flare",
                  "type":"bool",
                  "value":false
                 }, 

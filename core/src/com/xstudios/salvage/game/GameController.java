@@ -677,10 +677,16 @@ public class GameController implements Screen, ContactListener {
 
         AudioController.getInstance().update(level.getDiver().getOxygenLevel(), level.getDiver().getMaxOxygen());
 
+        if (input.didPing()) {
+            if (level.getDiver().getTreasureChests().size() > 0)
+                level.getDiver().getTreasureChests().pop().openChest();
+        }
 
         if (level.getDiver().getBody() != null && !pause) {
+//            cameraController.setCameraPosition(
+//                    (level.getDiver().getX() + 1.5f) * level.getDiver().getDrawScale().x, (level.getDiver().getY() + .5f) * level.getDiver().getDrawScale().y);
             cameraController.setCameraPosition(
-                    (level.getDiver().getX() + 1.5f) * level.getDiver().getDrawScale().x, (level.getDiver().getY() + .5f) * level.getDiver().getDrawScale().y);
+                    (level.getDiver().getX()) * level.getDiver().getDrawScale().x, (level.getDiver().getY() + .0f) * level.getDiver().getDrawScale().y);
 
             light.setPosition(
                     cameraController.getCameraPosition2D().x / 40f

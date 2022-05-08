@@ -88,7 +88,9 @@ public class LevelBuilder {
     protected ItemModel key;
     //    protected ItemModel dead_body;
     protected DeadBodyModel dead_body;
-    private Texture treasureAnimation;
+    private FilmStrip treasureOpenAnimation;
+    private FilmStrip treasureKeyAnimation;
+    private FilmStrip treasureMonsterAnimation;
 
     public LevelBuilder() {
         this.directory = directory;
@@ -123,7 +125,10 @@ public class LevelBuilder {
         dustAnimation = directory.getEntry("models:dust", Texture.class);
         plantAnimation = directory.getEntry("models:plant", Texture.class);
         keyAnimation = directory.getEntry("models:key_animation", Texture.class);
-        treasureAnimation = directory.getEntry("models:treasure_chest", Texture.class);
+        //Treasure Chest Animations
+        treasureKeyAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_key", Texture.class), 1, 40, 40);
+        treasureOpenAnimation = new FilmStrip(directory.getEntry("models:treasure_chest", Texture.class), 1, 14, 14);
+        treasureMonsterAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_monster", Texture.class), 1, 36, 36);
         monsterTenctacle = directory.getEntry("models:monster1", Texture.class);
 
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
@@ -200,8 +205,6 @@ public class LevelBuilder {
 
         float tScale = 2f / 3;
         if (w.canSpawnTentacle()) {
-
-
             Tentacle t = new Tentacle(w, agg_level);
             t.setScale(tentacleScale, tentacleScale);
             JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_tile.json"));
@@ -603,9 +606,17 @@ public class LevelBuilder {
                             TreasureModel treasureModel = new TreasureModel(createVerticies(tile, -tileSize / div / 4, -tileSize / div / 4,
                                     widthScale / 2, heightScale), sx, sy, tileSize / 2f, tileSize / 2f, div);
                             treasureModel.setAngle(rotation);
-                            treasureModel.setFilmStrip(new FilmStrip(treasureAnimation, 1, 14, 14));
+                            treasureModel.setIdleSprite(treasureOpenAnimation.copy());
+                            treasureModel.setTreasureType(TreasureModel.TreasureType.Key, treasureMonsterAnimation.copy());
                             treasureModel.setScale(1 / 2f, 1 / 2f);
                             treasureModel.initLight(rayHandler);
+                            treasureModel.setTentacleRotation(180);
+                            treasureModel.setTentacleSpawnPosition(0, 10f / div);
+                            Tentacle t = createTentcle(0, 0.5f, treasureModel, new FilmStrip(monsterTenctacle, 1, 30, 30), 200);
+
+                            level.addObject(t);
+                            treasureModel.setTrap(t);
+                            ;
                             gameObjects.add(treasureModel);
 
                             break;

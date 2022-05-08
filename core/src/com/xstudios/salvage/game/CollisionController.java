@@ -124,13 +124,19 @@ public class CollisionController {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof TreasureModel && f2.getUserData().equals("Treasure")) {
             DiverModel diver = (DiverModel) b1.getUserData();
             TreasureModel treasureModel = (TreasureModel) b2.getUserData();
-            treasureModel.setNearChest(true);
-        }
-        if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof TreasureModel && f1.getUserData().equals("Treasure")) {
+            if (!treasureModel.isOpened()) {
+                treasureModel.setNearChest(true);
+                diver.getTreasureChests().add(treasureModel);
+            }
+        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof TreasureModel && f1.getUserData().equals("Treasure")) {
 
             DiverModel diver = (DiverModel) b2.getUserData();
             TreasureModel treasureModel = (TreasureModel) b1.getUserData();
-            treasureModel.setNearChest(true);
+            if (!treasureModel.isOpened()) {
+                treasureModel.setNearChest(true);
+                diver.getTreasureChests().add(treasureModel);
+            }
+
         }
     }
 
@@ -142,13 +148,19 @@ public class CollisionController {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof TreasureModel && f2.getUserData().equals("Treasure")) {
             DiverModel diver = (DiverModel) b1.getUserData();
             TreasureModel treasureModel = (TreasureModel) b2.getUserData();
-            treasureModel.setNearChest(false);
-        }
-        if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof TreasureModel && f1.getUserData().equals("Treasure")) {
+            if (!treasureModel.isOpened()) {
+                treasureModel.setNearChest(false);
+                diver.getTreasureChests().remove(treasureModel);
+            }
+        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof TreasureModel && f1.getUserData().equals("Treasure")) {
 
             DiverModel diver = (DiverModel) b2.getUserData();
             TreasureModel treasureModel = (TreasureModel) b1.getUserData();
-            treasureModel.setNearChest(false);
+            if (!treasureModel.isOpened()) {
+                treasureModel.setNearChest(false);
+                diver.getTreasureChests().remove(treasureModel);
+            }
+
         }
 
     }

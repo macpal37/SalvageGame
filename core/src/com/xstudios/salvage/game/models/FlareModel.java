@@ -111,6 +111,7 @@ public class FlareModel extends DiverObjectModel {
     public void removeLights() {
         if (light != null)
             light.remove();
+
         if (redLight != null)
             redLight.remove();
     }
@@ -189,7 +190,7 @@ public class FlareModel extends DiverObjectModel {
     }
 
     public float getLightRadius() {
-        if(isActivated) {
+        if (isActivated) {
             return light.getDistance();
         } else {
             return 0;
@@ -358,7 +359,7 @@ public class FlareModel extends DiverObjectModel {
         return light;
     }
 
-    public void turnOffLight(float white_color_percent,float color_percent) {
+    public void turnOffLight(float white_color_percent, float color_percent) {
 //        light_color.a = .6f;
         light_color.a = color_percent * color_alpha_val;
         white_light.a = white_color_percent * white_alpha_val;
@@ -384,14 +385,14 @@ public class FlareModel extends DiverObjectModel {
 
     public void turnOnLight() {
         float temp_color = light_color.a * 1.6f;
-        if(temp_color > color_alpha_val){
+        if (temp_color > color_alpha_val) {
             light_color.a = color_alpha_val;
         } else {
             light_color.a = temp_color;
         }
 
         float temp_white = white_light.a * 1.6f;
-        if(temp_white > white_alpha_val){
+        if (temp_white > white_alpha_val) {
             white_light.a = white_alpha_val;
         } else {
             white_light.a = temp_white;
