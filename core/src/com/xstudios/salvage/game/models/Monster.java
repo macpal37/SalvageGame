@@ -16,13 +16,16 @@ public class Monster extends GameObject {
     private float maxAggression = 100;
     public float agression = 0.0f;
     private Queue<Wall> tentacles;
+    private Queue<Wall> idle_tentacles;
+    private final float RADIUS = 7;
     private float aggravation = 0.0f;
 
     /* The Monster's vision represented as a circle*/
     private float visionRadius = 7;
 
     private CircleShape radialPresence;
-    private FilmStrip tentacleSprite;
+    private FilmStrip tentacleAttackSprite;
+    private FilmStrip tentacleIdleSprite;
     private ArrayList<Wall> targetLocations;
     private int invincibility_time = 0;
 
@@ -73,6 +76,7 @@ public class Monster extends GameObject {
         setName("monster");
 
         tentacles = new LinkedList<Wall>();
+        idle_tentacles = new LinkedList<>();
         targetLocations = new ArrayList<Wall>();
         setActive(active);
     }
@@ -116,9 +120,15 @@ public class Monster extends GameObject {
     private int startingFrame = 0;
 
 
-    public void setTentacleSprite(FilmStrip value) {
-        tentacleSprite = value;
-        tentacleSprite.setFrame(11);
+    public void setAttackTentacleSprite(FilmStrip value) {
+        tentacleAttackSprite = value;
+        tentacleAttackSprite.setFrame(1);
+    }
+
+    public void setIdleTentacleSprite(FilmStrip value) {
+        tentacleIdleSprite = value;
+        tentacleIdleSprite.setFrame(1);
+        // TODO: why 11
     }
 
 
@@ -136,11 +146,14 @@ public class Monster extends GameObject {
 
     public void spawnTenctacle(DiverModel diver) {
         Tentacle tentacle = new Tentacle(diver.getX(), diver.getY());
-        tentacle.setFilmStrip(tentacleSprite.copy());
+        tentacle.setFilmStrip(tentacleAttackSprite.copy());
     }
 
     public void addTentacle(Wall wall) {
         tentacles.add(wall);
+    }
+    public void addIdleTentacle(Wall wall) {
+        idle_tentacles.add(wall);
     }
 
     public Wall getNextTentacle() {
@@ -159,9 +172,9 @@ public class Monster extends GameObject {
         return tentacles;
     }
 
-    public ArrayList<Wall> getSpawnLocations() {
-        return targetLocations;
-    }
+    public Queue<Wall> getIdleTentacles() { return idle_tentacles; }
+
+    public ArrayList<Wall> getSpawnLocations() { return targetLocations; }
 
     public void setAggravation(float temp_aggravation) {
         aggravation = temp_aggravation;

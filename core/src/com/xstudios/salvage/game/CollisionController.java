@@ -365,10 +365,12 @@ public class CollisionController {
             AudioController.getInstance().wood_collision(diver.getForce());
         }
 
-        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall &&
+        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall
+                && !(fd2 instanceof Tentacle) &&
                 diver.getDiverCollisionBox().equals(fd1)) {
             AudioController.getInstance().wall_collision(diver.getForce());
-        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall &&
+        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall
+                && !(fd1 instanceof Tentacle) &&
                 diver.getDiverCollisionBox().equals(fd2)) {
             AudioController.getInstance().wall_collision(diver.getForce());
         }
@@ -407,12 +409,12 @@ public class CollisionController {
      */
     public boolean getWinState(Body b1, Body b2, DiverModel diver) {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof GoalDoor) {
-            System.out.println("GOALl1!");
+//            System.out.println("GOALl1!");
 
             return diver.hasBody();
         }
         if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof GoalDoor) {
-            System.out.println("GOALl2!");
+//            System.out.println("GOALl2!");
             return diver.hasBody();
         }
         return false;
@@ -436,20 +438,20 @@ public class CollisionController {
                 diver.getDiverCollisionBox().equals(fd1) &&
                 b2.getUserData() instanceof HazardModel) {
             diver.setChangeLightFilter(true);
-            System.out.println("CHANGE LIGHT FILTER TRUE");
+//            System.out.println("CHANGE LIGHT FILTER TRUE");
         }
         if (b2.getUserData() instanceof DiverModel &&
                 diver.getDiverCollisionBox().equals(fd2) &&
                 b1.getUserData() instanceof HazardModel) {
             diver.setChangeLightFilter(true);
-            System.out.println("CHANGE LIGHT FILTER TRUE");
+//            System.out.println("CHANGE LIGHT FILTER TRUE");
         }
     }
 
 
     public static float staticHazardCollision(DiverModel diver, HazardModel hazard) {
 //        System.out.println("Hazard Contact: " + hazard.getOxygenDrain());
-        System.out.println("START HAZARD COLLISION");
+//        System.out.println("START HAZARD COLLISION");
         if (!diver.getStunned() && !diver.isInvincible()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
@@ -480,15 +482,112 @@ public class CollisionController {
             FlareModel flare = (FlareModel) b1.getUserData();
             Tentacle t = (Tentacle) b2.getUserData();
             t.setStartGrowing(false);
-            System.out.println("we got a flare folks");
+//            System.out.println("we got a flare folks");
 //            }
         }
         if (b1.getUserData() instanceof Tentacle &&
                 b2.getBody().getUserData() instanceof FlareModel) {
             Tentacle t = (Tentacle) b1.getUserData();
             t.setStartGrowing(false);
-            System.out.println("we got a flare folks");
+//            System.out.println("we got a flare folks");
         }
     }
 
+
+    /**
+     * Used to tell if the diver and flare are in range of each other
+     *
+     * @param b1
+     * @param b2
+     */
+
+    public void startDiverFlare(Body b1, Body b2) {
+
+        if (b1.getUserData() instanceof FlareModel) {
+            if (b2.getUserData() instanceof DiverModel) {
+                FlareModel f = (FlareModel) b1.getUserData();
+
+                f.turnOffLight(.33f, 1f);
+//                System.out.println("FLARE DIVER");
+
+            }
+        } else if (b2.getUserData() instanceof FlareModel) {
+            if (b1.getUserData() instanceof DiverModel) {
+                FlareModel f = (FlareModel) b2.getUserData();
+                f.turnOffLight(.33f, 1f);
+//                System.out.println("FLARE DIVER");
+
+            }
+        }
+    }
+
+
+    /**
+     * Used to tell if the diver and flare are in range of each other
+     *
+     * @param b1
+     * @param b2
+     */
+
+    public void endDiverFlare(Body b1, Body b2) {
+
+        if (b1.getUserData() instanceof FlareModel) {
+            if (b2.getUserData() instanceof DiverModel) {
+                FlareModel f = (FlareModel) b1.getUserData();
+                f.turnOnLight();
+            }
+        } else if (b2.getUserData() instanceof FlareModel) {
+            if (b1.getUserData() instanceof DiverModel) {
+                FlareModel f = (FlareModel) b2.getUserData();
+                f.turnOnLight();
+            }
+        }
+    }
+
+
+    /**
+     * Used to tell if the diver and flare are in range of each other
+     *
+     * @param b1
+     * @param b2
+     */
+
+    public void startFlareFlare(Body b1, Body b2) {
+
+        if (b1.getUserData() instanceof FlareModel) {
+            if (b2.getUserData() instanceof FlareModel) {
+                FlareModel f = (FlareModel) b1.getUserData();
+
+                f.turnOffLight(.4f, .8f);
+                FlareModel f2 = (FlareModel) b2.getUserData();
+
+                f2.turnOffLight(.4f, .8f);
+//                System.out.println("FLARE Flare");
+
+            }
+        }
+    }
+
+
+    /**
+     * Used to tell if the diver and flare are in range of each other
+     *
+     * @param b1
+     * @param b2
+     */
+
+    public void endFlareFlare(Body b1, Body b2) {
+
+        if (b1.getUserData() instanceof FlareModel) {
+            if (b2.getUserData() instanceof FlareModel) {
+                FlareModel f = (FlareModel) b1.getUserData();
+                f.turnOnLight();
+
+                FlareModel f2 = (FlareModel) b2.getUserData();
+
+                f2.turnOnLight();
+//                System.out.println("end flare flare");
+            }
+        }
+    }
 }

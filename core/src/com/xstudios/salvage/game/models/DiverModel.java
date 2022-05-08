@@ -1112,7 +1112,7 @@ public class DiverModel extends GameObject {
                 f.setX(getX());
                 f.setY(getY());
                 flare_duration++;
-                System.out.println("FLARe IS ACTIVE");
+//                System.out.println("FLARe IS ACTIVE");
             } else {
 //                f.setActivated(false);
                 f.setCarried(false);
@@ -1300,14 +1300,14 @@ public class DiverModel extends GameObject {
                     diverSprites.get(diverState).setFrame(idleFrame + 24);
 //                    canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
 
-                } else if (stunned) {
+                }/* else if (stunned) {
                     if (stunCooldown % 20 > 5) {
 
 //                        canvas.draw(diverSprites.get(diverState), Color.RED, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
                     } else {
 //                        canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), effect * 0.25f, 0.25f);
                     }
-                } else {
+                } */else {
                     if (turnFrames > 0 && turnFrames < 5) {
                         if (tick % 4 == 0) {
                             turnFrames--;

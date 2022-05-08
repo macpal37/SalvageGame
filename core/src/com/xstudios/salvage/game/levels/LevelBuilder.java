@@ -196,7 +196,7 @@ public class LevelBuilder {
 
     public float div = 25f;
 
-    public Tentacle createTentcle(float agg_level, float tentacleScale, Wall w, FilmStrip sprite) {
+    public Tentacle createTentcle(float agg_level, float tentacleScale, Wall w, FilmStrip sprite, int lifespan) {
 
         float tScale = 2f / 3;
         if (w.canSpawnTentacle()) {
@@ -279,7 +279,7 @@ public class LevelBuilder {
             t.setDrawScale(drawScale);
             t.setFilmStrip(sprite);
             t.setStartGrowing(true);
-            t.setMaxLifeSpan(300);
+            t.setMaxLifeSpan(lifespan);
             t.setName("tentacle");
             return t;
         } else
@@ -738,7 +738,7 @@ public class LevelBuilder {
             } else if (go instanceof Monster) {
                 System.out.println("Is this working?????");
                 Monster monster = (Monster) go;
-                monster.setTentacleSprite(new FilmStrip(monsterTenctacle, 1, 30, 30));
+                monster.setAttackTentacleSprite(new FilmStrip(monsterTenctacle, 1, 30, 30));
                 monster.setDrawScale(drawScale);
                 monster.setName("Monster");
                 level.addObject(monster);

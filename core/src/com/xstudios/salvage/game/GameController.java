@@ -43,7 +43,8 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion background;
 
 
-    protected Texture monsterTenctacle;
+    protected Texture monsterAttackTenctacle;
+    protected Texture monsterIdleTenctacle;
     protected Texture flareAnimation;
     protected TextureRegion hud;
     protected TextureRegion oxygen;
@@ -247,6 +248,12 @@ public class GameController implements Screen, ContactListener {
     private LevelModel level;
 
     private PointLight light;
+    private Color stun_color;
+    private Color low_oxygen_color;
+    private Color monster_color;
+    private float stun_light_radius = 5f;
+    private float normal_light_radius = 15f;
+
     private RayHandler rayHandler;
 
     private PointLight wallShine;
@@ -329,7 +336,11 @@ public class GameController implements Screen, ContactListener {
 //        rayHandlerFlare.setAmbientLight(1f);
 //        RayHandler.useDiffuseLight(true);
 
-        light = new PointLight(rayHandler, 100, Color.BLACK, 15, 0, 0);
+        stun_color = new Color(1f, 0.15f, 0.15f, .3f);//Color.BLACK;
+        low_oxygen_color = new Color(0f, .2f, .7f, .3f);
+        monster_color = new Color(1f, 0f, 0f, .4f);
+
+        light = new PointLight(rayHandler, 100, Color.BLACK, normal_light_radius, 0, 0);
         wallShine = new PointLight(rayHandler, 100, Color.BLUE, 8, 0, 0);
         wallShine.setSoft(true);
 
@@ -468,7 +479,9 @@ public class GameController implements Screen, ContactListener {
         keyHud = new TextureRegion(directory.getEntry("key_hud", Texture.class));
         flareHud = new TextureRegion(directory.getEntry("flare_hud", Texture.class));
         oxygen = new TextureRegion(directory.getEntry("oxygen", Texture.class));
-        monsterTenctacle = directory.getEntry("models:monster1", Texture.class);
+        monsterAttackTenctacle = directory.getEntry("models:monster1", Texture.class);
+        monsterIdleTenctacle = directory.getEntry("models:monster1", Texture.class);
+        //TODO: CHANGE BACK TO ACTUAL WALL TENTACLE
         plantAnimation = directory.getEntry("models:plant", Texture.class);
 
         //pause
@@ -548,8 +561,7 @@ public class GameController implements Screen, ContactListener {
         for (GameObject obj : level.getAllObjects()) {
             addObject(obj);
         }
-
-        monsterController = new MonsterController(level.getMonster());
+        monsterController = new MonsterController(level.getMonster(), getWorldBounds());
 
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
@@ -688,6 +700,8 @@ public class GameController implements Screen, ContactListener {
 
         // TODO: why wasnt this in marco's code?
 
+        updateDiverLighting();
+
         cameraController.render();
     }
 
@@ -759,17 +773,28 @@ public class GameController implements Screen, ContactListener {
         if (monsterController.isMonsterActive()) {
             monsterController.update(hostileOxygenDrain, level.getDiver());
             Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
+            Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
+            System.out.println("TENTACLE SIZE " + tentacles.size());
+            System.out.println("IDLE SIZE " + idle_tentacles.size());
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
-                if (add_wall.canSpawnTentacle() && add_wall != null) {
-
-                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), 1f, add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30));
+                if (add_wall != null && add_wall.canSpawnTentacle()) {
+                    System.out.println("CREATE TENTACLE");
+                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), 1f, add_wall, new FilmStrip(monsterAttackTenctacle, 1, 30, 30), 300);
                     addQueuedObject(t);
                     AudioController.getInstance().roar();
                 }
             }
+            while (idle_tentacles.size() > 0) {
+                Wall add_wall = idle_tentacles.poll();
+                if (add_wall != null && add_wall.canSpawnTentacle()) {
+                    System.out.println("...............................................");
+                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), .4f, add_wall, new FilmStrip(monsterAttackTenctacle, 1, 30, 30), 400);
+                    addQueuedObject(t);
+//                AudioController.getInstance().roar();
+                }
+            }
         }
-
 
         //** ADDING TENTACLES TO WalL!
 //        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
@@ -825,17 +850,53 @@ public class GameController implements Screen, ContactListener {
 //            System.out.println("PAIN: " + hostileOxygenDrain);
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
             level.getDiver().setStunCooldown(level.getDiver().getStunCooldown() - 1);
-
         } else {
-
             level.getDiver().setStunned(false);
             hostileOxygenDrain = 0.0f;
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
-//            level.getDiver().setHazardCollisionFilter();
-//            System.out.println("SETTING STUNNED TO FALSE");
         }
 
+    }
 
+    public void updateDiverLighting() {
+        if (monsterController.isMonsterActive() && level.getMonster().getAggravation() > level.getMonster().getAggroLevel()) {
+            changeLightColor(monster_color);
+        } else if (level.getDiver().getOxygenLevel() < level.getDiver().getMaxOxygen() * .25f) {
+            changeLightColor(low_oxygen_color);
+        } else {
+            changeLightColor(Color.BLACK);
+        }
+
+        if (level.getDiver().isInvincible()) {
+            if (light.getDistance() > stun_light_radius) {
+                light.setDistance(light.getDistance() - 1);
+            }
+        } else {
+            if (light.getDistance() < normal_light_radius) {
+                light.setDistance(light.getDistance() + 1);
+            }
+        }
+
+    }
+
+    public void changeLightColor(Color color) {
+        float curr_a = light.getColor().a;
+        float curr_r = light.getColor().r;
+        float curr_g = light.getColor().g;
+        float curr_b = light.getColor().b;
+        if (curr_a != color.a) {
+            curr_a += .01f * Math.signum(color.a - curr_a);
+        }
+        if (curr_r != color.r) {
+            curr_r += .01f * Math.signum(color.r - curr_r);
+        }
+        if (curr_g != color.g) {
+            curr_g += .01f * Math.signum(color.g - curr_g);
+        }
+        if (curr_b != color.b) {
+            curr_b += .01f * Math.signum(color.b - curr_b);
+        }
+        light.setColor(new Color(curr_r, curr_g, curr_b, curr_a));
     }
 
     /**
@@ -1226,7 +1287,12 @@ public class GameController implements Screen, ContactListener {
         collisionController.startMonsterWallCollision(body1, body2);
         collisionController.startDiverDeadBodyCollision(body1, body2);
         collisionController.startFlareTentacleCollision(fix1, fix2);
+
         collisionController.startDiverTreasureCollision(fix1, fix2);
+
+        collisionController.startFlareFlare(body1, body2);
+        collisionController.startDiverFlare(body1, body2);
+
         float d = collisionController.startDiverHazardCollision(fix1, fix2, level.getDiver());
         if (d != 0)
             hostileOxygenDrain = d;
@@ -1256,7 +1322,12 @@ public class GameController implements Screen, ContactListener {
         collisionController.removeDiverSensorTouching(level.getDiver(), fix1, fix2);
         collisionController.endDiverItemCollision(body1, body2);
         collisionController.endDiverHazardCollision(fix1, fix2, level.getDiver());
+
         collisionController.endDiverTreasureCollision(fix1, fix2);
+
+        collisionController.endFlareFlare(body1, body2);
+        collisionController.endDiverFlare(body1, body2);
+
 
     }
 
