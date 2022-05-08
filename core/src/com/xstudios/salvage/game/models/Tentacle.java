@@ -48,8 +48,7 @@ public class Tentacle extends GameObject {
         spawnWall.setHasTentcle(true);
         setAngle(wall.getTentacleRotation() / 180 * (float) Math.PI);
         System.out.println("length " + len);
-        extend_frame_length = 16;//Math.min(extend_frame_length,(int)(len));
-//        setStartGrowing(false);
+        extend_frame_length = 16;
         System.out.println("extend frame length: " + extend_frame_length);
     }
 

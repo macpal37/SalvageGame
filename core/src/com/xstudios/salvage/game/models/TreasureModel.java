@@ -138,7 +138,7 @@ public class TreasureModel extends ObstacleModel {
         sprite = treasureOpenAnimation;
         this.contents = contents;
         if (contents == TreasureType.Monster) {
-            sprite.setFrame(34);
+            sprite.setFrame(32);
         } else {
             sprite.setFrame(0);
         }
@@ -221,11 +221,11 @@ public class TreasureModel extends ObstacleModel {
 
                     break;
                 case Monster:
-                    if (sprite.getFrame() < 36)
+                    if (sprite.getFrame() < 35)
                         if (tick % 2 == 0)
                             sprite.setFrame(sprite.getFrame() + 1);
 
-                    if (sprite.getFrame() == 34) {
+                    if (sprite.getFrame() == 33) {
                         trap.setActive(true);
                         trap.setStartGrowing(true);
 

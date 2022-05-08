@@ -682,11 +682,11 @@ public class GameController implements Screen, ContactListener {
                 TreasureModel tm = level.getDiver().getTreasureChests().pop();
                 tm.openChest();
                 if (tm.getContents() == TreasureModel.TreasureType.Monster) {
-                    Tentacle t = levelBuilder.createTentcle(0, 0.5f, tm, new FilmStrip(monsterAttackTenctacle, 1, 30, 30), 30);
+                    Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, LevelBuilder.TentacleType.OldAttack, 30);
                     tm.setTrap(t);
                     addQueuedObject(t);
                 } else if (tm.getContents() == TreasureModel.TreasureType.Key) {
-                    
+
                 }
             }
 
@@ -795,7 +795,7 @@ public class GameController implements Screen, ContactListener {
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     System.out.println("CREATE TENTACLE");
-                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), 1f, add_wall, new FilmStrip(monsterAttackTenctacle, 1, 30, 30), 300);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 1f, add_wall, LevelBuilder.TentacleType.NewAttack, 300);
                     addQueuedObject(t);
                     AudioController.getInstance().roar();
                 }
@@ -804,7 +804,7 @@ public class GameController implements Screen, ContactListener {
                 Wall add_wall = idle_tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     System.out.println("...............................................");
-                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), .4f, add_wall, new FilmStrip(monsterAttackTenctacle, 1, 30, 30), 400);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, LevelBuilder.TentacleType.NewAttack, 400);
                     addQueuedObject(t);
 //                AudioController.getInstance().roar();
                 }

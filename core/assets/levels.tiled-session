@@ -150,6 +150,7 @@
             }
         }
     },
+    "last.imagePath": "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels/tilesets",
     "map.lastUsedFormat": "json",
     "openFiles": [
         "levels/tilesets/tentacle_tile.json",
@@ -160,17 +161,22 @@
     "project": "levels.tiled-project",
     "property.type": "float",
     "recentFiles": [
-        "levels/tilesets/tentacle_tile.json",
-        "levels/tilesets/old_ship_tileset.json",
-        "levels/beta_0.json",
-        "levels/beta_1.json",
-        "levels/in_progress.json",
-        "levels/level4.json",
         "levels/level1.json",
         "levels/level0.json",
+        "levels/beta_2.json",
+        "levels/beta_1.json",
+        "levels/beta_0.json",
+        "levels/tilesets/tentacle_tile.json",
+        "levels/tilesets/old_ship_tileset.json",
+        "levels/in_progress.json",
+        "levels/level4.json",
         "levels/test_level.json",
         "levels/tutorial3.json",
-        "levels/tutorial2.json",
-        "levels/tutorial1.json"
-    ]
+        "levels/tutorial2.json"
+    ],
+    "tileset.lastUsedFormat": "json",
+    "tileset.tileSize": {
+        "height": 286,
+        "width": 600
+    }
 }
