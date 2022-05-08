@@ -249,6 +249,11 @@ public class GameController implements Screen, ContactListener {
 
     private PointLight light;
     private Color stun_color;
+    private Color low_oxygen_color;
+    private Color monster_color;
+    private float stun_light_radius = 5f;
+    private float normal_light_radius = 15f;
+
     private RayHandler rayHandler;
 
     private PointLight wallShine;
@@ -332,8 +337,10 @@ public class GameController implements Screen, ContactListener {
 //        RayHandler.useDiffuseLight(true);
 
         stun_color = new Color(1f, 0.15f, 0.15f, .3f);//Color.BLACK;
+        low_oxygen_color = new Color(0f, .2f, .7f, .3f);
+        monster_color = new Color(1f, 0f, 0f, .4f);
 
-        light = new PointLight(rayHandler, 100, Color.BLACK, 15, 0, 0);
+        light = new PointLight(rayHandler, 100, Color.BLACK, normal_light_radius, 0, 0);
         wallShine = new PointLight(rayHandler, 100, Color.BLUE, 8, 0, 0);
         wallShine.setSoft(true);
 
@@ -473,7 +480,8 @@ public class GameController implements Screen, ContactListener {
         flareHud = new TextureRegion(directory.getEntry("flare_hud", Texture.class));
         oxygen = new TextureRegion(directory.getEntry("oxygen", Texture.class));
         monsterAttackTenctacle = directory.getEntry("models:monster1", Texture.class);
-        monsterIdleTenctacle = directory.getEntry("models:monster2", Texture.class);
+        monsterIdleTenctacle = directory.getEntry("models:monster1", Texture.class);
+        //TODO: CHANGE BACK TO ACTUAL WALL TENTACLE
         plantAnimation = directory.getEntry("models:plant", Texture.class);
 
         //pause
@@ -684,6 +692,8 @@ public class GameController implements Screen, ContactListener {
 
         // TODO: why wasnt this in marco's code?
 
+        updateDiverLighting();
+
         cameraController.render();
     }
 
@@ -756,21 +766,22 @@ public class GameController implements Screen, ContactListener {
             monsterController.update(hostileOxygenDrain, level.getDiver());
             Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
             Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
-
+            System.out.println("TENTACLE SIZE "+ tentacles.size());
+            System.out.println("IDLE SIZE "+ idle_tentacles.size());
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
-                if (add_wall.canSpawnTentacle() && add_wall != null) {
-
-                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), 1f, add_wall, new FilmStrip(monsterAttackTenctacle, 1, 30, 30));
+                if (add_wall != null && add_wall.canSpawnTentacle()) {
+                    System.out.println("CREATE TENTACLE");
+                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), 1f, add_wall, new FilmStrip(monsterAttackTenctacle, 1, 30, 30), 300);
                     addQueuedObject(t);
                     AudioController.getInstance().roar();
                 }
             }
             while (idle_tentacles.size() > 0) {
                 Wall add_wall = idle_tentacles.poll();
-                if (add_wall.canSpawnTentacle() && add_wall != null) {
-
-                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), 1f, add_wall, new FilmStrip(monsterIdleTenctacle, 5, 5, 23));
+                if (add_wall != null && add_wall.canSpawnTentacle()) {
+                    System.out.println("...............................................");
+                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), .4f, add_wall, new FilmStrip(monsterAttackTenctacle, 1, 30, 30), 400);
                     addQueuedObject(t);
 //                AudioController.getInstance().roar();
                 }
@@ -831,66 +842,51 @@ public class GameController implements Screen, ContactListener {
 //            System.out.println("PAIN: " + hostileOxygenDrain);
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
             level.getDiver().setStunCooldown(level.getDiver().getStunCooldown() - 1);
-//            changeToStunLight();
-                System.out.println("STUN COLOR");
-                System.out.println(Color.BLACK.r + " " + Color.BLACK.g + " "+ Color.BLACK.b + " "+ Color.BLACK.a + " ");
-//            }
-//            else {
-//                light.setColor(Color.BLACK);
-//            }
         } else {
-//            changeToNormalLight();
             level.getDiver().setStunned(false);
             hostileOxygenDrain = 0.0f;
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
-//            level.getDiver().setHazardCollisionFilter();
-//            System.out.println("SETTING STUNNED TO FALSE");
         }
-        if(level.getDiver().isInvincible()){
-            changeToStunLight();
+
+    }
+
+    public void updateDiverLighting(){
+        if (monsterController.isMonsterActive() && level.getMonster().getAggravation()  > level.getMonster().getAggroLevel()) {
+            changeLightColor(monster_color);
+        } else if(level.getDiver().getOxygenLevel() < level.getDiver().getMaxOxygen() * .25f){
+            changeLightColor(low_oxygen_color);
         } else {
-            changeToNormalLight();
+            changeLightColor(Color.BLACK);
         }
 
+        if (level.getDiver().isInvincible()){
+            if(light.getDistance() > stun_light_radius){
+                light.setDistance(light.getDistance() - 1);
+            }
+        } else {
+            if(light.getDistance() < normal_light_radius){
+                light.setDistance(light.getDistance() + 1);
+            }
+        }
 
     }
 
-    public void changeToStunLight() {
+    public void changeLightColor(Color color) {
         float curr_a =light.getColor().a;
         float curr_r = light.getColor().r;
         float curr_g = light.getColor().g;
         float curr_b = light.getColor().b;
-        if (curr_a > stun_color.a) {
-            curr_a -= .01f;
+        if (curr_a != color.a) {
+            curr_a += .01f * Math.signum(color.a - curr_a);
         }
-        if (curr_r < stun_color.r) {
-            curr_r += .01f;
+        if (curr_r != color.r) {
+            curr_r += .01f * Math.signum(color.r - curr_r);
         }
-        if (curr_g < stun_color.g) {
-            curr_g += .01f;
+        if (curr_g != color.g) {
+            curr_g += .01f * Math.signum(color.g - curr_g);
         }
-        if (curr_b < stun_color.b) {
-            curr_b += .01f;
-        }
-        light.setColor(new Color(curr_r, curr_g, curr_b, curr_a));
-    }
-
-    public void changeToNormalLight() {
-        float curr_a =light.getColor().a;
-        float curr_r = light.getColor().r;
-        float curr_g = light.getColor().g;
-        float curr_b = light.getColor().b;
-        if (curr_a < Color.BLACK.a) {
-            curr_a += .01f;
-        }
-        if (curr_r > Color.BLACK.r) {
-            curr_r -= .01f;
-        }
-        if (curr_g > Color.BLACK.g) {
-            curr_g -= .01f;
-        }
-        if (curr_b > Color.BLACK.b) {
-            curr_b -= .01f;
+        if (curr_b != color.b) {
+            curr_b += .01f * Math.signum(color.b - curr_b);
         }
         light.setColor(new Color(curr_r, curr_g, curr_b, curr_a));
     }

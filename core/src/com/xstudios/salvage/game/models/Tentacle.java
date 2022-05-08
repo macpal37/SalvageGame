@@ -48,10 +48,9 @@ public class Tentacle extends GameObject {
         spawnWall.setHasTentcle(true);
         setAngle(wall.getTentacleRotation() / 180 * (float) Math.PI);
         System.out.println("length " + len);
-        extend_frame_length = Math.min(extend_frame_length,(int)(len));
+        extend_frame_length = 16;//Math.min(extend_frame_length,(int)(len));
 //        setStartGrowing(false);
         System.out.println("extend frame length: " + extend_frame_length);
-        System.out.println("LENGTH " + len);
     }
 
     public Tentacle() {
@@ -149,12 +148,12 @@ public class Tentacle extends GameObject {
     public void update() {
         life++;
 
-//        if (life > maxLifeSpan && startGrowing) {
-        System.out.println("frame " + frame + " max life span " + extend_frame_length);
-        if (frame >= extend_frame_length && life > maxLifeSpan && startGrowing) {
+        if (life > maxLifeSpan && startGrowing) {
+//        System.out.println("frame " + frame + " max life span " + extend_frame_length);
+//        if (frame >= extend_frame_length && frame < total_frames - extend_frame_length && startGrowing) {
                 setStartGrowing(false);
         }
-
+//TODO fix the collision boxes thing
         if (frame == 1) {
             collisionBoxes[0].setActive(true);
         }
@@ -189,10 +188,9 @@ public class Tentacle extends GameObject {
     public void setStartGrowing(boolean startGrowing) {
         this.startGrowing = startGrowing;
         System.out.println("start growing: " + startGrowing + " frame " + frame + " total frame " + extend_frame_length);
-        if(!startGrowing && frame <= extend_frame_length) {
-
-            frame = total_frames - frame;
-        }
+//        if(!startGrowing && frame < extend_frame_length) {
+//            frame = total_frames - frame;
+//        }
     }
 
     public boolean isStartGrowing() {
@@ -250,7 +248,7 @@ public class Tentacle extends GameObject {
 
         tick++;
         int grow_rate = 10;
-        if (frame > 30) {
+        if (frame >= 30) {
             frame = -1;
 
         }
@@ -267,7 +265,7 @@ public class Tentacle extends GameObject {
         if (frame >= 0) {
             tentacleSprite.setFrame(frame);
             canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x, (getY()) * drawScale.y + pivot.y, getAngle(), scale.x, scale.y);
-
+            System.out.println("FRAME "+ frame);
 
         }
 

@@ -122,12 +122,12 @@ public class Monster extends GameObject {
 
     public void setAttackTentacleSprite(FilmStrip value) {
         tentacleAttackSprite = value;
-        tentacleAttackSprite.setFrame(11);
+        tentacleAttackSprite.setFrame(1);
     }
 
     public void setIdleTentacleSprite(FilmStrip value) {
         tentacleIdleSprite = value;
-        tentacleIdleSprite.setFrame(11);
+        tentacleIdleSprite.setFrame(1);
         // TODO: why 11
     }
 

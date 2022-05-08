@@ -67,7 +67,7 @@
       "models:kitchen4": "models/kitchen4.png",
       "models:kitchen5": "models/kitchen5.png",
       "models:monster1": "models/monster_animation1.png",
-      "models:monster2": "models/tentacle_wall_animation.png",
+      "models:monster2": "models/tentacle_idle1.png",
 
 
     "levels:tilesets:old_ship_tileset":"levels/tilesets/old_ship_tileset.png",
