@@ -606,16 +606,14 @@ public class LevelBuilder {
                             TreasureModel treasureModel = new TreasureModel(createVerticies(tile, -tileSize / div / 4, -tileSize / div / 4,
                                     widthScale / 2, heightScale), sx, sy, tileSize / 2f, tileSize / 2f, div);
                             treasureModel.setAngle(rotation);
-                            treasureModel.setIdleSprite(treasureOpenAnimation.copy());
-                            treasureModel.setTreasureType(TreasureModel.TreasureType.Key, treasureMonsterAnimation.copy());
+                            treasureModel.setIdeSuspenseSprite(treasureOpenAnimation.copy(), treasureMonsterAnimation.copy());
+//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Monster, treasureMonsterAnimation.copy());
+                            treasureModel.setTreasureType(TreasureModel.TreasureType.Key, treasureKeyAnimation.copy());
                             treasureModel.setScale(1 / 2f, 1 / 2f);
                             treasureModel.initLight(rayHandler);
                             treasureModel.setTentacleRotation(180);
                             treasureModel.setTentacleSpawnPosition(0, 10f / div);
-                            Tentacle t = createTentcle(0, 0.5f, treasureModel, new FilmStrip(monsterTenctacle, 1, 30, 30), 200);
 
-                            level.addObject(t);
-                            treasureModel.setTrap(t);
                             ;
                             gameObjects.add(treasureModel);
 

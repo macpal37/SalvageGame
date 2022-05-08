@@ -103,8 +103,8 @@ public class MonsterController {
         targetLocations.push(monster.getPosition());
         tick = 0;
         state = FSMState.IDLE;
-        target_pos = new Vector2(bounds.x / 2, bounds.y/2);
-        curr_pos = new Vector2(bounds.x / 2, bounds.y/2);
+        target_pos = new Vector2(bounds.x / 2, bounds.y / 2);
+        curr_pos = new Vector2(bounds.x / 2, bounds.y / 2);
         this.bounds = bounds;
     }
 
@@ -130,7 +130,7 @@ public class MonsterController {
         // Add initialization code as necessary
         float aggravation = monster.getAggravation();
 
-        System.out.println("aggravation: " + monster.getAggravation() + " threshold " + monster.getAggroLevel());
+//        System.out.println("aggravation: " + monster.getAggravation() + " threshold " + monster.getAggroLevel());
         // Next state depends on current state.
         switch (state) {
 
@@ -143,7 +143,7 @@ public class MonsterController {
             case GONNA_POUNCE:
                 if (pounce_time > MAX_POUNCE_TIME) {
                     state = FSMState.AGGRIVATED;
-                    monster.setAggressiveLength((int) (MAX_INVINCIBILITY * aggravation /aggrivation_threshold));
+                    monster.setAggressiveLength((int) (MAX_INVINCIBILITY * aggravation / aggrivation_threshold));
                 } else {
                     pounce_time++;
                 }
@@ -169,7 +169,7 @@ public class MonsterController {
                 state = FSMState.IDLE; // If debugging is off
                 break;
         }
-        System.out.println("STATE " + state);
+//        System.out.println("STATE " + state);
     }
 
 
@@ -211,19 +211,18 @@ public class MonsterController {
 
             case IDLE:
                 if (tick % 5 == 0) {
-                    if(curr_pos.dst(target_pos) <  MAX_TARGET_DIST){
+                    if (curr_pos.dst(target_pos) < MAX_TARGET_DIST) {
                         int ctr = 0;
-                        while(curr_pos.dst(target_pos) <  10 && ctr < 10) {
+                        while (curr_pos.dst(target_pos) < 10 && ctr < 10) {
                             Random rand = new Random();
                             float xpos = rand.nextFloat() * RAND_DIST_RANGE;
                             float ypos = rand.nextFloat() * RAND_DIST_RANGE;
                             target_pos = diver.getPosition().cpy().add(xpos, ypos);
                             ctr++;
                         }
-                        System.out.println("////////////////////////////////////////////////////");
+//                        System.out.println("////////////////////////////////////////////////////");
                     } else {
                         curr_pos = (target_pos.cpy().sub(curr_pos).nor()).add(curr_pos);
-                        System.out.println("uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
                     }
 
                     if (tick % 250 == 0) {
@@ -244,20 +243,20 @@ public class MonsterController {
                 }
                 break;
             case AGGRIVATED:
-                if(tick % 5 == 0) {
-                    if(curr_pos.dst(target_pos) <  MAX_TARGET_DIST){
+                if (tick % 5 == 0) {
+                    if (curr_pos.dst(target_pos) < MAX_TARGET_DIST) {
                         int ctr = 0;
-                        while(curr_pos.dst(target_pos) <  10 && ctr < 10) {
+                        while (curr_pos.dst(target_pos) < 10 && ctr < 10) {
                             Random rand = new Random();
                             float xpos = rand.nextFloat() * ATTACK_DIST_RANGE;
                             float ypos = rand.nextFloat() * ATTACK_DIST_RANGE;
                             target_pos = diver.getPosition().cpy().add(xpos, ypos);
                             ctr++;
                         }
-                        System.out.println("rippppppppppppppppppppppppppppppppppppp");
+//                        System.out.println("rippppppppppppppppppppppppppppppppppppp");
                     } else {
                         curr_pos = (target_pos.cpy().sub(curr_pos).nor()).add(curr_pos);
-                        System.out.println("sadddddddddddddddddddddddddddddddddd");
+//                        System.out.println("sadddddddddddddddddddddddddddddddddd");
                     }
                 }
                 if (tick % 100 == 0) {

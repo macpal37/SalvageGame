@@ -678,8 +678,18 @@ public class GameController implements Screen, ContactListener {
         AudioController.getInstance().update(level.getDiver().getOxygenLevel(), level.getDiver().getMaxOxygen());
 
         if (input.didPing()) {
-            if (level.getDiver().getTreasureChests().size() > 0)
-                level.getDiver().getTreasureChests().pop().openChest();
+            if (level.getDiver().getTreasureChests().size() > 0) {
+                TreasureModel tm = level.getDiver().getTreasureChests().pop();
+                tm.openChest();
+                if (tm.getContents() == TreasureModel.TreasureType.Monster) {
+                    Tentacle t = levelBuilder.createTentcle(0, 0.5f, tm, new FilmStrip(monsterAttackTenctacle, 1, 30, 30), 30);
+                    tm.setTrap(t);
+                    addQueuedObject(t);
+                } else if (tm.getContents() == TreasureModel.TreasureType.Key) {
+                    
+                }
+            }
+
         }
 
         if (level.getDiver().getBody() != null && !pause) {
@@ -780,8 +790,7 @@ public class GameController implements Screen, ContactListener {
             monsterController.update(hostileOxygenDrain, level.getDiver());
             Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
             Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
-            System.out.println("TENTACLE SIZE " + tentacles.size());
-            System.out.println("IDLE SIZE " + idle_tentacles.size());
+
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {

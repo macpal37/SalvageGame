@@ -22,20 +22,32 @@ public class TreasureModel extends ObstacleModel {
         return trap;
     }
 
-    public void setTrap(Tentacle trap) {
-        trap.setMaxLifeSpan(10);
-//        trap.setStartGrowing(false);
-        System.out.println("TEN POS: " + trap.getPosition());
-        this.trap = trap;
+    public void setTrap(Tentacle t) {
+        t.setActive(false);
+        t.setStartGrowing(false);
+        t.setGrowRate(5);
+        this.trap = t;
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
-        trap.setPosition(getX(), getY());
-        trap.setAngle((float) (getAngle() + Math.PI));
+        if (trap != null) {
+            trap.setPosition(getX(), getY());
+            trap.setAngle((float) (getAngle() + Math.PI));
+        }
+
     }
 
+    public ItemModel getKeyReward() {
+        return keyReward;
+    }
+
+    public void setKeyReward(ItemModel keyReward) {
+        this.keyReward = keyReward;
+    }
+
+    public ItemModel keyReward;
     public Tentacle trap;
 
     public TreasureType getContents() {
@@ -49,6 +61,7 @@ public class TreasureModel extends ObstacleModel {
     private TreasureType contents;
 
     private FilmStrip idleSprite;
+    private FilmStrip suspenseSprite;
 
     public boolean isOpened() {
         return opened;
@@ -93,9 +106,8 @@ public class TreasureModel extends ObstacleModel {
 
         releaseFixtures();
         for (int ii = 0; ii < shapes.length; ii++) {
-            fixture.filter.categoryBits = 0x004;
-            fixture.filter.groupIndex = 0x002;
-            fixture.filter.maskBits = -1;
+            fixture.filter.categoryBits = 0x008;
+            fixture.filter.maskBits = 0x004;
             fixture.shape = shapes[ii];
 
             geoms[ii] = body.createFixture(fixture);
@@ -115,15 +127,22 @@ public class TreasureModel extends ObstacleModel {
     }
 
 
-    public void setIdleSprite(FilmStrip value) {
+    public void setIdeSuspenseSprite(FilmStrip value, FilmStrip suspense) {
         idleSprite = value;
+        suspenseSprite = suspense;
+        suspense.setFrame(0);
         idleSprite.setFrame(0);
     }
 
     public void setTreasureType(TreasureType contents, FilmStrip treasureOpenAnimation) {
         sprite = treasureOpenAnimation;
         this.contents = contents;
-        sprite.setFrame(0);
+        if (contents == TreasureType.Monster) {
+            sprite.setFrame(34);
+        } else {
+            sprite.setFrame(0);
+        }
+
     }
 
 
@@ -142,8 +161,7 @@ public class TreasureModel extends ObstacleModel {
         super.drawDebug(canvas);
         canvas.drawPhysics(treasureRadius, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
 
-//        if (opened && trap != null)
-//            trap.drawDebug(canvas);
+
     }
 
     boolean nearChest;
@@ -169,9 +187,9 @@ public class TreasureModel extends ObstacleModel {
     @Override
     public void draw(GameCanvas canvas) {
         tick++;
-        if (nearChest) {
+        if (nearChest && suspenseSprite.getFrame() < 35) {
             light.setActive(true);
-            if (lightColor.a < 0.5f)
+            if (lightColor.a < 0.4f)
                 lightColor.add(0, 0, 0, 0.01f);
 
             canvas.drawText("Press E", GameController.displayFont, (getX() - getWidth() / 3 * 2) * drawScale.x, (getY() + getHeight() / 3 * 2) * drawScale.y);
@@ -187,23 +205,32 @@ public class TreasureModel extends ObstacleModel {
                 idleSprite.setFrame(idleSprite.getFrame() + 1);
             }
             canvas.draw(idleSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), scale.x, scale.y);
+        } else if (suspenseSprite.getFrame() < 35) {
+            if (tick % 5 == 0)
+                suspenseSprite.setFrame(suspenseSprite.getFrame() + 1);
+            canvas.draw(suspenseSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), scale.x, scale.y);
         } else {
             canvas.draw(sprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), scale.x, scale.y);
 
             switch (contents) {
                 case Key:
+
                     if (tick % 6 == 0)
-                        if (sprite.getFrame() < 40)
+                        if (sprite.getFrame() < 39)
                             sprite.setFrame(sprite.getFrame() + 1);
 
                     break;
                 case Monster:
-//                    trap.draw(canvas);
-                    if (tick % 2 == 0)
-                        if (sprite.getFrame() < 36)
+                    if (sprite.getFrame() < 36)
+                        if (tick % 2 == 0)
                             sprite.setFrame(sprite.getFrame() + 1);
-                    if (sprite.getFrame() == 34)
+
+                    if (sprite.getFrame() == 34) {
+                        trap.setActive(true);
                         trap.setStartGrowing(true);
+
+                    }
+
                     break;
                 case Flare:
                     if (tick % 4 == 0)

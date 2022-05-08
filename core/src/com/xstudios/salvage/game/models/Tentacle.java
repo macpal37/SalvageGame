@@ -174,7 +174,8 @@ public class Tentacle extends GameObject {
     }
 
     public void update() {
-        life++;
+        if (isActive())
+            life++;
 
         if (life > maxLifeSpan && startGrowing) {
 //        System.out.println("frame " + frame + " max life span " + extend_frame_length);
@@ -270,12 +271,18 @@ public class Tentacle extends GameObject {
         extend_frame_length = l;
     }
 
+    public void setGrowRate(int grow_rate) {
+        this.grow_rate = grow_rate;
+    }
+
+    int grow_rate = 10;
+
     @Override
     public void draw(GameCanvas canvas) {
         update();
 
         tick++;
-        int grow_rate = 10;
+
         if (frame >= 30) {
             frame = -1;
 
@@ -290,10 +297,10 @@ public class Tentacle extends GameObject {
             }
         }
 
-        if (frame >= 0) {
+        if (frame >= 0 && isActive()) {
             tentacleSprite.setFrame(frame);
             canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x, (getY()) * drawScale.y + pivot.y, getAngle(), scale.x, scale.y);
-            System.out.println("FRAME " + frame);
+
 
         }
 
