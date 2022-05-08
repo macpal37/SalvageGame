@@ -325,29 +325,6 @@
                  "width":100,
                  "x":374.342934466529,
                  "y":298.657067376752
-                }, 
-                {
-                 "gid":26,
-                 "height":100,
-                 "id":36,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"aggro_threshold",
-                         "type":"float",
-                         "value":100
-                        }, 
-                        {
-                         "name":"vision_radius",
-                         "type":"float",
-                         "value":12
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":100,
-                 "x":157.531022678648,
-                 "y":616.966195977749
                 }],
          "opacity":1,
          "type":"objectgroup",

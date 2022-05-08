@@ -76,7 +76,7 @@ public class LevelBuilder {
     protected Texture plantAnimation;
     protected Texture keyAnimation;
     // Models to be updated
-    protected TextureRegion wallTexture;
+    protected TextureRegion sprite;
     protected TextureRegion hazardTexture;
     protected TextureRegion crateTexture;
     protected TextureRegion barrelTexture;
@@ -88,6 +88,7 @@ public class LevelBuilder {
     protected ItemModel key;
     //    protected ItemModel dead_body;
     protected DeadBodyModel dead_body;
+    private Texture treasureAnimation;
 
     public LevelBuilder() {
         this.directory = directory;
@@ -122,13 +123,13 @@ public class LevelBuilder {
         dustAnimation = directory.getEntry("models:dust", Texture.class);
         plantAnimation = directory.getEntry("models:plant", Texture.class);
         keyAnimation = directory.getEntry("models:key_animation", Texture.class);
-
+        treasureAnimation = directory.getEntry("models:treasure_chest", Texture.class);
         monsterTenctacle = directory.getEntry("models:monster1", Texture.class);
 
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
         keyTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         pingTexture = new TextureRegion(directory.getEntry("models:ping", Texture.class));
-        wallTexture = new TextureRegion(directory.getEntry("hazard", Texture.class));
+        sprite = new TextureRegion(directory.getEntry("hazard", Texture.class));
         hazardTexture = new TextureRegion(directory.getEntry("models:hazard", Texture.class));
         doorOpenTexture = new TextureRegion(directory.getEntry("models:door_open", Texture.class));
         doorCloseTexture = new TextureRegion(directory.getEntry("models:door_closed", Texture.class));
@@ -140,7 +141,7 @@ public class LevelBuilder {
     }
 
     enum TileType {
-        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Decor, Monster
+        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Decor, Monster, Treasure
     }
 
     class Tile {
@@ -584,7 +585,6 @@ public class LevelBuilder {
                             gameObjects.add(decor);
                             break;
                         case Monster:
-
                             Monster monster = new Monster(sx, sy, true);
                             if (obj.get("properties") != null)
                                 for (JsonValue prop : obj.get("properties")) {
@@ -597,6 +597,17 @@ public class LevelBuilder {
 
                                 }
                             gameObjects.add(monster);
+                            break;
+                        case Treasure:
+                            float dif = tileSize / 2f;
+                            TreasureModel treasureModel = new TreasureModel(createVerticies(tile, -tileSize / div / 4, -tileSize / div / 4,
+                                    widthScale / 2, heightScale), sx, sy, tileSize / 2f, tileSize / 2f, div);
+                            treasureModel.setAngle(rotation);
+                            treasureModel.setFilmStrip(new FilmStrip(treasureAnimation, 1, 14, 14));
+                            treasureModel.setScale(1 / 2f, 1 / 2f);
+                            treasureModel.initLight(rayHandler);
+                            gameObjects.add(treasureModel);
+
                             break;
                     }
 
@@ -614,6 +625,7 @@ public class LevelBuilder {
         int goalDoorCounter = 0;
         int hazardCounter = 0;
         for (GObject go : gameObjects) {
+
             if (go instanceof HazardModel) {
                 HazardModel hazard = (HazardModel) go;
                 hazard.setOxygenDrain(-0.1f);
@@ -628,6 +640,18 @@ public class LevelBuilder {
                 hazard.setActive(true);
                 level.addObject(hazard);
 
+            } else if (go instanceof TreasureModel) {
+                TreasureModel treasureModel = (TreasureModel) go;
+                treasureModel.setBodyType(BodyDef.BodyType.DynamicBody);
+                treasureModel.setSensor(false);
+                treasureModel.setFixedRotation(false);
+                treasureModel.setDrawScale(drawScale);
+                treasureModel.setDensity(1);
+                treasureModel.setMass(10f);
+                treasureModel.setFriction(0.4f);
+                treasureModel.setRestitution(0.1f);
+                treasureModel.setName("treasure");
+                level.addObject(treasureModel);
             } else if (go instanceof Door) {
                 Door door = (Door) go;
                 door.setBodyType(BodyDef.BodyType.StaticBody);

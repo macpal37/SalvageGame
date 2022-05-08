@@ -115,6 +115,44 @@ public class CollisionController {
         }
     }
 
+
+    public void startDiverTreasureCollision(Fixture f1, Fixture f2) {
+        Body b1 = f1.getBody();
+        Body b2 = f2.getBody();
+        Object fd1 = f1.getUserData();
+        Object fd2 = f2.getUserData();
+        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof TreasureModel && f2.getUserData().equals("Treasure")) {
+            DiverModel diver = (DiverModel) b1.getUserData();
+            TreasureModel treasureModel = (TreasureModel) b2.getUserData();
+            treasureModel.setNearChest(true);
+        }
+        if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof TreasureModel && f1.getUserData().equals("Treasure")) {
+
+            DiverModel diver = (DiverModel) b2.getUserData();
+            TreasureModel treasureModel = (TreasureModel) b1.getUserData();
+            treasureModel.setNearChest(true);
+        }
+    }
+
+    public void endDiverTreasureCollision(Fixture f1, Fixture f2) {
+        Body b1 = f1.getBody();
+        Body b2 = f2.getBody();
+        Object fd1 = f1.getUserData();
+        Object fd2 = f2.getUserData();
+        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof TreasureModel && f2.getUserData().equals("Treasure")) {
+            DiverModel diver = (DiverModel) b1.getUserData();
+            TreasureModel treasureModel = (TreasureModel) b2.getUserData();
+            treasureModel.setNearChest(false);
+        }
+        if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof TreasureModel && f1.getUserData().equals("Treasure")) {
+
+            DiverModel diver = (DiverModel) b2.getUserData();
+            TreasureModel treasureModel = (TreasureModel) b1.getUserData();
+            treasureModel.setNearChest(false);
+        }
+
+    }
+
     /**
      * Handle termination of contact of the diver with an item
      *
@@ -216,24 +254,7 @@ public class CollisionController {
         Body b2 = f2.getBody();
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
-//        try {
-//            System.out.println("IS DIVER? " + (b1.getUserData() instanceof DiverModel));
-//            System.out.println("FILTER HAZARD DATA FOR BODY 1 -> group " + b1.getFixtureList().get(0).getFilterData().groupIndex
-//                    + " mask " + b1.getFixtureList().get(0).getFilterData().maskBits
-//                    + " category " + b1.getFixtureList().get(0).getFilterData().categoryBits);
-//        } catch (Exception e) {
-//            System.out.println("didnt have a fixture list oops");
-//        }
-//        try {
-//            System.out.println("IS DIVER? " + (b2.getUserData() instanceof DiverModel));
-//            System.out.println("FILTER DATA FOR BODY 2 -> group " + b2.getFixtureList().get(0).getFilterData().groupIndex
-//                    + " mask " + b2.getFixtureList().get(0).getFilterData().maskBits
-//                    + " category " + b2.getFixtureList().get(0).getFilterData().categoryBits);
-//        } catch (Exception e) {
-//            System.out.println("didnt have a fixture list oops");
-//        }
 
-//         if the diver is touching a hazard (excluding the extra sensors)
         if (b1.getUserData() instanceof DiverModel &&
                 diver.getDiverCollisionBox().equals(fd1) &&
                 b2.getUserData() instanceof HazardModel) {
@@ -325,22 +346,6 @@ public class CollisionController {
         Body b2 = f2.getBody();
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
-
-//        try {
-//            System.out.println("IS DIVER? " + (b1.getUserData() instanceof DiverModel));
-//            System.out.println("FILTER DATA FOR BODY 1 -> group " + b1.getFixtureList().get(0).getFilterData().groupIndex
-//                    + " mask " + b1.getFixtureList().get(0).getFilterData().maskBits
-//                    + " category " + b1.getFixtureList().get(0).getFilterData().categoryBits);
-//        } catch (Exception e) {
-//            System.out.println("didnt have a fixture list oops");
-//        }
-//        try {
-//            System.out.println("IS DIVER? " + (b2.getUserData() instanceof DiverModel));
-//            System.out.println("FILTER DATA FOR BODY 2 -> group " + b2.getFixtureList().get(0).getFilterData().groupIndex
-//                    + " mask " + b2.getFixtureList().get(0).getFilterData().maskBits
-//                    + " category " + b2.getFixtureList().get(0).getFilterData().categoryBits);        } catch (Exception e) {
-//            System.out.println("didnt have a fixture list oops");
-//        }
 
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
 

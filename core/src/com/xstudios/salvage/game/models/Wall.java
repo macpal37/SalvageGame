@@ -65,7 +65,7 @@ public class Wall extends GameObject {
      */
     protected boolean invisible = false;
 
-    private FilmStrip wallTexture;
+    protected FilmStrip sprite;
 
 
     /**
@@ -468,13 +468,13 @@ public class Wall extends GameObject {
 
 
     public int getFrame() {
-        return wallTexture.getFrame();
+        return sprite.getFrame();
 
     }
 
     public void setFilmStrip(FilmStrip value) {
-        wallTexture = value;
-        wallTexture.setFrame(getID());
+        sprite = value;
+        sprite.setFrame(getID());
 
     }
 
@@ -488,8 +488,8 @@ public class Wall extends GameObject {
      */
     public void draw(GameCanvas canvas) {
 
-        if (wallTexture != null && !invisible) {
-            canvas.draw(wallTexture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 40f / 25f, 40f / 25f);
+        if (sprite != null && !invisible) {
+            canvas.draw(sprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 40f / 25f, 40f / 25f);
         }
     }
 

@@ -668,14 +668,22 @@ public class GameController implements Screen, ContactListener {
 
         if (level.getDiver().getBody() != null && !pause) {
             cameraController.setCameraPosition(
-                    level.getDiver().getX() * level.getDiver().getDrawScale().x, level.getDiver().getY() * level.getDiver().getDrawScale().y);
+                    (level.getDiver().getX() + 1.5f) * level.getDiver().getDrawScale().x, (level.getDiver().getY() + .5f) * level.getDiver().getDrawScale().y);
 
             light.setPosition(
-                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
-                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
+                    cameraController.getCameraPosition2D().x / 40f
+                    ,
+                    cameraController.getCameraPosition2D().y / 40f);
             wallShine.setPosition(
-                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
-                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
+                    cameraController.getCameraPosition2D().x / 40f
+                    ,
+                    cameraController.getCameraPosition2D().y / 40f);
+//            light.setPosition(
+//                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
+//                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
+//            wallShine.setPosition(
+//                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
+//                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
         }
 
         // TODO: why wasnt this in marco's code?
@@ -942,10 +950,9 @@ public class GameController implements Screen, ContactListener {
         // draw game objects
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0, 4, 4);
 
-//        for (GameObject obj : level.getAllObjects()) {
-        for (int i = level.getAllObjects().size() - 1; i >= 0; i--) {
-
-            GameObject obj = level.getAllObjects().get(i);
+        for (GameObject obj : level.getAllObjects()) {
+//        for (int i = level.getAllObjects().size() - 1; i >= 0; i--) {
+//            GameObject obj = level.getAllObjects().get(i);
             if (!(obj instanceof DiverModel))
                 if (!(obj instanceof DecorModel))
                     obj.draw(canvas);
@@ -1219,6 +1226,7 @@ public class GameController implements Screen, ContactListener {
         collisionController.startMonsterWallCollision(body1, body2);
         collisionController.startDiverDeadBodyCollision(body1, body2);
         collisionController.startFlareTentacleCollision(fix1, fix2);
+        collisionController.startDiverTreasureCollision(fix1, fix2);
         float d = collisionController.startDiverHazardCollision(fix1, fix2, level.getDiver());
         if (d != 0)
             hostileOxygenDrain = d;
@@ -1248,6 +1256,7 @@ public class GameController implements Screen, ContactListener {
         collisionController.removeDiverSensorTouching(level.getDiver(), fix1, fix2);
         collisionController.endDiverItemCollision(body1, body2);
         collisionController.endDiverHazardCollision(fix1, fix2, level.getDiver());
+        collisionController.endDiverTreasureCollision(fix1, fix2);
 
     }
 

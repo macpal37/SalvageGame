@@ -304,7 +304,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -903,6 +902,11 @@
                  "value":"Monster"
                 }, 
                 {
+                 "name":"tentacle_size",
+                 "type":"float",
+                 "value":1
+                }, 
+                {
                  "name":"vision_radius",
                  "type":"float",
                  "value":6
@@ -1281,11 +1285,61 @@
         }, 
         {
          "id":36,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":1,
+                     "name":"",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":0,
+                             "y":-55.25
+                            }, 
+                            {
+                             "x":91.75,
+                             "y":-55.75
+                            }, 
+                            {
+                             "x":92.25,
+                             "y":-0.75
+                            }],
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":4.5,
+                     "y":95.25
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
          "properties":[
+                {
+                 "name":"door_id",
+                 "type":"int",
+                 "value":0
+                }, 
+                {
+                 "name":"has_flare",
+                 "type":"bool",
+                 "value":false
+                }, 
                 {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Treasure"
                 }]
         }, 
         {
