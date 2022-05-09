@@ -331,7 +331,8 @@ public class CollisionController {
             if (wall.isWall()) {
                 diver.setTouchedWall(wall);
                 diver.setTouchingObstacle(true);
-
+            }
+            if (wall.isCanAlertMonster()) {
                 //AudioController.getInstance().wall_collision(diver.getForce());
                 monsterController.wallCollision();
                 audio.wood_collision(diver.getForce());
@@ -340,8 +341,10 @@ public class CollisionController {
             Wall wall = (Wall) b1.getUserData();
             if (wall.isWall()) {
                 diver.setTouchedWall(wall);
-
                 diver.setTouchingObstacle(true);
+            }
+            if (wall.isCanAlertMonster()) {
+                //AudioController.getInstance().wall_collision(diver.getForce());
                 monsterController.wallCollision();
                 audio.wood_collision(diver.getForce());
             }
@@ -373,8 +376,10 @@ public class CollisionController {
         Body b2 = f2.getBody();
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
+        System.out.println("Hello ");
         if (b1.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd1) && b2.getUserData() instanceof Wall
         ) {
+            System.out.println("Hello ");
             diver.setTouchedWall(null);
             ((DiverModel) b1.getUserData()).setTouchingObstacle(false);
         } else if (b2.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd2) && b1.getUserData() instanceof Wall) {

@@ -853,7 +853,7 @@ public class DiverModel extends GameObject {
         }
 //        float coAngle = 180 * angle / (float) Math.PI;
 
-        float newAngle = angle * ((isLatching()) ? ((isBoosting()) ? 4 : 5) : 1);
+        float newAngle = angle * ((isLatching()) ? ((isBoosting()) ? 2 : 2) : 1);
         float coAngle = angle;
 
 
@@ -1117,15 +1117,17 @@ public class DiverModel extends GameObject {
             if (flare_duration < MAX_FLARE_DURATION) {
 
                 f.setActivated(true);
-                f.setX(getX());
-                f.setY(getY());
+                f.setX(getX() + (25 / 32f * (float) Math.cos(getAngle())));
+                f.setY(getY() + (25 / 32f * (float) Math.sin(getAngle())));
+                f.setAngle(getAngle());
                 flare_duration++;
 //                System.out.println("FLARe IS ACTIVE");
             } else {
 //                f.setActivated(false);
                 f.setCarried(false);
-                f.setX(getX());
-                f.setY(getY());
+                f.setX(getX() + (25 / 32f * (float) Math.cos(getAngle())));
+                f.setY(getY() + (25 / 32f * (float) Math.sin(getAngle())));
+                f.setAngle(0);
                 f.setVX(0);
                 f.setVY(0);
                 num_flares--;

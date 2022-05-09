@@ -629,7 +629,7 @@ public class GameController extends ScreenController implements ContactListener 
         // TODO: or when it is pressed again? Have had some issues with key presses being missed
         // otherwise, stop latching
 
-        if (input.didKickOff() && !level.getDiver().isLatching() && level.getDiver().isTouchingObstacle()) {
+        if (input.didKickOff() && !level.getDiver().isLatching() && level.getDiver().isTouchingObstacle() && level.getDiver().getTouchedWall() != null) {
             //System.out.println("Player Coords: " + level.getDiver().getPosition());
             //System.out.println("Wall Coords: " + level.getDiver().getTouchedWall().getPosition());
             int playerX = (int) level.getDiver().getPosition().x - 1;
@@ -658,6 +658,7 @@ public class GameController extends ScreenController implements ContactListener 
         } else if (!input.didKickOff() && level.getDiver().isLatching()) {
             level.getDiver().setLatching(false);
             level.getDiver().setBoosting(true);
+            level.getDiver().setTouchedWall(null);
             level.getDiver().boost(); // boost according to the current user input
         }
 
@@ -817,7 +818,7 @@ public class GameController extends ScreenController implements ContactListener 
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     System.out.println("CREATE TENTACLE");
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 1f, add_wall, LevelBuilder.TentacleType.NewAttack, 300);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, LevelBuilder.TentacleType.NewAttack, 400);
                     addQueuedObject(t);
                     audio.roar();
                 }
@@ -826,7 +827,7 @@ public class GameController extends ScreenController implements ContactListener 
                 Wall add_wall = idle_tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     System.out.println("...............................................");
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, LevelBuilder.TentacleType.NewAttack, 400);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, LevelBuilder.TentacleType.Idle, 100);
                     addQueuedObject(t);
 //                AudioController.getInstance().roar();
                 }
@@ -836,7 +837,7 @@ public class GameController extends ScreenController implements ContactListener 
         //** ADDING TENTACLES TO WalL!
 //        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
 //            Wall w = level.getDiver().getTouchedWall();
-//            Tentacle t = levelBuilder.createTentcle(monster.getAggravation(), 1f, w, new FilmStrip(monsterTenctacle, 1, 30, 30));
+//            Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, w, LevelBuilder.TentacleType.Idle, 100);
 //            addQueuedObject(t);
 //        }
 
@@ -957,7 +958,7 @@ public class GameController extends ScreenController implements ContactListener 
         }
         for (int i = 0; i < tentacles.size(); i++) {
             Tentacle t = tentacles.get(i);
-            System.out.println("Tentacle!");
+
             if (t.isDead()) {
                 tentacles.remove(t);
                 i--;
