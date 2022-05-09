@@ -4,6 +4,8 @@ import box2dLight.Light;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.PolygonRegion;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.xstudios.salvage.game.GameCanvas;
@@ -183,6 +185,16 @@ public class TreasureModel extends ObstacleModel {
         super.drawDebug(canvas);
         canvas.drawPhysics(treasureRadius, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
 
+        CircleShape test_randomization = new CircleShape();
+        test_randomization.setRadius(2);
+        if (contents == TreasureType.Key) {
+            canvas.drawPhysics(test_randomization, Color.PINK, this.getX(), this.getY(), drawScale.x, drawScale.y);
+        } else if (contents == TreasureType.Flare) {
+            canvas.drawPhysics(test_randomization, Color.PURPLE, this.getX(), this.getY(), drawScale.x, drawScale.y);
+        } else if (contents == TreasureType.Monster) {
+            canvas.drawPhysics(test_randomization, Color.BLUE, this.getX(), this.getY(), drawScale.x, drawScale.y);
+        }
+
     }
 
     public void setNearChest(boolean flag) {
@@ -234,7 +246,8 @@ public class TreasureModel extends ObstacleModel {
                     if (tick % 6 == 0)
                         if (sprite.getFrame() < 39)
                             sprite.setFrame(sprite.getFrame() + 1);
-
+                    // call key's draw function
+                    // only draw if active
                     break;
                 case Monster:
                     if (sprite.getFrame() < 35)

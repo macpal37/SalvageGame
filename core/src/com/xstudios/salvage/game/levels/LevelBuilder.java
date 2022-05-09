@@ -16,9 +16,11 @@ import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.models.*;
 
+import com.xstudios.salvage.game.models.TreasureModel.TreasureType;
 import com.xstudios.salvage.util.FilmStrip;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class LevelBuilder {
@@ -105,7 +107,7 @@ public class LevelBuilder {
         this.directory = directory;
         jsonReader = new JsonReader();
 //        level = new LevelModel();
-
+        chests = new HashMap<Integer, ArrayList<TreasureModel>>();
     }
 
     public void setDirectory(AssetDirectory directory) {
@@ -655,32 +657,60 @@ public class LevelBuilder {
                                 }
                             else {
                                 treasureModel.setID(0);
-                                treasureModel.mayContainFlare(true);
-
+                                treasureModel.mayContainFlare(false);
                             }
                             treasureModel.setAngle(rotation);
                             treasureModel.setIdeSuspenseSprite(treasureOpenAnimation.copy(), treasureMonsterAnimation.copy());
 
                            
                             //TODO
-                            treasureModel.setTreasureType(TreasureModel.TreasureType.Monster, treasureMonsterAnimation.copy());
+//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Monster, treasureMonsterAnimation.copy());
+////
+//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Key, treasureKeyAnimation.copy());
 //
-                            treasureModel.setTreasureType(TreasureModel.TreasureType.Key, treasureKeyAnimation.copy());
-
-                            treasureModel.setTreasureType(TreasureModel.TreasureType.Flare, treasureKeyAnimation.copy());
+//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Flare, treasureKeyAnimation.copy());
 
                             treasureModel.setScale(1 / 2f, 1 / 2f);
                             treasureModel.initLight(rayHandler);
                             treasureModel.setTentacleRotation(180);
                             treasureModel.setTentacleSpawnPosition(0, -10f / div);
                             gameObjects.add(treasureModel);
-
+                            // add treasuremodel to a hashmap mapping ids to lists of chests
+                            chests.computeIfAbsent(treasureModel.getID(),
+                                    k -> new ArrayList<TreasureModel>());
+                            chests.get(treasureModel.getID()).add(treasureModel);
                             break;
                     }
 
 
                 }
 
+            }
+        }
+
+        // we have a hashmap mapping ids to lists of chests that may contain a key matching that id
+        // Iterate over the chest groups
+        for (Integer id : chests.keySet()) {
+            // Get the list of chests in one chest group
+            ArrayList<TreasureModel> chest_lst = chests.get(id);
+            // Shuffle the array to randomize which one gets the key
+            Collections.shuffle(chest_lst);
+            // Within a group, there can be only one key, so arbitrarily put a key in the first one
+            chest_lst.get(0).setTreasureType(TreasureType.Key, treasureKeyAnimation.copy());
+            for (int i = 1; i < chest_lst.size(); i++) {
+                TreasureModel chest = chest_lst.get(i);
+                // if the chest can contain a flare, choose to put a flare in it with probability 10%
+                // otherwise, put a monster in it
+                if (chest.isMayContainFlare()) {
+                    int roll = (int) (Math.random() * 10);
+                    if (roll == 1) {
+                        chest.setTreasureType(TreasureType.Flare, treasureKeyAnimation.copy());
+                    }
+                    else
+                        chest.setTreasureType(TreasureType.Monster, treasureMonsterAnimation.copy());
+                } else {
+                    chest.setTreasureType(TreasureType.Monster, treasureMonsterAnimation.copy());
+                }
             }
         }
 
