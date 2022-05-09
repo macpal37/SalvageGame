@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class LevelBuilder {
     private JsonReader jsonReader;
     private AssetDirectory directory;
-//    private LevelModel level;
+
 
     // Assets
     JsonValue constants;
@@ -634,11 +634,11 @@ public class LevelBuilder {
                             treasureModel.setAngle(rotation);
                             treasureModel.setIdeSuspenseSprite(treasureOpenAnimation.copy(), treasureMonsterAnimation.copy());
                             treasureModel.setTreasureType(TreasureModel.TreasureType.Monster, treasureMonsterAnimation.copy());
-//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Key, treasureKeyAnimation.copy());
+//
                             treasureModel.setScale(1 / 2f, 1 / 2f);
                             treasureModel.initLight(rayHandler);
                             treasureModel.setTentacleRotation(180);
-                            treasureModel.setTentacleSpawnPosition(0, 10f / div);
+                            treasureModel.setTentacleSpawnPosition(0, -10f / div);
 
                             ;
                             gameObjects.add(treasureModel);
@@ -712,6 +712,7 @@ public class LevelBuilder {
             } else if (go instanceof Wall) {
 
                 Wall obj = (Wall) go;
+                obj.setWall(true);
                 obj.setBodyType(BodyDef.BodyType.StaticBody);
                 obj.setDensity(0);
                 obj.setFriction(0.4f);
@@ -771,7 +772,6 @@ public class LevelBuilder {
                 level.getAboveObjects().add(dm);
                 level.addObject(dm);
             } else if (go instanceof Monster) {
-                System.out.println("Is this working?????");
                 Monster monster = (Monster) go;
                 monster.setAttackTentacleSprite(new FilmStrip(monsterTenctacle, 1, 30, 30));
                 monster.setDrawScale(drawScale);

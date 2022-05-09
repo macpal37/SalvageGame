@@ -22,6 +22,16 @@ public class Wall extends GameObject {
      */
     private static final EarClippingTriangulator TRIANGULATOR = new EarClippingTriangulator();
 
+    public boolean isWall() {
+        return isWall;
+    }
+
+    public void setWall(boolean wall) {
+        isWall = wall;
+    }
+
+    private boolean isWall = false;
+
     /**
      * Shape information for this physics object
      */
@@ -223,8 +233,8 @@ public class Wall extends GameObject {
     }
 
     public void setTentacleSpawnPosition(float x, float y) {
-        if (x >= 0 || y >= 0)
-            this.tentacleSpawnPosition = new Vector2(getX() + x, y + getY());
+
+        this.tentacleSpawnPosition = new Vector2(getX() + x, y + getY());
     }
 
     private Vector2 tentacleSpawnPosition = null;

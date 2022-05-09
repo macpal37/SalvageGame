@@ -296,14 +296,15 @@ public class CollisionController {
                 b2.getUserData() instanceof Monster) {
             Wall wall = (Wall) b1.getUserData();
             Monster monster = (Monster) b2.getUserData();
-            monster.addLocation(wall);
+            if (wall.isWall())
+                monster.addLocation(wall);
 
-        }
-        if (b1.getUserData() instanceof Monster &&
+        } else if (b1.getUserData() instanceof Monster &&
                 b2.getUserData() instanceof Wall) {
             Monster monster = (Monster) b1.getUserData();
             Wall wall = (Wall) b2.getUserData();
-            monster.addLocation(wall);
+            if (wall.isWall())
+                monster.addLocation(wall);
         }
     }
 
@@ -320,13 +321,14 @@ public class CollisionController {
                 b2.getUserData() instanceof Monster) {
             Wall wall = (Wall) b1.getUserData();
             Monster monster = (Monster) b2.getUserData();
-            monster.removeLocation(wall);
-        }
-        if (b1.getUserData() instanceof Monster &&
+            if (wall.isWall())
+                monster.removeLocation(wall);
+        } else if (b1.getUserData() instanceof Monster &&
                 b2.getUserData() instanceof Wall) {
             Monster monster = (Monster) b1.getUserData();
             Wall wall = (Wall) b2.getUserData();
-            monster.removeLocation(wall);
+            if (wall.isWall())
+                monster.removeLocation(wall);
         }
     }
 
@@ -360,32 +362,36 @@ public class CollisionController {
         Object fd2 = f2.getUserData();
 
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
+            Wall wall = (Wall) b2.getUserData();
+            if (wall.isWall()) {
+                diver.setTouchedWall(wall);
+                diver.setTouchingObstacle(true);
 
-            diver.setTouchedWall((Wall) b2.getUserData());
-            diver.setTouchingObstacle(true);
+                //AudioController.getInstance().wall_collision(diver.getForce());
+                monsterController.wallCollision();
+                AudioController.getInstance().wood_collision(diver.getForce());
+            }
+        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
+            Wall wall = (Wall) b1.getUserData();
+            if (wall.isWall()) {
+                diver.setTouchedWall(wall);
 
-            //AudioController.getInstance().wall_collision(diver.getForce());
-            monsterController.wallCollision();
-            AudioController.getInstance().wood_collision(diver.getForce());
+                diver.setTouchingObstacle(true);
+                monsterController.wallCollision();
+                AudioController.getInstance().wood_collision(diver.getForce());
+            }
 
         }
-        if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
-            diver.setTouchedWall((Wall) b1.getUserData());
 
-            ((DiverModel) b2.getUserData()).setTouchingObstacle(true);
-            monsterController.wallCollision();
-            AudioController.getInstance().wood_collision(diver.getForce());
-        }
-
-        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall
-                && !(fd2 instanceof Tentacle) &&
-                diver.getDiverCollisionBox().equals(fd1)) {
-            AudioController.getInstance().wall_collision(diver.getForce());
-        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall
-                && !(fd1 instanceof Tentacle) &&
-                diver.getDiverCollisionBox().equals(fd2)) {
-            AudioController.getInstance().wall_collision(diver.getForce());
-        }
+//        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall
+//                && !(fd2 instanceof Tentacle) &&
+//                diver.getDiverCollisionBox().equals(fd1)) {
+//            AudioController.getInstance().wall_collision(diver.getForce());
+//        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall
+//                && !(fd1 instanceof Tentacle) &&
+//                diver.getDiverCollisionBox().equals(fd2)) {
+//            AudioController.getInstance().wall_collision(diver.getForce());
+//        }
 
     }
 
@@ -404,9 +410,10 @@ public class CollisionController {
         Object fd2 = f2.getUserData();
         if (b1.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd1) && b2.getUserData() instanceof Wall
         ) {
+            diver.setTouchedWall(null);
             ((DiverModel) b1.getUserData()).setTouchingObstacle(false);
-        }
-        if (b2.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd2) && b1.getUserData() instanceof Wall) {
+        } else if (b2.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd2) && b1.getUserData() instanceof Wall) {
+            diver.setTouchedWall(null);
             ((DiverModel) b2.getUserData()).setTouchingObstacle(false);
         }
     }

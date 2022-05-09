@@ -276,14 +276,21 @@ public class Tentacle extends GameObject {
 
     int grow_rate = 10;
 
+    public boolean isDead() {
+        return dead;
+    }
+
+    boolean dead = false;
+
     @Override
     public void draw(GameCanvas canvas) {
         update();
 
         tick++;
 
-        if (frame >= 30) {
+        if (frame >= 29) {
             frame = -1;
+            dead = true;
 
         }
         if (startGrowing && frame < extend_frame_length) {
@@ -334,6 +341,7 @@ public class Tentacle extends GameObject {
      * @param world Box2D world that stores body
      */
     public void deactivatePhysics(World world) {
+        spawnWall.setHasTentcle(false);
         for (HazardModel hm : collisionBoxes) {
             hm.deactivatePhysics(world);
         }

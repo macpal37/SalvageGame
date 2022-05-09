@@ -27,6 +27,7 @@ import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Queue;
 
@@ -505,6 +506,8 @@ public class GameController implements Screen, ContactListener {
         addQueue.add(obj);
     }
 
+    public ArrayList<Tentacle> tentacles = new ArrayList<>();
+
     /**
      * Immediately adds the object to the physics world
      * <p>
@@ -513,6 +516,8 @@ public class GameController implements Screen, ContactListener {
     protected void addObject(GameObject obj) {
         assert inBounds(obj) : "Object is not in bounds";
         obj.activatePhysics(world);
+        if (obj instanceof Tentacle)
+            tentacles.add((Tentacle) obj);
     }
 
     /**
@@ -929,6 +934,17 @@ public class GameController implements Screen, ContactListener {
             GameObject go = addQueue.poll();
             addObject(go);
             level.addObject(go);
+        }
+        for (int i = 0; i < tentacles.size(); i++) {
+            Tentacle t = tentacles.get(i);
+            System.out.println("Tentacle!");
+            if (t.isDead()) {
+                tentacles.remove(t);
+                i--;
+                t.deactivatePhysics(world);
+                level.getAllObjects().remove(t);
+            }
+
         }
 
         if (level.getDiver().getDeadBody() != null && level.getDiver().getDeadBody().isCarried()) {

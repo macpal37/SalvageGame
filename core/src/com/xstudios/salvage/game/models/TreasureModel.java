@@ -25,17 +25,14 @@ public class TreasureModel extends ObstacleModel {
     public void setTrap(Tentacle t) {
         t.setActive(false);
         t.setStartGrowing(false);
-        t.setGrowRate(5);
+        t.setGrowRate(10);
         this.trap = t;
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
-        if (trap != null) {
-            trap.setPosition(getX(), getY());
-            trap.setAngle((float) (getAngle() + Math.PI));
-        }
+        setTentacleSpawnPosition(0, -10f / 32f);
 
     }
 
@@ -242,6 +239,7 @@ public class TreasureModel extends ObstacleModel {
 
         }
 
-
+        if (trap != null)
+            trap.draw(canvas);
     }
 }
