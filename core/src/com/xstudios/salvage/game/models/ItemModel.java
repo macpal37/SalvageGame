@@ -191,16 +191,6 @@ public class ItemModel extends DiverObjectModel {
                     light.setActive(false);
                 }
 
-                canvas.draw(spriteSheet, ItemModel.COLOR_OPTIONS[getID()], origin.x * 2, origin.y * 2,
-                        getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f * worldDrawScale.x, 0.25f * worldDrawScale.y);
-            }
-            if (!carried && isTouched) {
-                canvas.drawText("Press q", GameController.displayFont,
-                        (getX() - getWidth() * 1.25f) * drawScale.x * worldDrawScale.x, (getY() + getHeight() * 1.5f) * drawScale.y * worldDrawScale.y);
-                light.setPosition(getX(), getY());
-                light.setActive(true);
-            } else {
-                light.setActive(false);
 
             }
             // TODO: right now key should only be inactive if it is in a chest but should probably

@@ -668,10 +668,14 @@ public class LevelBuilder {
                             Monster monster = new Monster(sx, sy, true);
                             if (obj.get("properties") != null)
                                 for (JsonValue prop : obj.get("properties")) {
-                                    if (prop.getString("name").equals("aggro_rate"))
-                                        monster.setAggravationRate(prop.getInt("value"));
-                                    else if (prop.getString("name").equals("aggro_threshold"))
+                                    if (prop.getString("name").equals("aggro_rate")) {
+                                        monster.setAggravationRate(prop.getInt("value") * 0.5f);
+                                        System.out.println(monster.getAggravationRate());
+                                    } else if (prop.getString("name").equals("aggro_threshold"))
+
                                         monster.setAggroLevel(prop.getInt("value") * 20.5f);
+
+
                                     else if (prop.getString("name").equals("vision_radius"))
                                         monster.setVisionRadius(prop.getInt("value"));
 

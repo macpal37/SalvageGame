@@ -132,6 +132,10 @@ public class MonsterController {
         return monster;
     }
 
+    public boolean isKillState() {
+        return state == FSMState.ATTACK;
+    }
+
     public void wallCollision() {
         if (monster != null) {
             float agg = monster.getAggravation();
@@ -149,7 +153,7 @@ public class MonsterController {
         // Add initialization code as necessary
         float aggravation = monster.getAggravation();
 
-//        System.out.println("aggravation: " + monster.getAggravation() + " threshold " + monster.getAggroLevel());
+        System.out.println("aggravation: " + monster.getAggravation() + " threshold " + monster.getAggroLevel());
         // Next state depends on current state.
         switch (state) {
 
@@ -174,9 +178,15 @@ public class MonsterController {
                 if (aggravation <= monster.getAggroLevel() || monster.getAggressiveLength() <= 0 && state != FSMState.ROARING) {
 //                    monster.reduceInvincibilityTime();
                     state = FSMState.IDLE;
-                } else if (aggravation > (monster.getAggroLevel() * 15.0)) {
+
+                } else if (aggravation > (monster.getAggroLevel() * 20.0f) && aggravation > 15.0f) {
+
                     state = FSMState.ATTACK;
-                } else {
+                }
+//               else if (aggravation > 10.0f) {
+//                    state = FSMState.ATTACK;
+//               }
+                else {
                     monster.reduceAggressiveLength();
                 }
                 break;
@@ -216,7 +226,7 @@ public class MonsterController {
     public void update(float aggravationDrain, DiverModel diver) {
         tick++;
         if (tick % 50 == 0) {
-            if (monster.getAggravation() > 0.0f && state != FSMState.GONNA_POUNCE && state != FSMState.ATTACK) {
+            if (monster.getAggravation() > 0.0f && state != FSMState.GONNA_POUNCE) {
                 float aggravation = monster.getAggravation() - 0.5f;
                 monster.setAggravation(aggravation);
             }
@@ -322,6 +332,7 @@ public class MonsterController {
                     diver.setStunned(true);
                     diver.setStunCooldown(500);
                     hasRoared = true;
+                    roar_pause = tick;
                     monster.setAggravation(100000.0f);
                 } else if (tick - roar_pause > 500) {
                     monster.setAggravation(100000.0f);
