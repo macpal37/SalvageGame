@@ -140,10 +140,10 @@ public class AudioController {
 
     public void idle_roar() {
         double rand = Math.random();
-        float roar_volume = (float) (0.4);
+        float roar_volume = (float) (0.2);
         idle_roar_low.setVolume(roar_volume);
         idle_roar_high.setVolume(roar_volume);
-        if (!idle_roar_high.isPlaying() || !idle_roar_low.isPlaying()) {
+       // if (!idle_roar_high.isPlaying() && !idle_roar_low.isPlaying()) {
             if (rand > 0.5) {
                 idle_roar_high.stop();
                 idle_roar_low.play();
@@ -151,7 +151,7 @@ public class AudioController {
                 idle_roar_low.stop();
                 idle_roar_high.play();
             }
-        }
+       // }
     }
 
     public void reset() {
