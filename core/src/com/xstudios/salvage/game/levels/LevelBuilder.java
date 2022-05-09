@@ -675,7 +675,14 @@ public class LevelBuilder {
                             }
                             treasureModel.setAngle(rotation);
                             treasureModel.setIdeSuspenseSprite(treasureOpenAnimation.copy(), treasureMonsterAnimation.copy());
+
+
+                            //TODO
                             treasureModel.setTreasureType(TreasureModel.TreasureType.Monster, treasureMonsterAnimation.copy());
+//
+//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Key, treasureKeyAnimation.copy());
+//
+//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Flare, treasureKeyAnimation.copy());
 
                             treasureModel.setScale(1 / 2f, 1 / 2f);
                             treasureModel.initLight(rayHandler);
