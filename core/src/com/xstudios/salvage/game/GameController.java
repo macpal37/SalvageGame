@@ -256,6 +256,13 @@ public class GameController extends ScreenController implements ContactListener 
         camera.getCamera().update();
         world_scale = new Vector2(width / SCEEN_WIDTH * 40, height / SCEEN_HEIGHT * 40);
         worldScale.set(width / SCEEN_WIDTH, height / SCEEN_HEIGHT);
+        for (GObject go : level.getAllObjects()) {
+            go.setWorldDrawScale(worldScale.x, worldScale.y);
+        }
+        for (GObject go : level.getAboveObjects()) {
+            go.setWorldDrawScale(worldScale.x, worldScale.y);
+        }
+        reset();
     }
 
     public int getTotalLevels() {
