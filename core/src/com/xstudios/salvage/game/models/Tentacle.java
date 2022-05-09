@@ -233,7 +233,7 @@ public class Tentacle extends GameObject {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-        
+
 
         canvas.drawPhysics(circ, Color.GREEN, getX(), getY(), drawScale.x, drawScale.y);
         for (HazardModel hm : collisionBoxes) {
@@ -309,7 +309,11 @@ public class Tentacle extends GameObject {
 
         if (frame >= 0 && isActive()) {
             tentacleSprite.setFrame(frame);
-            canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x, (getY()) * drawScale.y + pivot.y, getAngle(), scale.x, scale.y);
+            canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x,
+                    (getY()) * drawScale.y + pivot.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
+
+
+
         }
 
     }

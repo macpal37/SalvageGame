@@ -74,16 +74,19 @@ public class Door extends Wall {
             float x = vertices[0];
             float y = vertices[1];
             if (isActive()) {
-                canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
+                canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x,
+                        (y) * drawScale.y, getAngle(), doorScale.x * worldDrawScale.x, doorScale.y * worldDrawScale.y);
 //                    canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], origin.x, 0, x * drawScale.x, (y) * drawScale.y + doorDimension.y / 2f, getAngle(), 1, 1);
             } else if (sprite.getFrame() < 11) {
                 if (tick % 6 == 0) {
                     sprite.setFrame(sprite.getFrame() + 1);
                 }
-                canvas.draw(sprite, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
+                canvas.draw(sprite, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x,
+                        (y) * drawScale.y, getAngle(), doorScale.x * worldDrawScale.x, doorScale.y * worldDrawScale.y);
 
             } else {
-                canvas.draw(openDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
+                canvas.draw(openDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x,
+                        (y) * drawScale.y, getAngle(), doorScale.x * worldDrawScale.x, doorScale.y * worldDrawScale.y);
             }
         }
 

@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
+import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
@@ -1102,6 +1103,7 @@ public class DiverModel extends GameObject {
         for (FlareModel f : flares) {
             f.initLight(rayHandler);
             f.setCarried(true);
+            f.setWorldDrawScale(worldDrawScale);
             f.setActivated(false);
         }
     }
@@ -1117,16 +1119,16 @@ public class DiverModel extends GameObject {
             if (flare_duration < MAX_FLARE_DURATION) {
 
                 f.setActivated(true);
-                f.setX(getX() + (25 / 32f * (float) Math.cos(getAngle())));
-                f.setY(getY() + (25 / 32f * (float) Math.sin(getAngle())));
+                f.setX((getX() + (25 / 32f * (float) Math.cos(getAngle()))) * worldDrawScale.x);
+                f.setY((getY() + (25 / 32f * (float) Math.sin(getAngle()))) * worldDrawScale.y);
                 f.setAngle(getAngle());
                 flare_duration++;
 //                System.out.println("FLARe IS ACTIVE");
             } else {
 //                f.setActivated(false);
                 f.setCarried(false);
-                f.setX(getX() + (25 / 32f * (float) Math.cos(getAngle())));
-                f.setY(getY() + (25 / 32f * (float) Math.sin(getAngle())));
+                f.setX((getX() + (25 / 32f * (float) Math.cos(getAngle()))) * worldDrawScale.x);
+                f.setY((getY() + (25 / 32f * (float) Math.sin(getAngle()))) * worldDrawScale.y);
                 f.setAngle(0);
                 f.setVX(0);
                 f.setVY(0);
@@ -1344,11 +1346,12 @@ public class DiverModel extends GameObject {
                 }
 
             }
-            canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x - 50, origin.y + 50, getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f, flip * 0.25f);
+            canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x - 50, origin.y + 50,
+                    getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f * worldDrawScale.x, flip * 0.25f * worldDrawScale.y);
         }
         if (ping || ping_cooldown > 0) {
-            canvas.draw(pingTexture, Color.WHITE, origin.x + pingDirection.x,
-                    origin.y + pingDirection.y, getX() * drawScale.x + 50, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+//            canvas.draw(pingTexture, Color.WHITE, origin.x + pingDirection.x,
+//                    origin.y + pingDirection.y, getX() * drawScale.x + 50, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
             ping_cooldown--;
         }
     }

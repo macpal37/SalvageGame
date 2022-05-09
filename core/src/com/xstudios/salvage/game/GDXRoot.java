@@ -9,13 +9,21 @@ import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
 public class GDXRoot extends Game implements ScreenListener {
-	/** AssetManager to load game assets (textures, sounds, etc.) */
+	/**
+	 * AssetManager to load game assets (textures, sounds, etc.)
+	 */
 	AssetDirectory directory;
-	/** Drawing context to display graphics (VIEW CLASS) */
+	/**
+	 * Drawing context to display graphics (VIEW CLASS)
+	 */
 	private GameCanvas canvas;
-	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
+	/**
+	 * Player mode for the asset loading screen (CONTROLLER CLASS)
+	 */
 	private LoadingMode loading;
-	/** List of all WorldControllers */
+	/**
+	 * List of all WorldControllers
+	 */
 	private GameController controller;
 
 	private GameOverController game_over_controller;
@@ -38,14 +46,14 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	/**
 	 * Called when the Application is first created.
-	 *
+	 * <p>
 	 * This is method immediately loads assets for the loading screen, and prepares
 	 * the asynchronous loader for all other assets.
 	 */
 	@Override
-	public void create () {
+	public void create() {
 		current = 0;
-		cameraController = new CameraController(32,18);
+		cameraController = new CameraController(32, 18);
 
 //		gameCameraController = new CameraController(32, 18);
 
@@ -76,11 +84,11 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	/**
 	 * Called when the Application is destroyed.
-	 *
+	 * <p>
 	 * This is preceded by a call to pause().
 	 */
 	@Override
-	public void dispose () {
+	public void dispose() {
 		setScreen(null);
 		controller.dispose();
 
@@ -98,7 +106,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	/**
 	 * Called when the Application is resized.
-	 *
+	 * <p>
 	 * This can happen at any point during a non-paused state but will never happen
 	 * before a call to create().
 	 *
@@ -107,13 +115,13 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void resize(int width, int height) {
 		canvas.resize();
-		super.resize(width,height);
-		cameraController.resize(width,height);
+		super.resize(width, height);
+		cameraController.resize(width, height);
 	}
 
 	// setting the game requires reseting AFTER gathering assets, so we have a separate function
 	// (may need to change later)
-	public void set_game(AssetDirectory directory, GameCanvas canvas){
+	public void set_game(AssetDirectory directory, GameCanvas canvas) {
 		controller.setLevel(current);
 		controller.gatherAssets(directory);
 		controller.setCanvas(canvas);
@@ -124,6 +132,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	/**
 	 * Method for setting/switching to a screen
+	 *
 	 * @param screen
 	 * @param directory
 	 * @param canvas
@@ -178,7 +187,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 
 			//menu >> setting
-			if (exitCode == 1){
+			if (exitCode == 1) {
 				switch_screen(settings_controller, directory, canvas);
 			}
 
@@ -189,11 +198,11 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 		}
 		//Setting
-		else if (screen == settings_controller){
+		else if (screen == settings_controller) {
 			settings_controller.dispose();
 
 			//settings >> menu
-			if(exitCode == 0){
+			if (exitCode == 0) {
 				switch_screen(menu_controller, directory, canvas);
 			}
 
@@ -217,11 +226,11 @@ public class GDXRoot extends Game implements ScreenListener {
 		else if (screen == game_over_controller) {
 			System.out.println("in gameover");
 			//if won, update level progress
-			if(game_over_controller.getWin()){
+			if (game_over_controller.getWin()) {
 				// set the current level to be the next level if player clicks next level button
 				current++;
 				// if beat a new level, store that information in the save file
-				if(player.getLevel() == current)
+				if (player.getLevel() == current)
 					player.nextLevel();
 			}
 			// reset game over controller and switch to a new screen
@@ -240,9 +249,9 @@ public class GDXRoot extends Game implements ScreenListener {
 				switch_screen(menu_controller, directory, canvas);
 
 			//game over >> next level, will be main menu if next level doesn't exist
-			if(exitCode == 2) {
+			if (exitCode == 2) {
 				//main menu instead
-				if(current >= total_levels)
+				if (current >= total_levels)
 					switch_screen(menu_controller, directory, canvas);
 					//next level
 				else
@@ -261,7 +270,7 @@ public class GDXRoot extends Game implements ScreenListener {
 				current = exitCode - 1;
 
 				//go to menu instead
-				if(current > controller.getTotalLevels() - 1)
+				if (current > controller.getTotalLevels() - 1)
 					switch_screen(menu_controller, directory, canvas);
 
 					//go to levels

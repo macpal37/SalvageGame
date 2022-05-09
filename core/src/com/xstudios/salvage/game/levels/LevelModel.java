@@ -82,6 +82,7 @@ public class LevelModel {
      */
     public void addObject(GameObject obj) {
         objects.add(0, obj);
+
         if (obj instanceof Monster) {
 
             monster = (Monster) obj;

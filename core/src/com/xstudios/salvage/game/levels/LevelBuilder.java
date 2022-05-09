@@ -224,6 +224,7 @@ public class LevelBuilder {
     }
 
 
+    //    public float div = 25f;
     public float div = 25f;
 
     public enum TentacleType {
@@ -446,6 +447,7 @@ public class LevelBuilder {
      */
     public void createLevel(String levelFileName, LevelModel level, Vector2 drawScale, Vector2 drawScaleSymbol, RayHandler rayHandler) {
         this.drawScale = drawScale;
+        System.out.println("LEVEL SCALE: " + drawScale.toString());
         ArrayList<GObject> gameObjects = new ArrayList<GObject>();
 
         JsonValue map = jsonReader.parse(Gdx.files.internal("levels/" + levelFileName + ".json"));
@@ -666,10 +668,11 @@ public class LevelBuilder {
                             Monster monster = new Monster(sx, sy, true);
                             if (obj.get("properties") != null)
                                 for (JsonValue prop : obj.get("properties")) {
-                                    if (prop.getString("name").equals("aggro_rate"))
-                                        monster.setAggravationRate(prop.getInt("value"));
+                                    if (prop.getString("name").equals("aggro_rate")){
+                                        monster.setAggravationRate(prop.getInt("value") * 0.5f);
+                                    System.out.println(monster.getAggravationRate());}
                                     else if (prop.getString("name").equals("aggro_threshold"))
-                                        monster.setAggroLevel(prop.getInt("value"));
+                                        monster.setAggroLevel(prop.getInt("value") * 10.0f);
                                     else if (prop.getString("name").equals("vision_radius"))
                                         monster.setVisionRadius(prop.getInt("value"));
 
@@ -762,7 +765,7 @@ public class LevelBuilder {
         int goalDoorCounter = 0;
         int hazardCounter = 0;
         for (GObject go : gameObjects) {
-
+            go.setWorldDrawScale(drawScale.x / 40f, drawScale.y / 40f);
             if (go instanceof HazardModel) {
                 HazardModel hazard = (HazardModel) go;
                 hazard.setOxygenDrain(-0.1f);
