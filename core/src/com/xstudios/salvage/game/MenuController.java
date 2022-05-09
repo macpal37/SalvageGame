@@ -5,16 +5,12 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
-import com.badlogic.gdx.controllers.ControllerMapping;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.xstudios.salvage.assets.AssetDirectory;
-import com.xstudios.salvage.util.Controllers;
 import com.xstudios.salvage.util.ScreenListener;
-import com.xstudios.salvage.util.XBoxController;
 
 /**
  * Class that provides a loading screen for the state of the game.
@@ -29,229 +25,100 @@ import com.xstudios.salvage.util.XBoxController;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class MenuController implements Screen, InputProcessor, ControllerListener {
+public class MenuController extends ScreenController implements ControllerListener {
     // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
     /**
      * Background texture for start-up
      */
     private Texture background;
-
-    private ScrollPane scroll;
-    private Actor widget;
-
-    /**
-     * Default budget for asset loader (do nothing but load 60 fps)
-     */
-    private static int DEFAULT_BUDGET = 15;
-    /**
-     * Standard window size (for scaling)
-     */
-    private static int STANDARD_WIDTH = 800;
-    /**
-     * Standard window height (for scaling)
-     */
-    private static int STANDARD_HEIGHT = 700;
-    /**
-     * Ratio of the bar width to the screen
-     */
-    private static float BAR_WIDTH_RATIO = 0.66f;
-    /**
-     * Ration of the bar height to the screen
-     */
-    private static float BAR_HEIGHT_RATIO = 0.25f;
-    /**
-     * Height of the progress bar
-     */
-    private static float BUTTON_SCALE = 0.75f;
-
-    /**
-     * Reference to GameCanvas created by the root
-     */
-    private GameCanvas canvas;
-    /**
-     * Listener that will update the player mode when we are done
-     */
-    private ScreenListener listener;
-
     /**
      * Background Texture
      */
     protected Texture title;
     protected Texture quit;
     protected Texture select_level;
-    protected Texture level_editor;
+    protected Texture setting;
+    protected Texture tentacles;
 
-    /**
-     * The width of the progress bar
-     */
-    private int width;
-    /**
-     * The y-coordinate of the center of the progress bar
-     */
-    private int centerY;
-    /**
-     * The x-coordinate of the center of the progress bar
-     */
-    private int centerX;
-    /**
-     * The height of the canvas window (necessary since sprite origin != screen origin)
-     */
-    private int heightY;
-    /**
-     * Scaling factor for when the student changes the resolution.
-     */
-    private float scale;
+    private boolean press_quit;
+    private boolean press_select_level;
+    private boolean press_setting;
 
-    /**
-     * The current state of the play button
-     */
-    private int pressState;
+    private boolean release;
 
-
-    /**
-     * Whether or not this player mode is still active
-     */
-    private boolean active;
-
-    /**
-     * Returns true if all assets are loaded and the player is ready to go.
-     *
-     * @return true if the player is ready to go
-     */
-    public boolean isReady() {
-        return pressState == 2;
-    }
 
     public MenuController() {
-        // Load the next two images immediately.
+        width = Gdx.graphics.getWidth();
+        height = Gdx.graphics.getHeight();
 
-        pressState = 0;
-
-        Gdx.input.setInputProcessor(this);
-
-        // Let ANY connected controller start the game.
-        for (XBoxController controller : Controllers.get().getXBoxControllers()) {
-            controller.addListener(this);
-        }
+        press_select_level = false;
+        press_setting = false;
+        press_quit = false;
+        release = false;
     }
 
-    public void setActive() {
-        active = true;
-    }
 
-    public void setCanvas(GameCanvas canvas) {
-        this.canvas = canvas;
+    public void setCameraController(CameraController cameraController) {
+        this.camera = cameraController;
+        camera.setCameraPosition(width / 2, height / 2);
+        camera.setBounds(width / 2, height / 2, width, height);
+        camera.render();
     }
 
     public void gatherAssets(AssetDirectory directory) {
         background = directory.getEntry("background:menu", Texture.class);
         title = directory.getEntry("title", Texture.class);
         quit = directory.getEntry("quit", Texture.class);
-        level_editor = directory.getEntry("level_editor", Texture.class);
+        setting = directory.getEntry("setting", Texture.class);
         select_level = directory.getEntry("select_level", Texture.class);
+        tentacles = directory.getEntry("screen_tentacles", Texture.class);
     }
 
-    /**
-     * Called when this screen should release all resources.
-     */
-    public void dispose() {
-        pressState = 0;
+    public void dispose(){
         background = null;
         active = false;
-        title = null;
         quit = null;
-        level_editor = null;
+        setting = null;
         select_level = null;
+        press_select_level = false;
+        press_setting = false;
+        press_quit = false;
+        release = false;
     }
 
-//    public boolean pointer(int x, int y, int width, int height){
-//        int pX = Gdx.input.getX();
-//        int pY = Gdx.input.getY();
-//        // Flip to match graphics coordinates
-//        pY = canvas.getHeight() - pY;
-//
-//        float widthR = BUTTON_SCALE * scale * width/ 2.0f;
-//        float heightR = BUTTON_SCALE * scale * height/ 2.0f;
-//        float dist =
-//                (pX - x) * (pX - x) + (pY - y) * (pY - y);
-//        if (dist < widthR * heightR) {
-//            return true;
-//        }
-//        return false;
-//    }
+    private boolean help_draw(Texture t, int x, int y, boolean tint){
+        int ox = t.getWidth()/2;
+        int oy = t.getHeight()/2;
+        Color c = Color.WHITE;
+        boolean clicked = false;
+        if(tint) {
+            int pX = Gdx.input.getX();
+            int pY = Gdx.input.getY();
+            // Flip to match graphics coordinates
+            int flip_y = canvas.getHeight() - y;
+            float w = 0.7f * scale * ox;
+            float h = 0.7f * scale * oy;
 
-    public boolean pointer1(int x, int y, int width, int height, float scale) {
-        float pX = Gdx.input.getX();
-        float pY = Gdx.input.getY();
-        // Flip to match graphics coordinates
-        y = canvas.getHeight() - y;
-        float w = scale * width;
-        float h = scale * height;
-
-        if((x + w > pX && x - w < pX) && (y + h > pY && y - h < pY)){
-            return true;
+            if ((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)) {
+                c = Color.GRAY;
+                if (Gdx.input.isTouched()) clicked = true;
+            }
         }
-        return false;
+        canvas.draw(t, c, ox, oy, x, y, 0, 0.7f *  scale, 0.7f * scale);
+        return clicked;
     }
 
-    /**
-     * Draw the status of this player mode.
-     * <p>
-     * We prefer to separate update and draw from one another as separate methods, instead
-     * of using the single render() method that LibGDX does.  We will talk about why we
-     * prefer this in lecture.
-     */
     private void draw() {
         canvas.begin();
-        canvas.draw(background, Color.WHITE, 0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.draw(
-                title,
-                Color.WHITE,
-                title.getWidth() / 2,
-                title.getHeight() / 2,
-                centerX,
-                centerY + 2 * centerY,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
-        Color tint = (pointer1(centerX, centerY + centerY, select_level.getWidth() / 2,
-                select_level.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                select_level,
-                tint,
-                select_level.getWidth() / 2,
-                select_level.getHeight() / 2,
-                centerX,
-                centerY + centerY,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
-        tint = (pointer1(centerX,
-                centerY + centerY / 2, level_editor.getWidth() / 2,
-                level_editor.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                level_editor,
-                tint,
-                level_editor.getWidth() / 2,
-                level_editor.getHeight() / 2,
-                centerX,
-                centerY + centerY / 2,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
-        tint = (pointer1(centerX,
-                centerY, quit.getWidth() / 2,
-                quit.getHeight() / 2, BUTTON_SCALE * scale) ? Color.GRAY : Color.WHITE);
-        canvas.draw(
-                quit,
-                tint,
-                quit.getWidth() / 2,
-                quit.getHeight() / 2,
-                centerX,
-                centerY,
-                0,
-                BUTTON_SCALE * scale,
-                BUTTON_SCALE * scale);
+
+        canvas.draw(background, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        canvas.draw(tentacles, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        press_select_level = help_draw(select_level, width/3, height - height/3 - height/12, true);
+
+        press_setting = help_draw(setting, width/3, height/2 - height/10, true);
+
+        press_quit = help_draw(quit, width/3, height/6 + height/20, true);
 
         canvas.end();
     }
@@ -270,40 +137,9 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     public void render(float delta) {
         if (active) {
             draw();
-
-            // We are are ready, notify our listener
-            if (pressState == 4 && listener != null) {
-                listener.exitScreen(this, 0);
-            }
-            if (pressState == 5 && listener != null) {
-                listener.exitScreen(this, 1);
-            }
-            if (pressState == 6 && listener != null) {
-                listener.exitScreen(this, 2);
-            }
         }
     }
 
-    /**
-     * Called when the Screen is resized.
-     * <p>
-     * This can happen at any point during a non-paused state but will never happen
-     * before a call to show().
-     *
-     * @param width  The new width in pixels
-     * @param height The new height in pixels
-     */
-    public void resize(int width, int height) {
-        // Compute the drawing scale
-        float sx = ((float) width) / STANDARD_WIDTH;
-        float sy = ((float) height) / STANDARD_HEIGHT;
-        scale = (sx < sy ? sx : sy);
-
-        this.width = (int) (BAR_WIDTH_RATIO * width);
-        centerY = (int) (BAR_HEIGHT_RATIO * height);
-        centerX = width / 2;
-        heightY = height;
-    }
 
     /**
      * Called when the Screen is paused.
@@ -326,32 +162,6 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
 
     }
 
-    /**
-     * Called when this screen becomes the current screen for a Game.
-     */
-    public void show() {
-        // Useless if called in outside animation loop
-        Gdx.input.setInputProcessor(this);
-        active = true;
-    }
-
-    /**
-     * Called when this screen is no longer the current screen for a Game.
-     */
-    public void hide() {
-        // Useless if called in outside animation loop
-        active = false;
-    }
-
-    /**
-     * Sets the ScreenListener for this mode
-     * <p>
-     * The ScreenListener will respond to requests to quit.
-     */
-    public void setScreenListener(ScreenListener listener) {
-        this.listener = listener;
-    }
-
     // PROCESSING PLAYER INPUT
 
     /**
@@ -367,36 +177,8 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (pressState >= 4) {
-            return true;
-        }
-
-        // Flip to match graphics coordinates
-        screenY = heightY - screenY;
-
-        // TODO: Fix scaling
-        if (pointer1(centerX, centerY + centerY, select_level.getWidth() / 2,
-                select_level.getHeight() / 2, BUTTON_SCALE * scale)) {
-            pressState = 1;
-            return false;
-        }
-
-        if (pointer1(centerX,
-                centerY + centerY / 2, level_editor.getWidth() / 2,
-                level_editor.getHeight() / 2, BUTTON_SCALE * scale)) {
-            pressState = 2;
-            return false;
-        }
-
-        if (pointer1(centerX,
-                centerY, quit.getWidth() / 2,
-                quit.getHeight() / 2, BUTTON_SCALE * scale)) {
-            pressState = 3;
-            return false;
-        }
-        return false;
+        return true;
     }
-
 
     /**
      * Called when a finger was lifted or a mouse button was released.
@@ -410,9 +192,14 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (pressState >= 1) {
-            pressState = pressState + 3;
-            return false;
+        if(press_select_level) {
+            listener.exitScreen(this, 0);
+        }
+        else if(press_setting){
+            listener.exitScreen(this, 1);
+        }
+        else if(press_quit){
+            listener.exitScreen(this, 2);
         }
         return true;
     }
@@ -428,14 +215,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
-    public boolean buttonDown(Controller controller, int buttonCode) {
-        if (pressState == 0) {
-            ControllerMapping mapping = controller.getMapping();
-            if (mapping != null && buttonCode == mapping.buttonStart) {
-                pressState = 1;
-                return false;
-            }
-        }
+    public boolean buttonDown (Controller controller, int buttonCode) {
         return true;
     }
 
@@ -450,14 +230,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
-    public boolean buttonUp(Controller controller, int buttonCode) {
-        if (pressState == 1) {
-            ControllerMapping mapping = controller.getMapping();
-            if (mapping != null && buttonCode == mapping.buttonStart) {
-                pressState = 2;
-                return false;
-            }
-        }
+    public boolean buttonUp (Controller controller, int buttonCode) {
         return true;
     }
 
@@ -495,7 +268,7 @@ public class MenuController implements Screen, InputProcessor, ControllerListene
     /**
      * Called when the mouse was moved without any buttons being pressed. (UNSUPPORTED)
      *
-     * @param screenX the x-coordinate of the mouse on the screen
+     * @param screenX the x-coordinate of the mouse on the
      * @param screenY the y-coordinate of the mouse on the screen
      * @return whether to hand the event to other listeners.
      */
