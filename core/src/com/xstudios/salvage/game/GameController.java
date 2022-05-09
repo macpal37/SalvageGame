@@ -720,13 +720,13 @@ public class GameController extends ScreenController implements ContactListener 
 
 
             light.setPosition(
-                    camera.getCameraPosition2D().x / 40f
+                    camera.getCameraPosition2D().x / (40f * worldScale.x)
                     ,
-                    camera.getCameraPosition2D().y / 40f);
+                    camera.getCameraPosition2D().y / (40f * worldScale.y));
             wallShine.setPosition(
-                    camera.getCameraPosition2D().x / 40f
+                    camera.getCameraPosition2D().x / (40f * worldScale.x)
                     ,
-                    camera.getCameraPosition2D().y / 40f);
+                    camera.getCameraPosition2D().y / (40f * worldScale.y));
 //            light.setPosition(
 //                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
 //                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);

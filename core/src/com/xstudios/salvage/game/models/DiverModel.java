@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
+import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
@@ -1117,16 +1118,16 @@ public class DiverModel extends GameObject {
             if (flare_duration < MAX_FLARE_DURATION) {
 
                 f.setActivated(true);
-                f.setX(getX() + (25 / 32f * (float) Math.cos(getAngle())));
-                f.setY(getY() + (25 / 32f * (float) Math.sin(getAngle())));
+                f.setX((getX() + (25 / 32f * (float) Math.cos(getAngle()))) * GameController.worldScale.x);
+                f.setY((getY() + (25 / 32f * (float) Math.sin(getAngle()))) * GameController.worldScale.y);
                 f.setAngle(getAngle());
                 flare_duration++;
 //                System.out.println("FLARe IS ACTIVE");
             } else {
 //                f.setActivated(false);
                 f.setCarried(false);
-                f.setX(getX() + (25 / 32f * (float) Math.cos(getAngle())));
-                f.setY(getY() + (25 / 32f * (float) Math.sin(getAngle())));
+                f.setX((getX() + (25 / 32f * (float) Math.cos(getAngle()))) * GameController.worldScale.x);
+                f.setY((getY() + (25 / 32f * (float) Math.sin(getAngle()))) * GameController.worldScale.y);
                 f.setAngle(0);
                 f.setVX(0);
                 f.setVY(0);
