@@ -63,21 +63,7 @@ public class TreasureModel extends ObstacleModel {
         super(points, x + ox / div, y + oy / div);
         origin = new Vector2(ox, oy);
         lightColor = new Color(255 / 255f, 239 / 255f, 161 / 255f, 0.0f);
-
     }
-
-    // level builder will find groups of treasure chests with the same id
-    // as we iterate over the objects from tiled, if we see it is a treasure chest
-    // we have a hashmap of ids to lists of treasure chests with the given id
-    // later, we iterate over the keys and assign the contents
-    // - helper function to find which door ids there are
-    // - helper function to return an array of treasure chests assigned an id
-    // - for each door id, get a list of treasure chests with that id. randomize the list of treasure chests.
-    // Within a group, there can be only one key, so put a key in the first one
-    // Given the remaining treasure chests, choose to put a monster or a flare in it with some probability
-    // keep track of the # of flares/monsters so we don't exceed a certain fraction of the non-key chests
-
-    // update and draw should depend on the contents of the treasure
 
     /**
      * Get the tentacle that spawns from the treasure chest
@@ -99,6 +85,25 @@ public class TreasureModel extends ObstacleModel {
     public void update(float delta) {
         super.update(delta);
         setTentacleSpawnPosition(0, -10f / 32f);
+
+        switch (contents) {
+
+            case Key:
+                // if chest contains key and is opened and key anim done, toggle active
+                // TODO: Should probably make the animation frames not magic numbers
+                if (isOpened() && sprite.getFrame() == 39) {
+                    keyReward.setKeyActive(true);
+                }
+                if (!keyReward.isKeyActive()) {
+                    keyReward.updateChestLocation(this.getPosition());
+                }
+                break;
+
+            case Flare:
+                break;
+            case Monster:
+                break;
+        }
 
     }
 
@@ -125,12 +130,18 @@ public class TreasureModel extends ObstacleModel {
     @Override
     public boolean activatePhysics(World world) {
         setGravityScale(0.5f);
+//        if (contents == TreasureType.Key) {
+//            System.out.println("KeyReward null?" + (keyReward == null));
+//            keyReward.activatePhysics(world);
+//        }
         return super.activatePhysics(world);
     }
 
     @Override
     public void deactivatePhysics(World world) {
         super.deactivatePhysics(world);
+//        if (keyReward != null)
+//            keyReward.deactivatePhysics(world);
         light.remove();
     }
 
@@ -256,11 +267,20 @@ public class TreasureModel extends ObstacleModel {
             switch (contents) {
                 case Key:
 
-                    if (tick % 6 == 0)
-                        if (sprite.getFrame() < 39)
+
+                    if (tick % 6 == 0) {
+                        if (sprite.getFrame() == 38)
+                            keyReward.setActive(true);
+                        if (sprite.getFrame() < 41)
                             sprite.setFrame(sprite.getFrame() + 1);
+                    }
+
                     // call key's draw function
-                    // only draw if active
+                    // only draw if active, ie the appearing animation is over
+//                    if (keyReward.isActive()) {
+//                        keyReward.draw(canvas);
+//                    }
+
                     break;
                 case Monster:
                     if (sprite.getFrame() < 35)
@@ -285,5 +305,7 @@ public class TreasureModel extends ObstacleModel {
 
         if (trap != null)
             trap.draw(canvas);
+        if (keyReward != null)
+            keyReward.draw(canvas);
     }
 }

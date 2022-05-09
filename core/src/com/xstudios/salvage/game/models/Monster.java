@@ -17,6 +17,7 @@ public class Monster extends GameObject {
     public float agression = 0.0f;
     private Queue<Wall> tentacles;
     private Queue<Wall> idle_tentacles;
+    private Queue<Wall> kill_tentacles;
     private final float RADIUS = 7;
     private float aggravation = 0.0f;
 
@@ -75,8 +76,9 @@ public class Monster extends GameObject {
         setDimension(visionRadius, visionRadius);
         setName("monster");
 
-        tentacles = new LinkedList<Wall>();
+        tentacles = new LinkedList<>();
         idle_tentacles = new LinkedList<>();
+        kill_tentacles = new LinkedList<>();
         targetLocations = new ArrayList<Wall>();
         setActive(active);
     }
@@ -155,6 +157,9 @@ public class Monster extends GameObject {
     public void addIdleTentacle(Wall wall) {
         idle_tentacles.add(wall);
     }
+    public void addKillTentacle(Wall wall) {
+        kill_tentacles.add(wall);
+    }
 
     public Wall getNextTentacle() {
         return tentacles.poll();
@@ -173,6 +178,10 @@ public class Monster extends GameObject {
     }
 
     public Queue<Wall> getIdleTentacles() { return idle_tentacles; }
+
+    public Queue<Wall> getKillTentacles() {
+        return kill_tentacles;
+    }
 
     public ArrayList<Wall> getSpawnLocations() { return targetLocations; }
 

@@ -46,20 +46,20 @@
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":24,
-                 "y":958
+                 "x":56.6727750550465,
+                 "y":965.10277718588
                 }, 
                 {
                  "gid":6,
-                 "height":220,
+                 "height":323.700546913843,
                  "id":3,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":60,
-                 "x":-24,
-                 "y":962
+                 "x":-42.4672206832872,
+                 "y":1021.66332836139
                 }, 
                 {
                  "gid":25,
@@ -238,18 +238,6 @@
                 {
                  "gid":34,
                  "height":100,
-                 "id":19,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":100,
-                 "x":289.333333333333,
-                 "y":560
-                }, 
-                {
-                 "gid":34,
-                 "height":100,
                  "id":20,
                  "name":"",
                  "rotation":0,
@@ -264,6 +252,12 @@
                  "height":100,
                  "id":23,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"aggro_threshold",
+                         "type":"float",
+                         "value":8
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -272,16 +266,28 @@
                  "y":532
                 }, 
                 {
-                 "gid":37,
+                 "gid":24,
                  "height":100,
-                 "id":26,
+                 "id":31,
                  "name":"",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":252.666666666667,
-                 "y":805.333333333333
+                 "x":697.212159954542,
+                 "y":791.529938205839
+                }, 
+                {
+                 "gid":24,
+                 "height":100,
+                 "id":32,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":717.099936075005,
+                 "y":322.74664393778
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -290,7 +296,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":31,
+ "nextobjectid":33,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",

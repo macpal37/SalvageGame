@@ -3,11 +3,8 @@ package com.xstudios.salvage.game;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -17,7 +14,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.audio.AudioController;
 import com.xstudios.salvage.game.levels.LevelBuilder;
@@ -27,7 +23,6 @@ import com.xstudios.salvage.game.models.Wall;
 import com.xstudios.salvage.game.models.*;
 import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
-import com.xstudios.salvage.util.ScreenListener;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -160,6 +155,8 @@ public class GameController extends ScreenController implements ContactListener 
     private PhysicsController physicsController;
 
     private boolean reach_target = false;
+
+    private int game_over_animation_time = 60;
     /**
      * ================================LEVELS=================================
      */
@@ -179,7 +176,7 @@ public class GameController extends ScreenController implements ContactListener 
      * level4 - insanely hard key level
      */
     // Beta Release Setup
-    private String[] levels = {"beta_0", "beta_1", "beta_2", "beta_3", "beta_5"};
+    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8"};
 
 
     private int curr_level;
@@ -189,11 +186,13 @@ public class GameController extends ScreenController implements ContactListener 
 
     private enum state {
         PLAYING,
-        WIN_GAME,
-        LOSE_GAME,
+        EXIT_WIN,
+        EXIT_LOSE,
         RESTART,
         PAUSE,
-        QUIT
+        QUIT,
+        DYING,
+        WIN_ANIMATION
     }
 
     // TODO: when we add other screens we can actually implement code to support pausing and quitting
@@ -527,6 +526,8 @@ public class GameController extends ScreenController implements ContactListener 
      * param obj The object to add
      */
     protected void addObject(GameObject obj) {
+        System.out.println("obj_x: " + obj.getX() + " obj_y: " + obj.getY());
+        System.out.println("bounds_x: " + bounds.x + " bounds_y: " + bounds.y);
         assert inBounds(obj) : "Object is not in bounds";
         obj.activatePhysics(world);
         if (obj instanceof Tentacle)
@@ -559,7 +560,7 @@ public class GameController extends ScreenController implements ContactListener 
         for (GameObject obj : level.getAllObjects()) {
             obj.deactivatePhysics(world);
         }
-
+        game_over_animation_time = 60;
         level.getAllObjects().clear();
         level.getAboveObjects().clear();
         addQueue.clear();
@@ -573,33 +574,59 @@ public class GameController extends ScreenController implements ContactListener 
      */
     private void populateLevel() {
 
-//        camera.setZoom(1.0f);
-        System.out.println("SCALE:: " + world_scale.toString());
         levelBuilder.createLevel(levels[curr_level], level, world_scale, symbol_scale, rayHandler);
         pause = false;
 
         // TODO: will this have the same effect as going through each type, casting, then adding?
         for (GameObject obj : level.getAllObjects()) {
             addObject(obj);
+            System.out.println();
         }
+        System.out.println("added ");
         monsterController = new MonsterController(level.getMonster(), getWorldBounds());
+        monsterController.setAudio(audio);
 
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
+        System.out.println("level populated");
     }
 
     private void updateGameState() {
-        if (level.getDiver().getOxygenLevel() <= 0) {
-            game_state = state.LOSE_GAME;
+        System.out.println("game over animation " + game_over_animation_time);
+        System.out.println("oxygen level " + level.getDiver().getOxygenLevel());
+        if (game_over_animation_time <= 0) {
+            if (game_state == state.DYING) {
+                game_state = state.EXIT_LOSE;
+            } else if (game_state == state.WIN_ANIMATION) {
+                game_state = state.EXIT_WIN;
+            }
+        } else if (level.getDiver().getOxygenLevel() <= 0) {
+            game_state = state.DYING;
         } else if (reach_target) {
-            game_state = state.WIN_GAME;
+            System.out.println("REACH TARGET");
+            game_state = state.WIN_ANIMATION;
         } else if (pause) {
             game_state = state.PAUSE;
-        } else {
-            game_state = state.PLAYING;
         }
+//        else {
+//            game_state = state.PLAYING;
+//        }
+
+//        if (level.getDiver().getOxygenLevel() <= 0) {
+//            game_state = state.EXIT_LOSE;
+//        } else if (reach_target) {
+//            game_state = state.EXIT_WIN;
+//        } else if (pause) {
+//            game_state = state.PAUSE;
+//        } else {
+//            game_state = state.PLAYING;
+//        }
     }
 
+
+    private void updateDyingState() {
+        changeLightColor(new Color(0, 0, 0, 0));
+    }
 
     private void updatePlayingState() {
         // apply movement
@@ -819,6 +846,7 @@ public class GameController extends ScreenController implements ContactListener 
             monsterController.update(hostileOxygenDrain, level.getDiver());
             Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
             Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
+            Queue<Wall> attack_tentacles = monsterController.getMonster().getKillTentacles();
 
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
@@ -826,16 +854,26 @@ public class GameController extends ScreenController implements ContactListener 
                     System.out.println("CREATE TENTACLE");
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, LevelBuilder.TentacleType.NewAttack, 400);
                     addQueuedObject(t);
-                    audio.roar();
+                    t.setGrowRate(7);
                 }
             }
             while (idle_tentacles.size() > 0) {
                 Wall add_wall = idle_tentacles.poll();
-                if (add_wall != null && add_wall.canSpawnTentacle()) {
+                if (add_wall != null) {
                     System.out.println("...............................................");
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, LevelBuilder.TentacleType.Idle, 100);
                     addQueuedObject(t);
 //                AudioController.getInstance().roar();
+                }
+            }
+            while (attack_tentacles.size() > 0) {
+                Wall add_wall = attack_tentacles.poll();
+                if (add_wall != null && add_wall.canSpawnTentacle()) {
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, LevelBuilder.TentacleType.KILL, 1000000);
+                    t.setType(1);
+                    t.setGrowRate(4);
+                    System.out.println("type" + t.getType());
+                    addQueuedObject(t);
                 }
             }
         }
@@ -847,8 +885,16 @@ public class GameController extends ScreenController implements ContactListener 
 //            addQueuedObject(t);
 //        }
 
-
+        System.out.println("STATE " + game_state);
         switch (game_state) {
+            case DYING:
+                game_over_animation_time--;
+                updateDyingState();
+                break;
+            case WIN_ANIMATION:
+                game_over_animation_time--;
+                // do other things here?
+                break;
             case PLAYING:
                 updatePlayingState();
                 break;
@@ -1178,7 +1224,7 @@ public class GameController extends ScreenController implements ContactListener 
 
                 exit_home = help_draw(main_menu, exit_button.x, exit_button.y, true);
 
-            case WIN_GAME:
+            case EXIT_WIN:
                 break;
         }
 
@@ -1210,9 +1256,9 @@ public class GameController extends ScreenController implements ContactListener 
             }
             draw(delta);
             //draw(delta);
-            if (game_state == state.WIN_GAME) {
+            if (game_state == state.EXIT_WIN) {
                 listener.exitScreen(this, 0);
-            } else if (game_state == state.LOSE_GAME) {
+            } else if (game_state == state.EXIT_LOSE) {
                 listener.exitScreen(this, 1);
             } else if (exit_home == true && listener != null) {
                 listener.exitScreen(this, 2);
@@ -1271,6 +1317,7 @@ public class GameController extends ScreenController implements ContactListener 
         collisionController.startDiverDoorCollision(body1, body2);
         collisionController.startMonsterWallCollision(body1, body2);
         collisionController.startDiverDeadBodyCollision(body1, body2);
+        collisionController.startDiverMonsterCollision(body1, body2);
         collisionController.startFlareTentacleCollision(fix1, fix2);
 
         collisionController.startDiverTreasureCollision(fix1, fix2);
