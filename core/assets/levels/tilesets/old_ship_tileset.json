@@ -1316,20 +1316,8 @@
                      "type":"",
                      "visible":true,
                      "width":0,
-                     "x":4.5,
+                     "x":5.83333333333333,
                      "y":95.25
-                    }, 
-                    {
-                     "ellipse":true,
-                     "height":0,
-                     "id":2,
-                     "name":"SpawnLocatio",
-                     "rotation":0,
-                     "type":"",
-                     "visible":true,
-                     "width":0,
-                     "x":48.75,
-                     "y":84
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -1599,7 +1587,7 @@
                 {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Tentacle"
                 }]
         }, 
         {
@@ -1608,7 +1596,7 @@
                 {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Text"
                 }]
         }, 
         {
