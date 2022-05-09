@@ -693,6 +693,7 @@ public class LevelBuilder {
             key_chest.setTreasureType(TreasureType.Key, treasureKeyAnimation.copy());
             ItemModel key = new ItemModel(key_chest.getX(), key_chest.getY(),
                     constants.get("key"), ItemModel.ItemType.KEY);
+            System.out.println("key x: " + key_chest.getX() + " key y: " + key_chest.getY());
             key.setID(key_chest.getID());
             // this key will not be active/visible?
             System.out.println("entered create key: " + key.isActive());

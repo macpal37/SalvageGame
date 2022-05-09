@@ -121,9 +121,10 @@ public class TreasureModel extends ObstacleModel {
     @Override
     public boolean activatePhysics(World world) {
         setGravityScale(0.5f);
-        if (contents == TreasureType.Key) {
-            keyReward.activatePhysics(world);
-        }
+//        if (contents == TreasureType.Key) {
+//            System.out.println("KeyReward null?" + (keyReward == null));
+//            keyReward.activatePhysics(world);
+//        }
         return super.activatePhysics(world);
     }
 
