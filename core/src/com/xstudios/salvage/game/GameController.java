@@ -650,8 +650,8 @@ public class GameController implements Screen, ContactListener {
             level.getDiver().applyForce();
 
         // do the ping
-        level.getDiver().setPing(input.didPing());
-        level.getDiver().setPingDirection(level.getDeadBody().getPosition());
+//        level.getDiver().setPing(input.didOpenChest());
+//        level.getDiver().setPingDirection(level.getDeadBody().getPosition());
 
         // flare management
         if (input.dropFlare()) {
@@ -682,7 +682,7 @@ public class GameController implements Screen, ContactListener {
 
         AudioController.getInstance().update(level.getDiver().getOxygenLevel(), level.getDiver().getMaxOxygen());
 
-        if (input.didPing()) {
+        if (input.didOpenChest()) {
             if (level.getDiver().getTreasureChests().size() > 0) {
                 TreasureModel tm = level.getDiver().getTreasureChests().pop();
                 tm.openChest();

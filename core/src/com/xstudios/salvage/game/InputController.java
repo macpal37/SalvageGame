@@ -47,10 +47,10 @@ public class InputController {
     private boolean dropFlarePrevious;
 
     /**
-     * did we ping the body?
+     * did we open a chest?
      */
-    private boolean pingPressed;
-    private boolean pingPrevious;
+    private boolean openChest;
+    private boolean openChestPrevious;
 
 
     /**
@@ -177,12 +177,12 @@ public class InputController {
     }
 
     /**
-     * Returns true if the player wants to ping the body.
+     * Returns true if the player wants to open a chest
      *
-     * @return true if the player wants to ping the body.
+     * @return true if the player wants to open a chest
      */
-    public boolean didPing() {
-        return pingPressed && !pingPrevious;
+    public boolean didOpenChest() {
+        return openChest && !openChestPrevious;
     }
 
     /**
@@ -231,7 +231,7 @@ public class InputController {
         debugPrevious = debugPressed;
         menuPrevious = menuPressed;
         carryingObjectPrevious = carryingObject;
-        pingPrevious = pingPressed;
+        openChestPrevious = openChest;
         dropFlarePrevious = dropFlarePressed;
         pausePrevious = pausePressed;
 
@@ -283,9 +283,9 @@ public class InputController {
 
         carryingObject = (secondary && carryingObject) || Gdx.input.isKeyPressed(Input.Keys.Q);
 
-        dropFlarePressed = (secondary && dropFlarePressed) || Gdx.input.isKeyPressed(Input.Keys.F);
+        dropFlarePressed = (secondary && dropFlarePressed) || Gdx.input.isKeyPressed(Input.Keys.Z);
 
-        pingPressed = (secondary && pingPressed) || Gdx.input.isKeyPressed(Input.Keys.E);
+        openChest = (secondary && openChest) || Gdx.input.isKeyPressed(Input.Keys.X);
 
         pausePressed = (secondary && pausePressed) || Gdx.input.isKeyPressed(Keys.ESCAPE);
 
