@@ -67,18 +67,10 @@ public class LevelSelectController extends ScreenController implements Controlle
         for(int i = 1; i < 13; i++){
             level_list.add(directory.getEntry(Integer.toString(i), Texture.class));
         }
-        name_list.add(directory.getEntry("name1", Texture.class));
-        name_list.add(directory.getEntry("name2", Texture.class));
-        name_list.add(directory.getEntry("name3", Texture.class));
-        name_list.add(directory.getEntry("name4", Texture.class));
-        name_list.add(directory.getEntry("name5", Texture.class));
-        name_list.add(directory.getEntry("name6", Texture.class));
-        name_list.add(directory.getEntry("name7", Texture.class));
-        name_list.add(directory.getEntry("name8", Texture.class));
-        name_list.add(directory.getEntry("name9", Texture.class));
-        name_list.add(directory.getEntry("name10", Texture.class));
-        name_list.add(directory.getEntry("name11", Texture.class));
-        name_list.add(directory.getEntry("name12", Texture.class));
+
+        for(int a = 1; a < 13; a++){
+            name_list.add(directory.getEntry("name" + a, Texture.class));
+        }
     }
 
     public void setLocked(int level){
