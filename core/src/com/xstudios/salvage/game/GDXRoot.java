@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.xstudios.salvage.assets.AssetDirectory;
+import com.xstudios.salvage.audio.AudioController;
 import com.xstudios.salvage.util.ScreenListener;
 
 public class GDXRoot extends Game implements ScreenListener {
@@ -147,13 +148,15 @@ public class GDXRoot extends Game implements ScreenListener {
 			player = new Player(directory);
 			System.out.println("player_loaded");
 			//game controller setup
-			controller = new GameController(player);
+
+			AudioController.getInstance().setUp(player.getMusic(), player.getSoundEffects());
+
+			controller = new GameController();
 			controller.setCameraController(cameraController);
 			total_levels = controller.getTotalLevels();
 			controller.setScreenListener(this);
 
 			settings_controller.setPlayer(player);
-			settings_controller.setAudio(controller.getAudio());
 
 			//set up the cursor
 			Pixmap pm = new Pixmap(Gdx.files.internal("ui/cursor.png"));

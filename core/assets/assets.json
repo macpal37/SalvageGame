@@ -1,5 +1,8 @@
 {
   "textures": {
+    "confirmation" : "ui/confirmation.png",
+    "yes" : "ui/yes.png",
+    "no" : "ui/no.png",
     "bar" : "ui/bar.png",
     "slider" : "ui/slider.png",
     "reset" : "ui/reset.png",

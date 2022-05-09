@@ -34,11 +34,18 @@ public class SettingsController extends ScreenController implements ControllerLi
     protected Texture music;
     protected Texture sound_effects;
 
+    protected Texture confirmation;
+    protected Texture yes;
+    protected Texture no;
+
     protected Texture line;
     protected Texture box;
 
     private boolean press_menu;
     private boolean press_reset;
+    private boolean confirmation_screen;
+    private boolean press_yes;
+    private boolean press_no;
 
     private boolean music_box;
     private boolean sound_effects_box;
@@ -65,17 +72,15 @@ public class SettingsController extends ScreenController implements ControllerLi
 
         press_menu = false;
         press_reset = false;
+        confirmation_screen = false;
+        press_yes = false;
+        press_no = false;
 
         music_box = false;
         sound_effects_box = false;
 
         tick1 = 2;
         tick2 = 2;
-    }
-
-    //sets audioController
-    public void setAudio(AudioController a){
-        audio = a;
     }
 
     //sets Player
@@ -105,6 +110,9 @@ public class SettingsController extends ScreenController implements ControllerLi
         tentacles = directory.getEntry("screen_tentacles", Texture.class);
         line = directory.getEntry("bar", Texture.class);
         box = directory.getEntry("slider", Texture.class);
+        confirmation = directory.getEntry("confirmation", Texture.class);
+        yes = directory.getEntry("yes", Texture.class);
+        no = directory.getEntry("no", Texture.class);
     }
 
     //dispose
@@ -118,8 +126,13 @@ public class SettingsController extends ScreenController implements ControllerLi
         reset = null;
         line = null;
         box = null;
+        confirmation = null;
+        yes = null;
+        no = null;
+
         press_menu = false;
         press_reset= false;
+        confirmation_screen = false;
         segment = 0;
     }
 
@@ -179,6 +192,14 @@ public class SettingsController extends ScreenController implements ControllerLi
         else help_draw(box, width/14 + segment * tick2, height / 2 - height / 5 - height / 11, true);
 
         press_reset = help_draw(reset, width/14, height/7 - height/20, true);
+
+        if(confirmation_screen) {
+            canvas.draw(confirmation, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            press_yes = help_draw(yes, width - width/3 - width/20 - width/40 - width/40, height/2 - height/6+ height/80, true);
+            press_no = help_draw(no, width/3 + width/20, height/2 - height/6, true);
+        }
+
+
 
         canvas.end();
     }
@@ -264,14 +285,24 @@ public class SettingsController extends ScreenController implements ControllerLi
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if(press_reset){
-            player.setLevel(1);
-            tick1 = 2;
-            tick2 = 2;
+            confirmation_screen = true;
         }
-
-        if(music_box) music_box = false;
-        if(sound_effects_box) sound_effects_box = false;
-        if(press_menu) {
+        else if(confirmation_screen){
+            if(press_yes) {
+                player.setLevel(1);
+                tick1 = 2;
+                tick2 = 2;
+                press_yes = false;
+                confirmation_screen = false;
+            }
+            else if(press_no) {
+                press_no = false;
+                confirmation_screen = false;
+            }
+        }
+        else if(music_box) music_box = false;
+        else if(sound_effects_box) sound_effects_box = false;
+        else if(press_menu) {
             listener.exitScreen(this, 0);
         }
 
@@ -279,8 +310,8 @@ public class SettingsController extends ScreenController implements ControllerLi
         player.setSoundEffects(tick2);
         player.save();
 
-        audio.setMusic((float)tick1);
-        audio.setSoundEffects((float)tick2);
+        AudioController.getInstance().setMusic((float)tick1);
+        AudioController.getInstance().setSoundEffects((float)tick2);
 
         return true;
     }
@@ -379,20 +410,22 @@ public class SettingsController extends ScreenController implements ControllerLi
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        int total = segment * 5;
-        int max = screenX - width/14;
-        int start = width/14;
-        int ticks = max/segment;
-        if(music_box){
-            if(max >= start && max <= total)
-                tick1 = (ticks <= 4) ? ticks : 4;
+        if(!confirmation_screen) {
+            int total = segment * 5;
+            int max = screenX - width / 14;
+            int start = width / 14;
+            int ticks = max / segment;
+            if (music_box) {
+                if (max >= start && max <= total)
+                    tick1 = (ticks <= 4) ? ticks : 4;
+            }
+            AudioController.getInstance().setMusic((float) tick1);
+            if (sound_effects_box) {
+                if (max >= start && max <= total)
+                    tick2 = (ticks <= 4) ? ticks : 4;
+            }
+            AudioController.getInstance().setSoundEffects((float) tick2);
         }
-        audio.setMusic((float) tick1);
-        if(sound_effects_box){
-            if(max >= start && max <= total)
-                tick2 = (ticks <= 4) ? ticks : 4;
-        }
-        audio.setSoundEffects((float)tick2);
 
         return true;
     }

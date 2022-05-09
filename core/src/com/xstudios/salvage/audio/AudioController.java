@@ -25,9 +25,7 @@ public class AudioController {
     private float sound_effects_volume;
     private float music_volume;
 
-    public AudioController(float se, float m){
-        sound_effects_volume = se/4;
-        music_volume = m/4;
+    public AudioController(){
         audio = Audio.init();
         SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("audio/heartbeat.wav"));
         SoundBuffer oxygen_alarm_wav = WaveLoader.load(Gdx.files.internal("audio/oxygen_alarm.wav"));
@@ -42,20 +40,25 @@ public class AudioController {
         heartbeat.setLooping(true);
         bubbles.setLooping(true);
         oxygen_alarm.setLooping(true);
-        music.setVolume(0.4f * music_volume);
-        bubbles.setVolume(0.4f * sound_effects_volume);
-        oxygen_alarm.setVolume(0.4f * sound_effects_volume);
         ticks = 0;
     }
 
-    public static AudioController getInstance(float se, float m) {
+    public void setUp(float m, float se){
+        music_volume = m;
+        sound_effects_volume = se;
+    };
+
+    public static AudioController getInstance() {
         if (theController == null) {
-            theController = new AudioController(se, m);
+            theController = new AudioController();
         }
         return theController;
     }
 
     public void initialize() {
+        music.setVolume(0.4f * music_volume);
+        bubbles.setVolume(0.4f * sound_effects_volume);
+        oxygen_alarm.setVolume(0.4f * sound_effects_volume);
         music.play();
         bubbles.play();
         heartbeat.play();

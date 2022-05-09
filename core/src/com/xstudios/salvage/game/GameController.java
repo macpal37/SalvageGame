@@ -203,9 +203,9 @@ public class GameController extends ScreenController implements ContactListener 
      * with the Box2d coordinates.  The bounds are in terms of the Box2d
      * world, not the screen.
      */
-    protected GameController(Player player) {
+    protected GameController() {
         this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
-                new Vector2(0, DEFAULT_GRAVITY), player);
+                new Vector2(0, DEFAULT_GRAVITY));
         pause = false;
         exit_home = false;
         press_restart = false;
@@ -214,8 +214,7 @@ public class GameController extends ScreenController implements ContactListener 
 
     @Override
     public void resize(int width, int height) {
-        camera.getCamera().setToOrtho(false, width, height);
-        camera.getCamera().update();
+        System.out.println("gamecontroler is resizing " + width + " " + height);
     }
 
     public int getTotalLevels(){
@@ -233,8 +232,8 @@ public class GameController extends ScreenController implements ContactListener 
      * @param height  The height in Box2d coordinates
      * @param gravity The downward gravity
      */
-    protected GameController(float width, float height, float gravity, Player player) {
-        this(new Rectangle(0, 0, width, height), new Vector2(0, gravity), player);
+    protected GameController(float width, float height, float gravity) {
+        this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
     }
 
     protected Monster monster;
@@ -253,7 +252,7 @@ public class GameController extends ScreenController implements ContactListener 
      * @param gravity The gravitational force on this Box2d world
      */
 
-    protected GameController(Rectangle bounds, Vector2 gravity, Player player) {
+    protected GameController(Rectangle bounds, Vector2 gravity) {
 
         this.pauseScreen = new Vector3(0, 0, 0);
         this.tempProjectedHud = new Vector3(0, 0, 0);
@@ -292,10 +291,8 @@ public class GameController extends ScreenController implements ContactListener 
         wallShine.setContactFilter(f2);
         light.setContactFilter(f);
 
-        audio = AudioController.getInstance((float)player.getMusic(), (float)player.getSoundEffects());
-        audio.initialize();
+        AudioController.getInstance().initialize();
         collisionController = new CollisionController();
-        collisionController.setAudio(audio);
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
 
@@ -308,10 +305,6 @@ public class GameController extends ScreenController implements ContactListener 
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
 
-    }
-
-    public AudioController getAudio(){
-        return audio;
     }
 
     public void setLevel(int l) {
@@ -471,10 +464,9 @@ public class GameController extends ScreenController implements ContactListener 
         level.getAllObjects().clear();
         level.getAboveObjects().clear();
         addQueue.clear();
-        audio.reset();
+        AudioController.getInstance().reset();
         populateLevel();
     }
-
 
     /**
      * Lays out the game geography.
@@ -614,7 +606,7 @@ public class GameController extends ScreenController implements ContactListener 
 
         // update audio according to oxygen level
 
-        audio.update(level.getDiver().getOxygenLevel(), level.getDiver().getMaxOxygen());
+        AudioController.getInstance().update(level.getDiver().getOxygenLevel(), level.getDiver().getMaxOxygen());
 
 
         if (level.getDiver().getBody() != null) {
@@ -698,7 +690,7 @@ public class GameController extends ScreenController implements ContactListener 
             if (add_wall.canSpawnTentacle() && add_wall != null) {
                 Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), world_scale);
                 addQueuedObject(t);
-                audio.roar();
+                AudioController.getInstance().roar();
             }
         }
 

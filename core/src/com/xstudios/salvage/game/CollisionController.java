@@ -15,12 +15,6 @@ import com.xstudios.salvage.game.models.*;
 import com.xstudios.salvage.util.PooledList;
 
 public class CollisionController {
-
-    AudioController audio;
-
-    public void setAudio(AudioController a){
-        audio = a;
-    }
     /**
      * remove body from list of potential bodies that diver left and right sensors are touching
      *
@@ -281,9 +275,8 @@ public class CollisionController {
             diver.setTouchedWall((Wall) b2.getUserData());
             diver.setTouchingObstacle(true);
 
-            //AudioController.getInstance().wall_collision(diver.getForce());
             monsterController.wallCollision();
-            audio.wood_collision(diver.getForce());
+            AudioController.getInstance().wood_collision(diver.getForce());
 
         }
         if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
@@ -291,15 +284,15 @@ public class CollisionController {
 
             ((DiverModel) b2.getUserData()).setTouchingObstacle(true);
             monsterController.wallCollision();
-            audio.wood_collision(diver.getForce());
+            AudioController.getInstance().wood_collision(diver.getForce());
         }
 
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall &&
                 diver.getDiverCollisionBox().equals(fd1)) {
-            audio.wall_collision(diver.getForce());
+            AudioController.getInstance().wall_collision(diver.getForce());
         } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall &&
                 diver.getDiverCollisionBox().equals(fd2)) {
-            audio.wall_collision(diver.getForce());
+            AudioController.getInstance().wall_collision(diver.getForce());
         }
 
     }
