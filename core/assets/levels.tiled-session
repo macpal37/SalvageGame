@@ -9,8 +9,8 @@
             "scale": 0.70395,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 500.7457916045174,
-                "y": 498.61495844875344
+                "x": 347.32580438951635,
+                "y": 497.19440301157755
             }
         },
         "levels/Golden1.json": {
@@ -23,18 +23,58 @@
         },
         "levels/Golden2.json": {
             "scale": 0.5,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
                 "x": 601,
-                "y": 746
+                "y": 740
             }
         },
         "levels/Golden3.json": {
             "scale": 0.3248,
-            "selectedLayer": 0,
+            "selectedLayer": 2,
             "viewCenter": {
                 "x": 863.6083743842365,
                 "y": 658.8669950738916
+            }
+        },
+        "levels/Golden4.json": {
+            "scale": 0.25,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1078,
+                "y": 824
+            }
+        },
+        "levels/Golden5.json": {
+            "scale": 0.75,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 507.3333333333333,
+                "y": 494.66666666666663
+            }
+        },
+        "levels/Golden6.json": {
+            "scale": 0.75,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 2108.6666666666665,
+                "y": 522.6666666666666
+            }
+        },
+        "levels/Golden7.json": {
+            "scale": 0.25,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1226,
+                "y": 852
+            }
+        },
+        "levels/Golden8.json": {
+            "scale": 0.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1931,
+                "y": 852
             }
         },
         "levels/beta_0.json": {
@@ -70,11 +110,11 @@
             }
         },
         "levels/beta_5.json": {
-            "scale": 0.125,
+            "scale": 0.33,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 996,
-                "y": 744
+                "x": 1334.848484848485,
+                "y": 800.0000000000001
             }
         },
         "levels/in_progress.json": {
@@ -82,7 +122,7 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 1004.8442000523701,
-                "y": 746.2686567164183
+                "y": 739.722440429432
             }
         },
         "levels/level0.json": {
@@ -153,7 +193,7 @@
             "scale": 0.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 700,
+                "x": 701,
                 "y": 500
             }
         },
@@ -231,18 +271,18 @@
     "project": "levels.tiled-project",
     "property.type": "float",
     "recentFiles": [
-        "levels/Golden3.json",
-        "levels/tilesets/old_ship_tileset.json",
-        "levels/t_easy_1.json",
-        "levels/t_easy_2.json",
-        "levels/beta_2.json",
-        "levels/beta_5.json",
+        "levels/in_progress.json",
         "levels/tilesets/tentacle_tile.json",
         "levels/level4.json",
         "levels/level1.json",
         "levels/level0.json",
         "levels/test_level.json",
-        "levels/tutorial3.json"
+        "levels/tutorial3.json",
+        "levels/t_easy_1.json",
+        "levels/t_easy_2.json",
+        "levels/beta_2.json",
+        "levels/beta_5.json",
+        "levels/beta_1.json"
     ],
     "tileset.lastUsedFormat": "json",
     "tileset.tileSize": {

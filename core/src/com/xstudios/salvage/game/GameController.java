@@ -220,7 +220,7 @@ public class GameController implements Screen, ContactListener {
      * level4 - insanely hard key level
      */
     // Beta Release Setup
-    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "beta_5"};
+    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8"};
 
 
     private int curr_level;
