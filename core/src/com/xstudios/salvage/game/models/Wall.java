@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.ShortArray;
 import com.xstudios.salvage.game.GameCanvas;
+import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
 
@@ -507,9 +508,10 @@ public class Wall extends GameObject {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-
+        System.out.println("World: " + GameController.worldScale.toString());
         if (sprite != null && !invisible) {
-            canvas.draw(sprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 40f / 25f, 40f / 25f);
+            canvas.draw(sprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(),
+                    40f / 25f * GameController.worldScale.x, 40f / 25f * GameController.worldScale.y);
         }
     }
 

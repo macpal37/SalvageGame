@@ -223,6 +223,7 @@ public class LevelBuilder {
     }
 
 
+    //    public float div = 25f;
     public float div = 25f;
 
     public enum TentacleType {
@@ -440,6 +441,7 @@ public class LevelBuilder {
      */
     public void createLevel(String levelFileName, LevelModel level, Vector2 drawScale, Vector2 drawScaleSymbol, RayHandler rayHandler) {
         this.drawScale = drawScale;
+        System.out.println("LEVEL SCALE: " + drawScale.toString());
         ArrayList<GObject> gameObjects = new ArrayList<GObject>();
 
         JsonValue map = jsonReader.parse(Gdx.files.internal("levels/" + levelFileName + ".json"));
