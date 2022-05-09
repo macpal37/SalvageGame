@@ -13,26 +13,19 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.xstudios.salvage.assets.AssetDirectory;
-import com.xstudios.salvage.game.models.DiverModel;
-import com.xstudios.salvage.game.models.GoalDoor;
-
-import java.io.BufferedWriter;
-import java.io.Writer;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class Player {
-    private boolean mute;
-    private int volume;
+    private int sound_effects;
+    private int music;
     private int level;
     JsonValue json;
 
     public Player(AssetDirectory directory){
+        System.out.println("inside the player directory");
         json = directory.getEntry("player", JsonValue.class);
-        mute = json.getBoolean("mute", false);
-        volume = json.getInt("volume", 5);
+        sound_effects = json.getInt("sound_effects", 2);
+        music = json.getInt("music", 2);
         level = json.getInt("level", 1);
     }
 
@@ -42,37 +35,38 @@ public class Player {
 
     public void nextLevel(){
         level++;
+        save();
     }
 
-    public void setVolume(int v){
-        volume = v;
+    public void setLevel(int l){
+        level = l;
     }
 
-    public int getVolume(){
-        return volume;
+    public void setMusic(int m){
+        music = m;
     }
 
-    public void setMute(boolean m){
-        mute = m;
+    public int getMusic(){
+        return music;
     }
 
-    public boolean getMute(){
-        return mute;
-    }
+    public void setSoundEffects(int s){sound_effects = s;}
+
+    public int getSoundEffects(){ return sound_effects;}
 
     public void save() {
         JsonValue updateLevel = new JsonValue(level);
-        JsonValue updateVolume = new JsonValue(volume);
-        JsonValue updateMute = new JsonValue(mute);
+        JsonValue updateMusic = new JsonValue(music);
+        JsonValue updateSoundEffects = new JsonValue(sound_effects);
         FileHandle file = Gdx.files.local("core/assets/player.json");
 
         json.remove("level");
-        json.remove("volume");
-        json.remove("mute");
+        json.remove("music");
+        json.remove("sound_effects");
 
         json.addChild("level", updateLevel);
-        json.addChild("volume", updateVolume);
-        json.addChild("mute", updateMute);
+        json.addChild("music", updateMusic);
+        json.addChild("sound_effects", updateSoundEffects);
 
         file.writeString(json.toJson(JsonWriter.OutputType.json),false);
     }

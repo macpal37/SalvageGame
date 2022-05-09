@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.xstudios.salvage.game.GameCanvas;
+import com.xstudios.salvage.util.FilmStrip;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -27,6 +28,12 @@ public class Door extends Wall {
     public Door(float[] points, float x, float y) {
         super(points, 0, 0);
         toUnlock = false;
+    }
+
+    @Override
+    public void setFilmStrip(FilmStrip value) {
+        super.setFilmStrip(value);
+        value.setFrame(0);
     }
 
     public void addTextures(TextureRegion closed, TextureRegion open) {
@@ -58,8 +65,10 @@ public class Door extends Wall {
     }
 
 
-    public void draw(GameCanvas canvas) {
+    int tick = 0;
 
+    public void draw(GameCanvas canvas) {
+        tick++;
 
         if (openDoor != null && closedDoor != null) {
             float x = vertices[0];
@@ -67,6 +76,12 @@ public class Door extends Wall {
             if (isActive()) {
                 canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
 //                    canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], origin.x, 0, x * drawScale.x, (y) * drawScale.y + doorDimension.y / 2f, getAngle(), 1, 1);
+            } else if (sprite.getFrame() < 11) {
+                if (tick % 6 == 0) {
+                    sprite.setFrame(sprite.getFrame() + 1);
+                }
+                canvas.draw(sprite, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
+
             } else {
                 canvas.draw(openDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x, (y) * drawScale.y, getAngle(), doorScale.x, doorScale.y);
             }
