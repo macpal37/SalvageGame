@@ -47,6 +47,7 @@ public class ItemModel extends DiverObjectModel {
 
         this.item_type = item_type;
 
+        // TODO: doesn't it never enter this try?
         try {
             item_color = COLOR_OPTIONS[getID()];
         } catch (Exception e) {

@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.GObject;
+import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.game.models.*;
 
 import com.xstudios.salvage.game.models.TreasureModel.TreasureType;
@@ -662,14 +663,6 @@ public class LevelBuilder {
                             treasureModel.setAngle(rotation);
                             treasureModel.setIdeSuspenseSprite(treasureOpenAnimation.copy(), treasureMonsterAnimation.copy());
 
-                           
-                            //TODO
-//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Monster, treasureMonsterAnimation.copy());
-////
-//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Key, treasureKeyAnimation.copy());
-//
-//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Flare, treasureKeyAnimation.copy());
-
                             treasureModel.setScale(1 / 2f, 1 / 2f);
                             treasureModel.initLight(rayHandler);
                             treasureModel.setTentacleRotation(180);
@@ -696,7 +689,17 @@ public class LevelBuilder {
             // Shuffle the array to randomize which one gets the key
             Collections.shuffle(chest_lst);
             // Within a group, there can be only one key, so arbitrarily put a key in the first one
-            chest_lst.get(0).setTreasureType(TreasureType.Key, treasureKeyAnimation.copy());
+            TreasureModel key_chest = chest_lst.get(0);
+            key_chest.setTreasureType(TreasureType.Key, treasureKeyAnimation.copy());
+            ItemModel key = new ItemModel(key_chest.getX(), key_chest.getY(),
+                    constants.get("key"), ItemModel.ItemType.KEY);
+            key.setID(key_chest.getID());
+            // this key will not be active/visible?
+            System.out.println("entered create key: " + key.isActive());
+            key.setActive(false);
+            key_chest.setKeyReward(key);
+            gameObjects.add(key);
+
             for (int i = 1; i < chest_lst.size(); i++) {
                 TreasureModel chest = chest_lst.get(i);
                 // if the chest can contain a flare, choose to put a flare in it with probability 10%
