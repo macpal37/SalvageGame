@@ -1,40 +1,40 @@
 {
-    "activeFile": "levels/beta_1.json",
+    "activeFile": "levels/beta_0.json",
     "expandedProjectPaths": [
-        "levels/tilesets",
-        "levels"
+        "levels",
+        "levels/tilesets"
     ],
     "fileStates": {
         "levels/beta_0.json": {
-            "scale": 0.33,
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 746.969696969697,
-                "y": 772.7272727272727
+                "x": 499.5,
+                "y": 499.5
             }
         },
         "levels/beta_1.json": {
             "scale": 0.46,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 844.5652173913043,
-                "y": 836.9565217391304
+                "x": 748.9130434782608,
+                "y": 501.0869565217392
             }
         },
         "levels/beta_2.json": {
-            "scale": 1.5,
+            "scale": 0.33,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1176,
-                "y": 634.3333333333333
+                "x": 1250,
+                "y": 749.9999999999999
             }
         },
         "levels/beta_3.json": {
-            "scale": 0.5,
+            "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1000,
-                "y": 749
+                "x": 998.4848484848485,
+                "y": 749.9999999999999
             }
         },
         "levels/beta_5.json": {
@@ -55,10 +55,10 @@
         },
         "levels/level0.json": {
             "scale": 0.4674,
-            "selectedLayer": 1,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 941.37783483098,
-                "y": 662.1737270004279
+                "x": 749.8930252460419,
+                "y": 501.7115960633291
             }
         },
         "levels/level1.json": {
@@ -121,6 +121,14 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "levels/tilesets/tentacle_attack.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/tilesets/tentacle_idle.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "levels/tilesets/tentacle_tile.json": {
             "scaleInDock": 1,
             "scaleInEditor": 1
@@ -153,26 +161,29 @@
     "last.imagePath": "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels/tilesets",
     "map.lastUsedFormat": "json",
     "openFiles": [
-        "levels/tilesets/tentacle_tile.json",
         "levels/tilesets/old_ship_tileset.json",
+        "levels/tilesets/tentacle_attack.json",
         "levels/beta_0.json",
-        "levels/beta_1.json"
+        "levels/beta_1.json",
+        "levels/beta_3.json",
+        "levels/level0.json",
+        "levels/tilesets/tentacle_idle.json"
     ],
     "project": "levels.tiled-project",
     "property.type": "float",
     "recentFiles": [
-        "levels/level1.json",
-        "levels/level0.json",
-        "levels/beta_2.json",
-        "levels/beta_1.json",
+        "levels/beta_3.json",
         "levels/beta_0.json",
-        "levels/tilesets/tentacle_tile.json",
+        "levels/beta_1.json",
+        "levels/beta_2.json",
+        "levels/level0.json",
         "levels/tilesets/old_ship_tileset.json",
+        "levels/tilesets/tentacle_attack.json",
+        "levels/tilesets/tentacle_idle.json",
+        "levels/tilesets/tentacle_tile.json",
+        "levels/level1.json",
         "levels/in_progress.json",
-        "levels/level4.json",
-        "levels/test_level.json",
-        "levels/tutorial3.json",
-        "levels/tutorial2.json"
+        "levels/level4.json"
     ],
     "tileset.lastUsedFormat": "json",
     "tileset.tileSize": {
