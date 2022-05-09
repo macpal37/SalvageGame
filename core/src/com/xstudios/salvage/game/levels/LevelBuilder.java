@@ -671,7 +671,7 @@ public class LevelBuilder {
                                     if (prop.getString("name").equals("aggro_rate"))
                                         monster.setAggravationRate(prop.getInt("value"));
                                     else if (prop.getString("name").equals("aggro_threshold"))
-                                        monster.setAggroLevel(prop.getInt("value"));
+                                        monster.setAggroLevel(prop.getInt("value") * 20.5f);
                                     else if (prop.getString("name").equals("vision_radius"))
                                         monster.setVisionRadius(prop.getInt("value"));
 
