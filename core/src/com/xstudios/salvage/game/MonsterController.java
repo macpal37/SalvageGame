@@ -131,6 +131,10 @@ public class MonsterController {
         return monster;
     }
 
+    public boolean isKillState() {
+        return state == FSMState.ATTACK;
+    }
+
     public void wallCollision() {
         if (monster != null) {
             float agg = monster.getAggravation();
@@ -183,8 +187,6 @@ public class MonsterController {
             case ATTACK:
                 monster.setAggravation(100000.0f);
                 break;
-
-
 
             default:
                 // Unknown or unhandled state, should never get here
@@ -322,6 +324,7 @@ public class MonsterController {
                     diver.setStunned(true);
                     diver.setStunCooldown(500);
                     hasRoared = true;
+                    roar_pause = tick;
                     monster.setAggravation(100000.0f);
                 }
                 else if (tick - roar_pause > 500) {

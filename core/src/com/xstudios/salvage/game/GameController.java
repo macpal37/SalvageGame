@@ -1297,7 +1297,7 @@ public class GameController extends ScreenController implements ContactListener 
         collisionController.startFlareFlare(body1, body2);
         collisionController.startDiverFlare(body1, body2);
 
-        float d = collisionController.startDiverHazardCollision(fix1, fix2, level.getDiver());
+        float d = collisionController.startDiverHazardCollision(fix1, fix2, level.getDiver(), monsterController);
         if (d != 0)
             hostileOxygenDrain = d;
 
