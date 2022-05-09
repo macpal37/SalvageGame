@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.GObject;
+import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.game.models.*;
 
 import com.xstudios.salvage.game.models.TreasureModel.TreasureType;
@@ -142,7 +143,7 @@ public class LevelBuilder {
         plantAnimation = directory.getEntry("models:plant", Texture.class);
         keyAnimation = directory.getEntry("models:key_animation", Texture.class);
         //Treasure Chest Animations
-        treasureKeyAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_key", Texture.class), 1, 40, 40);
+        treasureKeyAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_key", Texture.class), 2, 21, 42);
         treasureOpenAnimation = new FilmStrip(directory.getEntry("models:treasure_chest", Texture.class), 1, 14, 14);
         treasureMonsterAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_monster", Texture.class), 1, 36, 36);
 
@@ -691,14 +692,6 @@ public class LevelBuilder {
                             treasureModel.setAngle(rotation);
                             treasureModel.setIdeSuspenseSprite(treasureOpenAnimation.copy(), treasureMonsterAnimation.copy());
 
-
-                            //TODO
-//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Monster, treasureMonsterAnimation.copy());
-////
-//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Key, treasureKeyAnimation.copy());
-//
-//                            treasureModel.setTreasureType(TreasureModel.TreasureType.Flare, treasureKeyAnimation.copy());
-
                             treasureModel.setScale(1 / 2f, 1 / 2f);
                             treasureModel.initLight(rayHandler);
                             treasureModel.setTentacleRotation(180);
@@ -725,13 +718,27 @@ public class LevelBuilder {
             // Shuffle the array to randomize which one gets the key
             Collections.shuffle(chest_lst);
             // Within a group, there can be only one key, so arbitrarily put a key in the first one
-            chest_lst.get(0).setTreasureType(TreasureType.Key, treasureKeyAnimation.copy());
+            TreasureModel key_chest = chest_lst.get(0);
+            key_chest.setTreasureType(TreasureType.Key, treasureKeyAnimation.copy());
+            ItemModel key = new ItemModel(key_chest.getX(), key_chest.getY() + 10f,
+                    constants.get("key"), ItemModel.ItemType.KEY);
+            System.out.println("key x: " + key_chest.getX() + " key y: " + key_chest.getY());
+            key.setFilmStrip(new FilmStrip(keyAnimation, 1, 6, 6));
+//            key.setAngle(rotation);
+            key.setID(key_chest.getID());
+            // this key will not be active/visible?
+            System.out.println("entered create key: " + key.isActive());
+            key.setKeyActive(false);
+            key.setInChest(true);
+            key_chest.setKeyReward(key);
+            gameObjects.add(key);
+
             for (int i = 1; i < chest_lst.size(); i++) {
                 TreasureModel chest = chest_lst.get(i);
                 // if the chest can contain a flare, choose to put a flare in it with probability 10%
                 // otherwise, put a monster in it
                 if (chest.isMayContainFlare()) {
-                    int roll = (int) (Math.random() * 10);
+                    int roll = (int) (Math.random() * 0);
                     if (roll == 1) {
                         chest.setTreasureType(TreasureType.Flare, treasureKeyAnimation.copy());
                     } else
@@ -871,6 +878,9 @@ public class LevelBuilder {
         }
 
         diver.setDeadBody(dead_body);
+
+        // reset the hashmap for next time
+        chests.clear();
 
     }
 

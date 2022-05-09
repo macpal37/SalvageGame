@@ -500,6 +500,8 @@ public class GameController extends ScreenController implements ContactListener 
      * param obj The object to add
      */
     protected void addObject(GameObject obj) {
+        System.out.println("obj_x: " + obj.getX() + " obj_y: " + obj.getY());
+        System.out.println("bounds_x: " + bounds.x + " bounds_y: " + bounds.y);
         assert inBounds(obj) : "Object is not in bounds";
         obj.activatePhysics(world);
         if (obj instanceof Tentacle)
@@ -545,7 +547,6 @@ public class GameController extends ScreenController implements ContactListener 
      * Lays out the game geography.
      */
     private void populateLevel() {
-
         camera.setZoom(1.0f);
         levelBuilder.createLevel(levels[curr_level], level, world_scale, symbol_scale, rayHandler);
         pause = false;
@@ -553,11 +554,14 @@ public class GameController extends ScreenController implements ContactListener 
         // TODO: will this have the same effect as going through each type, casting, then adding?
         for (GameObject obj : level.getAllObjects()) {
             addObject(obj);
+            System.out.println();
         }
+        System.out.println("added ");
         monsterController = new MonsterController(level.getMonster(), getWorldBounds());
 
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
+        System.out.println("level populated");
     }
 
     private void updateGameState() {
