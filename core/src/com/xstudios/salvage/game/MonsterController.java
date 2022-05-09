@@ -140,7 +140,7 @@ public class MonsterController {
         if (monster != null) {
             float agg = monster.getAggravation();
             if (agg < monster.getAggroLevel() + 1) {
-                monster.setAggravation(agg + monster.getAggravationRate());
+                monster.setAggravation(agg + monster.getAggravationRate() / 3);
             }
         }
 
