@@ -19,6 +19,7 @@ import com.xstudios.salvage.game.models.*;
 import com.xstudios.salvage.util.FilmStrip;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class LevelBuilder {
     private JsonReader jsonReader;
@@ -94,6 +95,11 @@ public class LevelBuilder {
 
     private FilmStrip monsterAttackAnimation;
 
+    /**
+     * A hashmap used for assigning contents to treasure chests. may be destroyed once level is created
+     * Maps door id to a list of treasure chests that may contain a key corresponding to the door id
+     */
+    HashMap<Integer, ArrayList<TreasureModel>> chests;
 
     public LevelBuilder() {
         this.directory = directory;
@@ -639,8 +645,6 @@ public class LevelBuilder {
                             treasureModel.initLight(rayHandler);
                             treasureModel.setTentacleRotation(180);
                             treasureModel.setTentacleSpawnPosition(0, -10f / div);
-
-                            ;
                             gameObjects.add(treasureModel);
 
                             break;
