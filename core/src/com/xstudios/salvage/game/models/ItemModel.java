@@ -42,6 +42,7 @@ public class ItemModel extends DiverObjectModel {
 
     boolean isInChest;
     Vector2 chest_location;
+    boolean keyActive;
 
 
     public ItemModel(float x, float y, JsonValue data, ItemType item_type) {
@@ -156,11 +157,17 @@ public class ItemModel extends DiverObjectModel {
     public void updateChestLocation(Vector2 loc){
         chest_location.set(loc);
     }
+    public void setKeyActive(boolean b) {
+        keyActive = b;
+    }
+    public boolean isKeyActive() {
+        return keyActive;
+    }
 
     @Override
     public void draw(GameCanvas canvas) {
-        System.out.println("key is active? " + isActive());
-        if (isActive()) {
+        System.out.println("key is active? " + isKeyActive());
+        if (isKeyActive()) {
             if (texture != null) {
                 if (!carried) {
 

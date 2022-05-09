@@ -83,9 +83,9 @@ public class TreasureModel extends ObstacleModel {
                 // if chest contains key and is opened and key anim done, toggle active
                 // TODO: Should probably make the animation frames not magic numbers
                 if (isOpened() && sprite.getFrame() == 39) {
-                    keyReward.setActive(true);
+                    keyReward.setKeyActive(true);
                 }
-                if (keyReward.isActive()) {
+                if (!keyReward.isKeyActive()) {
                     keyReward.updateChestLocation(this.getPosition());
                 }
                 break;
@@ -131,8 +131,8 @@ public class TreasureModel extends ObstacleModel {
     @Override
     public void deactivatePhysics(World world) {
         super.deactivatePhysics(world);
-        if (keyReward != null)
-            keyReward.deactivatePhysics(world);
+//        if (keyReward != null)
+//            keyReward.deactivatePhysics(world);
         light.remove();
     }
 

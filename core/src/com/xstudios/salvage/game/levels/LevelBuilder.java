@@ -694,10 +694,13 @@ public class LevelBuilder {
             ItemModel key = new ItemModel(key_chest.getX(), key_chest.getY(),
                     constants.get("key"), ItemModel.ItemType.KEY);
             System.out.println("key x: " + key_chest.getX() + " key y: " + key_chest.getY());
+            key.setFilmStrip(new FilmStrip(keyAnimation, 1, 6, 6));
+//            key.setAngle(rotation);
             key.setID(key_chest.getID());
             // this key will not be active/visible?
             System.out.println("entered create key: " + key.isActive());
-            key.setActive(false);
+            key.setKeyActive(false);
+            key.setInChest(true);
             key_chest.setKeyReward(key);
             gameObjects.add(key);
 
@@ -847,6 +850,9 @@ public class LevelBuilder {
         }
 
         diver.setDeadBody(dead_body);
+
+        // reset the hashmap for next time
+        chests.clear();
 
     }
 
