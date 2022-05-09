@@ -558,6 +558,7 @@ public class GameController extends ScreenController implements ContactListener 
         }
         System.out.println("added ");
         monsterController = new MonsterController(level.getMonster(), getWorldBounds());
+        monsterController.setAudio(audio);
 
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
@@ -817,6 +818,7 @@ public class GameController extends ScreenController implements ContactListener 
             monsterController.update(hostileOxygenDrain, level.getDiver());
             Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
             Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
+            Queue<Wall> attack_tentacles = monsterController.getMonster().getKillTentacles();
 
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
@@ -824,16 +826,26 @@ public class GameController extends ScreenController implements ContactListener 
                     System.out.println("CREATE TENTACLE");
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, LevelBuilder.TentacleType.NewAttack, 400);
                     addQueuedObject(t);
-                    audio.roar();
+                    t.setGrowRate(7);
                 }
             }
             while (idle_tentacles.size() > 0) {
                 Wall add_wall = idle_tentacles.poll();
-                if (add_wall != null && add_wall.canSpawnTentacle()) {
+                if (add_wall != null) {
                     System.out.println("...............................................");
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, LevelBuilder.TentacleType.Idle, 100);
                     addQueuedObject(t);
 //                AudioController.getInstance().roar();
+                }
+            }
+            while (attack_tentacles.size() > 0) {
+                Wall add_wall = attack_tentacles.poll();
+                if (add_wall != null && add_wall.canSpawnTentacle()) {
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, LevelBuilder.TentacleType.KILL, 1000000);
+                    t.setType(1);
+                    t.setGrowRate(4);
+                    System.out.println("type" + t.getType());
+                    addQueuedObject(t);
                 }
             }
         }
@@ -1277,6 +1289,7 @@ public class GameController extends ScreenController implements ContactListener 
         collisionController.startDiverDoorCollision(body1, body2);
         collisionController.startMonsterWallCollision(body1, body2);
         collisionController.startDiverDeadBodyCollision(body1, body2);
+        collisionController.startDiverMonsterCollision(body1, body2);
         collisionController.startFlareTentacleCollision(fix1, fix2);
 
         collisionController.startDiverTreasureCollision(fix1, fix2);

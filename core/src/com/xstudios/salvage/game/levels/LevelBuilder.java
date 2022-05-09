@@ -227,7 +227,7 @@ public class LevelBuilder {
     public float div = 25f;
 
     public enum TentacleType {
-        OldAttack, NewAttack, Idle
+        OldAttack, NewAttack, Idle, KILL
     }
 
     public Tentacle createTentacle(float agg_level, float tentacleScale, Wall w, TentacleType type, int lifespan) {
@@ -259,6 +259,11 @@ public class LevelBuilder {
                     width = tileset.getFloat("imagewidth");
                     height = tileset.getFloat("imageheight");
                     t.setPosition(t.getX(), t.getY() - height / div / 8);
+                    break;
+                case KILL:
+                    t = new Tentacle(w, agg_level);
+                    t.setFilmStrip(monsterAttackAnimation.copy());
+                    tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_attack.json"));
                     break;
 
             }
