@@ -22,11 +22,11 @@
             }
         },
         "levels/beta_2.json": {
-            "scale": 1.5,
+            "scale": 0.33,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1176,
-                "y": 634.3333333333333
+                "x": 1325.7575757575758,
+                "y": 704.5454545454545
             }
         },
         "levels/beta_3.json": {
@@ -172,13 +172,13 @@
     "project": "levels.tiled-project",
     "property.type": "float",
     "recentFiles": [
+        "levels/beta_0.json",
         "levels/tilesets/old_ship_tileset.json",
         "levels/tilesets/tentacle_attack.json",
         "levels/tilesets/tentacle_idle.json",
         "levels/level0.json",
         "levels/beta_3.json",
         "levels/beta_1.json",
-        "levels/beta_0.json",
         "levels/tilesets/tentacle_tile.json",
         "levels/level1.json",
         "levels/beta_2.json",

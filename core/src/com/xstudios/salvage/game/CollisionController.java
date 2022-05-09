@@ -366,7 +366,8 @@ public class CollisionController {
             if (wall.isWall()) {
                 diver.setTouchedWall(wall);
                 diver.setTouchingObstacle(true);
-
+            }
+            if (wall.isCanAlertMonster()) {
                 //AudioController.getInstance().wall_collision(diver.getForce());
                 monsterController.wallCollision();
                 AudioController.getInstance().wood_collision(diver.getForce());
@@ -375,8 +376,10 @@ public class CollisionController {
             Wall wall = (Wall) b1.getUserData();
             if (wall.isWall()) {
                 diver.setTouchedWall(wall);
-
                 diver.setTouchingObstacle(true);
+            }
+            if (wall.isCanAlertMonster()) {
+                //AudioController.getInstance().wall_collision(diver.getForce());
                 monsterController.wallCollision();
                 AudioController.getInstance().wood_collision(diver.getForce());
             }

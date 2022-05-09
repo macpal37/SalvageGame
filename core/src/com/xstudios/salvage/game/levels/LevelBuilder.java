@@ -482,7 +482,7 @@ public class LevelBuilder {
                                 wall.setTentacleSpawnPosition(tile.spawnX, tile.spawnY);
                                 wall.setTentacleRotation(tile.rotation);
                             }
-
+                            wall.setCanAlertMonster(true);
                             wall.setID(tile.id);
 
                             gameObjects.add(wall);
@@ -596,6 +596,7 @@ public class LevelBuilder {
                                     System.out.println("Unknown Object?");
                             }
                             obstacle.setAngle(rotation);
+                            obstacle.setCanAlertMonster(true);
                             gameObjects.add(obstacle);
                             break;
 
@@ -612,6 +613,7 @@ public class LevelBuilder {
                         case Hazard:
                             HazardModel hazard = new HazardModel(createVerticies(tile, 0, 0, widthScale, heightScale), sx, sy);
                             gameObjects.add(hazard);
+                            hazard.setCanAlertMonster(true);
                             hazard.setAngle(rotation);
                             break;
                         case Decor:
