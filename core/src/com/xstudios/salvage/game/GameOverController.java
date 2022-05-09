@@ -1,6 +1,5 @@
 package com.xstudios.salvage.game;
 
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
@@ -10,167 +9,75 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
-public class GameOverController implements Screen, ApplicationListener, InputProcessor {
-    private Skin skin;
-    private Stage stage;
-    /**
-     * Listener that will update the player mode when we are done
-     */
-    private ScreenListener listener;
-    /**
-     * Whether or not this is an active controller
-     */
-    private boolean active;
+public class GameOverController extends ScreenController {
 
-    /**
-     * The actual assets to be loaded
-     */
-    private AssetDirectory assets;
-    /**
-     * Reference to the game canvas
-     */
-    protected GameCanvas canvas;
-
-    /**
-     * The boundary of the world
-     */
-    protected Rectangle bounds;
-    /**
-     * The world scale
-     */
-    protected Vector2 scale;
-    /**
-     * Background Texture
-     */
     protected TextureRegion background;
     protected Texture main_menu;
     protected Texture try_again_next;
     protected Texture title;
-    /**
-     * The font for giving messages to the player
-     */
-    public static BitmapFont displayFont;
 
     private boolean restart_game;
     private boolean exit_home;
     private boolean next_level;
-
     private boolean display_win;
 
-    private float x_pos_text;
-    private float y_pos_text;
+    private int index;
 
-    public GameOverController(Rectangle bounds) {
+    public GameOverController() {
         active = false;
-        this.bounds = bounds;
-        this.scale = new Vector2(1, 1);
         restart_game = false;
         exit_home = false;
         next_level = false;
+
+        width = Gdx.graphics.getWidth();
+        height = Gdx.graphics.getHeight();
     }
 
-    @Override
-    public void create() {
-
-        TextureRegion imageTR = new TextureRegion(try_again_next);
-        TextureRegionDrawable imageTRD = new TextureRegionDrawable(imageTR);
-        ImageButton button = new ImageButton(imageTRD);
-        stage = new Stage();
-
-        button.setWidth(try_again_next.getWidth());
-        button.setHeight(try_again_next.getHeight());
-        button.setPosition(87, 66);
-
-        button.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if(display_win) next_level = true;
-                else restart_game = true;
-            }
-        });
-        stage.addActor(button);
-
-        TextureRegion imageTR1 = new TextureRegion(main_menu);
-        TextureRegionDrawable imageTRD1 = new TextureRegionDrawable(imageTR1);
-        ImageButton button1 = new ImageButton(imageTRD1);
-
-        button1.setWidth(main_menu.getWidth());
-        button1.setHeight(main_menu.getHeight());
-        button1.setPosition(780, 66);
-
-        button1.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                exit_home = true;
-            }
-        });
-        stage.addActor(button1);
-
-        Gdx.input.setInputProcessor(stage);
+    public void setCameraController(CameraController cameraController) {
+        this.camera = cameraController;
+        camera.setCameraPosition(width/2, height/2);
+        camera.setBounds(width/2, height/2, width, height);
+        camera.render();
     }
 
     @Override
     public void dispose() {
+        active = false;
         exit_home = false;
         restart_game = false;
         next_level = false;
     }
 
-    @Override
     public void render() {
-        if (active) {
-            canvas.begin();
-            stage.draw();
-
-            Color tint = pointer1(87, 66, try_again_next.getWidth() , try_again_next.getHeight()) ? Color.GRAY : Color.WHITE;
-            canvas.draw(try_again_next, tint, 0, 0, 87, 66, 0, 1, 1);
-
-            tint = pointer1(780, 66, main_menu.getWidth(), main_menu.getHeight()) ? Color.GRAY : Color.WHITE;
-            canvas.draw(main_menu, tint, 0, 0,780,66, 0, 1, 1);
-
-            canvas.end();
-            // We are are ready, notify our listener
-            if (restart_game && listener != null) {
-                listener.exitScreen(this, 0);
-            }
-
-            if(exit_home && listener != null){
-                listener.exitScreen(this, 1);
-            }
-
-            if(next_level && listener != null){
-                listener.exitScreen(this, 2);
-            }
-            // can do this with different exit codes to indicate which screen to switch to
+        if(active) {
+//            if (restart_game && listener != null)
+//                listener.exitScreen(this, 0);
+//
+//            if(exit_home && listener != null)
+//                listener.exitScreen(this, 1);
+//
+//            if(next_level && listener != null)
+//                listener.exitScreen(this, 2);
         }
-    }
-
-    @Override
-    public void show() {
-        active = true;
     }
 
     @Override
     public void render(float delta) {
         draw(delta);
         render();
-    }
-
-    @Override
-    public void resize(int width, int height) {
     }
 
     @Override
@@ -181,67 +88,63 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
     public void resume() {
     }
 
-    @Override
-    public void hide() {
-        active = false;
-    }
+    private boolean help_draw(Texture t, int x, int y, boolean tint){
+        //gets the origin of the texture to draw, here it is the middle of the texture
+        int ox = t.getWidth()/2;
+        int oy = t.getHeight()/2;
+        Color c = Color.WHITE;
+        boolean clicked = false;
 
+        //tint is true, then the image is interactable
+        if(tint){
+            //gets the location of the mouse coordinates
+            int pX = Gdx.input.getX();
+            int pY = Gdx.input.getY();
+            // Flip to match graphics coordinates
+            int flip_y = canvas.getHeight() - y;
+            //find width and height of the texture with scale
+            float w = scale * ox;
+            float h = scale * oy;
 
-    /**
-     * Sets the ScreenListener for this mode
-     * <p>
-     * The ScreenListener will respond to requests to quit.
-     */
-    public void setScreenListener(ScreenListener listener) {
-        this.listener = listener;
-    }
-
-    /**
-     * Sets the canvas associated with this controller
-     * <p>
-     * The canvas is shared across all controllers.  Setting this value will compute
-     * the drawing scale from the canvas size.
-     *
-     * @param canvas the canvas associated with this controller
-     */
-    public void setCanvas(GameCanvas canvas) {
-        this.canvas = canvas;
-        this.scale.x = canvas.getWidth() / bounds.getWidth();
-        this.scale.y = canvas.getHeight() / bounds.getHeight();
-        x_pos_text = canvas.getWidth() / 2f;
-        y_pos_text = canvas.getHeight() / 2f;
-    }
-    public boolean pointer1(int x, int y, int w, int h) {
-        int pX = Gdx.input.getX();
-        int pY = Gdx.input.getY();
-        // Flip to match graphics coordinates
-        y = canvas.getHeight() - y;
-
-        if((x + w > pX && x < pX) && (y > pY && y - h < pY)){
-            return true;
+            //if pointer is in the texture area, then tint is gray
+            if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
+                c = Color.GRAY;
+                //if clicked, clicked = true
+                if(Gdx.input.isTouched()) clicked = true;
+            }
         }
-        return false;
+        //draw everything
+        canvas.draw(t, c, ox, oy, x, y, 0, scale, scale);
+        return clicked;
     }
-
-    public boolean pointer() {
-        int pX = Gdx.input.getX();
-        int pY = Gdx.input.getY();
-        //System.out.println("x: " + pX + " y: " + (Gdx.graphics.getHeight() - pY));
-        return false;
-    }
-
 
     public void draw(float dt) {
         canvas.clear();
 
         canvas.begin();
-        pointer();
-        canvas.draw(background, Color.WHITE,0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.draw(title, Color.WHITE, title.getWidth()/2, title.getHeight()/2, Gdx.graphics.getWidth()/2,
-                625, 0,1, 1);
+
+        //draws background
+        canvas.draw(background, Color.WHITE,0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        //draws title
+        help_draw(title, width/2, height - height/7, false);
+
+        //draws MAIN MENU and checks if clicked
+        exit_home = help_draw(main_menu, width/6, height/9, true);
+
+        //draws TRY AGAIN or NEXT LEVEL and checks if clicked
+        boolean which = help_draw(try_again_next, width - width/6, height/9, true);
+
+        //if display_win, then next_level is true, else restart_game is true
+        if(display_win)
+            next_level = which;
+        else
+            restart_game = which;
+
         canvas.end();
     }
 
+    @Override
     public void gatherAssets(AssetDirectory directory) {
         main_menu = directory.getEntry("main_menu", Texture.class);
         if(display_win) {
@@ -259,12 +162,19 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
         display_win = w;
     }
 
+    public boolean getWin(){ return display_win;}
+
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         return true;
     }
 
 
     /**
+<<<<<<< HEAD
+     * Sets the ScreenListener for this mode
+     * <p>
+     * The ScreenListener will respond to requests to quit.
+=======
      * Called when a finger was lifted or a mouse button was released.
      *
      * This method checks to see if the play button is currently pressed down. If so,
@@ -274,21 +184,43 @@ public class GameOverController implements Screen, ApplicationListener, InputPro
      * @param screenY the y-coordinate of the mouse on the screen
      * @param pointer the button or touch finger number
      * @return whether to hand the event to other listeners.
+>>>>>>> 59eb7d2e1fed53c568bbdd46ab5dcc9b1fcc4d97
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        //if clicked on restart_game, then exit to controller
+        if (restart_game)
+            listener.exitScreen(this, 0);
+
+        //if clicked on exit_home, then exit to menu
+        else if(exit_home)
+            listener.exitScreen(this, 1);
+
+        //if clicked on next_level, then exit to next_level
+        else if(next_level)
+            listener.exitScreen(this, 2);
+
         return true;
     }
+
     /**
+<<<<<<< HEAD
+     * Sets the canvas associated with this controller
+     * <p>
+     * The canvas is shared across all controllers.  Setting this value will compute
+     * the drawing scale from the canvas size.
+=======
      * Called when a button on the Controller was pressed.
      *
      * The buttonCode is controller specific. This listener only supports the start
      * button on an X-Box controller.  This outcome of this method is identical to
      * pressing (but not releasing) the play button.
+>>>>>>> 59eb7d2e1fed53c568bbdd46ab5dcc9b1fcc4d97
      *
      * @param controller The game controller
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
+
     public boolean buttonDown (Controller controller, int buttonCode) {return true;}
 
     /**

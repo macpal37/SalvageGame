@@ -1,5 +1,12 @@
 {
   "textures": {
+    "bar" : "ui/bar.png",
+    "slider" : "ui/slider.png",
+    "reset" : "ui/reset.png",
+    "sound_effects" : "ui/sound_effects.png",
+    "music" : "ui/music.png",
+    "menu" : "ui/settings_menu.png",
+    "settings": "ui/settings.png",
     "cursor" : "ui/cursor.png",
     "main_menu_pause" : "ui/main_menu_pause.png",
     "restart" : "ui/restart.png",
@@ -14,6 +21,7 @@
     "game_over" : "background/game_over_background.png",
     "m": "background/m.jpg",
     "title": "ui/salvage.png",
+    "screen_tentacles": "ui/screen_tentacles.png",
     "quit": "ui/quit.png",
     "select_level": "ui/select_level.png",
     "main_menu": "ui/main_menu.png",
@@ -22,6 +30,9 @@
     "hud" : "ui/hud.png",
     "oxygen_depleted": "ui/oxygen_depleted.png",
     "oxygen_text": "ui/oxygen_text.png",
+
+
+    "setting": "ui/setting.png",
 
     "key_hud": "ui/key_hud.png",
     "flare_hud": "ui/flare.png",
@@ -38,10 +49,11 @@
     "level_editor": "ui/level_editor.png",
 
 
-        "background:ocean":"background/background1.png",
-        "background:game_over":"background/game_over.png",
-        "background:menu":"background/menu_background.png",
-        "background:level_select":"background/level_select_background.png",
+    "background:ocean":"background/background1.png",
+    "background:game_over":"background/game_over.png",
+    "background:menu":"background/menu_background.png",
+    "background:level_select":"background/level_select_background.png",
+    "background:settings":"background/settings_background.png",
 
     "models:diver": "models/diver.png",
     "models:diver_swimming": "models/diver_swimming.png",
@@ -52,7 +64,7 @@
 
     "models:barrel": "models/barrel.png",
     "models:crate": "models/crate.png",
-        "models:flare_animation": "models/flare_animation.png",
+    "models:flare_animation": "models/flare_animation.png",
 
     "models:key": "models/key.png",
     "models:key_animation": "models/key_glowing.png",
@@ -74,7 +86,6 @@
         "models:monster_idle": "models/tentacle_idle.png",
 
 
-
     "levels:tilesets:old_ship_tileset":"levels/tilesets/old_ship_tileset.png",
 
     "wall": {
@@ -82,11 +93,24 @@
       "wrapU":"repeated",
       "wrapV": "repeated"
     },
-     "hazard": {
-          "file":"models/hazard_texture.png",
-          "wrapU":"repeated",
-          "wrapV": "repeated"
-        }
+    "hazard": {
+      "file":"models/hazard_texture.png",
+      "wrapU":"repeated",
+      "wrapV": "repeated"
+    },
+    "lock" : "ui/lock.png",
+    "1": "ui/levels/Michael.png",
+    "2": "ui/levels/Daphne.png",
+    "3": "ui/levels/Eric.png",
+    "4": "ui/levels/Ryder.png",
+    "5": "ui/levels/victor.png",
+    "6": "ui/levels/Miriam.png",
+    "7": "ui/levels/Jason.png",
+    "8": "ui/levels/Mika.png",
+    "9": "ui/levels/Jess.png",
+    "10": "ui/levels/Eric.png",
+    "11": "ui/levels/Davis.png",
+    "12": "ui/levels/Tyler.png"
 
   },
   "jsons"  : {

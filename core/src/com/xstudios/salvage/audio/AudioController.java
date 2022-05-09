@@ -1,6 +1,7 @@
 package com.xstudios.salvage.audio;
 
 import com.badlogic.gdx.Gdx;
+import com.xstudios.salvage.game.InputController;
 import de.pottgames.tuningfork.*;
 
 
@@ -25,15 +26,18 @@ public class AudioController {
 
     private StreamedSoundSource music;
     private StreamedSoundSource bubbles;
-
-    //    private float max_oxygen;
     private int ticks;
     private int last_playing_tick;
     private int time_apart;
 
     private float volume_tick;
 
-    private AudioController() {
+    private float sound_effects_volume;
+    private float music_volume;
+
+    public AudioController(float se, float m){
+        sound_effects_volume = se/4;
+        music_volume = m/4;
         audio = Audio.init();
         SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("audio/heartbeat.wav"));
         SoundBuffer oxygen_alarm_wav = WaveLoader.load(Gdx.files.internal("audio/oxygen_alarm.wav"));
@@ -64,14 +68,16 @@ public class AudioController {
         music.setVolume(0.3f);
         bubbles.setVolume(0.4f);
         alarm.setVolume(0.4f);
+        music.setVolume(0.4f * music_volume);
+        bubbles.setVolume(0.4f * sound_effects_volume);
         ticks = 0;
         time_apart = 400;
         volume_tick = 0.0f;
     }
 
-    public static AudioController getInstance() {
+    public static AudioController getInstance(float se, float m) {
         if (theController == null) {
-            theController = new AudioController();
+            theController = new AudioController(se, m);
         }
         return theController;
     }
@@ -83,6 +89,16 @@ public class AudioController {
         heartbeat.setVolume(0.0f);
     }
 
+    public void setMusic(float v){
+        music_volume = v/4;
+        music.setVolume(music_volume * 0.4f);
+    }
+
+    public void setSoundEffects(float s){
+        sound_effects_volume = s/4;
+        bubbles.setVolume(sound_effects_volume * 0.4f);
+        oxygen_alarm.setVolume(sound_effects_volume * 0.4f);
+    }
 
     public void update(float oxygen, float max_oxygen) {
 
@@ -102,23 +118,18 @@ public class AudioController {
             last_playing_tick = ticks;
         }
 
-//        if (((oxygen / max_oxygen) < 0.25f) && !oxygen_alarm.isPlaying()) {
-//            float oxygen_volume = 0.4f + ((25.0f - oxygen) / 50.0f);
-//            oxygen_alarm.setVolume(oxygen_volume);
-//            oxygen_alarm.play();
-//
-//        }
     }
 
     public void wall_collision(float force) {
         //float volume = (force)/20.f;
-        audio.play(wall_collision, 0.5f);
+        audio.play(wall_collision, 0.5f * sound_effects_volume);
     }
 
 
     public void wood_collision(float force) {
         //float volume = (force)/20.f;
-        audio.play(wall_collision, 0.3f);
+        audio.play(wood_collision, 0.3f * sound_effects_volume);
+
     }
 
     public void chase() {
@@ -189,3 +200,4 @@ public class AudioController {
 
 
 }
+

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
@@ -16,13 +17,24 @@ public class GDXRoot extends Game implements ScreenListener {
 	private LoadingMode loading;
 	/** List of all WorldControllers */
 	private GameController controller;
+
 	private GameOverController game_over_controller;
+
 	private MenuController menu_controller;
+
 	private CameraController cameraController;
+
+	private CameraController gameCameraController;
+
 	private LevelSelectController level_select_controller;
+
+	private SettingsController settings_controller;
+
 	private Player player;
-	// The currently playing level?
+
 	private int current;
+
+	private int total_levels;
 
 	/**
 	 * Called when the Application is first created.
@@ -34,24 +46,29 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void create () {
 		current = 0;
 		cameraController = new CameraController(32,18);
+
+//		gameCameraController = new CameraController(32, 18);
+
 		canvas = new GameCanvas(cameraController);
-		loading = new LoadingMode("assets.json", canvas, 1);
+		loading = new LoadingMode("assets.json", canvas, 1, cameraController);
 
-		controller = new GameController();
-		controller.setCameraController(cameraController);
+		game_over_controller = new GameOverController();
+		game_over_controller.setCameraController(cameraController);
 
-		game_over_controller = new GameOverController(controller.getWorldBounds());
 		menu_controller = new MenuController();
+		menu_controller.setCameraController(cameraController);
+
+		settings_controller = new SettingsController();
+		settings_controller.setCameraController(cameraController);
 
 		level_select_controller = new LevelSelectController();
 		level_select_controller.setCameraController(cameraController, canvas.getWidth(), canvas.getHeight());
 
-		// this class will listen for function calls from each screen controller
 		loading.setScreenListener(this);
-		controller.setScreenListener(this);
 		game_over_controller.setScreenListener(this);
 		menu_controller.setScreenListener(this);
 		level_select_controller.setScreenListener(this);
+		settings_controller.setScreenListener(this);
 
 		setScreen(loading);
 
@@ -70,8 +87,6 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas.dispose();
 		canvas = null;
 
-		// Unload all of the resources
-		// Unload all of the resources
 		if (directory != null) {
 			directory.unloadAssets();
 			directory.dispose();
@@ -96,154 +111,163 @@ public class GDXRoot extends Game implements ScreenListener {
 		cameraController.resize(width,height);
 	}
 
+	// setting the game requires reseting AFTER gathering assets, so we have a separate function
+	// (may need to change later)
+	public void set_game(AssetDirectory directory, GameCanvas canvas){
+		controller.setLevel(current);
+		controller.gatherAssets(directory);
+		controller.setCanvas(canvas);
+		// rest also loads the level in, probably should change naming...
+		controller.reset();
+		setScreen(controller);
+	}
+
 	/**
-	 * Exit Codes (not sure if there is a better way to do this with enums)
-	 *
-	 * Loading Screen
-	 * - 0: go to menu controller
-	 * In Game
-	 * - 2: go to menu controller
-	 * - anything else: go to game over controller and set win/loss screen
-	 * Game Over
-	 * - 0: go to game controller
-	 * - 1: go to menu controller
-	 * - 2:
-	 *
-	 * @param screen   The screen requesting to exit
-	 * @param exitCode The state of the screen upon exit
+	 * Method for setting/switching to a screen
+	 * @param screen
+	 * @param directory
+	 * @param canvas
 	 */
+	public void switch_screen(ScreenController screen, AssetDirectory directory, GameCanvas canvas) {
+		screen.gatherAssets(directory);
+		screen.setCanvas(canvas);
+		setScreen(screen);
+	}
+
 	@Override
 	public void exitScreen(Screen screen, int exitCode) {
+		//LOADING
 		if (screen == loading) {
+			// loads and sets all assets (textures, constants, player json) for the game
 			System.out.println("loading");
 			directory = loading.getAssets();
+			loading.dispose();
+			loading = null;
+			System.out.println("loaded");
+			// loads player, which stores info about the current save and settings
 			player = new Player(directory);
-			// set the cursor. We don't use the asset directory because it doesn't have
-			// built in support for Pixmaps
+			System.out.println("player_loaded");
+			//game controller setup
+			controller = new GameController(player);
+			controller.setCameraController(cameraController);
+			total_levels = controller.getTotalLevels();
+			controller.setScreenListener(this);
+
+			settings_controller.setPlayer(player);
+			settings_controller.setAudio(controller.getAudio());
+
+			//set up the cursor
 			Pixmap pm = new Pixmap(Gdx.files.internal("ui/cursor.png"));
 			Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
 			pm.dispose();
-			if (exitCode == 0) {
-				controller.setCameraPositionNormal();
-				menu_controller.dispose();
-				menu_controller.gatherAssets(directory);
-				menu_controller.setCanvas(canvas);
-				menu_controller.setActive();
-				setScreen(menu_controller);
-			}
-			loading.dispose();
-			loading = null;
-		} else if (screen == controller) {
-			if(exitCode == 2){
-				controller.setCameraPositionNormal();
-				menu_controller.dispose();
-				menu_controller.gatherAssets(directory);
-				menu_controller.setCanvas(canvas);
-				menu_controller.setActive();
-				setScreen(menu_controller);
-			}
-			else {
-				System.out.println("controller");
-//				System.out.println(exitCode);
-				System.out.println("this happened");
-				controller.setCameraPositionNormal();
-				game_over_controller.dispose();
-				if (directory == null) {
-					System.out.println("DIRECTORY IS NULL!");
-				}
-				game_over_controller.setWin(exitCode == 0);
-				game_over_controller.gatherAssets(directory);
-				game_over_controller.create();
-				game_over_controller.setCanvas(canvas);
-				setScreen(game_over_controller);
-			}
 
-		} else if (screen == game_over_controller) {
-			System.out.println("game_over_controller");
+			//loading >> menu
+			switch_screen(menu_controller, directory, canvas);
+		}
+		//MENU
+		else if (screen == menu_controller) {
+			// upon leaving the menu_controller we dispose
+			menu_controller.dispose();
+			//menu >> level select
 			if (exitCode == 0) {
-				controller.setCanvas(canvas);
-				controller.reset();
-
-				setScreen(controller);
-			}
-			if (exitCode == 1) {
-				controller.setCameraPositionNormal();
-				menu_controller.dispose();
-				menu_controller.gatherAssets(directory);
-				menu_controller.setCanvas(canvas);
-				menu_controller.setActive();
-				setScreen(menu_controller);
-			}
-			if (exitCode == 2){
-				System.out.println("current: " + current);
-				if(current > 1){
-					game_over_controller.dispose();
-					controller.setCameraPositionNormal();
-					menu_controller.dispose();
-					menu_controller.gatherAssets(directory);
-					menu_controller.setCanvas(canvas);
-					menu_controller.setActive();
-					setScreen(menu_controller);
-				}
-				else {
-					current++;
-					if (player.getLevel() == current) player.nextLevel();
-					player.save();
-					controller.setLevel(current);
-					controller.gatherAssets(directory);
-					controller.setCanvas(canvas);
-					controller.reset();
-
-					setScreen(controller);
-				}
-			}
-		} else if (screen == menu_controller) {
-			if (exitCode == 0) {
+				// add the dispose to the if screen is x_controller and exit screen is called
+				// if going to level select, we get the assets, set canvas and setActive (not sure if we need this)
 				level_select_controller.setLocked(player.getLevel());
-				level_select_controller.dispose();
-				level_select_controller.gatherAssets(directory);
-				level_select_controller.setCanvas(canvas);
-				level_select_controller.setActive();
-				setScreen(level_select_controller);
+				level_select_controller.setTotalLevels(total_levels);
+				switch_screen(level_select_controller, directory, canvas);
 			}
-			if (exitCode == 1) {
-				controller.gatherAssets(directory);
-				controller.setCanvas(canvas);
-				controller.reset();
 
-				setScreen(controller);
+			//menu >> setting
+			if (exitCode == 1){
+				switch_screen(settings_controller, directory, canvas);
 			}
+
+			//menu >> quit
 			if (exitCode == 2) {
 				player.save();
 				Gdx.app.exit();
 			}
+		}
+		//Setting
+		else if (screen == settings_controller){
+			settings_controller.dispose();
 
-		} else if (screen == level_select_controller) {
+			//settings >> menu
+			if(exitCode == 0){
+				switch_screen(menu_controller, directory, canvas);
+			}
+
+		}
+		//GAME
+		else if (screen == controller) {
+			controller.reset();
+			//pause >> menu
+			if (exitCode == 2) {
+				controller.setDefaultPosition();
+				switch_screen(menu_controller, directory, canvas);
+			}
+
+			//game >> game over
+			else {
+				game_over_controller.setWin(exitCode == 0);
+				switch_screen(game_over_controller, directory, canvas);
+			}
+		}
+		//GAME OVER
+		else if (screen == game_over_controller) {
+			System.out.println("in gameover");
+			//if won, update level progress
+			if(game_over_controller.getWin()){
+				// set the current level to be the next level if player clicks next level button
+				current++;
+				// if beat a new level, store that information in the save file
+				if(player.getLevel() == current)
+					player.nextLevel();
+			}
+			// reset game over controller and switch to a new screen
+			game_over_controller.dispose();
+
+			//game over >> restart
 			if (exitCode == 0) {
-				controller.setCameraPositionNormal();
-				menu_controller.dispose();
-				menu_controller.gatherAssets(directory);
-				menu_controller.setCanvas(canvas);
-				menu_controller.setActive();
-				setScreen(menu_controller);
-			} else {
-				System.out.println("exitCode= " + exitCode);
+				System.out.println("restart");
+//				controller.setLevel(current);
+				controller.reset();
+				set_game(directory, canvas);
+			}
+
+			//game over >> main menu
+			if (exitCode == 1)
+				switch_screen(menu_controller, directory, canvas);
+
+			//game over >> next level, will be main menu if next level doesn't exist
+			if(exitCode == 2) {
+				//main menu instead
+				if(current >= total_levels)
+					switch_screen(menu_controller, directory, canvas);
+					//next level
+				else
+					set_game(directory, canvas);
+			}
+		}
+
+		//LEVEL SELECT
+		else if (screen == level_select_controller) {
+			//level select >> main menu
+			if (exitCode == 0)
+				switch_screen(menu_controller, directory, canvas);
+
+				//level select >> levels
+			else {
 				current = exitCode - 1;
-				// if you specify a level that exceeds the max number of levels, crashes the game
-				if(current > 5) {
-					controller.setCameraPositionNormal();
-					menu_controller.dispose();
-					menu_controller.gatherAssets(directory);
-					menu_controller.setCanvas(canvas);
-					menu_controller.setActive();
-					setScreen(menu_controller);
-				}
+
+				//go to menu instead
+				if(current > controller.getTotalLevels() - 1)
+					switch_screen(menu_controller, directory, canvas);
+
+					//go to levels
 				else {
-					controller.setLevel(exitCode - 1);
-					controller.gatherAssets(directory);
-					controller.setCanvas(canvas);
-					controller.reset();
-					setScreen(controller);
+					System.out.println("level select >> game");
+					set_game(directory, canvas);
 				}
 			}
 		}

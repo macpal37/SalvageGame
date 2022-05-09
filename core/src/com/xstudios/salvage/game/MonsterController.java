@@ -93,6 +93,8 @@ public class MonsterController {
     private boolean hasRoared;
     private boolean isRoaring;
 
+    private AudioController audio;
+
     private Vector2 target_pos;
     private Vector2 curr_pos;
 
@@ -122,7 +124,9 @@ public class MonsterController {
         roar_pause = 0;
     }
 
-
+    public void setAudio(AudioController a) {
+        audio = a;
+    }
     public Monster getMonster() {
         return monster;
     }
@@ -308,12 +312,12 @@ public class MonsterController {
                 break;
 
             case GONNA_POUNCE:
-                AudioController.getInstance().attack_roar();
+                audio.attack_roar();
 
 
             case ATTACK:
                 if (!hasRoared){
-                    AudioController.getInstance().loud_roar_play(hasRoared);
+                    audio.loud_roar_play(hasRoared);
                     monster.setVisionRadius(10);
                     diver.setStunned(true);
                     diver.setStunCooldown(500);
@@ -323,7 +327,7 @@ public class MonsterController {
                 else if (tick - roar_pause > 500) {
                     diver.changeOxygenLevel(2);
                     monster.moveMonster(diver.getPosition());
-                    AudioController.getInstance().chase();
+                    audio.chase();
                     float best_distance = 10000.0f;
                     float temp_distance = 0.0f;
                     Wall final_loc = null;
