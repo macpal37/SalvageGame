@@ -48,6 +48,7 @@ public class CameraController {
         cameraPosition = new Vector3(width / 2, height / 2, 0);
         cameraPosition2D = new Vector2(500, 500);
         camera.position.scl(cameraPosition);
+
         cameraSpeed = DEFAULT_CAMERA_SPEED;
 
     }
@@ -65,7 +66,6 @@ public class CameraController {
 
     public void setBounds(int x, int y, int width, int height) {
         bounds = new Rectangle(x - width / 2, y - height / 2, width / 2, height / 2);
-        setCameraPosition(0, 0);
     }
 
     public void setCameraSpeed(float speed) {
@@ -76,11 +76,9 @@ public class CameraController {
         return cameraSpeed;
     }
 
-    public void resize(int width, int height) {
-
-        viewport.update(width, height);
-        setCameraPosition((float) width / 2, (float) height / 2);
-
+    public void resize (int width, int height){
+        viewport.update(width,height);
+        setCameraPosition((float)width/2,(float)height/2);
     }
 
 
@@ -109,22 +107,13 @@ public class CameraController {
         return cameraPosition2D;
     }
 
-
-    public void translate(float x, float y) {
-        if (cameraPosition.x + x < bounds.width && cameraPosition.x + x > bounds.x
-                && cameraPosition.y + y < bounds.height && cameraPosition.y + y > bounds.y) {
-            updatePosition(x, y);
-        }
-
+    public void setViewport(int width, int height){
+        viewport.update(width, height);
     }
 
     private void updatePosition(float x, float y) {
         cameraPosition.add(x, y, 0);
         camera.position.set(cameraPosition);
-    }
-
-    public void setSmoothSpeed(float smoothSpeed) {
-        this.smoothSpeed = smoothSpeed;
     }
 
     public float getSmoothSpeed() {
@@ -139,3 +128,4 @@ public class CameraController {
         return viewport.getScreenHeight();
     }
 }
+

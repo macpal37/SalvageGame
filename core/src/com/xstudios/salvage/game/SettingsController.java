@@ -1,212 +1,232 @@
 package com.xstudios.salvage.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.xstudios.salvage.assets.AssetDirectory;
-import com.xstudios.salvage.util.ScreenListener;
-import java.util.ArrayList;
+import com.xstudios.salvage.audio.AudioController;
 
 /**
  * Class that provides a loading screen for the state of the game.
- * <p>
+ *
  * You still DO NOT need to understand this class for this lab.  We will talk about this
  * class much later in the course.  This class provides a basic template for a loading
  * screen to be used at the start of the game or between levels.  Feel free to adopt
  * this to your needs.
- * <p>
+ *
  * You will note that this mode has some textures that are not loaded by the AssetManager.
- * You are never required to load through the e.  But doing this will block
+ * You are never required to load through the AssetManager.  But doing this will block
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-
-public class LevelSelectController extends ScreenController implements ControllerListener{
-
-    private Texture main_menu;
+public class SettingsController extends ScreenController implements ControllerListener {
+    // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
+    /** Background texture for start-up */
     private Texture background;
-    private Texture level;
-    private Texture line;
-    private Texture lock;
 
-    private int level_clicked;
-    private boolean press_main_menu;
-    private ArrayList<Texture> level_list;
+    /** Background Texture */
+    protected Texture menu;
+    protected Texture reset;
+    protected Texture settings;
+    protected Texture tentacles;
+    protected Texture music;
+    protected Texture sound_effects;
 
-    private int locked;
+    protected Texture line;
+    protected Texture box;
 
-    private int total_levels;
+    private boolean press_menu;
+    private boolean press_reset;
 
-    public LevelSelectController() {
-        level_list = new ArrayList<>();
-        level_clicked = 0;
-        press_main_menu = false;
+    private boolean music_box;
+    private boolean sound_effects_box;
+
+    private int music_volume;
+    private int sound_effects_volume;
+
+    private int tick1;
+    private int tick2;
+
+    private int segment;
+
+    Player player;
+
+    AudioController audio;
+
+    public SettingsController() {
+
+
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
+
+        segment = (width/2 - width/9 - width/14)/4;
+
+        press_menu = false;
+        press_reset = false;
+
+        music_box = false;
+        sound_effects_box = false;
+
+        tick1 = 2;
+        tick2 = 2;
     }
 
-    public void setCameraController(CameraController cameraController, int w, int h) {
+    //sets audioController
+    public void setAudio(AudioController a){
+        audio = a;
+    }
+
+    //sets Player
+    public void setPlayer(Player player){
+        this.player = player;
+        music_volume = player.getMusic();
+        tick1 = music_volume;
+        sound_effects_volume = player.getSoundEffects();
+        tick2 = sound_effects_volume;
+    }
+
+    //sets CameraController
+    public void setCameraController(CameraController cameraController) {
         this.camera = cameraController;
         camera.setCameraPosition(width/2, height/2);
         camera.setBounds(width/2, height/2, width, height);
         camera.render();
     }
 
-    @Override
     public void gatherAssets(AssetDirectory directory) {
-        background = directory.getEntry("background:level_select", Texture.class);
-        main_menu = directory.getEntry("main_menu", Texture.class);
-        level = directory.getEntry("level", Texture.class);
-        line = directory.getEntry("line", Texture.class);
-        lock = directory.getEntry("lock", Texture.class);
-        for(int i = 1; i < 13; i++){
-            level_list.add(directory.getEntry(Integer.toString(i), Texture.class));
-        }
+        background =  directory.getEntry( "background:settings", Texture.class );
+        settings = directory.getEntry("settings", Texture.class);
+        menu = directory.getEntry("menu", Texture.class);
+        music = directory.getEntry("music", Texture.class);
+        sound_effects = directory.getEntry("sound_effects", Texture.class);
+        reset = directory.getEntry("reset", Texture.class);
+        tentacles = directory.getEntry("screen_tentacles", Texture.class);
+        line = directory.getEntry("bar", Texture.class);
+        box = directory.getEntry("slider", Texture.class);
     }
 
-    public void setLocked(int level){
-        locked = level;
-    }
-
-    public void setTotalLevels(int level){
-        total_levels = level;
-    }
-
-    public void dispose() {
+    //dispose
+    public void dispose(){
         background = null;
-        main_menu = null;
-        level = null;
+        active = false;
+        menu = null;
+        settings = null;
+        music = null;
+        sound_effects = null;
+        reset = null;
         line = null;
-        level_clicked = 0;
-        press_main_menu = false;
+        box = null;
+        press_menu = false;
+        press_reset= false;
+        segment = 0;
     }
 
-    private void help_draw_line(int x, int y, int level, float angle){
-        help_draw(line, x, y, false, level, null, angle, true);
-    }
-
-    private boolean help_draw_level(int x, int y, int l){
-        return help_draw(level, x, y, true, l, level_list.get(l - 1), 0, false);
-    }
-
-    private boolean help_draw(Texture t, int x, int y, boolean tint, int level, Texture t1, float angle, boolean line){
-        int ox = t.getWidth()/2;
-        int oy = t.getHeight()/2;
+    //helps in the draw function
+    private boolean help_draw(Texture t, int x, int y, boolean tint){
         Color c = Color.WHITE;
         boolean clicked = false;
-        if(line){
-            if(level > locked) return false;
-            else {
-                canvas.draw(t, c, ox, oy, x, height - y, angle, scale, scale);
-                return true;
-            }
-        }
+
+        //if tint is true, then the image can be changed color(interactive)
         if(tint){
+            //mouse position
             int pX = Gdx.input.getX();
             int pY = Gdx.input.getY();
-            float flip_y = y - (int)(height/2 - camera.getCameraPosition2D().y);
-            float w = scale * ox;
-            float h = scale * oy;
+            // Flip to match graphics coordinates
+            int flip_y = canvas.getHeight() - y;
+            float w = scale * t.getWidth();
+            float h = scale * t.getHeight();
 
-            if(level != 0){
-                if(level > locked) {
-                    c = Color.GRAY;
-                    canvas.draw(t, c, ox, oy, x, height - y, 0, scale, scale);
-                    return false;
-                }
-                else{
-                    if(t1 != null)
-                        t = t1;
-                }
-            }
-            if((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)){
+            //if true, then image tint is gray
+            if((x + w >= pX && x <= pX) && (flip_y >= pY && flip_y - h <= pY)){
                 c = Color.GRAY;
+                //if true(touched), then clicked is true
                 if(Gdx.input.isTouched()) clicked = true;
             }
         }
-        canvas.draw(t, c, ox, oy, x, height - y, angle, scale, scale);
+        //draws
+        canvas.draw(t, c, 0, 0, x, y, 0, scale, scale);
         return clicked;
     }
 
     private void draw() {
-        canvas.clear();
         canvas.begin();
+   
+        canvas.draw(background, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        canvas.draw(tentacles, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        canvas.draw(background, Color.WHITE, 0, -1 * height * 2, width,  height * 3);
+        press_menu = help_draw(menu, width/30, height - height/12, true);
 
-        //menu
-        press_main_menu = help_draw(main_menu, width/7,height/7, true, 0, null, 0, false);
+        help_draw(settings, width/14, height - height/4 - height/20, false);
 
-        //lines
-        help_draw_line(width/3, height/2, 2, 0.8f);
-        help_draw_line(width - width/3, height/3, 3, 0.2f);
-        help_draw_line(width - width/7, height/2, 4, -1.5f);
-        help_draw_line(width - width/3, height - height/5, 5, 0);
-        help_draw_line(width/3, height - height/6, 6, 1f);
-        help_draw_line(width/5, height + height/4, 7, -1f);
-        help_draw_line(width/3, height + height/3, 8, 1f);
-        help_draw_line(width - width/3, height + height/4, 9, 0);
-        help_draw_line(width - width/4, height + height/2, 10, 1f);
-        help_draw_line(width/2, 2 * height - height/6, 11, 0.7f);
-        help_draw_line(width/2 + width/12, 2 * height + height/10, 12, -0.2f);
+        help_draw(music, width/14, height - height/4 - height/20 - height/10, false);
 
-        //levels
-        Boolean[] levels = {
-                help_draw_level(width/6, height/2, 1),
-                help_draw_level(width/2, height/4, 2),
-                help_draw_level(width - width/6, height/4, 3),
-                help_draw_level(width - width/5, height - height/4, 4),
-                help_draw_level(width/2, height - height/3, 5),
-                help_draw_level(width/5, height, 6),
-                help_draw_level(width/4, 2 * height - height/2, 7),
-                help_draw_level(width/2, height + height/6, 8),
-                help_draw_level(width - width/5, height + height/4, 9),
-                help_draw_level(width - width/3, 2 * height - height/3, 10),
-                help_draw_level(width/2 - width/12, 2 * height - height/10, 11),
-                help_draw_level(width - width/4, 2 * height + height/5, 12)};
+        help_draw(line, width/14, height - height/2, false);
 
-        //clicked level
-        for(int i = 0; i < levels.length; i++){
-            if(levels[i])
-                level_clicked = i + 1;
+        if(!music_box) {
+            music_box = help_draw(box, width/14 + segment * tick1, height - height / 2 - height / 24, true);
         }
+        else help_draw(box, width / 14 + segment * tick1, height - height / 2 - height / 24, true);
+
+        help_draw(sound_effects, width/14, height/2 - height/7, false);
+
+        help_draw(line, width/14, height/2 - height/5 - height/20, false);
+
+        if(!sound_effects_box) {
+            sound_effects_box = help_draw(box, width/14 + segment * tick2, height / 2 - height / 5 - height / 11, true);
+        }
+        else help_draw(box, width/14 + segment * tick2, height / 2 - height / 5 - height / 11, true);
+
+        press_reset = help_draw(reset, width/14, height/7 - height/20, true);
+
         canvas.end();
     }
 
 
     // ADDITIONAL SCREEN METHODS
-
     /**
      * Called when the Screen should render itself.
-     * <p>
+     *
      * We defer to the other methods update() and draw().  However, it is VERY important
      * that we only quit AFTER a draw.
      *
      * @param delta Number of seconds since last animation frame
      */
     public void render(float delta) {
-
         if (active) {
             draw();
         }
     }
 
     /**
+     * Called when the Screen is resized.
+     *
+     * This can happen at any point during a non-paused state but will never happen
+     * before a call to show().
+     *
+     * @param width  The new width in pixels
+     * @param height The new height in pixels
+     */
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        segment = (int)((line.getWidth() - box.getWidth()/2) * scale)/4;
+    }
+
+    /**
      * Called when the Screen is paused.
-     * <p>
+     *
      * This is usually when it's not active or visible on screen. An Application is
      * also paused before it is destroyed.
      */
     public void pause() {
         // TODO Auto-generated method stub
+
     }
+
     /**
      * Called when the Screen is resumed from a paused state.
-     * <p>
+     *
      * This is usually when it regains focus.
      */
     public void resume() {
@@ -215,10 +235,9 @@ public class LevelSelectController extends ScreenController implements Controlle
     }
 
     // PROCESSING PLAYER INPUT
-
     /**
      * Called when the screen was touched or a mouse button was pressed.
-     * <p>
+     *
      * This method checks to see if the play button is available and if the click
      * is in the bounds of the play button.  If so, it signals the that the button
      * has been pressed and is currently down. Any mouse button is accepted.
@@ -234,7 +253,7 @@ public class LevelSelectController extends ScreenController implements Controlle
 
     /**
      * Called when a finger was lifted or a mouse button was released.
-     * <p>
+     *
      * This method checks to see if the play button is currently pressed down. If so,
      * it signals the that the player is ready to go.
      *
@@ -243,21 +262,32 @@ public class LevelSelectController extends ScreenController implements Controlle
      * @param pointer the button or touch finger number
      * @return whether to hand the event to other listeners.
      */
-
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if(press_reset){
+            player.setLevel(1);
+            tick1 = 2;
+            tick2 = 2;
+        }
 
-        if(press_main_menu)
+        if(music_box) music_box = false;
+        if(sound_effects_box) sound_effects_box = false;
+        if(press_menu) {
             listener.exitScreen(this, 0);
+        }
 
-        else if (level_clicked >= 1)
-            listener.exitScreen(this, level_clicked);
+        player.setMusic(tick1);
+        player.setSoundEffects(tick2);
+        player.save();
+
+        audio.setMusic((float)tick1);
+        audio.setSoundEffects((float)tick2);
 
         return true;
     }
 
     /**
      * Called when a button on the Controller was pressed.
-     * <p>
+     *
      * The buttonCode is controller specific. This listener only supports the start
      * button on an X-Box controller.  This outcome of this method is identical to
      * pressing (but not releasing) the play button.
@@ -272,7 +302,7 @@ public class LevelSelectController extends ScreenController implements Controlle
 
     /**
      * Called when a button on the Controller was released.
-     * <p>
+     *
      * The buttonCode is controller specific. This listener only supports the start
      * button on an X-Box controller.  This outcome of this method is identical to
      * releasing the the play button after pressing it.
@@ -280,8 +310,8 @@ public class LevelSelectController extends ScreenController implements Controlle
      * @param controller The game controller
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
+     * @return whether to hand the event to other listeners.
      */
-
     public boolean buttonUp (Controller controller, int buttonCode) {
         return true;
     }
@@ -320,7 +350,7 @@ public class LevelSelectController extends ScreenController implements Controlle
     /**
      * Called when the mouse was moved without any buttons being pressed. (UNSUPPORTED)
      *
-     * @param screenX the x-coordinate of the mouse on the screen
+     * @param screenX the x-coordinate of the mouse on the
      * @param screenY the y-coordinate of the mouse on the screen
      * @return whether to hand the event to other listeners.
      */
@@ -333,18 +363,10 @@ public class LevelSelectController extends ScreenController implements Controlle
      *
      * @param dx the amount of horizontal scroll
      * @param dy the amount of vertical scroll
+     *
      * @return whether to hand the event to other listeners.
      */
     public boolean scrolled(float dx, float dy) {
-        float y = camera.getCameraPosition2D().y;
-
-        if((y + dy * 40.0f  > height/2  && dy > 0) || (y + dy * 40.0f < (-1 * height))  && dy < 0) {
-            camera.setCameraPosition(width/2, camera.getCameraPosition2D().y);
-        }
-        else
-            camera.setCameraPosition(width/2, camera.getCameraPosition2D().y + dy * 40.0f);
-        camera.render();
-
         return true;
     }
 
@@ -357,6 +379,21 @@ public class LevelSelectController extends ScreenController implements Controlle
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        int total = segment * 5;
+        int max = screenX - width/14;
+        int start = width/14;
+        int ticks = max/segment;
+        if(music_box){
+            if(max >= start && max <= total)
+                tick1 = (ticks <= 4) ? ticks : 4;
+        }
+        audio.setMusic((float) tick1);
+        if(sound_effects_box){
+            if(max >= start && max <= total)
+                tick2 = (ticks <= 4) ? ticks : 4;
+        }
+        audio.setSoundEffects((float)tick2);
+
         return true;
     }
 
@@ -367,28 +404,26 @@ public class LevelSelectController extends ScreenController implements Controlle
      *
      * @param controller The game controller
      */
-    public void connected(Controller controller) {
-    }
+    public void connected (Controller controller) {}
 
     /**
      * Called when a controller is disconnected. (UNSUPPORTED)
      *
      * @param controller The game controller
      */
-    public void disconnected(Controller controller) {
-    }
+    public void disconnected (Controller controller) {}
 
     /**
      * Called when an axis on the Controller moved. (UNSUPPORTED)
-     * <p>
+     *
      * The axisCode is controller specific. The axis value is in the range [-1, 1].
      *
      * @param controller The game controller
-     * @param axisCode   The axis moved
-     * @param value      The axis value, -1 to 1
+     * @param axisCode 	The axis moved
+     * @param value 	The axis value, -1 to 1
      * @return whether to hand the event to other listeners.
      */
-    public boolean axisMoved(Controller controller, int axisCode, float value) {
+    public boolean axisMoved (Controller controller, int axisCode, float value) {
         return true;
     }
 

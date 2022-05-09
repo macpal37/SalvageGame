@@ -853,7 +853,7 @@ public class DiverModel extends GameObject {
         }
 //        float coAngle = 180 * angle / (float) Math.PI;
 
-        float newAngle = angle * ((isLatching()) ? ((isBoosting()) ? 4 : 5) : 1);
+        float newAngle = angle * ((isLatching()) ? ((isBoosting()) ? 2 : 2) : 1);
         float coAngle = angle;
 
 

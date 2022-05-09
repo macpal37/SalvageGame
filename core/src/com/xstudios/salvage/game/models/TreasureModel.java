@@ -240,7 +240,7 @@ public class TreasureModel extends ObstacleModel {
             if (lightColor.a < 0.4f)
                 lightColor.add(0, 0, 0, 0.01f);
 
-            canvas.drawText("Press E", GameController.displayFont, (getX() - getWidth() / 3 * 2) * drawScale.x, (getY() + getHeight() / 3 * 2) * drawScale.y);
+            canvas.drawText("Press X", GameController.displayFont, (getX() - getWidth() / 3 * 2) * drawScale.x, (getY() + getHeight() / 3 * 2) * drawScale.y);
         } else if (lightColor.a > 0)
             lightColor.add(0, 0, 0, -0.01f);
         if (lightColor.a != 0 || lightColor.a != 0.5f)

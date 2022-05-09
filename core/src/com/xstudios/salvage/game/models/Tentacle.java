@@ -231,7 +231,7 @@ public class Tentacle extends GameObject {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-
+        
 
         canvas.drawPhysics(circ, Color.GREEN, getX(), getY(), drawScale.x, drawScale.y);
         for (HazardModel hm : collisionBoxes) {

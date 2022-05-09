@@ -30,6 +30,16 @@ public class Wall extends GameObject {
         isWall = wall;
     }
 
+    public boolean isCanAlertMonster() {
+        return canAlertMonster;
+    }
+
+    public void setCanAlertMonster(boolean canAlertMonster) {
+        this.canAlertMonster = canAlertMonster;
+    }
+
+    private boolean canAlertMonster = false;
+
     private boolean isWall = false;
 
     /**
