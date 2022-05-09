@@ -38,6 +38,8 @@ public class Tentacle extends GameObject {
     private int change = 0;
     private int extend_frame_length = 16;
     private int total_frames = 30;
+    private int type;
+
 
     private Wall spawnWall;
     private int animation_length;
@@ -257,7 +259,6 @@ public class Tentacle extends GameObject {
         scale.set(x, y);
     }
 
-
     int tick = 0;
 
     public Vector2 pivot = new Vector2(0, 0);
@@ -273,6 +274,9 @@ public class Tentacle extends GameObject {
     public void setGrowRate(int grow_rate) {
         this.grow_rate = grow_rate;
     }
+
+    public void setType (int type) { this.type = type;}
+    public int getType () { return this.type;}
 
     int grow_rate = 10;
 
@@ -306,8 +310,6 @@ public class Tentacle extends GameObject {
         if (frame >= 0 && isActive()) {
             tentacleSprite.setFrame(frame);
             canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x, (getY()) * drawScale.y + pivot.y, getAngle(), scale.x, scale.y);
-
-
         }
 
     }

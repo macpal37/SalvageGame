@@ -308,6 +308,19 @@ public class CollisionController {
         }
     }
 
+    public void startDiverMonsterCollision(Body b1, Body b2) {
+        Object fd1 = b1.getUserData();
+        Object fd2 = b2.getUserData();
+        if (b1.getUserData() instanceof DiverModel &&
+                b2.getUserData() instanceof Monster) {
+            AudioController.getInstance().idle_roar();
+
+        } else if (b1.getUserData() instanceof Monster &&
+                b2.getUserData() instanceof DiverModel) {
+            AudioController.getInstance().idle_roar();
+        }
+    }
+
     /**
      * Handles the possible tentacle spawn points
      *
