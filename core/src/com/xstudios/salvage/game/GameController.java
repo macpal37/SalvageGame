@@ -27,6 +27,7 @@ import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Queue;
 
@@ -505,6 +506,8 @@ public class GameController implements Screen, ContactListener {
         addQueue.add(obj);
     }
 
+    public ArrayList<Tentacle> tentacles = new ArrayList<>();
+
     /**
      * Immediately adds the object to the physics world
      * <p>
@@ -513,6 +516,8 @@ public class GameController implements Screen, ContactListener {
     protected void addObject(GameObject obj) {
         assert inBounds(obj) : "Object is not in bounds";
         obj.activatePhysics(world);
+        if (obj instanceof Tentacle)
+            tentacles.add((Tentacle) obj);
     }
 
     /**
@@ -682,11 +687,11 @@ public class GameController implements Screen, ContactListener {
                 TreasureModel tm = level.getDiver().getTreasureChests().pop();
                 tm.openChest();
                 if (tm.getContents() == TreasureModel.TreasureType.Monster) {
-                    Tentacle t = levelBuilder.createTentcle(0, 0.5f, tm, new FilmStrip(monsterAttackTenctacle, 1, 30, 30), 30);
+                    Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, LevelBuilder.TentacleType.OldAttack, 30);
                     tm.setTrap(t);
                     addQueuedObject(t);
                 } else if (tm.getContents() == TreasureModel.TreasureType.Key) {
-                    
+
                 }
             }
 
@@ -795,7 +800,7 @@ public class GameController implements Screen, ContactListener {
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     System.out.println("CREATE TENTACLE");
-                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), 1f, add_wall, new FilmStrip(monsterAttackTenctacle, 1, 30, 30), 300);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 1f, add_wall, LevelBuilder.TentacleType.NewAttack, 300);
                     addQueuedObject(t);
                     AudioController.getInstance().roar();
                 }
@@ -804,7 +809,7 @@ public class GameController implements Screen, ContactListener {
                 Wall add_wall = idle_tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     System.out.println("...............................................");
-                    Tentacle t = levelBuilder.createTentcle(level.getMonster().getAggravation(), .4f, add_wall, new FilmStrip(monsterAttackTenctacle, 1, 30, 30), 400);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, LevelBuilder.TentacleType.NewAttack, 400);
                     addQueuedObject(t);
 //                AudioController.getInstance().roar();
                 }
@@ -929,6 +934,17 @@ public class GameController implements Screen, ContactListener {
             GameObject go = addQueue.poll();
             addObject(go);
             level.addObject(go);
+        }
+        for (int i = 0; i < tentacles.size(); i++) {
+            Tentacle t = tentacles.get(i);
+            System.out.println("Tentacle!");
+            if (t.isDead()) {
+                tentacles.remove(t);
+                i--;
+                t.deactivatePhysics(world);
+                level.getAllObjects().remove(t);
+            }
+
         }
 
         if (level.getDiver().getDeadBody() != null && level.getDiver().getDeadBody().isCarried()) {

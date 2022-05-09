@@ -81,9 +81,9 @@ public class LevelModel {
      * Add new objects to the list of all objects and the category lists they correspond to
      */
     public void addObject(GameObject obj) {
-        objects.add(obj);
+        objects.add(0, obj);
         if (obj instanceof Monster) {
-            System.out.println("HELLO?????");
+
             monster = (Monster) obj;
         }
         if (obj instanceof Door) {

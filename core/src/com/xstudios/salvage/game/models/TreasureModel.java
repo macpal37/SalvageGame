@@ -25,17 +25,14 @@ public class TreasureModel extends ObstacleModel {
     public void setTrap(Tentacle t) {
         t.setActive(false);
         t.setStartGrowing(false);
-        t.setGrowRate(5);
+        t.setGrowRate(10);
         this.trap = t;
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
-        if (trap != null) {
-            trap.setPosition(getX(), getY());
-            trap.setAngle((float) (getAngle() + Math.PI));
-        }
+        setTentacleSpawnPosition(0, -10f / 32f);
 
     }
 
@@ -138,7 +135,7 @@ public class TreasureModel extends ObstacleModel {
         sprite = treasureOpenAnimation;
         this.contents = contents;
         if (contents == TreasureType.Monster) {
-            sprite.setFrame(34);
+            sprite.setFrame(32);
         } else {
             sprite.setFrame(0);
         }
@@ -221,11 +218,11 @@ public class TreasureModel extends ObstacleModel {
 
                     break;
                 case Monster:
-                    if (sprite.getFrame() < 36)
+                    if (sprite.getFrame() < 35)
                         if (tick % 2 == 0)
                             sprite.setFrame(sprite.getFrame() + 1);
 
-                    if (sprite.getFrame() == 34) {
+                    if (sprite.getFrame() == 33) {
                         trap.setActive(true);
                         trap.setStartGrowing(true);
 
@@ -242,6 +239,7 @@ public class TreasureModel extends ObstacleModel {
 
         }
 
-
+        if (trap != null)
+            trap.draw(canvas);
     }
 }

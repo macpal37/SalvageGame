@@ -48,8 +48,7 @@ public class Tentacle extends GameObject {
         spawnWall.setHasTentcle(true);
         setAngle(wall.getTentacleRotation() / 180 * (float) Math.PI);
         System.out.println("length " + len);
-        extend_frame_length = 16;//Math.min(extend_frame_length,(int)(len));
-//        setStartGrowing(false);
+        extend_frame_length = 16;
         System.out.println("extend frame length: " + extend_frame_length);
     }
 
@@ -277,14 +276,21 @@ public class Tentacle extends GameObject {
 
     int grow_rate = 10;
 
+    public boolean isDead() {
+        return dead;
+    }
+
+    boolean dead = false;
+
     @Override
     public void draw(GameCanvas canvas) {
         update();
 
         tick++;
 
-        if (frame >= 30) {
+        if (frame >= 29) {
             frame = -1;
+            dead = true;
 
         }
         if (startGrowing && frame < extend_frame_length) {
@@ -335,6 +341,7 @@ public class Tentacle extends GameObject {
      * @param world Box2D world that stores body
      */
     public void deactivatePhysics(World world) {
+        spawnWall.setHasTentcle(false);
         for (HazardModel hm : collisionBoxes) {
             hm.deactivatePhysics(world);
         }
