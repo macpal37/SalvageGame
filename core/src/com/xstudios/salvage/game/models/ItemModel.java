@@ -40,6 +40,9 @@ public class ItemModel extends DiverObjectModel {
 
     Color item_color;
 
+    boolean isInChest;
+    Vector2 chest_location;
+
 
     public ItemModel(float x, float y, JsonValue data, ItemType item_type) {
 
@@ -56,6 +59,7 @@ public class ItemModel extends DiverObjectModel {
         setName(item_type + "" + getID());
         movement = new Vector2();
 //        light_color = new Color(1f,0.5f,0.5f,0.5f);
+        chest_location = new Vector2(0, 0);
     }
 
 
@@ -146,28 +150,43 @@ public class ItemModel extends DiverObjectModel {
 
     int tick = 0;
 
+    public void setInChest(boolean b) {
+        isInChest = b;
+    }
+    public void updateChestLocation(Vector2 loc){
+        chest_location.set(loc);
+    }
+
     @Override
     public void draw(GameCanvas canvas) {
-        if (texture != null) {
-            if (!carried) {
+        System.out.println("key is active? " + isActive());
+        if (isActive()) {
+            if (texture != null) {
+                if (!carried) {
 
-                if (tick % 15 == 0) {
-                    int frame = spriteSheet.getFrame();
-                    frame++;
-                    if (frame >= spriteSheet.getSize())
-                        frame = 0;
-                    spriteSheet.setFrame(frame);
+                    if (tick % 15 == 0) {
+                        int frame = spriteSheet.getFrame();
+                        frame++;
+                        if (frame >= spriteSheet.getSize())
+                            frame = 0;
+                        spriteSheet.setFrame(frame);
+                    }
+                    canvas.draw(spriteSheet, ItemModel.COLOR_OPTIONS[getID()], origin.x * 2, origin.y * 2, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
                 }
-                canvas.draw(spriteSheet, ItemModel.COLOR_OPTIONS[getID()], origin.x * 2, origin.y * 2, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+                if (!carried && isTouched) {
+                    canvas.drawText("Press q", GameController.displayFont, (getX() - getWidth() * 1.25f) * drawScale.x, (getY() + getHeight() * 1.5f) * drawScale.y);
+                    light.setPosition(getX(), getY());
+                    light.setActive(true);
+                } else {
+                    light.setActive(false);
+                }
             }
-            if (!carried && isTouched) {
-                canvas.drawText("Press q", GameController.displayFont, (getX() - getWidth() * 1.25f) * drawScale.x, (getY() + getHeight() * 1.5f) * drawScale.y);
-                light.setPosition(getX(), getY());
-                light.setActive(true);
-            } else {
-                light.setActive(false);
-            }
-
+            // TODO: right now key should only be inactive if it is in a chest but should probably
+            // update this condition
+        } else if (isInChest) {
+            // move to chest location
+            // put this in an update function later
+            this.setPosition(chest_location);
         }
     }
 

@@ -85,9 +85,9 @@ public class TreasureModel extends ObstacleModel {
                 if (isOpened() && sprite.getFrame() == 39) {
                     keyReward.setActive(true);
                 }
-//                if (keyReward.isActive()) {
-//                    keyReward.update(delta);
-//                }
+                if (keyReward.isActive()) {
+                    keyReward.updateChestLocation(this.getPosition());
+                }
                 break;
 
             case Flare:
