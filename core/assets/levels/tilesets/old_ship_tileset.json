@@ -342,7 +342,7 @@
                      "height":0,
                      "id":3,
                      "name":"SpawnLocation",
-                     "rotation":45,
+                     "rotation":-45,
                      "type":"",
                      "visible":true,
                      "width":0,
@@ -885,116 +885,31 @@
         }, 
         {
          "id":25,
-         "objectgroup":
-            {
-             "draworder":"index",
-             "name":"",
-             "objects":[
-                    {
-                     "height":0,
-                     "id":2,
-                     "name":"",
-                     "polygon":[
-                            {
-                             "x":3.5,
-                             "y":10.75
-                            }, 
-                            {
-                             "x":10.75,
-                             "y":-5.75
-                            }, 
-                            {
-                             "x":12.75,
-                             "y":13.25
-                            }, 
-                            {
-                             "x":34.5,
-                             "y":-0.75
-                            }, 
-                            {
-                             "x":26,
-                             "y":17.25
-                            }, 
-                            {
-                             "x":41,
-                             "y":19.75
-                            }, 
-                            {
-                             "x":23.25,
-                             "y":26.75
-                            }, 
-                            {
-                             "x":46,
-                             "y":48.75
-                            }, 
-                            {
-                             "x":23.25,
-                             "y":36.5
-                            }, 
-                            {
-                             "x":29,
-                             "y":60.5
-                            }, 
-                            {
-                             "x":10,
-                             "y":36
-                            }, 
-                            {
-                             "x":-6.75,
-                             "y":59.25
-                            }, 
-                            {
-                             "x":-2.75,
-                             "y":38.5
-                            }, 
-                            {
-                             "x":-22.5,
-                             "y":43
-                            }, 
-                            {
-                             "x":-2.25,
-                             "y":28.25
-                            }, 
-                            {
-                             "x":-19.75,
-                             "y":18.5
-                            }, 
-                            {
-                             "x":-5.75,
-                             "y":15
-                            }, 
-                            {
-                             "x":-16.75,
-                             "y":-4.75
-                            }],
-                     "rotation":0,
-                     "type":"",
-                     "visible":true,
-                     "width":0,
-                     "x":40.75,
-                     "y":26.75
-                    }],
-             "opacity":1,
-             "type":"objectgroup",
-             "visible":true,
-             "x":0,
-             "y":0
-            },
          "properties":[
+                {
+                 "name":"aggro_rate",
+                 "type":"float",
+                 "value":0.1
+                }, 
+                {
+                 "name":"aggro_threshold",
+                 "type":"float",
+                 "value":6
+                }, 
                 {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Hazard"
+                 "value":"Monster"
                 }, 
                 {
-                 "name":"oxygen_drain",
+                 "name":"tentacle_size",
                  "type":"float",
-                 "value":-0.1
+                 "value":1
                 }, 
                 {
-                 "name":"stun_duration",
-                 "type":"int",
-                 "value":60
+                 "name":"vision_radius",
+                 "type":"float",
+                 "value":6
                 }]
         }, 
         {
@@ -1370,11 +1285,61 @@
         }, 
         {
          "id":36,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":0,
+                     "id":1,
+                     "name":"",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":0,
+                             "y":-55.25
+                            }, 
+                            {
+                             "x":91.75,
+                             "y":-55.75
+                            }, 
+                            {
+                             "x":92.25,
+                             "y":-0.75
+                            }],
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":4.5,
+                     "y":95.25
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
          "properties":[
+                {
+                 "name":"door_id",
+                 "type":"int",
+                 "value":0
+                }, 
+                {
+                 "name":"may_contain_flare",
+                 "type":"bool",
+                 "value":false
+                }, 
                 {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Treasure"
                 }]
         }, 
         {

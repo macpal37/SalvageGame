@@ -27,6 +27,7 @@ import com.xstudios.salvage.util.PooledList;
 import com.xstudios.salvage.util.ScreenListener;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Queue;
 
@@ -43,7 +44,8 @@ public class GameController implements Screen, ContactListener {
     protected TextureRegion background;
 
 
-    protected Texture monsterTenctacle;
+    protected Texture monsterAttackTenctacle;
+    protected Texture monsterIdleTenctacle;
     protected Texture flareAnimation;
     protected TextureRegion hud;
     protected TextureRegion oxygen;
@@ -218,7 +220,7 @@ public class GameController implements Screen, ContactListener {
      * level4 - insanely hard key level
      */
     // Beta Release Setup
-    private String[] levels = {"test_level", "beta_1", "beta_2", "beta_3", "beta_5"};
+    private String[] levels = {"beta_0", "beta_1", "beta_2", "beta_3", "beta_5"};
 
 
     private int curr_level;
@@ -247,6 +249,12 @@ public class GameController implements Screen, ContactListener {
     private LevelModel level;
 
     private PointLight light;
+    private Color stun_color;
+    private Color low_oxygen_color;
+    private Color monster_color;
+    private float stun_light_radius = 5f;
+    private float normal_light_radius = 15f;
+
     private RayHandler rayHandler;
 
     private PointLight wallShine;
@@ -294,7 +302,7 @@ public class GameController implements Screen, ContactListener {
         this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
     }
 
-    protected Monster monster;
+//    protected Monster monster;
 
 //    private RayHandler rayHandlerFlare;
 
@@ -329,7 +337,11 @@ public class GameController implements Screen, ContactListener {
 //        rayHandlerFlare.setAmbientLight(1f);
 //        RayHandler.useDiffuseLight(true);
 
-        light = new PointLight(rayHandler, 100, Color.BLACK, 15, 0, 0);
+        stun_color = new Color(1f, 0.15f, 0.15f, .3f);//Color.BLACK;
+        low_oxygen_color = new Color(0f, .2f, .7f, .3f);
+        monster_color = new Color(1f, 0f, 0f, .4f);
+
+        light = new PointLight(rayHandler, 100, Color.BLACK, normal_light_radius, 0, 0);
         wallShine = new PointLight(rayHandler, 100, Color.BLUE, 8, 0, 0);
         wallShine.setSoft(true);
 
@@ -468,7 +480,9 @@ public class GameController implements Screen, ContactListener {
         keyHud = new TextureRegion(directory.getEntry("key_hud", Texture.class));
         flareHud = new TextureRegion(directory.getEntry("flare_hud", Texture.class));
         oxygen = new TextureRegion(directory.getEntry("oxygen", Texture.class));
-        monsterTenctacle = directory.getEntry("models:monster1", Texture.class);
+        monsterAttackTenctacle = directory.getEntry("models:monster1", Texture.class);
+        monsterIdleTenctacle = directory.getEntry("models:monster1", Texture.class);
+        //TODO: CHANGE BACK TO ACTUAL WALL TENTACLE
         plantAnimation = directory.getEntry("models:plant", Texture.class);
 
         //pause
@@ -492,6 +506,8 @@ public class GameController implements Screen, ContactListener {
         addQueue.add(obj);
     }
 
+    public ArrayList<Tentacle> tentacles = new ArrayList<>();
+
     /**
      * Immediately adds the object to the physics world
      * <p>
@@ -500,6 +516,8 @@ public class GameController implements Screen, ContactListener {
     protected void addObject(GameObject obj) {
         assert inBounds(obj) : "Object is not in bounds";
         obj.activatePhysics(world);
+        if (obj instanceof Tentacle)
+            tentacles.add((Tentacle) obj);
     }
 
     /**
@@ -548,16 +566,10 @@ public class GameController implements Screen, ContactListener {
         for (GameObject obj : level.getAllObjects()) {
             addObject(obj);
         }
-        monster = new Monster(level.getDiver().getX(), level.getDiver().getY());
-        monster.setTentacleSprite(new FilmStrip(monsterTenctacle, 1, 30, 30));
-        monster.setDrawScale(scale);
-        monster.setName("Monster");
-        monsterController = new MonsterController(monster);
-        level.addObject(monster);
+        monsterController = new MonsterController(level.getMonster(), getWorldBounds());
+
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
-        addObject(monster);
-
     }
 
     private void updateGameState() {
@@ -670,20 +682,46 @@ public class GameController implements Screen, ContactListener {
 
         AudioController.getInstance().update(level.getDiver().getOxygenLevel(), level.getDiver().getMaxOxygen());
 
+        if (input.didPing()) {
+            if (level.getDiver().getTreasureChests().size() > 0) {
+                TreasureModel tm = level.getDiver().getTreasureChests().pop();
+                tm.openChest();
+                if (tm.getContents() == TreasureModel.TreasureType.Monster) {
+                    Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, LevelBuilder.TentacleType.OldAttack, 30);
+                    tm.setTrap(t);
+                    addQueuedObject(t);
+                } else if (tm.getContents() == TreasureModel.TreasureType.Key) {
+
+                }
+            }
+
+        }
 
         if (level.getDiver().getBody() != null && !pause) {
+//            cameraController.setCameraPosition(
+//                    (level.getDiver().getX() + 1.5f) * level.getDiver().getDrawScale().x, (level.getDiver().getY() + .5f) * level.getDiver().getDrawScale().y);
             cameraController.setCameraPosition(
-                    level.getDiver().getX() * level.getDiver().getDrawScale().x, level.getDiver().getY() * level.getDiver().getDrawScale().y);
+                    (level.getDiver().getX()) * level.getDiver().getDrawScale().x, (level.getDiver().getY() + .0f) * level.getDiver().getDrawScale().y);
 
             light.setPosition(
-                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
-                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
+                    cameraController.getCameraPosition2D().x / 40f
+                    ,
+                    cameraController.getCameraPosition2D().y / 40f);
             wallShine.setPosition(
-                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
-                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
+                    cameraController.getCameraPosition2D().x / 40f
+                    ,
+                    cameraController.getCameraPosition2D().y / 40f);
+//            light.setPosition(
+//                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
+//                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
+//            wallShine.setPosition(
+//                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
+//                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
         }
 
         // TODO: why wasnt this in marco's code?
+
+        updateDiverLighting();
 
         cameraController.render();
     }
@@ -745,45 +783,43 @@ public class GameController implements Screen, ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+
         for (Door door : level.getDoors()) {
             door.setActive(!door.getUnlock(level.getDiver().getItem()));
         }
 
         rayHandler.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
-//        rayHandlerFlare.setCombinedMatrix(cameraController.getCamera().combined.cpy().scl(40f));
 
-        //monsterController.update(level.getDiver());
+//        System.out.println("isMonsterActive");
+        if (monsterController.isMonsterActive()) {
+            monsterController.update(hostileOxygenDrain, level.getDiver());
+            Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
+            Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
 
-
-        monsterController.update(hostileOxygenDrain, level.getDiver());
-        Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
-//        Wall add_wall = tentacles.poll();
-//        if (add_wall != null && add_wall.canSpawnTentacle()) {
-//            Tentacle t = levelBuilder.createTentcle(add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
-//            addQueuedObject(t);
-//        }
-        while (tentacles.size() > 0) {
-            Wall add_wall = tentacles.poll();
-            if (add_wall.canSpawnTentacle() && add_wall != null) {
-
-                Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), 1f, add_wall, new FilmStrip(monsterTenctacle, 1, 30, 30));
-                addQueuedObject(t);
-                AudioController.getInstance().roar();
+            while (tentacles.size() > 0) {
+                Wall add_wall = tentacles.poll();
+                if (add_wall != null && add_wall.canSpawnTentacle()) {
+                    System.out.println("CREATE TENTACLE");
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 1f, add_wall, LevelBuilder.TentacleType.NewAttack, 300);
+                    addQueuedObject(t);
+                    AudioController.getInstance().roar();
+                }
+            }
+            while (idle_tentacles.size() > 0) {
+                Wall add_wall = idle_tentacles.poll();
+                if (add_wall != null && add_wall.canSpawnTentacle()) {
+                    System.out.println("...............................................");
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, LevelBuilder.TentacleType.NewAttack, 400);
+                    addQueuedObject(t);
+//                AudioController.getInstance().roar();
+                }
             }
         }
-//        for (Tentacle t : monsterController.getMonster().getTentacles()) {
-//            Wall w = t.getSpawnWall();
-//            System.out.println(w);
-//            if (w.canSpawnTentacle()) {
-//                t = levelBuilder.createTentcle(t, new FilmStrip(monsterTenctacle, 1, 30, 30), scale);
-//                addQueuedObject(t);
-//            }
-//        }
 
         //** ADDING TENTACLES TO WalL!
 //        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
 //            Wall w = level.getDiver().getTouchedWall();
-//            Tentacle t = levelBuilder.createTentcle(monster.getAggrivation(), 1f, w, new FilmStrip(monsterTenctacle, 1, 30, 30));
+//            Tentacle t = levelBuilder.createTentcle(monster.getAggravation(), 1f, w, new FilmStrip(monsterTenctacle, 1, 30, 30));
 //            addQueuedObject(t);
 //        }
 
@@ -834,17 +870,53 @@ public class GameController implements Screen, ContactListener {
 //            System.out.println("PAIN: " + hostileOxygenDrain);
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
             level.getDiver().setStunCooldown(level.getDiver().getStunCooldown() - 1);
-
         } else {
-
             level.getDiver().setStunned(false);
             hostileOxygenDrain = 0.0f;
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
-//            level.getDiver().setHazardCollisionFilter();
-//            System.out.println("SETTING STUNNED TO FALSE");
         }
 
+    }
 
+    public void updateDiverLighting() {
+        if (monsterController.isMonsterActive() && level.getMonster().getAggravation() > level.getMonster().getAggroLevel()) {
+            changeLightColor(monster_color);
+        } else if (level.getDiver().getOxygenLevel() < level.getDiver().getMaxOxygen() * .25f) {
+            changeLightColor(low_oxygen_color);
+        } else {
+            changeLightColor(Color.BLACK);
+        }
+
+        if (level.getDiver().isInvincible()) {
+            if (light.getDistance() > stun_light_radius) {
+                light.setDistance(light.getDistance() - 1);
+            }
+        } else {
+            if (light.getDistance() < normal_light_radius) {
+                light.setDistance(light.getDistance() + 1);
+            }
+        }
+
+    }
+
+    public void changeLightColor(Color color) {
+        float curr_a = light.getColor().a;
+        float curr_r = light.getColor().r;
+        float curr_g = light.getColor().g;
+        float curr_b = light.getColor().b;
+        if (curr_a != color.a) {
+            curr_a += .01f * Math.signum(color.a - curr_a);
+        }
+        if (curr_r != color.r) {
+            curr_r += .01f * Math.signum(color.r - curr_r);
+        }
+        if (curr_g != color.g) {
+            curr_g += .01f * Math.signum(color.g - curr_g);
+        }
+        if (curr_b != color.b) {
+            curr_b += .01f * Math.signum(color.b - curr_b);
+        }
+        light.setColor(new Color(curr_r, curr_g, curr_b, curr_a));
     }
 
     /**
@@ -862,6 +934,17 @@ public class GameController implements Screen, ContactListener {
             GameObject go = addQueue.poll();
             addObject(go);
             level.addObject(go);
+        }
+        for (int i = 0; i < tentacles.size(); i++) {
+            Tentacle t = tentacles.get(i);
+            System.out.println("Tentacle!");
+            if (t.isDead()) {
+                tentacles.remove(t);
+                i--;
+                t.deactivatePhysics(world);
+                level.getAllObjects().remove(t);
+            }
+
         }
 
         if (level.getDiver().getDeadBody() != null && level.getDiver().getDeadBody().isCarried()) {
@@ -960,10 +1043,8 @@ public class GameController implements Screen, ContactListener {
         canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0, 4, 4);
 
         for (GameObject obj : level.getAllObjects()) {
-            if (obj instanceof Tentacle) {
-//                System.out.println("YeAH TENTACLE!!!");
-            }
-
+//        for (int i = level.getAllObjects().size() - 1; i >= 0; i--) {
+//            GameObject obj = level.getAllObjects().get(i);
             if (!(obj instanceof DiverModel))
                 if (!(obj instanceof DecorModel))
                     obj.draw(canvas);
@@ -1224,6 +1305,7 @@ public class GameController implements Screen, ContactListener {
         Object fd1 = fix1.getUserData();
         Object fd2 = fix2.getUserData();
 
+
         collisionController.startDiverToObstacle(fix1, fix2, level.getDiver(), monsterController);
         if (listener != null) {
             reach_target = collisionController.getWinState(body1, body2, level.getDiver());
@@ -1236,6 +1318,12 @@ public class GameController implements Screen, ContactListener {
         collisionController.startMonsterWallCollision(body1, body2);
         collisionController.startDiverDeadBodyCollision(body1, body2);
         collisionController.startFlareTentacleCollision(fix1, fix2);
+
+        collisionController.startDiverTreasureCollision(fix1, fix2);
+
+        collisionController.startFlareFlare(body1, body2);
+        collisionController.startDiverFlare(body1, body2);
+
         float d = collisionController.startDiverHazardCollision(fix1, fix2, level.getDiver());
         if (d != 0)
             hostileOxygenDrain = d;
@@ -1265,6 +1353,12 @@ public class GameController implements Screen, ContactListener {
         collisionController.removeDiverSensorTouching(level.getDiver(), fix1, fix2);
         collisionController.endDiverItemCollision(body1, body2);
         collisionController.endDiverHazardCollision(fix1, fix2, level.getDiver());
+
+        collisionController.endDiverTreasureCollision(fix1, fix2);
+
+        collisionController.endFlareFlare(body1, body2);
+        collisionController.endDiverFlare(body1, body2);
+
 
     }
 

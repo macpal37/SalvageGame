@@ -40,14 +40,16 @@ public class Tentacle extends GameObject {
     private int total_frames = 30;
 
     private Wall spawnWall;
+    private int animation_length;
 
     public Tentacle(Wall wall, float len) {
         this(wall.getTentacleSpawnPosition().x, wall.getTentacleSpawnPosition().y);
         spawnWall = wall;
         spawnWall.setHasTentcle(true);
         setAngle(wall.getTentacleRotation() / 180 * (float) Math.PI);
-//        animation_length = (int)(len*16/10);
-        System.out.println("LENGTH " + len);
+        System.out.println("length " + len);
+        extend_frame_length = 16;
+        System.out.println("extend frame length: " + extend_frame_length);
     }
 
     public Tentacle() {
@@ -101,6 +103,34 @@ public class Tentacle extends GameObject {
         origin.set(texture.getRegionWidth() / 2.0f, texture.getRegionHeight() / 2.0f);
     }
 
+
+    @Override
+    public void setPosition(Vector2 value) {
+        super.setPosition(value);
+        for (HazardModel hm : collisionBoxes) {
+            if (hm != null)
+                hm.setPosition(value);
+        }
+    }
+
+    @Override
+    public void setPosition(float x, float y) {
+        super.setPosition(x, y);
+        for (HazardModel hm : collisionBoxes) {
+            if (hm != null)
+                hm.setPosition(x, y);
+        }
+    }
+
+    @Override
+    public void setAngle(float value) {
+        super.setAngle(value);
+        for (HazardModel hm : collisionBoxes) {
+            if (hm != null)
+                hm.setAngle(value);
+        }
+    }
+
     public void setFilmStrip(FilmStrip value) {
         tentacleSprite = value;
         tentacleSprite.setFrame(1);
@@ -143,12 +173,15 @@ public class Tentacle extends GameObject {
     }
 
     public void update() {
-        life++;
+        if (isActive())
+            life++;
 
         if (life > maxLifeSpan && startGrowing) {
+//        System.out.println("frame " + frame + " max life span " + extend_frame_length);
+//        if (frame >= extend_frame_length && frame < total_frames - extend_frame_length && startGrowing) {
             setStartGrowing(false);
         }
-
+//TODO fix the collision boxes thing
         if (frame == 1) {
             collisionBoxes[0].setActive(true);
         }
@@ -182,9 +215,10 @@ public class Tentacle extends GameObject {
      */
     public void setStartGrowing(boolean startGrowing) {
         this.startGrowing = startGrowing;
-        if(!startGrowing && frame < extend_frame_length) {
-            frame = total_frames - frame;
-        }
+        System.out.println("start growing: " + startGrowing + " frame " + frame + " total frame " + extend_frame_length);
+//        if(!startGrowing && frame < extend_frame_length) {
+//            frame = total_frames - frame;
+//        }
     }
 
     public boolean isStartGrowing() {
@@ -236,14 +270,27 @@ public class Tentacle extends GameObject {
         extend_frame_length = l;
     }
 
+    public void setGrowRate(int grow_rate) {
+        this.grow_rate = grow_rate;
+    }
+
+    int grow_rate = 10;
+
+    public boolean isDead() {
+        return dead;
+    }
+
+    boolean dead = false;
+
     @Override
     public void draw(GameCanvas canvas) {
         update();
 
         tick++;
-        int grow_rate = 10;
-        if (frame >= 30) {
+
+        if (frame >= 29) {
             frame = -1;
+            dead = true;
 
         }
         if (startGrowing && frame < extend_frame_length) {
@@ -256,7 +303,7 @@ public class Tentacle extends GameObject {
             }
         }
 
-        if (frame >= 0) {
+        if (frame >= 0 && isActive()) {
             tentacleSprite.setFrame(frame);
             canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x, (getY()) * drawScale.y + pivot.y, getAngle(), scale.x, scale.y);
 
@@ -278,7 +325,7 @@ public class Tentacle extends GameObject {
         for (HazardModel hm : collisionBoxes) {
             hm.activatePhysics(world);
 
-            for(int i = 0; i < hm.getFixtureList().length; i++) {
+            for (int i = 0; i < hm.getFixtureList().length; i++) {
                 hm.getFixtureList()[i].setUserData(this);
             }
             hm.setActive(false);
@@ -294,11 +341,10 @@ public class Tentacle extends GameObject {
      * @param world Box2D world that stores body
      */
     public void deactivatePhysics(World world) {
+        spawnWall.setHasTentcle(false);
         for (HazardModel hm : collisionBoxes) {
             hm.deactivatePhysics(world);
         }
-
-
         if (body != null) {
             // Snapshot the values
             setBodyState(body);

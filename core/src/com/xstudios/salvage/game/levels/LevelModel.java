@@ -1,6 +1,7 @@
 package com.xstudios.salvage.game.levels;
 
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 import com.xstudios.salvage.game.GameObject;
@@ -15,6 +16,12 @@ public class LevelModel {
      */
     protected DiverModel diver;
 
+    public Monster getMonster() {
+        return monster;
+    }
+
+    protected Monster monster = new Monster(0, 0, false);
+
     protected ItemModel key;
     //    protected ItemModel dead_body;
     protected DeadBodyModel dead_body;
@@ -22,6 +29,17 @@ public class LevelModel {
     protected ArrayList<Tentacle> tentacles = new ArrayList<>();
 
     private Array<Door> doors = new Array<Door>();
+
+
+    public Rectangle getMapBounds() {
+        return mapBounds;
+    }
+
+    public void setMapBounds(Rectangle mapBounds) {
+        this.mapBounds = mapBounds;
+    }
+
+    public Rectangle mapBounds;
 
     /**
      * All the objects in the world.
@@ -63,7 +81,11 @@ public class LevelModel {
      * Add new objects to the list of all objects and the category lists they correspond to
      */
     public void addObject(GameObject obj) {
-        objects.add(obj);
+        objects.add(0, obj);
+        if (obj instanceof Monster) {
+
+            monster = (Monster) obj;
+        }
         if (obj instanceof Door) {
             doors.add((Door) obj);
         } else if (obj instanceof DiverModel) {
@@ -77,15 +99,17 @@ public class LevelModel {
             tentacles.add((Tentacle) obj);
         }
     }
+
     /**
      * remove objects to the list of all objects and the category lists they correspond to
      */
     public void removeObject(GameObject obj) {
         objects.remove(obj);
-        if(obj instanceof Tentacle){
+        if (obj instanceof Tentacle) {
             tentacles.remove((Tentacle) obj);
         }
     }
+
     public void dispose() {
         // TODO: do we need to clear all of the arrays?
         getAboveObjects().clear();

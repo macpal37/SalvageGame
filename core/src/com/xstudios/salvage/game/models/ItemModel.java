@@ -66,10 +66,7 @@ public class ItemModel extends DiverObjectModel {
     }
 
     public void initLight(RayHandler rayHandler) {
-
-
         light = new PointLight(rayHandler, 100, new Color(225 / 255f, 185 / 255f, 80 / 255f, 0.2f), 5, getX(), getY());
-
         Filter f = new Filter();
         f.categoryBits = 0x0002;
         f.maskBits = 0x0004;

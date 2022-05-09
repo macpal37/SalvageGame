@@ -144,7 +144,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			}
 			else {
 				System.out.println("controller");
-				System.out.println(exitCode);
+//				System.out.println(exitCode);
 				System.out.println("this happened");
 				controller.setCameraPositionNormal();
 				game_over_controller.dispose();
