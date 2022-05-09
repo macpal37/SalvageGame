@@ -1,24 +1,24 @@
 {
-    "activeFile": "levels/beta_1.json",
+    "activeFile": "levels/beta_0.json",
     "expandedProjectPaths": [
-        "levels/tilesets",
-        "levels"
+        "levels",
+        "levels/tilesets"
     ],
     "fileStates": {
         "levels/beta_0.json": {
-            "scale": 0.33,
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 750,
-                "y": 775.7575757575758
+                "x": 599.5,
+                "y": 299.5
             }
         },
         "levels/beta_1.json": {
             "scale": 0.46,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 844.5652173913043,
-                "y": 836.9565217391304
+                "x": 570.6521739130434,
+                "y": 733.695652173913
             }
         },
         "levels/beta_2.json": {
@@ -30,11 +30,11 @@
             }
         },
         "levels/beta_3.json": {
-            "scale": 0.5,
+            "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 383,
-                "y": 752
+                "x": 637.8787878787879,
+                "y": 813.6363636363637
             }
         },
         "levels/beta_5.json": {
@@ -55,10 +55,10 @@
         },
         "levels/level0.json": {
             "scale": 0.4674,
-            "selectedLayer": 1,
+            "selectedLayer": 4,
             "viewCenter": {
-                "x": 941.37783483098,
-                "y": 662.1737270004279
+                "x": 664.3132220795892,
+                "y": 630.0813008130082
             }
         },
         "levels/level1.json": {
@@ -121,6 +121,14 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "levels/tilesets/tentacle_attack.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/tilesets/tentacle_idle.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "levels/tilesets/tentacle_tile.json": {
             "scaleInDock": 1,
             "scaleInEditor": 1
@@ -153,30 +161,33 @@
     "last.imagePath": "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels/tilesets",
     "map.lastUsedFormat": "json",
     "openFiles": [
-        "levels/tilesets/tentacle_tile.json",
         "levels/tilesets/old_ship_tileset.json",
+        "levels/tilesets/tentacle_attack.json",
         "levels/beta_0.json",
-        "levels/beta_1.json"
+        "levels/beta_1.json",
+        "levels/beta_3.json",
+        "levels/level0.json",
+        "levels/tilesets/tentacle_idle.json"
     ],
     "project": "levels.tiled-project",
     "property.type": "float",
     "recentFiles": [
-        "levels/level1.json",
+        "levels/tilesets/old_ship_tileset.json",
+        "levels/tilesets/tentacle_attack.json",
+        "levels/tilesets/tentacle_idle.json",
         "levels/level0.json",
-        "levels/beta_2.json",
+        "levels/beta_3.json",
         "levels/beta_1.json",
         "levels/beta_0.json",
         "levels/tilesets/tentacle_tile.json",
-        "levels/tilesets/old_ship_tileset.json",
+        "levels/level1.json",
+        "levels/beta_2.json",
         "levels/in_progress.json",
-        "levels/level4.json",
-        "levels/test_level.json",
-        "levels/tutorial3.json",
-        "levels/tutorial2.json"
+        "levels/level4.json"
     ],
     "tileset.lastUsedFormat": "json",
     "tileset.tileSize": {
-        "height": 286,
-        "width": 600
+        "height": 69,
+        "width": 800
     }
 }

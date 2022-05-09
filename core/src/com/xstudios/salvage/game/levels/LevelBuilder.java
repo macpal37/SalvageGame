@@ -93,7 +93,8 @@ public class LevelBuilder {
     private FilmStrip treasureMonsterAnimation;
 
     private FilmStrip monsterAttackAnimation;
-
+    private FilmStrip monsterIdleAnimation;
+    private FilmStrip doorAnimation;
 
     public LevelBuilder() {
         this.directory = directory;
@@ -132,9 +133,13 @@ public class LevelBuilder {
         treasureKeyAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_key", Texture.class), 1, 40, 40);
         treasureOpenAnimation = new FilmStrip(directory.getEntry("models:treasure_chest", Texture.class), 1, 14, 14);
         treasureMonsterAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_monster", Texture.class), 1, 36, 36);
+
         monsterTenctacle = directory.getEntry("models:monster1", Texture.class);
 
         monsterAttackAnimation = new FilmStrip(directory.getEntry("models:monster_attack", Texture.class), 5, 6, 30);
+        monsterIdleAnimation = new FilmStrip(directory.getEntry("models:monster_idle", Texture.class), 5, 6, 30);
+
+        doorAnimation = new FilmStrip(directory.getEntry("models:door_animation", Texture.class), 2, 6, 12);
 
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
         keyTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
@@ -216,24 +221,36 @@ public class LevelBuilder {
 
         float tScale = 2f / 3;
         if (w.canSpawnTentacle()) {
-            Tentacle t = new Tentacle(w, agg_level);
-            t.setScale(tentacleScale, tentacleScale);
+
             JsonValue tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_tile.json"));
             ;
+            float width = 0, height = 0;
+            Tentacle t = null;
             switch (type) {
                 case OldAttack:
+                    t = new Tentacle(w, agg_level);
                     t.setFilmStrip(new FilmStrip(monsterTenctacle, 1, 30, 30));
                     tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_tile.json"));
                     break;
                 case NewAttack:
+                    t = new Tentacle(w, agg_level);
                     t.setFilmStrip(monsterAttackAnimation.copy());
                     tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_attack.json"));
                     break;
                 case Idle:
+
+                    t = new Tentacle(w, agg_level);
+
+                    t.setFilmStrip(monsterIdleAnimation.copy());
+                    tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_idle.json"));
+                    width = tileset.getFloat("imagewidth");
+                    height = tileset.getFloat("imageheight");
+                    t.setPosition(t.getX(), t.getY() - height / div / 8);
                     break;
 
             }
 
+            t.setScale(tentacleScale, tentacleScale);
             HazardModel[] boxes = new HazardModel[4];
             int tCount = 0;
             float tileHieght = tileset.getFloat("tileheight");
@@ -258,8 +275,9 @@ public class LevelBuilder {
                         );
 
                     } else {
-                        x = round(o.getFloat("x")) / div;
-                        y = round(o.getFloat("y")) / div;
+                        x = round(o.getFloat("x")) / div - width / div + width / div / 6;
+                        y = round(o.getFloat("y")) / div + height / div;
+
                         verticies.clear();
                         if (o.get("polygon") != null) {
 
@@ -448,8 +466,11 @@ public class LevelBuilder {
                     switch (tile.tileType) {
                         case Wall:
                             Wall wall = new Wall(createVerticies(tile, 0, 0, 1, 1), sx, sy);
-                            wall.setTentacleSpawnPosition(tile.spawnX, tile.spawnY);
-                            wall.setTentacleRotation(tile.rotation);
+                            if (tile.id != 10) {
+                                wall.setTentacleSpawnPosition(tile.spawnX, tile.spawnY);
+                                wall.setTentacleRotation(tile.rotation);
+                            }
+
                             wall.setID(tile.id);
 
                             gameObjects.add(wall);
@@ -545,6 +566,7 @@ public class LevelBuilder {
                             else
                                 door.setID(0);
                             door.setAngle(rotation);
+                            door.setFilmStrip(doorAnimation.copy());
                             gameObjects.add(door);
                             break;
                         case Obstacle:
@@ -650,12 +672,11 @@ public class LevelBuilder {
                             else {
                                 treasureModel.setID(0);
                                 treasureModel.mayContainFlare(true);
-
                             }
                             treasureModel.setAngle(rotation);
                             treasureModel.setIdeSuspenseSprite(treasureOpenAnimation.copy(), treasureMonsterAnimation.copy());
                             treasureModel.setTreasureType(TreasureModel.TreasureType.Monster, treasureMonsterAnimation.copy());
-//
+
                             treasureModel.setScale(1 / 2f, 1 / 2f);
                             treasureModel.initLight(rayHandler);
                             treasureModel.setTentacleRotation(180);

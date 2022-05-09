@@ -61,6 +61,7 @@
     "models:dead_body": "models/dead_body.png",
     "models:door_open": "models/door_opened.png",
     "models:door_closed": "models/door_locked.png",
+     "models:door_animation": "models/door_animation.png",
     "models:hazard": "models/hazard_nails.png",
 
       "models:kitchen1": "models/kitchen1.png",
@@ -70,8 +71,8 @@
       "models:kitchen5": "models/kitchen5.png",
       "models:monster1": "models/monster_animation1.png",
        "models:monster_attack": "models/tentacle_attack_animation.png",
+        "models:monster_idle": "models/tentacle_idle.png",
 
-      "models:monster2": "models/tentacle_idle1.png",
 
 
     "levels:tilesets:old_ship_tileset":"levels/tilesets/old_ship_tileset.png",
