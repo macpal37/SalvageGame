@@ -22,6 +22,7 @@ public class FlareModel extends DiverObjectModel {
      */
     private Vector2 movement;
 
+
     private PointLight light;
     private PointLight redLight;
 
@@ -231,14 +232,16 @@ public class FlareModel extends DiverObjectModel {
                     }
 //                        System.out.println("flickering");
                 }
-                canvas.draw(flareSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, (float) -Math.PI / 2, .36f, .36f);
-//                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1f, 1f);
 
             }
-            light.setPosition(getX(), getY());
+            canvas.draw(flareSprite, Color.WHITE, origin.x + 50, origin.y + 50, getX() * drawScale.x, getY() * drawScale.y, getAngle() - (float) Math.PI / 2, .36f, .36f);
+
+            light.setPosition(getX() + 25 / 32f, getY() - 10 / 32f);
             light.setActive(true);
-            redLight.setPosition(getX(), getY());
+            redLight.setPosition(light.getX(), light.getY());
             redLight.setActive(true);
+
+
         }
     }
 

@@ -1117,15 +1117,17 @@ public class DiverModel extends GameObject {
             if (flare_duration < MAX_FLARE_DURATION) {
 
                 f.setActivated(true);
-                f.setX(getX());
-                f.setY(getY());
+                f.setX(getX() + (25 / 32f * (float) Math.cos(getAngle())));
+                f.setY(getY() + (25 / 32f * (float) Math.sin(getAngle())));
+                f.setAngle(getAngle());
                 flare_duration++;
 //                System.out.println("FLARe IS ACTIVE");
             } else {
 //                f.setActivated(false);
                 f.setCarried(false);
-                f.setX(getX());
-                f.setY(getY());
+                f.setX(getX() + (25 / 32f * (float) Math.cos(getAngle())));
+                f.setY(getY() + (25 / 32f * (float) Math.sin(getAngle())));
+                f.setAngle(0);
                 f.setVX(0);
                 f.setVY(0);
                 num_flares--;
