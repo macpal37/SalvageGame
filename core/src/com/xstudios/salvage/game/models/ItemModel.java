@@ -154,12 +154,15 @@ public class ItemModel extends DiverObjectModel {
     public void setInChest(boolean b) {
         isInChest = b;
     }
-    public void updateChestLocation(Vector2 loc){
-        chest_location.set(loc);
+
+    public void updateChestLocation(Vector2 loc) {
+        chest_location.set(loc.x, loc.y + 2f);
     }
+
     public void setKeyActive(boolean b) {
         keyActive = b;
     }
+
     public boolean isKeyActive() {
         return keyActive;
     }

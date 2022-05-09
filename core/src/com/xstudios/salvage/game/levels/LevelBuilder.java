@@ -138,7 +138,7 @@ public class LevelBuilder {
         plantAnimation = directory.getEntry("models:plant", Texture.class);
         keyAnimation = directory.getEntry("models:key_animation", Texture.class);
         //Treasure Chest Animations
-        treasureKeyAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_key", Texture.class), 1, 40, 40);
+        treasureKeyAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_key", Texture.class), 2, 21, 42);
         treasureOpenAnimation = new FilmStrip(directory.getEntry("models:treasure_chest", Texture.class), 1, 14, 14);
         treasureMonsterAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_monster", Texture.class), 1, 36, 36);
         monsterTenctacle = directory.getEntry("models:monster1", Texture.class);
@@ -691,7 +691,7 @@ public class LevelBuilder {
             // Within a group, there can be only one key, so arbitrarily put a key in the first one
             TreasureModel key_chest = chest_lst.get(0);
             key_chest.setTreasureType(TreasureType.Key, treasureKeyAnimation.copy());
-            ItemModel key = new ItemModel(key_chest.getX(), key_chest.getY(),
+            ItemModel key = new ItemModel(key_chest.getX(), key_chest.getY() + 10f,
                     constants.get("key"), ItemModel.ItemType.KEY);
             System.out.println("key x: " + key_chest.getX() + " key y: " + key_chest.getY());
             key.setFilmStrip(new FilmStrip(keyAnimation, 1, 6, 6));
@@ -709,11 +709,10 @@ public class LevelBuilder {
                 // if the chest can contain a flare, choose to put a flare in it with probability 10%
                 // otherwise, put a monster in it
                 if (chest.isMayContainFlare()) {
-                    int roll = (int) (Math.random() * 10);
+                    int roll = (int) (Math.random() * 0);
                     if (roll == 1) {
                         chest.setTreasureType(TreasureType.Flare, treasureKeyAnimation.copy());
-                    }
-                    else
+                    } else
                         chest.setTreasureType(TreasureType.Monster, treasureMonsterAnimation.copy());
                 } else {
                     chest.setTreasureType(TreasureType.Monster, treasureMonsterAnimation.copy());

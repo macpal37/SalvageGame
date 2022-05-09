@@ -30,13 +30,21 @@ public class TreasureModel extends ObstacleModel {
         Key, Monster, Flare
     }
 
-    /** The key model */
+    /**
+     * The key model
+     */
     public ItemModel keyReward;
-    /** The tentacle model */
+    /**
+     * The tentacle model
+     */
     public Tentacle trap;
-    /** whether the contents contain a key, monster, or flare */
+    /**
+     * whether the contents contain a key, monster, or flare
+     */
     private TreasureType contents;
-    /** whether the chest has been opened or not */
+    /**
+     * whether the chest has been opened or not
+     */
     private boolean opened = false;
 
     private FilmStrip idleSprite;
@@ -59,6 +67,7 @@ public class TreasureModel extends ObstacleModel {
 
     /**
      * Get the tentacle that spawns from the treasure chest
+     *
      * @return
      */
     public Tentacle getTrap() {
@@ -254,14 +263,20 @@ public class TreasureModel extends ObstacleModel {
             switch (contents) {
                 case Key:
 
-                    if (tick % 6 == 0)
-                        if (sprite.getFrame() < 39)
+
+                    if (tick % 6 == 0) {
+                        if (sprite.getFrame() == 38)
+                            keyReward.setActive(true);
+                        if (sprite.getFrame() < 41)
                             sprite.setFrame(sprite.getFrame() + 1);
+                    }
+
                     // call key's draw function
                     // only draw if active, ie the appearing animation is over
 //                    if (keyReward.isActive()) {
 //                        keyReward.draw(canvas);
 //                    }
+
                     break;
                 case Monster:
                     if (sprite.getFrame() < 35)
@@ -286,5 +301,7 @@ public class TreasureModel extends ObstacleModel {
 
         if (trap != null)
             trap.draw(canvas);
+        if (keyReward != null)
+            keyReward.draw(canvas);
     }
 }
