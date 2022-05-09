@@ -1318,6 +1318,18 @@
                      "width":0,
                      "x":4.5,
                      "y":95.25
+                    }, 
+                    {
+                     "ellipse":true,
+                     "height":0,
+                     "id":2,
+                     "name":"SpawnLocatio",
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":0,
+                     "x":48.75,
+                     "y":84
                     }],
              "opacity":1,
              "type":"objectgroup",

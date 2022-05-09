@@ -631,6 +631,15 @@ public class LevelBuilder {
                             float dif = tileSize / 2f;
                             TreasureModel treasureModel = new TreasureModel(createVerticies(tile, -tileSize / div / 4, -tileSize / div / 4,
                                     widthScale / 2, heightScale), sx, sy, tileSize / 2f, tileSize / 2f, div);
+
+                            if (obj.get("properties") != null)
+                                for (JsonValue prop : obj.get("properties")) {
+                                    if (prop.getString("name").equals("id"))
+                                        treasureModel.setID(prop.getInt("value"));
+                                }
+                            else
+                                treasureModel.setID(0);
+
                             treasureModel.setAngle(rotation);
                             treasureModel.setIdeSuspenseSprite(treasureOpenAnimation.copy(), treasureMonsterAnimation.copy());
                             treasureModel.setTreasureType(TreasureModel.TreasureType.Monster, treasureMonsterAnimation.copy());
