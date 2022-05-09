@@ -1316,7 +1316,7 @@
                      "type":"",
                      "visible":true,
                      "width":0,
-                     "x":4.5,
+                     "x":5.83333333333333,
                      "y":95.25
                     }],
              "opacity":1,
@@ -1587,7 +1587,7 @@
                 {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Tentacle"
                 }]
         }, 
         {
@@ -1596,7 +1596,7 @@
                 {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Text"
                 }]
         }, 
         {

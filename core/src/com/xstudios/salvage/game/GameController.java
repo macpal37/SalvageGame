@@ -610,7 +610,7 @@ public class GameController implements Screen, ContactListener {
         // TODO: or when it is pressed again? Have had some issues with key presses being missed
         // otherwise, stop latching
 
-        if (input.didKickOff() && !level.getDiver().isLatching() && level.getDiver().isTouchingObstacle()) {
+        if (input.didKickOff() && !level.getDiver().isLatching() && level.getDiver().isTouchingObstacle() && level.getDiver().getTouchedWall() != null) {
             //System.out.println("Player Coords: " + level.getDiver().getPosition());
             //System.out.println("Wall Coords: " + level.getDiver().getTouchedWall().getPosition());
             int playerX = (int) level.getDiver().getPosition().x - 1;
@@ -639,6 +639,7 @@ public class GameController implements Screen, ContactListener {
         } else if (!input.didKickOff() && level.getDiver().isLatching()) {
             level.getDiver().setLatching(false);
             level.getDiver().setBoosting(true);
+            level.getDiver().setTouchedWall(null);
             level.getDiver().boost(); // boost according to the current user input
         }
 
@@ -937,7 +938,7 @@ public class GameController implements Screen, ContactListener {
         }
         for (int i = 0; i < tentacles.size(); i++) {
             Tentacle t = tentacles.get(i);
-            System.out.println("Tentacle!");
+
             if (t.isDead()) {
                 tentacles.remove(t);
                 i--;

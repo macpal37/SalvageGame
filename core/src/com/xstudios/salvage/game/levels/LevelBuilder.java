@@ -151,7 +151,7 @@ public class LevelBuilder {
     }
 
     enum TileType {
-        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Decor, Monster, Treasure
+        Empty, Wall, Diver, Obstacle, Item, Door, DeadBody, Block, Goal, Hazard, Decor, Monster, Treasure, Tentacle, Text
     }
 
     class Tile {
@@ -175,6 +175,7 @@ public class LevelBuilder {
             this.width = width;
             this.height = height;
             tileType = t;
+
         }
 
         public Tile(float x, float y, float width, float height, float[] vertices, TileType t) {
@@ -184,6 +185,7 @@ public class LevelBuilder {
             this.width = width;
             this.height = height;
             tileType = t;
+
         }
 
 
@@ -337,13 +339,17 @@ public class LevelBuilder {
                 }
             }
             if (tileJson.get("objectgroup") != null) {
+
+                if (tileType == TileType.Treasure)
+                    System.out.println("YEkjasfkjsadfhbaskdjfbh");
                 float x = 0;
                 float y = 0;
                 float spawnX = -1, spawnY = -1;
                 float rotation = 0;
 
                 for (JsonValue o : tileJson.get("objectgroup").get("objects")) {
-
+                    if (tileType == TileType.Treasure)
+                        System.out.println("HMMM");
                     if (o.getString("name").equals("SpawnLocation")) {
                         rotation = o.getFloat("rotation");
                         spawnX = o.getFloat("x") / div;
@@ -353,6 +359,7 @@ public class LevelBuilder {
                         y = round(o.getFloat("y")) / div;
                         verticies.clear();
                         if (o.get("polygon") != null) {
+
                             for (JsonValue point : o.get("polygon")) {
                                 float vx = (round(point.getFloat("x")) / div) + x;
                                 float vy = tileSize / div - ((round(point.getFloat("y")) / div) + y);
@@ -629,12 +636,33 @@ public class LevelBuilder {
                             break;
                         case Treasure:
                             float dif = tileSize / 2f;
+
                             TreasureModel treasureModel = new TreasureModel(createVerticies(tile, -tileSize / div / 4, -tileSize / div / 4,
                                     widthScale / 2, heightScale), sx, sy, tileSize / 2f, tileSize / 2f, div);
+
+                            if (obj.get("properties") != null)
+                                for (JsonValue prop : obj.get("properties")) {
+                                    if (prop.getString("name").equals("door_id"))
+                                        treasureModel.setID(prop.getInt("value"));
+                                    if (prop.getString("name").equals("may_contain_flare"))
+                                        treasureModel.mayContainFlare(prop.getBoolean("value"));
+                                }
+                            else {
+                                treasureModel.setID(0);
+                                treasureModel.mayContainFlare(true);
+
+                            }
                             treasureModel.setAngle(rotation);
                             treasureModel.setIdeSuspenseSprite(treasureOpenAnimation.copy(), treasureMonsterAnimation.copy());
+
+                           
+                            //TODO
                             treasureModel.setTreasureType(TreasureModel.TreasureType.Monster, treasureMonsterAnimation.copy());
 //
+                            treasureModel.setTreasureType(TreasureModel.TreasureType.Key, treasureKeyAnimation.copy());
+
+                            treasureModel.setTreasureType(TreasureModel.TreasureType.Flare, treasureKeyAnimation.copy());
+
                             treasureModel.setScale(1 / 2f, 1 / 2f);
                             treasureModel.initLight(rayHandler);
                             treasureModel.setTentacleRotation(180);

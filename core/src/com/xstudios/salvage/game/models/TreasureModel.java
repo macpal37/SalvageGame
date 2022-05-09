@@ -14,6 +14,16 @@ import java.util.ArrayList;
 
 public class TreasureModel extends ObstacleModel {
 
+    public boolean isMayContainFlare() {
+        return mayContainFlare;
+    }
+
+    boolean mayContainFlare;
+
+    public void mayContainFlare(boolean value) {
+        mayContainFlare = value;
+    }
+
     public enum TreasureType {
         Key, Monster, Flare
     }
