@@ -508,10 +508,10 @@ public class Wall extends GameObject {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        System.out.println("World: " + GameController.worldScale.toString());
+//        System.out.println("World: " + GameController.worldScale.toString());
         if (sprite != null && !invisible) {
             canvas.draw(sprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(),
-                    40f / 25f * GameController.worldScale.x, 40f / 25f * GameController.worldScale.y);
+                    40f / 25f * worldDrawScale.x, 40f / 25f * worldDrawScale.y);
         }
     }
 

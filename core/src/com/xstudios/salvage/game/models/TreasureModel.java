@@ -30,13 +30,21 @@ public class TreasureModel extends ObstacleModel {
         Key, Monster, Flare
     }
 
-    /** The key model */
+    /**
+     * The key model
+     */
     public ItemModel keyReward;
-    /** The tentacle model */
+    /**
+     * The tentacle model
+     */
     public Tentacle trap;
-    /** whether the contents contain a key, monster, or flare */
+    /**
+     * whether the contents contain a key, monster, or flare
+     */
     private TreasureType contents;
-    /** whether the chest has been opened or not */
+    /**
+     * whether the chest has been opened or not
+     */
     private boolean opened = false;
 
     private FilmStrip idleSprite;
@@ -73,6 +81,7 @@ public class TreasureModel extends ObstacleModel {
 
     /**
      * Get the tentacle that spawns from the treasure chest
+     *
      * @return
      */
     public Tentacle getTrap() {
@@ -232,13 +241,16 @@ public class TreasureModel extends ObstacleModel {
             if (opened && tick % 6 == 0) {
                 idleSprite.setFrame(idleSprite.getFrame() + 1);
             }
-            canvas.draw(idleSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), scale.x, scale.y);
+            canvas.draw(idleSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x,
+                    getY() * drawScale.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
         } else if (suspenseSprite.getFrame() < 35) {
             if (tick % 5 == 0)
                 suspenseSprite.setFrame(suspenseSprite.getFrame() + 1);
-            canvas.draw(suspenseSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), scale.x, scale.y);
+            canvas.draw(suspenseSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x,
+                    getY() * drawScale.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
         } else {
-            canvas.draw(sprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), scale.x, scale.y);
+            canvas.draw(sprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x,
+                    getY() * drawScale.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
 
             switch (contents) {
                 case Key:

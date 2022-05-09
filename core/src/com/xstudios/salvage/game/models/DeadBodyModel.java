@@ -85,7 +85,8 @@ public class DeadBodyModel extends DiverObjectModel {
     public void draw(GameCanvas canvas) {
         if (texture != null) {
             if (!carried) {
-                canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+                canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x,
+                        getY() * drawScale.y, getAngle(), 0.25f * worldDrawScale.x, 0.25f * worldDrawScale.y);
             }
         }
     }

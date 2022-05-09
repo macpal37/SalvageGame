@@ -157,10 +157,12 @@ public class ItemModel extends DiverObjectModel {
                         frame = 0;
                     spriteSheet.setFrame(frame);
                 }
-                canvas.draw(spriteSheet, ItemModel.COLOR_OPTIONS[getID()], origin.x * 2, origin.y * 2, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+                canvas.draw(spriteSheet, ItemModel.COLOR_OPTIONS[getID()], origin.x * 2, origin.y * 2,
+                        getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f * worldDrawScale.x, 0.25f * worldDrawScale.y);
             }
             if (!carried && isTouched) {
-                canvas.drawText("Press q", GameController.displayFont, (getX() - getWidth() * 1.25f) * drawScale.x, (getY() + getHeight() * 1.5f) * drawScale.y);
+                canvas.drawText("Press q", GameController.displayFont,
+                        (getX() - getWidth() * 1.25f) * drawScale.x * worldDrawScale.x, (getY() + getHeight() * 1.5f) * drawScale.y * worldDrawScale.y);
                 light.setPosition(getX(), getY());
                 light.setActive(true);
             } else {

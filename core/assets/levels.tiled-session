@@ -1,4 +1,158 @@
 {
+    "fileStates": {
+        "levels/beta_0.json": {
+            "scale": 0.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 501,
+                "y": 501
+            }
+        },
+        "levels/beta_1.json": {
+            "scale": 0.46,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 748.9130434782608,
+                "y": 501.0869565217392
+            }
+        },
+        "levels/beta_2.json": {
+            "scale": 0.33,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1250,
+                "y": 749.9999999999999
+            }
+        },
+        "levels/beta_3.json": {
+            "scale": 0.33,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 998.4848484848485,
+                "y": 749.9999999999999
+            }
+        },
+        "levels/beta_5.json": {
+            "scale": 0.125,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1304,
+                "y": 760
+            }
+        },
+        "levels/in_progress.json": {
+            "scale": 0.15275999999999998,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1250.3273108143494,
+                "y": 752.814873003404
+            }
+        },
+        "levels/level0.json": {
+            "scale": 0.4674,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 749.8930252460419,
+                "y": 501.7115960633291
+            }
+        },
+        "levels/level1.json": {
+            "scale": 0.2337,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1399.229781771502,
+                "y": 1093.2819854514337
+            }
+        },
+        "levels/level2.json": {
+            "scale": 0.175275,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1996.8620738838968,
+                "y": 1503.3518756240194
+            }
+        },
+        "levels/level3.json": {
+            "scale": 0.35055,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 998.4310369419484,
+                "y": 751.6759378120097
+            }
+        },
+        "levels/level4.json": {
+            "scale": 0.19,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1794.7368421052633,
+                "y": 805.2631578947367
+            }
+        },
+        "levels/t_easy_1.json": {
+            "scale": 0.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 700,
+                "y": 500
+            }
+        },
+        "levels/t_easy_2.json": {
+            "scale": 0.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 750,
+                "y": 502
+            }
+        },
+        "levels/test_level.json": {
+            "scale": 0.75,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1357.3333333333333,
+                "y": 1309.3333333333335
+            }
+        },
+        "levels/tilesets/old_ship_tileset.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/tilesets/tentacle_attack.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/tilesets/tentacle_idle.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/tilesets/tentacle_tile.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/tutorial1.json": {
+            "scale": 0.7011,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 499.2155184709742,
+                "y": 500.6418485237484
+            }
+        },
+        "levels/tutorial2.json": {
+            "scale": 0.4674,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 748.8232777064612,
+                "y": 502.78134360290977
+            }
+        },
+        "levels/tutorial3.json": {
+            "scale": 0.4674,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 748.8232777064612,
+                "y": 502.78134360290977
+            }
+        }
+    },
     "recentFiles": [
         "levels/beta_2.json",
         "levels/level0.json",

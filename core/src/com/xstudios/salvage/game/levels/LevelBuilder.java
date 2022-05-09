@@ -752,7 +752,7 @@ public class LevelBuilder {
         int goalDoorCounter = 0;
         int hazardCounter = 0;
         for (GObject go : gameObjects) {
-
+            go.setWorldDrawScale(drawScale.x / 40f, drawScale.y / 40f);
             if (go instanceof HazardModel) {
                 HazardModel hazard = (HazardModel) go;
                 hazard.setOxygenDrain(-0.1f);

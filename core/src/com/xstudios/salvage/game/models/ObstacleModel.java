@@ -53,7 +53,8 @@ public class ObstacleModel extends Wall {
 
         float scaleZ = 32f;
         if (texture != null) {
-            canvas.draw(texture, Color.WHITE, 0, 0, getX() * drawScale.x, getY() * drawScale.y, getAngle(), scale.x, scale.y);
+            canvas.draw(texture, Color.WHITE, 0, 0, getX() * drawScale.x, getY() * drawScale.y, getAngle(),
+                    scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
 
 
         }

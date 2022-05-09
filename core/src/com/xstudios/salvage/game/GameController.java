@@ -254,7 +254,8 @@ public class GameController extends ScreenController implements ContactListener 
     public void resize(int width, int height) {
         camera.getCamera().setToOrtho(false, width, height);
         camera.getCamera().update();
-        world_scale = new Vector2(width / SCEEN_WIDTH, height / SCEEN_HEIGHT);
+        world_scale = new Vector2(width / SCEEN_WIDTH * 40, height / SCEEN_HEIGHT * 40);
+        worldScale.set(width / SCEEN_WIDTH, height / SCEEN_HEIGHT);
     }
 
     public int getTotalLevels() {
@@ -420,7 +421,7 @@ public class GameController extends ScreenController implements ContactListener 
 //        for (GameObject obj : level.getAllObjects()) {
 //            obj.setDrawScale(world_scale);
 //        }
-        reset();
+//        reset();
     }
 
     /**
@@ -566,6 +567,7 @@ public class GameController extends ScreenController implements ContactListener 
     private void populateLevel() {
 
 //        camera.setZoom(1.0f);
+        System.out.println("SCALE:: " + world_scale.toString());
         levelBuilder.createLevel(levels[curr_level], level, world_scale, symbol_scale, rayHandler);
         pause = false;
 
@@ -720,13 +722,14 @@ public class GameController extends ScreenController implements ContactListener 
 
 
             light.setPosition(
-                    camera.getCameraPosition2D().x / (40f * worldScale.x)
+                    camera.getCameraPosition2D().x / (world_scale.x)
                     ,
-                    camera.getCameraPosition2D().y / (40f * worldScale.y));
+                    camera.getCameraPosition2D().y / (world_scale.y));
             wallShine.setPosition(
-                    camera.getCameraPosition2D().x / (40f * worldScale.x)
+                    camera.getCameraPosition2D().x / (world_scale.x)
                     ,
-                    camera.getCameraPosition2D().y / (40f * worldScale.y));
+                    camera.getCameraPosition2D().y / (world_scale.y));
+//            System.out.println("Light!: " + light.getPosition().toString());
 //            light.setPosition(
 //                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
 //                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
@@ -797,12 +800,12 @@ public class GameController extends ScreenController implements ContactListener 
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-        worldScale.set(world_scale.x, world_scale.y);
+//        worldScale.set(world_scale.x, world_scale.y);
         for (Door door : level.getDoors()) {
             door.setActive(!door.getUnlock(level.getDiver().getItem()));
         }
 //        System.out.println("ScALE: " + world_scale.toString());
-        rayHandler.setCombinedMatrix(camera.getCamera().combined.cpy().scl(world_scale.x * 40f, world_scale.y * 40f, 1f));
+        rayHandler.setCombinedMatrix(camera.getCamera().combined.cpy().scl(world_scale.x, world_scale.y, 1f));
 
 //        System.out.println("isMonsterActive");
         if (monsterController.isMonsterActive()) {
@@ -1025,7 +1028,7 @@ public class GameController extends ScreenController implements ContactListener 
                 if (Gdx.input.isTouched()) clicked = true;
             }
         }
-        canvas.draw(t, c, ox, oy, x, y, 0, 1, 1);
+        canvas.draw(t, c, ox, oy, x, y, 0, 1 * worldScale.x, worldScale.x);
         return clicked;
     }
 
@@ -1037,7 +1040,8 @@ public class GameController extends ScreenController implements ContactListener 
         canvas.begin();
 
         // draw game objects
-        canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0, 4, 4);
+        canvas.draw(background, com.badlogic.gdx.graphics.Color.WHITE, 0, 0, -500, -250, 0,
+                4 * worldScale.x, 4 * worldScale.y);
 
         for (GameObject obj : level.getAllObjects()) {
 //        for (int i = level.getAllObjects().size() - 1; i >= 0; i--) {
@@ -1083,8 +1087,8 @@ public class GameController extends ScreenController implements ContactListener 
                             (float) tempProjectedOxygen.x,
                             tempProjectedOxygen.y,
                             0.0f,
-                            1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()),
-                            0.5f
+                            1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()) * worldScale.x,
+                            0.5f * worldScale.y
                     );
 
                 } else if (level.getDiver().getOxygenLevel() < level.getDiver().getMaxOxygen() / 4 && tick % 25 > (level.getDiver().getOxygenLevel() / 2)) {
@@ -1092,30 +1096,30 @@ public class GameController extends ScreenController implements ContactListener 
                             (float) tempProjectedOxygen.x,
                             tempProjectedOxygen.y,
                             0.0f,
-                            1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()),
-                            0.5f
+                            1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()) * worldScale.x,
+                            0.5f * worldScale.y
                     );
                 } else {
                     canvas.draw(oxygen, Color.WHITE, 0, (float) oxygen.getRegionHeight() / 2,
                             (float) tempProjectedOxygen.x,
                             tempProjectedOxygen.y,
                             0.0f,
-                            1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()),
-                            0.5f
+                            1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()) * worldScale.x,
+                            0.5f * worldScale.y
                     );
                 }
 
 
                 canvas.draw(oxygenText, Color.WHITE, (float) oxygenText.getRegionWidth() / 2, (float) oxygenText.getRegionHeight() / 2,
                         tempProjectedHud.x, tempProjectedOxygen.y,
-                        0.0f, 0.5f, 0.5f);
+                        0.0f, 0.5f * worldScale.x, 0.5f * worldScale.y);
 
                 //draw inventory indicator
                 if (level.getDiver().carryingItem()) {
                     canvas.draw(keyHud, level.getDiver().getItem().getColor(), (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
                             tempProjectedOxygen.x - 50,
                             tempProjectedOxygen.y,
-                            0.0f, 0.35f, 0.35f);
+                            0.0f, 0.35f * worldScale.x, 0.35f * worldScale.y);
 
                 }
 
@@ -1124,13 +1128,13 @@ public class GameController extends ScreenController implements ContactListener 
                     canvas.draw(bodyHud, Color.WHITE, 0, (float) bodyHud.getRegionHeight() / 2,
                             tempProjectedHud.x + 50 + (camera.getCameraPosition2D().x - tempProjectedOxygen.x),
                             tempProjectedOxygen.y,
-                            0.0f, 0.35f, 0.35f);
+                            0.0f, 0.35f * worldScale.x, 0.35f * worldScale.y);
                 }
                 for (int i = 0; i < level.getDiver().getRemainingFlares(); i++) {
                     canvas.draw(flareHud, Color.WHITE, (float) flareHud.getRegionWidth(), (float) flareHud.getRegionHeight() / 2,
                             tempProjectedOxygen.x - 10 * i,
                             tempProjectedOxygen.y,
-                            0.0f, 0.35f, 0.35f);
+                            0.0f, 0.35f * worldScale.x, 0.35f * worldScale.y);
                 }
 
                 break;
@@ -1144,7 +1148,7 @@ public class GameController extends ScreenController implements ContactListener 
                 pauseScreen = camera.getCamera().unproject(pauseScreen);
 
                 canvas.draw(pause_screen, Color.WHITE, pause_screen.getWidth() / 2, pause_screen.getHeight() / 2, pauseScreen.x,
-                        pauseScreen.y, 0.0f, 1, 0.5f);
+                        pauseScreen.y, 0.0f, 1 * worldScale.x, 0.5f * worldScale.y);
 
                 Vector3 resume_button = new Vector3(0, 0, 0);
                 resume_button.x = (float) canvas.getWidth() / 2;
