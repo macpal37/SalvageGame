@@ -4,6 +4,8 @@ import box2dLight.Light;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.PolygonRegion;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.xstudios.salvage.game.GameCanvas;
@@ -28,6 +30,51 @@ public class TreasureModel extends ObstacleModel {
         Key, Monster, Flare
     }
 
+    /** The key model */
+    public ItemModel keyReward;
+    /** The tentacle model */
+    public Tentacle trap;
+    /** whether the contents contain a key, monster, or flare */
+    private TreasureType contents;
+    /** whether the chest has been opened or not */
+    private boolean opened = false;
+
+    private FilmStrip idleSprite;
+    private FilmStrip suspenseSprite;
+    private float openRadius = 5;
+    private CircleShape treasureRadius;
+    // doesn't the parent class already define this variable?
+    private Vector2 origin;
+    private Color lightColor;
+    private Light light;
+    boolean nearChest;
+
+    int tick = 0;
+
+    public TreasureModel(float[] points, float x, float y, float ox, float oy, float div) {
+        super(points, x + ox / div, y + oy / div);
+        origin = new Vector2(ox, oy);
+        lightColor = new Color(255 / 255f, 239 / 255f, 161 / 255f, 0.0f);
+
+    }
+
+    // level builder will find groups of treasure chests with the same id
+    // as we iterate over the objects from tiled, if we see it is a treasure chest
+    // we have a hashmap of ids to lists of treasure chests with the given id
+    // later, we iterate over the keys and assign the contents
+    // - helper function to find which door ids there are
+    // - helper function to return an array of treasure chests assigned an id
+    // - for each door id, get a list of treasure chests with that id. randomize the list of treasure chests.
+    // Within a group, there can be only one key, so put a key in the first one
+    // Given the remaining treasure chests, choose to put a monster or a flare in it with some probability
+    // keep track of the # of flares/monsters so we don't exceed a certain fraction of the non-key chests
+
+    // update and draw should depend on the contents of the treasure
+
+    /**
+     * Get the tentacle that spawns from the treasure chest
+     * @return
+     */
     public Tentacle getTrap() {
         return trap;
     }
@@ -54,9 +101,6 @@ public class TreasureModel extends ObstacleModel {
         this.keyReward = keyReward;
     }
 
-    public ItemModel keyReward;
-    public Tentacle trap;
-
     public TreasureType getContents() {
         return contents;
     }
@@ -65,32 +109,8 @@ public class TreasureModel extends ObstacleModel {
         this.contents = contents;
     }
 
-    private TreasureType contents;
-
-    private FilmStrip idleSprite;
-    private FilmStrip suspenseSprite;
-
     public boolean isOpened() {
         return opened;
-    }
-
-
-    private boolean opened = false;
-
-    private float openRadius = 5;
-
-    private CircleShape treasureRadius;
-
-    private Vector2 origin;
-
-
-    private Color lightColor;
-
-    public TreasureModel(float[] points, float x, float y, float ox, float oy, float div) {
-        super(points, x + ox / div, y + oy / div);
-        origin = new Vector2(ox, oy);
-        lightColor = new Color(255 / 255f, 239 / 255f, 161 / 255f, 0.0f);
-
     }
 
     @Override
@@ -152,7 +172,6 @@ public class TreasureModel extends ObstacleModel {
 
     }
 
-
     /**
      * Determines whether a key or monster appears.
      */
@@ -161,23 +180,26 @@ public class TreasureModel extends ObstacleModel {
         opened = true;
     }
 
-    int tick = 0;
-
     @Override
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
         canvas.drawPhysics(treasureRadius, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
 
+        CircleShape test_randomization = new CircleShape();
+        test_randomization.setRadius(2);
+        if (contents == TreasureType.Key) {
+            canvas.drawPhysics(test_randomization, Color.PINK, this.getX(), this.getY(), drawScale.x, drawScale.y);
+        } else if (contents == TreasureType.Flare) {
+            canvas.drawPhysics(test_randomization, Color.PURPLE, this.getX(), this.getY(), drawScale.x, drawScale.y);
+        } else if (contents == TreasureType.Monster) {
+            canvas.drawPhysics(test_randomization, Color.BLUE, this.getX(), this.getY(), drawScale.x, drawScale.y);
+        }
 
     }
-
-    boolean nearChest;
 
     public void setNearChest(boolean flag) {
         nearChest = flag;
     }
-
-    private Light light;
 
     public void initLight(RayHandler rayHandler) {
         light = new PointLight(rayHandler, 100, lightColor, 10, getX(), getY());
@@ -189,7 +211,6 @@ public class TreasureModel extends ObstacleModel {
         light.setSoft(true);
         light.setActive(false);
     }
-
 
     @Override
     public void draw(GameCanvas canvas) {
@@ -225,7 +246,8 @@ public class TreasureModel extends ObstacleModel {
                     if (tick % 6 == 0)
                         if (sprite.getFrame() < 39)
                             sprite.setFrame(sprite.getFrame() + 1);
-
+                    // call key's draw function
+                    // only draw if active
                     break;
                 case Monster:
                     if (sprite.getFrame() < 35)
@@ -245,7 +267,6 @@ public class TreasureModel extends ObstacleModel {
                             sprite.setFrame(sprite.getFrame() + 1);
                     break;
             }
-
 
         }
 
