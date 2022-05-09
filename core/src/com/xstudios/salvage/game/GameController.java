@@ -819,7 +819,7 @@ public class GameController implements Screen, ContactListener {
             while (attack_tentacles.size() > 0) {
                 Wall add_wall = attack_tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, LevelBuilder.TentacleType.KILL, 1000000);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, LevelBuilder.TentacleType.KILL, 1000000);
                     t.setType(1);
                     t.setGrowRate(4);
                     System.out.println("type" + t.getType());

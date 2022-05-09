@@ -169,7 +169,7 @@ public class MonsterController {
                 if (aggravation <= monster.getAggroLevel() || monster.getAggressiveLength() <= 0 && state != FSMState.ROARING) {
 //                    monster.reduceInvincibilityTime();
                     state = FSMState.IDLE;
-                } else if (aggravation > (monster.getAggroLevel() * 2.0)) {
+                } else if (aggravation > (monster.getAggroLevel() * 4.0)) {
                     state = FSMState.ATTACK;
                     roar_pause = tick;
                 } else {
@@ -178,7 +178,6 @@ public class MonsterController {
                 break;
 
             case ATTACK:
-                monster.setAggravation(100000.0f);
                 state = FSMState.ATTACK;
                 break;
 
@@ -313,16 +312,16 @@ public class MonsterController {
 
 
             case ATTACK:
-                monster.setAggravation(100000.0f);
                 if (!hasRoared){
                     AudioController.getInstance().loud_roar_play(hasRoared);
                     monster.setVisionRadius(10);
                     diver.setStunned(true);
                     diver.setStunCooldown(500);
-                    diver.changeOxygenLevel(1);
                     hasRoared = true;
+                    monster.setAggravation(100000.0f);
                 }
                 else if (tick - roar_pause > 500) {
+                    diver.changeOxygenLevel(2);
                     monster.moveMonster(diver.getPosition());
                     AudioController.getInstance().chase();
                     float best_distance = 10000.0f;

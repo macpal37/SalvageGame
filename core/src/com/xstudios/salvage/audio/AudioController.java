@@ -31,6 +31,8 @@ public class AudioController {
     private int last_playing_tick;
     private int time_apart;
 
+    private float volume_tick;
+
     private AudioController() {
         audio = Audio.init();
         SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("audio/heartbeat.wav"));
@@ -59,11 +61,12 @@ public class AudioController {
         attack_roar.setLooping(false);
         bubbles.setLooping(true);
         alarm.setLooping(true);
-        music.setVolume(0.2f);
+        music.setVolume(0.3f);
         bubbles.setVolume(0.4f);
         alarm.setVolume(0.4f);
         ticks = 0;
         time_apart = 400;
+        volume_tick = 0.0f;
     }
 
     public static AudioController getInstance() {
@@ -168,6 +171,16 @@ public class AudioController {
             loud_roar.setVolume(1.0f);
             loud_roar.play();
         }
+    }
+
+    public void dying() {
+        attack_roar.stop();
+        idle_roar_low.stop();
+        idle_roar_high.stop();
+        music.setVolume(0.2f - volume_tick);
+        music.setVolume(0.2f - volume_tick);
+        volume_tick -= 0.01f;
+        time_apart += 10;
     }
 
     public boolean is_loud_roaring() {
