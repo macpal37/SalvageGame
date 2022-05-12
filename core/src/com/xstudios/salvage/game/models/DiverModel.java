@@ -891,7 +891,7 @@ public class DiverModel extends GameObject {
 //        tick++;
         // possible states: swimming, idling/drifting, latching, boosting
         if (isSwimming()) { // player is actively using the arrow keys
-
+            System.out.println("IS SWIMMING");
 
             // set custom max speed and damping values
             setMaxSpeed(swimMaxSpeed);

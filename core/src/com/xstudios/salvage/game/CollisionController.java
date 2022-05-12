@@ -455,14 +455,16 @@ public class CollisionController {
     public static float staticHazardCollision(DiverModel diver, HazardModel hazard, MonsterController monster) {
 //        System.out.println("Hazard Contact: " + hazard.getOxygenDrain());
 //        System.out.println("START HAZARD COLLISION");
-        if (!diver.getStunned() && !diver.isInvincible() && !monster.isKillState()) {
+        if (!diver.getStunned() && /*!diver.isInvincible() && */ !monster.isKillState()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
-            diver.resetInvincibleTime();
+//            diver.resetInvincibleTime();
+            System.out.println(" WHAT THE FUCK 1 -------------------------- ");
         }
-        else if (!diver.getStunned() && !diver.isInvincible() && monster.isKillState()) {
+        else if (!diver.getStunned() && /*!diver.isInvincible() && */monster.isKillState()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
+            System.out.println(" WHAT THE FUCK 2-------------------------- ");
         }
         diver.setChangeLightFilter(false);
 //        else {

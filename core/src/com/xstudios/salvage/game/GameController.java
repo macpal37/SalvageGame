@@ -594,8 +594,8 @@ public class GameController extends ScreenController implements ContactListener 
     }
 
     private void updateGameState() {
-        System.out.println("game over animation " + game_over_animation_time);
-        System.out.println("oxygen level "+ level.getDiver().getOxygenLevel() );
+//        System.out.println("game over animation " + game_over_animation_time);
+//        System.out.println("oxygen level "+ level.getDiver().getOxygenLevel() );
         if(game_over_animation_time<=0) {
             if(game_state == state.DYING) {
                 game_state = state.EXIT_LOSE;
@@ -635,6 +635,7 @@ public class GameController extends ScreenController implements ContactListener 
         InputController input = InputController.getInstance();
 
         if (input.isPause()) {
+            System.out.println("pAUSE??????????????");
             if (pause)
                 resume();
             else
@@ -653,7 +654,7 @@ public class GameController extends ScreenController implements ContactListener 
         if (input.getHorizontal() != 0 || input.getVertical() != 0) {
             level.getDiver().setFacingDir(input.getHorizontal(), input.getVertical());
         }
-        level.getDiver().reduceInvincibleTime();
+//        level.getDiver().reduceInvincibleTime();
 //        System.out.println("invincible time " + level.getDiver().getInvincibleTime());
 
         // set latching and boosting attributesf
@@ -699,8 +700,10 @@ public class GameController extends ScreenController implements ContactListener 
         level.getDiver().setDriftMovement(physicsController.getCurrentVector(level.getDiver().getPosition()).x,
                 physicsController.getCurrentVector(level.getDiver().getPosition()).y);
         // apply forces for movement
-        if (!level.getDiver().getStunned())
+        if (!level.getDiver().getStunned()) {
             level.getDiver().applyForce();
+//            System.out.println("APPLY FORCE????????????");
+        }
 
         // do the ping
 //        level.getDiver().setPing(input.didOpenChest());
@@ -854,9 +857,9 @@ public class GameController extends ScreenController implements ContactListener 
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     System.out.println("CREATE TENTACLE");
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, LevelBuilder.TentacleType.NewAttack, 400);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, LevelBuilder.TentacleType.NewAttack, 40);
                     addQueuedObject(t);
-                    t.setGrowRate(7);
+                    t.setGrowRate(2);
                 }
             }
             while (idle_tentacles.size() > 0) {
@@ -887,7 +890,7 @@ public class GameController extends ScreenController implements ContactListener 
 //            addQueuedObject(t);
 //        }
 
-        System.out.println("STATE "+ game_state);
+//        System.out.println("STATE "+ game_state);
         switch (game_state) {
             case DYING:
                 game_over_animation_time--;
@@ -925,13 +928,13 @@ public class GameController extends ScreenController implements ContactListener 
 
         //deal with hazard stun
 
-        if (level.getDiver().isInvincible()) {
-            level.getDiver().setHazardInvincibilityFilter();
-//            light.setContactFilter(no_hazard_collision_category, no_hazard_collision_group, no_hazard_collision_mask);
-        } else {
+//        if (level.getDiver().isInvincible()) {
+//            level.getDiver().setHazardInvincibilityFilter();
+////            light.setContactFilter(no_hazard_collision_category, no_hazard_collision_group, no_hazard_collision_mask);
+//        } else {
             level.getDiver().setHazardCollisionFilter();
 //            light.setContactFilter(hazard_collision_category, hazard_collision_group, hazard_collision_mask);
-        }
+//        }
 
         if (level.getDiver().getStunCooldown() > 0) {
 //            System.out.println("PAIN: " + hostileOxygenDrain);
@@ -954,7 +957,7 @@ public class GameController extends ScreenController implements ContactListener 
             changeLightColor(Color.BLACK);
         }
 
-        if (level.getDiver().isInvincible()) {
+        if (level.getDiver().getStunned()) {
             if (light.getDistance() > stun_light_radius) {
                 light.setDistance(light.getDistance() - 1);
             }
