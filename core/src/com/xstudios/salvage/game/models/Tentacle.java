@@ -295,8 +295,8 @@ public class Tentacle extends GameObject {
         if (frame >= 29) {
             frame = -1;
             dead = true;
-
         }
+
         if (startGrowing && frame < extend_frame_length) {
             if (tick % grow_rate == 0) {
                 frame++;
@@ -311,9 +311,6 @@ public class Tentacle extends GameObject {
             tentacleSprite.setFrame(frame);
             canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x,
                     (getY()) * drawScale.y + pivot.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
-
-
-
         }
 
     }

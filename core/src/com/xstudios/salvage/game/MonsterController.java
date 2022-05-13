@@ -47,10 +47,6 @@ public class MonsterController {
          */
         AGGRIVATED,
         /**
-         * The monster is roaring before final attack
-         */
-        ROARING,
-        /**
          * The monster is attacking the player
          */
         ATTACK
@@ -127,7 +123,7 @@ public class MonsterController {
         isRoaring = false;
         roar_pause = 0;
         monster.setAggressiveLength(AGGRESSIVE_LENGTH);
-        MAX_AGGRESSIVE_TIME = monster.getAggressiveLength() * 4;
+        MAX_AGGRESSIVE_TIME = monster.getAggressiveLength() * 10;
     }
 
     public void setAudio(AudioController a) {
@@ -174,6 +170,7 @@ public class MonsterController {
             case GONNA_POUNCE:
                 if (pounce_time > MAX_POUNCE_TIME) {
                     state = FSMState.AGGRIVATED;
+                    //total_aggressive_time = 0;
                     monster.setAggressiveLength(AGGRESSIVE_LENGTH);
                     tick = 0;
 //                    monster.setAggressiveLength((int) (MAX_INVINCIBILITY * aggravation / aggrivation_threshold));
@@ -184,18 +181,17 @@ public class MonsterController {
 
             case AGGRIVATED:
                 System.out.println("Aggravation length " + monster.getAggressiveLength());
-                if (aggravation <= monster.getAggroLevel() || monster.getAggressiveLength() <= 0 && state != FSMState.ROARING) {
+                if (aggravation <= monster.getAggroLevel() || monster.getAggressiveLength() <= 0) {
 //                    monster.reduceInvincibilityTime();
                     state = FSMState.IDLE;
                     monster.setAggravation((9 * monster.getAggravation())/10f);
                 }
-//                else if(total_aggressive_time >= MAX_AGGRESSIVE_TIME) {
-////                    if (aggravation > (monster.getAggroLevel() * 20.0f)) {
-//                    state = FSMState.ATTACK;
-//                }
-//               else if (aggravation > 10.0f) {
-//                    state = FSMState.ATTACK;
-//               }
+                else if(total_aggressive_time >= MAX_AGGRESSIVE_TIME) {
+//                    if (aggravation > (monster.getAggroLevel() * 20.0f)) {
+//                        state = FSMState.ATTACK;
+//                    }
+                    state = FSMState.ATTACK;
+                }
                 else {
                     monster.reduceAggressiveLength();
                 }
