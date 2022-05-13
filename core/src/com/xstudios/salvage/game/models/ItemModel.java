@@ -190,8 +190,8 @@ public class ItemModel extends DiverObjectModel {
                 } else {
                     light.setActive(false);
                 }
-                canvas.draw(spriteSheet, ItemModel.COLOR_OPTIONS[getID()], origin.x * 2, origin.y * 2,
-                        getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f * worldDrawScale.x, 0.25f * worldDrawScale.y);
+//                canvas.draw(spriteSheet, ItemModel.COLOR_OPTIONS[getID()], origin.x * 2, origin.y * 2,
+//                        getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f * worldDrawScale.x, 0.25f * worldDrawScale.y);
             }
             if (!carried && isTouched) {
                 canvas.drawText("Press q", GameController.displayFont,

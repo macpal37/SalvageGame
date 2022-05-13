@@ -730,6 +730,7 @@ public class LevelBuilder {
             key_chest.setTreasureType(TreasureType.Key, treasureKeyAnimation.copy());
             ItemModel key = new ItemModel(key_chest.getX(), key_chest.getY() + 10f,
                     constants.get("key"), ItemModel.ItemType.KEY);
+
             System.out.println("key x: " + key_chest.getX() + " key y: " + key_chest.getY());
             key.setFilmStrip(new FilmStrip(keyAnimation, 1, 6, 6));
 //            key.setAngle(rotation);

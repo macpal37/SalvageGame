@@ -1034,6 +1034,7 @@ public class DiverModel extends GameObject {
                     current_item.setY(getY());
                     //current_item.setGravityScale(1);
                     current_item.setCarried(true);
+                    current_item.setKeyActive(true);
                     break;
                 }
 

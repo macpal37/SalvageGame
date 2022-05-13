@@ -280,12 +280,12 @@
                         {
                          "name":"aggro_rate",
                          "type":"float",
-                         "value":0.006
+                         "value":0.1
                         }, 
                         {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":0.8
+                         "value":15
                         }, 
                         {
                          "name":"tentacle_size",

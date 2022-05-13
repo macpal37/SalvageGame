@@ -1,78 +1,80 @@
 {
-    "activeFile": "",
+    "activeFile": "levels/Golden4.json",
     "expandedProjectPaths": [
+        "levels/tilesets",
+        "levels"
     ],
     "fileStates": {
         "levels/Golden0.json": {
             "scale": 0.8512,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 501.0573308270677,
-                "y": 500.4699248120301
+                "x": 269.0319548872181,
+                "y": 673.7546992481205
             }
         },
         "levels/Golden1.json": {
             "scale": 0.3591,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1251.7404622667784,
-                "y": 751.8796992481205
+                "x": 520.7463102199945,
+                "y": 800.6126427179059
             }
         },
         "levels/Golden2.json": {
             "scale": 0.3591,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 1251.7404622667784,
-                "y": 751.8796992481205
+                "x": 1203.0075187969926,
+                "y": 753.2720690615428
             }
         },
         "levels/Golden3.json": {
             "scale": 0.3591,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1251.7404622667784,
-                "y": 751.8796992481205
+                "x": 930.1030353661934,
+                "y": 861.8769145084937
             }
         },
         "levels/Golden4.json": {
             "scale": 0.3591,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 1251.7404622667784,
-                "y": 751.8796992481205
+                "x": 1203.0075187969926,
+                "y": 730.9941520467837
             }
         },
         "levels/Golden5.json": {
             "scale": 0.3591,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1251.7404622667784,
-                "y": 751.8796992481205
+                "x": 1567.8084099136731,
+                "y": 753.2720690615428
             }
         },
         "levels/Golden6.json": {
             "scale": 0.3591,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1251.7404622667784,
-                "y": 751.8796992481205
+                "x": 2261.208576998051,
+                "y": 803.3973823447508
             }
         },
         "levels/Golden7.json": {
             "scale": 0.3591,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1251.7404622667784,
-                "y": 751.8796992481205
+                "x": 2082.985240879978,
+                "y": 847.9532163742691
             }
         },
         "levels/Golden8.json": {
             "scale": 0.3591,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1251.7404622667784,
-                "y": 751.8796992481205
+                "x": 1918.6856028961292,
+                "y": 672.514619883041
             }
         },
         "levels/beta_0.json": {
@@ -229,20 +231,29 @@
         }
     },
     "openFiles": [
+        "levels/Golden3.json",
+        "levels/Golden2.json",
+        "levels/Golden4.json",
+        "levels/Golden5.json",
+        "levels/Golden6.json",
+        "levels/Golden7.json",
+        "levels/Golden8.json",
+        "levels/Golden1.json",
+        "levels/Golden0.json"
     ],
     "project": "levels.tiled-project",
     "recentFiles": [
+        "levels/Golden3.json",
+        "levels/Golden2.json",
+        "levels/Golden0.json",
+        "levels/Golden1.json",
+        "levels/Golden8.json",
+        "levels/Golden7.json",
+        "levels/Golden6.json",
+        "levels/Golden5.json",
+        "levels/Golden4.json",
         "levels/beta_2.json",
         "levels/level0.json",
-        "levels/beta_0.json",
-        "levels/beta_3.json",
-        "levels/beta_1.json",
-        "levels/tilesets/old_ship_tileset.json",
-        "levels/tilesets/tentacle_attack.json",
-        "levels/tilesets/tentacle_idle.json",
-        "levels/tilesets/tentacle_tile.json",
-        "levels/level1.json",
-        "levels/in_progress.json",
-        "levels/level4.json"
+        "levels/beta_0.json"
     ]
 }

@@ -87,6 +87,7 @@ public class AudioController {
         bubbles.play();
         heartbeat.play();
         heartbeat.setVolume(0.0f);
+        //audio.setMasterVolume(0.6f);
     }
 
     public void setMusic(float v){
@@ -97,7 +98,7 @@ public class AudioController {
     public void setSoundEffects(float s){
         sound_effects_volume = s/4;
         bubbles.setVolume(sound_effects_volume * 0.4f);
-        oxygen_alarm.setVolume(sound_effects_volume * 0.4f);
+        alarm.setVolume(sound_effects_volume * 0.4f);
     }
 
     public void update(float oxygen, float max_oxygen) {
@@ -122,7 +123,7 @@ public class AudioController {
 
     public void wall_collision(float force) {
         //float volume = (force)/20.f;
-        audio.play(wall_collision, 0.5f * sound_effects_volume);
+        audio.play(wall_collision, 0.7f * sound_effects_volume);
     }
 
 
@@ -140,14 +141,14 @@ public class AudioController {
 
     public void idle_roar() {
         double rand = Math.random();
-        float roar_volume = (float) (0.2);
+        float roar_volume = (float) (0.5);
         idle_roar_low.setVolume(roar_volume);
         idle_roar_high.setVolume(roar_volume);
             if (rand > 0.5) {
-                idle_roar_high.stop();
+                //idle_roar_high.stop();
                 idle_roar_low.play();
             } else {
-                idle_roar_low.stop();
+                //idle_roar_low.stop();
                 idle_roar_high.play();
             }
     }
@@ -155,6 +156,7 @@ public class AudioController {
     public void reset() {
         alarm.stop();
         heartbeat.stop();
+        loud_roar.stop();
         ticks = 0;
     }
 

@@ -245,6 +245,17 @@ public class CollisionController {
             HazardModel hazard = (HazardModel) b1.getUserData();
             return staticHazardCollision(diver, hazard, monster);
         }
+
+        if (b1.getUserData() instanceof DiverModel &&
+                b2.getUserData() instanceof Tentacle) {
+            Tentacle t = (Tentacle) b2.getUserData();
+            audio.idle_roar();
+        }
+        else if (b1.getUserData() instanceof Tentacle &&
+                b2.getUserData() instanceof DiverModel) {
+            Tentacle t = (Tentacle) b1.getUserData();
+            audio.idle_roar();
+        }
         // return 0 if not colliding
         return 0;
     }
@@ -458,14 +469,16 @@ public class CollisionController {
         if (!diver.getStunned() && /*!diver.isInvincible() && */ !monster.isKillState()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
+            diver.resetInvincibleTime();
+            ;
 //            diver.resetInvincibleTime();
-            System.out.println(" WHAT THE FUCK 1 -------------------------- ");
         }
         else if (!diver.getStunned() && /*!diver.isInvincible() && */monster.isKillState()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
-            System.out.println(" WHAT THE FUCK 2-------------------------- ");
+
         }
+
         diver.setChangeLightFilter(false);
 //        else {
 //            diver.setChangeLightFilter(true);

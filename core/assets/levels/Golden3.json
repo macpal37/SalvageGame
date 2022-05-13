@@ -326,7 +326,7 @@
                         {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":6
+                         "value":16
                         }],
                  "rotation":0,
                  "type":"",
