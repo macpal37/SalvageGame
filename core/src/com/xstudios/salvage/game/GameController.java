@@ -610,9 +610,9 @@ public class GameController extends ScreenController implements ContactListener 
         } else if (pause) {
             game_state = state.PAUSE;
         }
-//        else {
-//            game_state = state.PLAYING;
-//        }
+        else {
+            game_state = state.PLAYING;
+        }
 
 //        if (level.getDiver().getOxygenLevel() <= 0) {
 //            game_state = state.EXIT_LOSE;
@@ -907,9 +907,10 @@ public class GameController extends ScreenController implements ContactListener 
                 InputController input = InputController.getInstance();
                 if (input.isPause()) {
                     resume();
-                } else {
-                    updatePlayingState();
                 }
+//                else {
+//                    updatePlayingState();
+//                }
                 break;
             // could be useful later but currently just has updates for PLAYING state
 //            case WIN_GAME:
