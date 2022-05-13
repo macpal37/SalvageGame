@@ -859,7 +859,7 @@ public class GameController extends ScreenController implements ContactListener 
                     System.out.println("CREATE TENTACLE");
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, LevelBuilder.TentacleType.NewAttack, 40);
                     addQueuedObject(t);
-                    t.setGrowRate(2);
+                    t.setGrowRate(5);
                 }
             }
             while (idle_tentacles.size() > 0) {
@@ -867,6 +867,7 @@ public class GameController extends ScreenController implements ContactListener 
                 if (add_wall != null) {
                     System.out.println("...............................................");
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, LevelBuilder.TentacleType.Idle, 100);
+                    t.setGrowRate(5);
                     addQueuedObject(t);
 //                AudioController.getInstance().roar();
                 }

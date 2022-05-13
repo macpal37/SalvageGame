@@ -672,7 +672,7 @@ public class LevelBuilder {
                                         monster.setAggravationRate(prop.getFloat("value"));
                                     System.out.println("ahhhhhhhhhhhhhhhhhhhh "+ prop.getFloat("value")  + " " + monster.getAggravationRate());}
                                     else if (prop.getString("name").equals("aggro_threshold"))
-                                        monster.setAggroLevel(prop.getInt("value") * 10.0f);
+                                        monster.setAggroLevel(prop.getInt("value"));
                                     else if (prop.getString("name").equals("vision_radius"))
                                         monster.setVisionRadius(prop.getInt("value"));
 
