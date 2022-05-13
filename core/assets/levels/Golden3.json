@@ -231,7 +231,7 @@
                         {
                          "name":"starting_oxygen",
                          "type":"int",
-                         "value":70
+                         "value":145
                         }],
                  "rotation":0,
                  "type":"",

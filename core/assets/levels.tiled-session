@@ -13,7 +13,7 @@
         },
         "levels/Golden1.json": {
             "scale": 0.3591,
-            "selectedLayer": 0,
+            "selectedLayer": 2,
             "viewCenter": {
                 "x": 1251.7404622667784,
                 "y": 751.8796992481205
@@ -21,7 +21,7 @@
         },
         "levels/Golden2.json": {
             "scale": 0.3591,
-            "selectedLayer": 1,
+            "selectedLayer": 2,
             "viewCenter": {
                 "x": 1251.7404622667784,
                 "y": 751.8796992481205
@@ -37,7 +37,7 @@
         },
         "levels/Golden4.json": {
             "scale": 0.3591,
-            "selectedLayer": 1,
+            "selectedLayer": 2,
             "viewCenter": {
                 "x": 1251.7404622667784,
                 "y": 751.8796992481205
@@ -60,6 +60,14 @@
             }
         },
         "levels/Golden7.json": {
+            "scale": 0.3591,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1251.7404622667784,
+                "y": 751.8796992481205
+            }
+        },
+        "levels/Golden8.json": {
             "scale": 0.3591,
             "selectedLayer": 1,
             "viewCenter": {
