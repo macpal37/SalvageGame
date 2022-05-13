@@ -1,4 +1,9 @@
 {
+    "activeFile": "levels/tilesets/tentacle_idle.json",
+    "expandedProjectPaths": [
+        "levels",
+        "levels/tilesets"
+    ],
     "fileStates": {
         "levels/beta_0.json": {
             "scale": 0.5,
@@ -153,7 +158,12 @@
             }
         }
     },
+    "openFiles": [
+        "levels/tilesets/tentacle_idle.json"
+    ],
+    "project": "",
     "recentFiles": [
+        "levels/tilesets/tentacle_idle.json",
         "levels/beta_2.json",
         "levels/level0.json",
         "levels/beta_0.json",
@@ -161,7 +171,6 @@
         "levels/beta_1.json",
         "levels/tilesets/old_ship_tileset.json",
         "levels/tilesets/tentacle_attack.json",
-        "levels/tilesets/tentacle_idle.json",
         "levels/tilesets/tentacle_tile.json",
         "levels/level1.json",
         "levels/in_progress.json",
