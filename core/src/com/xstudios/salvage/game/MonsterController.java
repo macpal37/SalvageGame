@@ -81,8 +81,10 @@ public class MonsterController {
     private int MAX_INVINCIBILITY = 50;
 
     private int total_aggressive_time = 0;
+    private int last_aggression = 0;
     private int MAX_AGGRESSIVE_TIME;
     private int AGGRESSIVE_LENGTH = 15;
+    private int LAST_AGGRESSIVE_LENGTH = 350;
 
     private PooledList<Vector2> targetLocations;
 
@@ -123,7 +125,7 @@ public class MonsterController {
         isRoaring = false;
         roar_pause = 0;
         monster.setAggressiveLength(AGGRESSIVE_LENGTH);
-        MAX_AGGRESSIVE_TIME = monster.getAggressiveLength() * 10;
+        MAX_AGGRESSIVE_TIME = monster.getAggressiveLength() * 4;
     }
 
     public void setAudio(AudioController a) {
@@ -159,12 +161,12 @@ public class MonsterController {
         // Next state depends on current state.
         switch (state) {
 
-
             case IDLE:
-                if (aggravation > monster.getAggroLevel()) {
+                if (aggravation > monster.getAggroLevel() && last_aggression > LAST_AGGRESSIVE_LENGTH) {
                     state = FSMState.GONNA_POUNCE;
                     pounce_time = 0;
                 }
+                last_aggression++;
                 break;
 
             case GONNA_POUNCE:
@@ -185,6 +187,7 @@ public class MonsterController {
 //                    monster.reduceInvincibilityTime();
                     state = FSMState.IDLE;
                     monster.setAggravation((9 * monster.getAggravation())/10f);
+                    last_aggression = 0;
                 }
                 else if(total_aggressive_time >= MAX_AGGRESSIVE_TIME) {
 //                    if (aggravation > (monster.getAggroLevel() * 20.0f)) {
@@ -303,7 +306,7 @@ public class MonsterController {
 ////                        System.out.println("sadddddddddddddddddddddddddddddddddd");
 //                    }
 //                }
-                if (tick % 50 == 0) {
+                if (tick % 5 == 0) {
                     float best_distance = 10000.0f;
                     float temp_distance = 0.0f;
                     Wall final_loc = null;
@@ -344,7 +347,7 @@ public class MonsterController {
                     roar_pause = tick;
 //                    monster.setAggravation(100000.0f);
                 }
-                else if (tick - roar_pause > 500) {
+                else if (tick - roar_pause > 400) {
 //                    monster.setAggravation(100000.0f);
 //                    diver.changeOxygenLevel(2);
                     monster.moveMonster(diver.getPosition());
