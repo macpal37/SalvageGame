@@ -305,7 +305,7 @@ public class TreasureModel extends ObstacleModel {
 
         if (trap != null)
             trap.draw(canvas);
-        if (keyReward != null)
+        if (keyReward != null && !keyReward.isCarried())
             keyReward.draw(canvas);
     }
 }

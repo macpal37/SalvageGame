@@ -106,12 +106,12 @@
                         {
                          "name":"aggro_rate",
                          "type":"float",
-                         "value":0.0075
+                         "value":0.1
                         }, 
                         {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":5.5
+                         "value":12.5
                         }],
                  "rotation":0,
                  "type":"",
