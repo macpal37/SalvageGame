@@ -254,12 +254,12 @@ public class LevelBuilder {
                 case Idle:
 
                     t = new Tentacle(w, agg_level);
-
+                    t.setTentacleType(type);
                     t.setFilmStrip(monsterIdleAnimation.copy());
                     tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_idle.json"));
                     width = tileset.getFloat("imagewidth");
                     height = tileset.getFloat("imageheight");
-                    t.setPosition(t.getX(), t.getY() - height / div / 8);
+                    t.setPosition(t.getX(), t.getY() - height / div / 8 * (float) Math.cos(t.getAngle()));
                     break;
                 case KILL:
                     t = new Tentacle(w, agg_level);
@@ -668,10 +668,10 @@ public class LevelBuilder {
                             Monster monster = new Monster(sx, sy, true);
                             if (obj.get("properties") != null)
                                 for (JsonValue prop : obj.get("properties")) {
-                                    if (prop.getString("name").equals("aggro_rate")){
+                                    if (prop.getString("name").equals("aggro_rate")) {
                                         monster.setAggravationRate(prop.getFloat("value"));
-                                    System.out.println("ahhhhhhhhhhhhhhhhhhhh "+ prop.getFloat("value")  + " " + monster.getAggravationRate());}
-                                    else if (prop.getString("name").equals("aggro_threshold"))
+                                        System.out.println("ahhhhhhhhhhhhhhhhhhhh " + prop.getFloat("value") + " " + monster.getAggravationRate());
+                                    } else if (prop.getString("name").equals("aggro_threshold"))
                                         monster.setAggroLevel(prop.getInt("value"));
                                     else if (prop.getString("name").equals("vision_radius"))
                                         monster.setVisionRadius(prop.getInt("value"));
