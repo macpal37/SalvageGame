@@ -317,6 +317,17 @@
                  "height":100,
                  "id":90,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"aggro_rate",
+                         "type":"float",
+                         "value":0.075
+                        }, 
+                        {
+                         "name":"aggro_threshold",
+                         "type":"float",
+                         "value":6
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
