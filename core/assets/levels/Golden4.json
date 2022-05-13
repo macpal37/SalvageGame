@@ -254,9 +254,14 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"aggro_rate",
+                         "type":"float",
+                         "value":0.1
+                        }, 
+                        {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":40
+                         "value":20
                         }],
                  "rotation":0,
                  "type":"",
