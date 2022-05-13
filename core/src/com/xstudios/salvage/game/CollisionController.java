@@ -277,14 +277,14 @@ public class CollisionController {
     public void startDiverMonsterCollision(Body b1, Body b2) {
         Object fd1 = b1.getUserData();
         Object fd2 = b2.getUserData();
-        if (b1.getUserData() instanceof DiverModel &&
-                b2.getUserData() instanceof Monster) {
-            audio.idle_roar();
-
-        } else if (b1.getUserData() instanceof Monster &&
-                b2.getUserData() instanceof DiverModel) {
-            audio.idle_roar();
-        }
+//        if (b1.getUserData() instanceof DiverModel &&
+//                b2.getUserData() instanceof Monster) {
+//            audio.idle_roar();
+//
+//        } else if (b1.getUserData() instanceof Monster &&
+//                b2.getUserData() instanceof DiverModel) {
+//            audio.idle_roar();
+//        }
     }
 
     /**
@@ -459,12 +459,10 @@ public class CollisionController {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
 //            diver.resetInvincibleTime();
-            System.out.println(" WHAT THE FUCK 1 -------------------------- ");
         }
         else if (!diver.getStunned() && /*!diver.isInvincible() && */monster.isKillState()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
-            System.out.println(" WHAT THE FUCK 2-------------------------- ");
         }
         diver.setChangeLightFilter(false);
 //        else {
