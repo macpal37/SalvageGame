@@ -138,11 +138,11 @@ public class MonsterController {
     }
 
     public void wallCollision() {
-        if (monster != null) {
+        if (monster != null && state != FSMState.AGGRIVATED) {
             float agg = monster.getAggravation();
 //            if (agg < monster.getAggroLevel() + 1) {
-            System.out.println("agg rate "+ monster.getAggravationRate());
-                monster.setAggravation(agg + monster.getAggravationRate());
+            //System.out.println("agg rate "+ monster.getAggravationRate());
+            monster.setAggravation(agg + monster.getAggravationRate());
 //            }
         }
 

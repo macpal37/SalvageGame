@@ -1,10 +1,80 @@
 {
-    "activeFile": "levels/tilesets/tentacle_idle.json",
+    "activeFile": "",
     "expandedProjectPaths": [
-        "levels",
-        "levels/tilesets"
     ],
     "fileStates": {
+        "levels/Golden0.json": {
+            "scale": 0.8512,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 501.0573308270677,
+                "y": 500.4699248120301
+            }
+        },
+        "levels/Golden1.json": {
+            "scale": 0.3591,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1251.7404622667784,
+                "y": 751.8796992481205
+            }
+        },
+        "levels/Golden2.json": {
+            "scale": 0.3591,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1251.7404622667784,
+                "y": 751.8796992481205
+            }
+        },
+        "levels/Golden3.json": {
+            "scale": 0.3591,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1251.7404622667784,
+                "y": 751.8796992481205
+            }
+        },
+        "levels/Golden4.json": {
+            "scale": 0.3591,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 1251.7404622667784,
+                "y": 751.8796992481205
+            }
+        },
+        "levels/Golden5.json": {
+            "scale": 0.3591,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1251.7404622667784,
+                "y": 751.8796992481205
+            }
+        },
+        "levels/Golden6.json": {
+            "scale": 0.3591,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1251.7404622667784,
+                "y": 751.8796992481205
+            }
+        },
+        "levels/Golden7.json": {
+            "scale": 0.3591,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1251.7404622667784,
+                "y": 751.8796992481205
+            }
+        },
+        "levels/Golden8.json": {
+            "scale": 0.3591,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1251.7404622667784,
+                "y": 751.8796992481205
+            }
+        },
         "levels/beta_0.json": {
             "scale": 0.5,
             "selectedLayer": 1,
@@ -159,11 +229,9 @@
         }
     },
     "openFiles": [
-        "levels/tilesets/tentacle_idle.json"
     ],
-    "project": "",
+    "project": "levels.tiled-project",
     "recentFiles": [
-        "levels/tilesets/tentacle_idle.json",
         "levels/beta_2.json",
         "levels/level0.json",
         "levels/beta_0.json",
@@ -171,6 +239,7 @@
         "levels/beta_1.json",
         "levels/tilesets/old_ship_tileset.json",
         "levels/tilesets/tentacle_attack.json",
+        "levels/tilesets/tentacle_idle.json",
         "levels/tilesets/tentacle_tile.json",
         "levels/level1.json",
         "levels/in_progress.json",
