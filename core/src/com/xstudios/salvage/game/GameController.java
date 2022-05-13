@@ -1315,7 +1315,7 @@ public class GameController extends ScreenController implements ContactListener 
 
 
         collisionController.startDiverToObstacle(fix1, fix2, level.getDiver(), monsterController);
-        if (listener != null) {
+        if (listener != null && !reach_target) {
             reach_target = collisionController.getWinState(body1, body2, level.getDiver());
 
         }
