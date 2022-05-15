@@ -1,29 +1,28 @@
 package com.xstudios.salvage.game.models;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.ShortArray;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.xstudios.salvage.util.FilmStrip;
 
+import java.util.ArrayList;
+
 public class Tentacle extends GameObject {
     /**
      * Shape information for this physics object
      */
-    protected PolygonShape[][] shapes;
+    protected PolygonShape[] shapes;
 
     /**
      * Shape information for this physics object
      */
-    protected Fixture[][] geoms;
+    protected ArrayList<Fixture[]> geoms = new ArrayList<>();
     /**
      * Cache of the polygon vertices (for resizing)
      */
@@ -37,14 +36,22 @@ public class Tentacle extends GameObject {
     private int frame = 0;
     private int life = 0;
     private int change = 0;
+    private int extend_frame_length = 16;
+    private int total_frames = 30;
+    private int type;
+
 
     private Wall spawnWall;
+    private int animation_length;
 
-    public Tentacle(Wall wall) {
+    public Tentacle(Wall wall, float len) {
         this(wall.getTentacleSpawnPosition().x, wall.getTentacleSpawnPosition().y);
         spawnWall = wall;
         spawnWall.setHasTentcle(true);
         setAngle(wall.getTentacleRotation() / 180 * (float) Math.PI);
+        System.out.println("length " + len);
+        extend_frame_length = 16;
+        System.out.println("extend frame length: " + extend_frame_length);
     }
 
     public Tentacle() {
@@ -98,6 +105,34 @@ public class Tentacle extends GameObject {
         origin.set(texture.getRegionWidth() / 2.0f, texture.getRegionHeight() / 2.0f);
     }
 
+
+    @Override
+    public void setPosition(Vector2 value) {
+        super.setPosition(value);
+        for (HazardModel hm : collisionBoxes) {
+            if (hm != null)
+                hm.setPosition(value);
+        }
+    }
+
+    @Override
+    public void setPosition(float x, float y) {
+        super.setPosition(x, y);
+        for (HazardModel hm : collisionBoxes) {
+            if (hm != null)
+                hm.setPosition(x, y);
+        }
+    }
+
+    @Override
+    public void setAngle(float value) {
+        super.setAngle(value);
+        for (HazardModel hm : collisionBoxes) {
+            if (hm != null)
+                hm.setAngle(value);
+        }
+    }
+
     public void setFilmStrip(FilmStrip value) {
         tentacleSprite = value;
         tentacleSprite.setFrame(1);
@@ -116,8 +151,9 @@ public class Tentacle extends GameObject {
 
         releaseFixtures();
 
-        for (HazardModel hm : collisionBoxes)
+        for (HazardModel hm : collisionBoxes) {
             hm.createFixtures();
+        }
 
         markDirty(false);
     }
@@ -139,12 +175,15 @@ public class Tentacle extends GameObject {
     }
 
     public void update() {
-        life++;
+        if (isActive())
+            life++;
 
-        if (life > maxLifeSpan) {
-            startGrowing = false;
+        if (life > maxLifeSpan && startGrowing) {
+//        System.out.println("frame " + frame + " max life span " + extend_frame_length);
+//        if (frame >= extend_frame_length && frame < total_frames - extend_frame_length && startGrowing) {
+            setStartGrowing(false);
         }
-
+//TODO fix the collision boxes thing
         if (frame == 1) {
             collisionBoxes[0].setActive(true);
         }
@@ -178,6 +217,10 @@ public class Tentacle extends GameObject {
      */
     public void setStartGrowing(boolean startGrowing) {
         this.startGrowing = startGrowing;
+        System.out.println("start growing: " + startGrowing + " frame " + frame + " total frame " + extend_frame_length);
+//        if(!startGrowing && frame < extend_frame_length) {
+//            frame = total_frames - frame;
+//        }
     }
 
     public boolean isStartGrowing() {
@@ -190,7 +233,7 @@ public class Tentacle extends GameObject {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-
+        
 
         canvas.drawPhysics(circ, Color.GREEN, getX(), getY(), drawScale.x, drawScale.y);
         for (HazardModel hm : collisionBoxes) {
@@ -203,10 +246,9 @@ public class Tentacle extends GameObject {
     }
 
     public Wall getDead() {
-        if (frame == -1){
+        if (frame == -1) {
             return spawnWall;
-        }
-        else{
+        } else {
             return null;
         }
     }
@@ -217,7 +259,6 @@ public class Tentacle extends GameObject {
         scale.set(x, y);
     }
 
-
     int tick = 0;
 
     public Vector2 pivot = new Vector2(0, 0);
@@ -226,31 +267,49 @@ public class Tentacle extends GameObject {
         pivot.set(x, y);
     }
 
+    public void setAnimationLength(int l) {
+        extend_frame_length = l;
+    }
+
+    public void setGrowRate(int grow_rate) {
+        this.grow_rate = grow_rate;
+    }
+
+    public void setType (int type) { this.type = type;}
+    public int getType () { return this.type;}
+
+    int grow_rate = 10;
+
+    public boolean isDead() {
+        return dead;
+    }
+
+    boolean dead = false;
 
     @Override
     public void draw(GameCanvas canvas) {
         update();
 
         tick++;
-        if (frame == 30) {
+
+        if (frame >= 29) {
             frame = -1;
+            dead = true;
 
         }
-        if (startGrowing && frame < 16) {
-            if (tick % 5 == 0) {
+        if (startGrowing && frame < extend_frame_length) {
+            if (tick % grow_rate == 0) {
                 frame++;
             }
         } else if (!startGrowing && frame > 0) {
-            if (tick % 5 == 0) {
+            if (tick % grow_rate == 0) {
                 frame++;
             }
         }
 
-        if (frame >= 0) {
+        if (frame >= 0 && isActive()) {
             tentacleSprite.setFrame(frame);
             canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x, (getY()) * drawScale.y + pivot.y, getAngle(), scale.x, scale.y);
-
-
         }
 
     }
@@ -267,6 +326,10 @@ public class Tentacle extends GameObject {
     public boolean activatePhysics(World world) {
         for (HazardModel hm : collisionBoxes) {
             hm.activatePhysics(world);
+
+            for (int i = 0; i < hm.getFixtureList().length; i++) {
+                hm.getFixtureList()[i].setUserData(this);
+            }
             hm.setActive(false);
         }
 
@@ -280,11 +343,10 @@ public class Tentacle extends GameObject {
      * @param world Box2D world that stores body
      */
     public void deactivatePhysics(World world) {
+        spawnWall.setHasTentcle(false);
         for (HazardModel hm : collisionBoxes) {
             hm.deactivatePhysics(world);
         }
-
-
         if (body != null) {
             // Snapshot the values
             setBodyState(body);

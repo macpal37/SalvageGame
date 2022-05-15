@@ -1,6 +1,14 @@
 package com.xstudios.salvage.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerMapping;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
@@ -10,6 +18,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.util.ScreenListener;
 
@@ -161,6 +170,11 @@ public class GameOverController extends ScreenController {
 
 
     /**
+<<<<<<< HEAD
+     * Sets the ScreenListener for this mode
+     * <p>
+     * The ScreenListener will respond to requests to quit.
+=======
      * Called when a finger was lifted or a mouse button was released.
      *
      * This method checks to see if the play button is currently pressed down. If so,
@@ -170,6 +184,7 @@ public class GameOverController extends ScreenController {
      * @param screenY the y-coordinate of the mouse on the screen
      * @param pointer the button or touch finger number
      * @return whether to hand the event to other listeners.
+>>>>>>> 59eb7d2e1fed53c568bbdd46ab5dcc9b1fcc4d97
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         //if clicked on restart_game, then exit to controller
@@ -186,17 +201,26 @@ public class GameOverController extends ScreenController {
 
         return true;
     }
+
     /**
+<<<<<<< HEAD
+     * Sets the canvas associated with this controller
+     * <p>
+     * The canvas is shared across all controllers.  Setting this value will compute
+     * the drawing scale from the canvas size.
+=======
      * Called when a button on the Controller was pressed.
      *
      * The buttonCode is controller specific. This listener only supports the start
      * button on an X-Box controller.  This outcome of this method is identical to
      * pressing (but not releasing) the play button.
+>>>>>>> 59eb7d2e1fed53c568bbdd46ab5dcc9b1fcc4d97
      *
      * @param controller The game controller
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
+
     public boolean buttonDown (Controller controller, int buttonCode) {return true;}
 
     /**

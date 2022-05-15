@@ -47,6 +47,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void create () {
 		current = 0;
 		cameraController = new CameraController(32,18);
+
 //		gameCameraController = new CameraController(32, 18);
 
 		canvas = new GameCanvas(cameraController);

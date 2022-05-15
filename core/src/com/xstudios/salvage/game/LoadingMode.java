@@ -1,5 +1,6 @@
 package com.xstudios.salvage.game;
 
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -21,12 +22,18 @@ import com.xstudios.salvage.util.ScreenListener;
  */
 public class LoadingMode implements Screen {
     // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
-    /** Internal assets for this loading screen */
+    /**
+     * Internal assets for this loading screen
+     */
     private AssetDirectory internal;
-    /** The actual assets to be loaded */
+    /**
+     * The actual assets to be loaded
+     */
     private AssetDirectory assets;
 
-    /** Background texture for start-up */
+    /**
+     * Background texture for start-up
+     */
     private Texture background;
     private Texture tentacles;
 
@@ -35,24 +42,41 @@ public class LoadingMode implements Screen {
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = 720;
 
+    /**
+     * Default budget for asset loader (do nothing but load 60 fps)
+     */
+    private static int DEFAULT_BUDGET = 15;
+
+    /**
+     * Reference to GameCanvas created by the root
+     */
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
-    /** Listener that will update the player mode when we are done */
+    /**
+     * Listener that will update the player mode when we are done
+     */
     private ScreenListener listener;
-
-
 
     private int width;
     private int height;
-    /** Scaling factor for when the student changes the resolution. */
+
+    /**
+     * Scaling factor for when the student changes the resolution.
+     */
     private float scale;
 
-    /** Current progress (0 to 1) of the asset manager */
+    /**
+     * Current progress (0 to 1) of the asset manager
+     */
     private float progress;
-    /** The amount of time to devote to loading assets (as opposed to on screen hints, etc.) */
+    /**
+     * The amount of time to devote to loading assets (as opposed to on screen hints, etc.)
+     */
     private int budget;
 
-    /** Whether or not this player mode is still active */
+    /**
+     * Whether or not this player mode is still active
+     */
     private boolean active;
     private boolean done;
 
@@ -71,6 +95,22 @@ public class LoadingMode implements Screen {
     }
 
     /**
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+     * Creates a LoadingMode with the default budget, size and position.
+     *
+     * @param file   The asset directory to load in the background
+     * @param canvas The game canvas to draw to
+     */
+//    public LoadingMode(String file, GameCanvas canvas) {
+//        this(file, canvas, DEFAULT_BUDGET);
+//    }
+
+    /**
+>>>>>>> origin/beta_merge
+=======
+>>>>>>> 59eb7d2e1fed53c568bbdd46ab5dcc9b1fcc4d97
      * Creates a LoadingMode with the default size and position.
      *
      * <p>The budget is the number of milliseconds to spend loading assets each animation frame. This
@@ -78,7 +118,7 @@ public class LoadingMode implements Screen {
      * if the budget is 10, you have 6 milliseconds to do something else. This is how game companies
      * animate their loading screens.
      *
-     * @param file The asset directory to load in the background
+     * @param file   The asset directory to load in the background
      * @param canvas The game canvas to draw to
      * @param millis The loading budget in milliseconds
      */
@@ -181,6 +221,7 @@ public class LoadingMode implements Screen {
     }
 
     // ADDITIONAL SCREEN METHODS
+
     /**
      * Called when the Screen should render itself.
      *
@@ -207,11 +248,12 @@ public class LoadingMode implements Screen {
      * <p>This can happen at any point during a non-paused state but will never happen before a call
      * to show().
      *
-     * @param width The new width in pixels
+     * @param width  The new width in pixels
      * @param height The new height in pixels
      */
     public void resize(int width, int height) {
         // Compute the drawing scale
+
         float sx = ((float)width)/STANDARD_WIDTH;
         float sy = ((float)height)/STANDARD_HEIGHT;
         scale = (sx < sy ? sx : sy);
@@ -242,7 +284,9 @@ public class LoadingMode implements Screen {
 
     }
 
-    /** Called when this screen becomes the current screen for a Game. */
+    /**
+     * Called when this screen becomes the current screen for a Game.
+     */
     public void show() {
     }
 

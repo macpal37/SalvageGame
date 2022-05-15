@@ -315,6 +315,7 @@ public abstract class GameObject extends GObject{
      * @return true if the body is active
      */
     public boolean isActive() {
+//        System.out.println("HELPPPPPPPPPPPPPP " +body != null  + " hhh "+ (body != null ? body.isActive() : super.isActive()));
         return (body != null ? body.isActive() : super.isActive());
     }
 

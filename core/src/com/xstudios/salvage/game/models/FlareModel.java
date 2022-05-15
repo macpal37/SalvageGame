@@ -22,6 +22,7 @@ public class FlareModel extends DiverObjectModel {
      */
     private Vector2 movement;
 
+
     private PointLight light;
     private PointLight redLight;
 
@@ -29,9 +30,13 @@ public class FlareModel extends DiverObjectModel {
 
     private int FLARE_LIGHT_RADIUS = 10;
     private int MIN_LIGHT_RADIUS = 1;
+    private float LIGHT_RADIUS_SCALE = .1f;
 
     private Color light_color;
     private Color white_light;
+
+    private float white_alpha_val = .4f;
+    private float color_alpha_val = .6f;
 
     private boolean isActivated;
     private float MAX_SPEED = .7f;
@@ -40,6 +45,8 @@ public class FlareModel extends DiverObjectModel {
 
     public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.CYAN};
     Color item_color;
+
+    private CircleShape radialPresence;
 
     public FlareModel(JsonValue data) {
         this(0, 0, data);
@@ -55,12 +62,12 @@ public class FlareModel extends DiverObjectModel {
             item_color = Color.WHITE;
         }
         movement = new Vector2();
-        light_color = new Color(1f, 0.5f, 0.5f, 0.6f);//Color.BLACK;
-        white_light = new Color(1f, 1f, 1f, 0.4f);
+        light_color = new Color(1f, 0.5f, 0.5f, color_alpha_val);//Color.BLACK;
+        white_light = new Color(1f, 1f, 1f, white_alpha_val);
         setCarried(true);
         drawScale.set(40, 40);
         isActivated = false;
-        shape.setAsBox(.5f, .05f, new Vector2(.15f, -.225f), 0);
+        shape.setAsBox(.27f, .05f, new Vector2(.15f, -.45f), 0);
     }
 
 
@@ -105,6 +112,7 @@ public class FlareModel extends DiverObjectModel {
     public void removeLights() {
         if (light != null)
             light.remove();
+
         if (redLight != null)
             redLight.remove();
     }
@@ -142,6 +150,19 @@ public class FlareModel extends DiverObjectModel {
         fixture.shape = shape;
 
         geometry = body.createFixture(fixture);
+
+        // Create the fixture
+        // create a sensor to detect wall collisions
+        FixtureDef monsterDef = new FixtureDef();
+        monsterDef.isSensor = true;
+        // we don't want this fixture to collide, just act as a sensor
+        monsterDef.filter.groupIndex = -1;
+        radialPresence = new CircleShape();
+        radialPresence.setRadius(FLARE_LIGHT_RADIUS * LIGHT_RADIUS_SCALE);
+        monsterDef.shape = radialPresence;
+        Fixture hitboxFixture = body.createFixture(monsterDef);
+        hitboxFixture.setUserData("FlareRadius");
+
         markDirty(false);
     }
 
@@ -169,6 +190,13 @@ public class FlareModel extends DiverObjectModel {
         origin.set(texture.getRegionWidth() / 2.0f, texture.getRegionHeight() / 2.0f);
     }
 
+    public float getLightRadius() {
+        if (isActivated) {
+            return light.getDistance();
+        } else {
+            return 0;
+        }
+    }
 
     public int tick = 0;
 
@@ -204,14 +232,16 @@ public class FlareModel extends DiverObjectModel {
                     }
 //                        System.out.println("flickering");
                 }
-                canvas.draw(flareSprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, (float) -Math.PI / 2, .36f, .36f);
-//                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 1f, 1f);
 
             }
-            light.setPosition(getX(), getY());
+            canvas.draw(flareSprite, Color.WHITE, origin.x + 50, origin.y + 50, getX() * drawScale.x, getY() * drawScale.y, getAngle() - (float) Math.PI / 2, .36f, .36f);
+
+            light.setPosition(getX() + 25 / 32f, getY() - 10 / 32f);
             light.setActive(true);
-            redLight.setPosition(getX(), getY());
+            redLight.setPosition(light.getX(), light.getY());
             redLight.setActive(true);
+
+
         }
     }
 
@@ -224,17 +254,12 @@ public class FlareModel extends DiverObjectModel {
     @Override
     public void setCarried(boolean b) {
         carried = b;
-        if (!carried) {
-            light.setColor(new Color(1f, 1f, 1f, 0.6f));
-            light.setDistance(5);
-            redLight.setColor(new Color(1f, 0.5f, 0.5f, 0.6f));
-        }
-
     }
 
     @Override
     public void drawDebug(GameCanvas canvas) {
         canvas.drawPhysics(shape, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
+        canvas.drawPhysics(radialPresence, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
     }
 
     /**
@@ -337,28 +362,47 @@ public class FlareModel extends DiverObjectModel {
         return light;
     }
 
-    public void setLightColor(Color c) {
-        light.setColor(c);
-    }
+    public void turnOffLight(float white_color_percent, float color_percent) {
+//        light_color.a = .6f;
+        light_color.a = color_percent * color_alpha_val;
+        white_light.a = white_color_percent * white_alpha_val;
+//        float temp_color = light_color.a * color_percent;
+//        if(temp_color <= 0){
+//            light_color.a = .05f;// color_alpha_val;
+//        } else {
+//            light_color.a = temp_color;
+//        }
+//
+//        float temp_white = white_light.a * white_color_percent;
+//        if(temp_white <= 0){
+//            white_light.a = .05f;// color_alpha_val;
+//        } else {
+//            white_light.a = temp_white;
+//        }
 
-    public void setBrightness(float f) {
-        System.out.println("light color 1 " + light_color.a);
-        System.out.println("light white 1 " + white_light.a);
-        light_color.a *= f;
-        white_light.a *= f;
-
-        light_color.r *= f;
-        white_light.r *= f;
-
-        light_color.g *= f;
-        white_light.g *= f;
-
-        light_color.b *= f;
-        white_light.b *= f;
+//        white_light.a *= white_color_percent;
+//        light_color.a *= color_percent;
         light.setColor(white_light);
         redLight.setColor(light_color);
-        System.out.println("light color 2 " + light_color.a);
-        System.out.println("light white 2 " + white_light.a);
+    }
+
+    public void turnOnLight() {
+        float temp_color = light_color.a * 1.6f;
+        if (temp_color > color_alpha_val) {
+            light_color.a = color_alpha_val;
+        } else {
+            light_color.a = temp_color;
+        }
+
+        float temp_white = white_light.a * 1.6f;
+        if (temp_white > white_alpha_val) {
+            white_light.a = white_alpha_val;
+        } else {
+            white_light.a = temp_white;
+        }
+
+        light.setColor(white_light);
+        redLight.setColor(light_color);
     }
 
     public void setFilmStrip(FilmStrip value) {

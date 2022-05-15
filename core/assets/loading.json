@@ -1,7 +1,6 @@
 {
-	"textures": {
-        "background": "loading/loading_screen.png",
-        "progress": "loading/progressbar.png"
-    }
+  "textures": {
+    "background": "loading/loading_screen.png",
+    "progress": "loading/progressbar.png"
+  }
 }
-
