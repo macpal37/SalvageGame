@@ -67,7 +67,7 @@ public class FlareModel extends DiverObjectModel {
         setCarried(true);
         drawScale.set(40, 40);
         isActivated = false;
-        shape.setAsBox(.27f, .05f, new Vector2(.15f, -.45f), 0);
+        shape.setAsBox(.27f, .05f, new Vector2(-.15f, 0), 0);
     }
 
 
