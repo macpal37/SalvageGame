@@ -117,6 +117,11 @@ public class DiverModel extends GameObject {
     private final float drift_maxspeed;
 
     /**
+     * the boost input
+     */
+    private final float boost_impulse;
+
+    /**
      * Which direction is the character facing
      */
     private boolean faceRight;
@@ -304,10 +309,17 @@ public class DiverModel extends GameObject {
         setFixedRotation(true);
 
         swimMaxSpeed = data.getFloat("maxspeed", 0);
+        swimDamping = data.getFloat("damping", 0);
         drift_maxspeed = data.getFloat("drift_maxspeed", 0);
-
-        damping = data.getFloat("damping", 0);
+        boostedMaxSpeed = data.getFloat("boost_maxspeed");
+        boostDamping = data.getFloat("boost_damping");
+        boost_impulse = data.getFloat("boost_impulse");
         force = data.getFloat("force", 0);
+
+        // the current speed and damping
+        maxSpeed = swimMaxSpeed;
+        damping = swimDamping;
+
         MAX_INVINCIBLE_TIME = data.getInt("invincible_time", 20);
 
         dimension = new Vector2();
@@ -355,18 +367,10 @@ public class DiverModel extends GameObject {
         end2 = new CircleShape();
         cap1 = null;
         cap2 = null;
-        // TODO: Put this in the constants JSON
 
-        boostedMaxSpeed = swimMaxSpeed * 1.5f;
-
-        maxSpeed = swimMaxSpeed;
-        swimDamping = damping;
-
-        boostDamping = damping / 7;
         facingDir = new Vector2(0, 0);
 
         setFixedRotation(false);
-
 
         carrying_body = false;
         dead_body = null;
@@ -594,25 +598,19 @@ public class DiverModel extends GameObject {
         }
         body.setUserData(this);
 
-
-        JsonValue sensorjv = data.get("sensor");
-
-
         // create a sensor to detect wall collisions
         FixtureDef hitboxDef = new FixtureDef();
-        hitboxDef.density = data.getFloat("density", 0);
+        hitboxDef.density = 0; // so we don't add extra mass to the diver
         hitboxDef.isSensor = true;
-        // we don't want this fixture to collide, just act as a sensor
-//        hitboxDef.filter
         hitboxDef.filter.categoryBits = 0x0002;
         hitboxDef.filter.maskBits = 0x0004;
         hitboxDef.filter.groupIndex = 1;
         hitboxShape = new PolygonShape();
-        hitboxShape.setAsBox(getWidth() * 1.6f, getHeight(),
+        hitboxShape.setAsBox(getWidth() * 1.5f, getHeight() * 1.4f,
                 new Vector2(0, 0), 0.0f);
         hitboxDef.shape = hitboxShape;
-//        Fixture hitboxFixture = body.createFixture(hitboxDef);
-//        hitboxFixture.setUserData(hitboxSensorName);
+        Fixture hitboxFixture = body.createFixture(hitboxDef);
+        hitboxFixture.setUserData(hitboxSensorName);
 
         for (FlareModel f : flares) {
             f.activatePhysics(world);
@@ -791,7 +789,7 @@ public class DiverModel extends GameObject {
 
     // TODO: Having a state machine would probably be helpful
     public boolean isSwimming() {
-        return !isLatching() /*&& !isBoosting() */ && movement.len() != 0;
+        return !isLatching() && !isBoosting() && movement.len() != 0;
     }
 
     public boolean isIdling() {
@@ -978,8 +976,7 @@ public class DiverModel extends GameObject {
             setMaxSpeed(boostedMaxSpeed);
             setLinearDamping(boostDamping);
             if (movement.y > 0) {
-//                targetAngleY = 85;
-
+                targetAngleY = 85;
             } else if (movement.y < 0) {
                 targetAngleY = -85;
             }
@@ -992,6 +989,7 @@ public class DiverModel extends GameObject {
                 targetAngleX = 180;
             }
             // TODO: Currently doesn't take movement input. Will need steering in specific dirs only?
+
             if (Math.abs(getVX()) >= getMaxSpeed()) {
                 setVX(Math.signum(getVX()) * getMaxSpeed());
             }
@@ -1211,12 +1209,10 @@ public class DiverModel extends GameObject {
 
     public void boost() {
         // set impulse in direction of key input
-        float boost = 3f;
-
-        forceCache.set(facingDir.nor().x * boost, facingDir.nor().y * boost);
+        forceCache.set(facingDir.nor().x * boost_impulse, facingDir.nor().y * boost_impulse);
+        body.setLinearVelocity(Vector2.Zero); // make sure to zero out prev velocity just in case
         body.applyLinearImpulse(forceCache, body.getWorldCenter(), true);
-        forceCache.set(movement.nor().x * boost, movement.nor().y * boost);
-        body.applyLinearImpulse(forceCache, body.getPosition(), true);
+        System.out.println("Diver Vel after boost: " + getLinearVelocity().len());
     }
 
     public void dropItem() {
