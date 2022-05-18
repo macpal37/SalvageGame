@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.xstudios.salvage.game.levels.LevelBuilder;
 import com.xstudios.salvage.util.FilmStrip;
 
 import java.util.ArrayList;
@@ -184,29 +185,44 @@ public class Tentacle extends GameObject {
             setStartGrowing(false);
         }
 //TODO fix the collision boxes thing
-        if (frame == 1) {
-            collisionBoxes[0].setActive(true);
-        }
-        if (frame == 5) {
-            collisionBoxes[1].setActive(true);
-        }
-        if (frame == 10) {
-            collisionBoxes[2].setActive(true);
-        }
-        if (frame == 15) {
-            collisionBoxes[3].setActive(true);
-        }
-        if (frame == 17) {
-            collisionBoxes[3].setActive(false);
-        }
-        if (frame == 20) {
-            collisionBoxes[2].setActive(false);
-        }
-        if (frame == 24) {
-            collisionBoxes[1].setActive(false);
-        }
-        if (frame == 29) {
-            collisionBoxes[0].setActive(false);
+        if (tentacleType != LevelBuilder.TentacleType.Idle) {
+            if (frame == 1) {
+                collisionBoxes[0].setActive(true);
+            }
+            if (frame == 5) {
+                collisionBoxes[1].setActive(true);
+            }
+            if (frame == 10) {
+                collisionBoxes[2].setActive(true);
+            }
+            if (frame == 15) {
+                collisionBoxes[3].setActive(true);
+            }
+            if (frame == 17) {
+                collisionBoxes[3].setActive(false);
+            }
+            if (frame == 20) {
+                collisionBoxes[2].setActive(false);
+            }
+            if (frame == 24) {
+                collisionBoxes[1].setActive(false);
+            }
+            if (frame == 29) {
+                collisionBoxes[0].setActive(false);
+            }
+        } else {
+            if (frame == 1) {
+                collisionBoxes[0].setActive(true);
+            }
+            if (frame == 5) {
+                collisionBoxes[1].setActive(true);
+            }
+            if (frame == 10) {
+                collisionBoxes[0].setActive(false);
+            }
+            if (frame == 15) {
+                collisionBoxes[1].setActive(false);
+            }
         }
 
 
@@ -233,7 +249,7 @@ public class Tentacle extends GameObject {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-        
+
 
         canvas.drawPhysics(circ, Color.GREEN, getX(), getY(), drawScale.x, drawScale.y);
         for (HazardModel hm : collisionBoxes) {
@@ -275,8 +291,13 @@ public class Tentacle extends GameObject {
         this.grow_rate = grow_rate;
     }
 
-    public void setType (int type) { this.type = type;}
-    public int getType () { return this.type;}
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getType() {
+        return this.type;
+    }
 
     int grow_rate = 10;
 
@@ -295,8 +316,8 @@ public class Tentacle extends GameObject {
         if (frame >= 29) {
             frame = -1;
             dead = true;
-
         }
+
         if (startGrowing && frame < extend_frame_length) {
             if (tick % grow_rate == 0) {
                 frame++;
@@ -309,7 +330,8 @@ public class Tentacle extends GameObject {
 
         if (frame >= 0 && isActive()) {
             tentacleSprite.setFrame(frame);
-            canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x, (getY()) * drawScale.y + pivot.y, getAngle(), scale.x, scale.y);
+            canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x,
+                    (getY()) * drawScale.y + pivot.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
         }
 
     }
@@ -354,5 +376,11 @@ public class Tentacle extends GameObject {
             body = null;
             bodyinfo.active = false;
         }
+    }
+
+    LevelBuilder.TentacleType tentacleType = LevelBuilder.TentacleType.NewAttack;
+
+    public void setTentacleType(LevelBuilder.TentacleType type) {
+        tentacleType = type;
     }
 }

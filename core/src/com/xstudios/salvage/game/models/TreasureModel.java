@@ -240,7 +240,8 @@ public class TreasureModel extends ObstacleModel {
             if (lightColor.a < 0.4f)
                 lightColor.add(0, 0, 0, 0.01f);
 
-            canvas.drawText("Press X", GameController.displayFont, (getX() - getWidth() / 3 * 2) * drawScale.x, (getY() + getHeight() / 3 * 2) * drawScale.y);
+            canvas.drawText("Press X", GameController.displayFont, (getX() - getWidth() / 3 * 2) * drawScale.x,
+                    (getY() + getHeight() / 3 * 2) * drawScale.y);
         } else if (lightColor.a > 0)
             lightColor.add(0, 0, 0, -0.01f);
         if (lightColor.a != 0 || lightColor.a != 0.5f)
@@ -252,13 +253,16 @@ public class TreasureModel extends ObstacleModel {
             if (opened && tick % 6 == 0) {
                 idleSprite.setFrame(idleSprite.getFrame() + 1);
             }
-            canvas.draw(idleSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), scale.x, scale.y);
+            canvas.draw(idleSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x,
+                    getY() * drawScale.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
         } else if (suspenseSprite.getFrame() < 35) {
             if (tick % 5 == 0)
                 suspenseSprite.setFrame(suspenseSprite.getFrame() + 1);
-            canvas.draw(suspenseSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), scale.x, scale.y);
+            canvas.draw(suspenseSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x,
+                    getY() * drawScale.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
         } else {
-            canvas.draw(sprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(), scale.x, scale.y);
+            canvas.draw(sprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x,
+                    getY() * drawScale.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
 
             switch (contents) {
                 case Key:
@@ -301,7 +305,7 @@ public class TreasureModel extends ObstacleModel {
 
         if (trap != null)
             trap.draw(canvas);
-        if (keyReward != null)
+        if (keyReward != null && !keyReward.isCarried())
             keyReward.draw(canvas);
     }
 }

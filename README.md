@@ -34,7 +34,7 @@ kick (hold SPACE, set direction with arrow key, then release SPACE):
 
 Player is able to kick off a platform and launch themselves at an angle aimed by the arrow key.
 
-drop flare (F):
+drop flare (Z):
 
 Player lights and drops a flare which illuminates the darkness for a period of time.
 

@@ -47,10 +47,6 @@ public class MonsterController {
          */
         AGGRIVATED,
         /**
-         * The monster is roaring before final attack
-         */
-        ROARING,
-        /**
          * The monster is attacking the player
          */
         ATTACK
@@ -78,11 +74,17 @@ public class MonsterController {
     private float MAX_ATTACK_TENTACLES = 5;
 
 
-    private float MAX_TARGET_DIST = 1;
-    private float RAND_DIST_RANGE = 20;
-    private float ATTACK_DIST_RANGE = 6;
+    private float MAX_TARGET_DIST = 10;
+    private float RAND_DIST_RANGE = 15;
+    private float ATTACK_DIST_RANGE = 0;
 
     private int MAX_INVINCIBILITY = 50;
+
+    private int total_aggressive_time = 0;
+    private int last_aggression = 0;
+    private int MAX_AGGRESSIVE_TIME;
+    private int AGGRESSIVE_LENGTH = 15;
+    private int LAST_AGGRESSIVE_LENGTH = 350;
 
     private PooledList<Vector2> targetLocations;
 
@@ -122,6 +124,10 @@ public class MonsterController {
         hasRoared = false;
         isRoaring = false;
         roar_pause = 0;
+        monster.setAggressiveLength(AGGRESSIVE_LENGTH);
+
+        //monster.setVisionRadius(40);
+        MAX_AGGRESSIVE_TIME = monster.getAggressiveLength() * 4;
     }
 
     public void setAudio(AudioController a) {
@@ -131,12 +137,17 @@ public class MonsterController {
         return monster;
     }
 
+    public boolean isKillState() {
+        return state == FSMState.ATTACK;
+    }
+
     public void wallCollision() {
-        if (monster != null) {
+        if (monster != null && state != FSMState.AGGRIVATED) {
             float agg = monster.getAggravation();
-            if (agg < monster.getAggroLevel() + 1) {
-                monster.setAggravation(agg + monster.getAggravationRate());
-            }
+//            if (agg < monster.getAggroLevel() + 1) {
+            //System.out.println("agg rate "+ monster.getAggravationRate());
+            monster.setAggravation(agg + monster.getAggravationRate());
+//            }
         }
 
     }
@@ -148,43 +159,56 @@ public class MonsterController {
         // Add initialization code as necessary
         float aggravation = monster.getAggravation();
 
-//        System.out.println("aggravation: " + monster.getAggravation() + " threshold " + monster.getAggroLevel());
+        System.out.println("aggravation: " + monster.getAggravation() + " threshold " + monster.getAggroLevel());
         // Next state depends on current state.
         switch (state) {
 
-
             case IDLE:
-                if (aggravation > monster.getAggroLevel()) {
+                if (aggravation > monster.getAggroLevel() && last_aggression > LAST_AGGRESSIVE_LENGTH) {
                     state = FSMState.GONNA_POUNCE;
                     pounce_time = 0;
+                    //monster.setVisionRadius(30);
                 }
+                last_aggression++;
                 break;
 
             case GONNA_POUNCE:
                 if (pounce_time > MAX_POUNCE_TIME) {
                     state = FSMState.AGGRIVATED;
-                    monster.setAggressiveLength((int) (MAX_INVINCIBILITY * aggravation / aggrivation_threshold));
+                    //total_aggressive_time = 0;
+                    monster.setAggressiveLength(AGGRESSIVE_LENGTH);
+                    tick = 0;
+//                    monster.setAggressiveLength((int) (MAX_INVINCIBILITY * aggravation / aggrivation_threshold));
                 } else {
                     pounce_time++;
                 }
                 break;
 
             case AGGRIVATED:
-                if (aggravation <= monster.getAggroLevel() || monster.getAggressiveLength() <= 0 && state != FSMState.ROARING) {
+                System.out.println("Aggravation length " + monster.getAggressiveLength());
+                if (aggravation <= monster.getAggroLevel() || monster.getAggressiveLength() <= 0) {
 //                    monster.reduceInvincibilityTime();
                     state = FSMState.IDLE;
-                } else if (aggravation > (monster.getAggroLevel() * 4.0)) {
+                    //monster.setVisionRadius(50);
+                    monster.setAggravation((9 * monster.getAggravation())/10f);
+                    last_aggression = 0;
+                }
+                else if(total_aggressive_time >= MAX_AGGRESSIVE_TIME) {
+//                    if (aggravation > (monster.getAggroLevel() * 20.0f)) {
+//                        state = FSMState.ATTACK;
+//                    }
                     state = FSMState.ATTACK;
-                } else {
+                }
+                else {
                     monster.reduceAggressiveLength();
                 }
+                total_aggressive_time++;
+                System.out.println("agg time tot "+ total_aggressive_time);
                 break;
 
             case ATTACK:
                 monster.setAggravation(100000.0f);
                 break;
-
-
 
             default:
                 // Unknown or unhandled state, should never get here
@@ -216,7 +240,7 @@ public class MonsterController {
     public void update(float aggravationDrain, DiverModel diver) {
         tick++;
         if (tick % 50 == 0) {
-            if (monster.getAggravation() > 0.0f && state != FSMState.GONNA_POUNCE && state != FSMState.ATTACK) {
+            if (monster.getAggravation() > 0.0f && state != FSMState.GONNA_POUNCE) {
                 float aggravation = monster.getAggravation() - 0.5f;
                 monster.setAggravation(aggravation);
             }
@@ -225,7 +249,7 @@ public class MonsterController {
 //
 
         changeStateIfApplicable();
-//        System.out.println(state);
+        System.out.println("uhhhhhhhhhhhhhh " + state);
 
         float goal_x = diver.getX() + diver.getVX();
         float goal_y = diver.getY() + diver.getVY();
@@ -233,59 +257,71 @@ public class MonsterController {
         switch (state) {
 
             case IDLE:
-                monster.moveMonster(curr_pos);
-                if (tick % 5 == 0) {
-                    if (curr_pos.dst(target_pos) < MAX_TARGET_DIST) {
-                        int ctr = 0;
-                        while (curr_pos.dst(target_pos) < 10 && ctr < 10) {
-                            Random rand = new Random();
-                            int x_change = rand.nextInt(2) * 2 - 1;
-                            int y_change = rand.nextInt(2) * 2 - 1;
-                            float xpos = rand.nextFloat() * RAND_DIST_RANGE * x_change;
-                            float ypos = rand.nextFloat() * RAND_DIST_RANGE * y_change;
-                            target_pos = diver.getPosition().cpy().add(xpos, ypos);
-                            ctr++;
-                        }
-//                        System.out.println("////////////////////////////////////////////////////");
-                    } else {
-                        curr_pos = (target_pos.cpy().sub(curr_pos).nor()).add(curr_pos);
-                    }
 
-                    if (tick % 250 == 0) {
-                        if (monster.getIdleTentacles().size() < MAX_IDLE_TENTACLES) {
-                            Wall final_loc = null;
-                            for (Wall wall : monster.getSpawnLocations()) {
-                                if (wall.canSpawnTentacle()) {
-                                    final_loc = wall;
-                                }
+                if (tick % 50 == 0) {
+                    if (tick % 100 == 0) {
+//                    if (curr_pos.dst(target_pos) < MAX_TARGET_DIST) {
+//                        int ctr = 0;
+//                        while (curr_pos.dst(target_pos) < 10 && ctr < 10) {
+//                            Random rand = new Random();
+//                            int x_change = rand.nextInt(2) * 2 - 1;
+//                            int y_change = rand.nextInt(2) * 2 - 1;
+//                            float xpos = rand.nextFloat() * RAND_DIST_RANGE * x_change;
+//                            float ypos = rand.nextFloat() * RAND_DIST_RANGE * y_change;
+//                            target_pos = diver.getPosition().cpy().add(xpos, ypos);
+//                            ctr++;
+//                        }
+//                        curr_pos = (target_pos.cpy().sub(curr_pos).nor()).add(curr_pos);
+//                        System.out.println("////////////////////////////////////////////////////");
+//                    } else {
+//                        curr_pos = (target_pos.cpy().sub(curr_pos).nor()).add(curr_pos);
+//                    }
+
+                        Random rand = new Random();
+                        int x_change = rand.nextInt(2) * 2 - 1;
+                        int y_change = rand.nextInt(2) * 2 - 1;
+                        float xpos = rand.nextFloat() * RAND_DIST_RANGE * x_change;
+                        float ypos = rand.nextFloat() * RAND_DIST_RANGE * y_change;
+                        target_pos = diver.getPosition().cpy().add(xpos, ypos);
+                        //curr_pos = (target_pos.cpy().sub(curr_pos).nor()).add(curr_pos);
+                        monster.moveMonster(target_pos);
+                    }
+                    if (monster.getIdleTentacles().size() < MAX_IDLE_TENTACLES) {
+                        Wall final_loc = null;
+                        for (Wall wall : monster.getSpawnLocations()) {
+                            if (wall.canSpawnTentacle()) {
+                                final_loc = wall;
                             }
-                            if (final_loc != null) {
-                                //System.out.println(final_loc);
-                                monster.addIdleTentacle(final_loc);
-                                //monster.setAggrivation(0.0f);
-                            }
+                        }
+                        if (final_loc != null) {
+                            //System.out.println(final_loc);
+                            monster.addIdleTentacle(final_loc);
+                            //monster.setAggrivation(0.0f);
                         }
                     }
                 }
                 break;
+
             case AGGRIVATED:
+//                if (tick % 5 == 0) {
+                    curr_pos = diver.getPosition().cpy();
+                    monster.moveMonster(curr_pos);
+//                    if (curr_pos.dst(target_pos) < MAX_TARGET_DIST) {
+//                        int ctr = 0;
+//                        while (curr_pos.dst(target_pos) < 10 && ctr < 10) {
+//                            Random rand = new Random();
+//                            float xpos = rand.nextFloat() * ATTACK_DIST_RANGE;
+//                            float ypos = rand.nextFloat() * ATTACK_DIST_RANGE;
+//                            target_pos = diver.getPosition().cpy().add(xpos, ypos);
+//                            ctr++;
+//                        }
+////                        System.out.println("rippppppppppppppppppppppppppppppppppppp");
+//                    } else {
+//                        curr_pos = (target_pos.cpy().sub(curr_pos).nor()).add(curr_pos);
+////                        System.out.println("sadddddddddddddddddddddddddddddddddd");
+//                    }
+//                }
                 if (tick % 5 == 0) {
-                    if (curr_pos.dst(target_pos) < MAX_TARGET_DIST) {
-                        int ctr = 0;
-                        while (curr_pos.dst(target_pos) < 10 && ctr < 10) {
-                            Random rand = new Random();
-                            float xpos = rand.nextFloat() * ATTACK_DIST_RANGE;
-                            float ypos = rand.nextFloat() * ATTACK_DIST_RANGE;
-                            target_pos = diver.getPosition().cpy().add(xpos, ypos);
-                            ctr++;
-                        }
-//                        System.out.println("rippppppppppppppppppppppppppppppppppppp");
-                    } else {
-                        curr_pos = (target_pos.cpy().sub(curr_pos).nor()).add(curr_pos);
-//                        System.out.println("sadddddddddddddddddddddddddddddddddd");
-                    }
-                }
-                if (tick % 100 == 0) {
                     float best_distance = 10000.0f;
                     float temp_distance = 0.0f;
                     Wall final_loc = null;
@@ -312,26 +348,33 @@ public class MonsterController {
 
             case GONNA_POUNCE:
                 audio.attack_roar();
-
+            break;
 
             case ATTACK:
                 if (!hasRoared){
                     roar_pause = tick;
                     audio.loud_roar_play(hasRoared);
                     monster.setVisionRadius(10);
+                    diver.setStunCooldown(300);
                     diver.setStunned(true);
-                    diver.setStunCooldown(500);
+                    //diver.changeOxygenLevel(-diver.getOxygenLevel() + 3);
                     hasRoared = true;
-                    monster.setAggravation(100000.0f);
+                    roar_pause = tick;
+//                    monster.setAggravation(100000.0f);
                 }
-                else if (tick - roar_pause > 500) {
-                    monster.setAggravation(100000.0f);
-                    diver.changeOxygenLevel(2);
+                else if (tick - roar_pause > 300) {
+//                    monster.setAggravation(100000.0f);
+//                    diver.changeOxygenLevel(2);
                     monster.moveMonster(diver.getPosition());
+                    diver.setStunned(false);
+                    diver.setStunCooldown(20);
                     audio.chase();
                     float best_distance = 10000.0f;
                     float temp_distance = 0.0f;
                     Wall final_loc = null;
+//                    best_distance = 10000.0f;
+//                    temp_distance = 0.0f;
+//                    final_loc = null;
                     for (Wall wall : monster.getSpawnLocations()) {
                         if (wall.canSpawnTentacle()) {
                             Vector2 location = wall.getPosition();
@@ -352,8 +395,9 @@ public class MonsterController {
                     }
                 }
                 break;
-            default:
 
+            default:
+                System.out.println("o no");
         }
 
 //        System.out.println("CURR_POS " + curr_pos);

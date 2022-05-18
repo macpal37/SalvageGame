@@ -278,9 +278,14 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"aggro_rate",
+                         "type":"float",
+                         "value":0.1
+                        }, 
+                        {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":1.1
+                         "value":15
                         }, 
                         {
                          "name":"tentacle_size",

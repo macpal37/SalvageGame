@@ -220,7 +220,7 @@ public class CollisionController {
      * @param f1 one of the colliding fixtures
      * @param f2 the other of the colliding fixtures
      */
-    public float startDiverHazardCollision(Fixture f1, Fixture f2, DiverModel diver) {
+    public float startDiverHazardCollision(Fixture f1, Fixture f2, DiverModel diver, MonsterController monster) {
         Body b1 = f1.getBody();
         Body b2 = f2.getBody();
         Object fd1 = f1.getUserData();
@@ -230,13 +230,24 @@ public class CollisionController {
                 diver.getDiverCollisionBox().equals(fd1) &&
                 b2.getUserData() instanceof HazardModel) {
             HazardModel hazard = (HazardModel) b2.getUserData();
-            return staticHazardCollision(diver, hazard);
+            return staticHazardCollision(diver, hazard, monster);
         }
         if (b2.getUserData() instanceof DiverModel &&
                 diver.getDiverCollisionBox().equals(fd2) &&
                 b1.getUserData() instanceof HazardModel) {
             HazardModel hazard = (HazardModel) b1.getUserData();
-            return staticHazardCollision(diver, hazard);
+            return staticHazardCollision(diver, hazard, monster);
+        }
+
+        if (b1.getUserData() instanceof DiverModel &&
+                b2.getUserData() instanceof Tentacle) {
+            Tentacle t = (Tentacle) b2.getUserData();
+            AudioController.getInstance().idle_roar();
+        }
+        else if (b1.getUserData() instanceof Tentacle &&
+                b2.getUserData() instanceof DiverModel) {
+            Tentacle t = (Tentacle) b1.getUserData();
+            AudioController.getInstance().idle_roar();
         }
         // return 0 if not colliding
         return 0;
@@ -373,10 +384,10 @@ public class CollisionController {
         Body b2 = f2.getBody();
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
-        System.out.println("Hello ");
+
         if (b1.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd1) && b2.getUserData() instanceof Wall
         ) {
-            System.out.println("Hello ");
+
             diver.setTouchedWall(null);
             ((DiverModel) b1.getUserData()).setTouchingObstacle(false);
         } else if (b2.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd2) && b1.getUserData() instanceof Wall) {
@@ -435,14 +446,22 @@ public class CollisionController {
     }
 
 
-    public static float staticHazardCollision(DiverModel diver, HazardModel hazard) {
+    public static float staticHazardCollision(DiverModel diver, HazardModel hazard, MonsterController monster) {
 //        System.out.println("Hazard Contact: " + hazard.getOxygenDrain());
 //        System.out.println("START HAZARD COLLISION");
-        if (!diver.getStunned() && !diver.isInvincible()) {
+        if (!diver.getStunned() && /*!diver.isInvincible() && */ !monster.isKillState()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
             diver.resetInvincibleTime();
+            ;
+//            diver.resetInvincibleTime();
         }
+        else if (!diver.getStunned() && /*!diver.isInvincible() && */monster.isKillState()) {
+            diver.setStunned(true);
+            diver.setStunCooldown(hazard.getStunDuration());
+
+        }
+
         diver.setChangeLightFilter(false);
 //        else {
 //            diver.setChangeLightFilter(true);

@@ -224,6 +224,7 @@ public class LevelBuilder {
     }
 
 
+    //    public float div = 25f;
     public float div = 25f;
 
     public enum TentacleType {
@@ -253,12 +254,12 @@ public class LevelBuilder {
                 case Idle:
 
                     t = new Tentacle(w, agg_level);
-
+                    t.setTentacleType(type);
                     t.setFilmStrip(monsterIdleAnimation.copy());
                     tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_idle.json"));
                     width = tileset.getFloat("imagewidth");
                     height = tileset.getFloat("imageheight");
-                    t.setPosition(t.getX(), t.getY() - height / div / 8);
+                    t.setPosition(t.getX(), t.getY() - height / div / 8 * (float) Math.cos(t.getAngle()));
                     break;
                 case KILL:
                     t = new Tentacle(w, agg_level);
@@ -446,6 +447,7 @@ public class LevelBuilder {
      */
     public void createLevel(String levelFileName, LevelModel level, Vector2 drawScale, Vector2 drawScaleSymbol, RayHandler rayHandler) {
         this.drawScale = drawScale;
+        System.out.println("LEVEL SCALE: " + drawScale.toString());
         ArrayList<GObject> gameObjects = new ArrayList<GObject>();
 
         JsonValue map = jsonReader.parse(Gdx.files.internal("levels/" + levelFileName + ".json"));
@@ -666,9 +668,10 @@ public class LevelBuilder {
                             Monster monster = new Monster(sx, sy, true);
                             if (obj.get("properties") != null)
                                 for (JsonValue prop : obj.get("properties")) {
-                                    if (prop.getString("name").equals("aggro_rate"))
-                                        monster.setAggravationRate(prop.getInt("value"));
-                                    else if (prop.getString("name").equals("aggro_threshold"))
+                                    if (prop.getString("name").equals("aggro_rate")) {
+                                        monster.setAggravationRate(prop.getFloat("value"));
+                                        System.out.println("ahhhhhhhhhhhhhhhhhhhh " + prop.getFloat("value") + " " + monster.getAggravationRate());
+                                    } else if (prop.getString("name").equals("aggro_threshold"))
                                         monster.setAggroLevel(prop.getInt("value"));
                                     else if (prop.getString("name").equals("vision_radius"))
                                         monster.setVisionRadius(prop.getInt("value"));
@@ -727,6 +730,7 @@ public class LevelBuilder {
             key_chest.setTreasureType(TreasureType.Key, treasureKeyAnimation.copy());
             ItemModel key = new ItemModel(key_chest.getX(), key_chest.getY() + 10f,
                     constants.get("key"), ItemModel.ItemType.KEY);
+
             System.out.println("key x: " + key_chest.getX() + " key y: " + key_chest.getY());
             key.setFilmStrip(new FilmStrip(keyAnimation, 1, 6, 6));
 //            key.setAngle(rotation);
@@ -762,7 +766,7 @@ public class LevelBuilder {
         int goalDoorCounter = 0;
         int hazardCounter = 0;
         for (GObject go : gameObjects) {
-
+            go.setWorldDrawScale(drawScale.x / 40f, drawScale.y / 40f);
             if (go instanceof HazardModel) {
                 HazardModel hazard = (HazardModel) go;
                 hazard.setOxygenDrain(-0.1f);

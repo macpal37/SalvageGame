@@ -231,7 +231,7 @@
                         {
                          "name":"starting_oxygen",
                          "type":"int",
-                         "value":70
+                         "value":145
                         }],
                  "rotation":0,
                  "type":"",
@@ -317,6 +317,17 @@
                  "height":100,
                  "id":90,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"aggro_rate",
+                         "type":"float",
+                         "value":0.075
+                        }, 
+                        {
+                         "name":"aggro_threshold",
+                         "type":"float",
+                         "value":16
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,

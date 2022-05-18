@@ -28,36 +28,47 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 /**
  * Base model class to support collisions.
- *
+ * <p>
  * Instances represents a body and/or a group of bodies.
  * There should be NO game controlling logic code in a physixcs objects,
  * that should reside in the Controllers.
- *
+ * <p>
  * This abstract class has no Body or Shape information and should never
  * be instantiated directly. Instead, you should instantiate either
  * SimplePhysicsObject or ComplexPhysicsObject.  This class only exists
  * to unify common functionality. In particular, it wraps the body and
  * and fixture information into a single interface.
  */
-public abstract class GameObject extends GObject{
-    /** The physics body for Box2D. */
+public abstract class GameObject extends GObject {
+    /**
+     * The physics body for Box2D.
+     */
     protected Body body;
 
-    /** The texture for the shape. */
+    /**
+     * The texture for the shape.
+     */
     protected TextureRegion texture;
 
-    /** The texture origin for drawing */
+    /**
+     * The texture origin for drawing
+     */
     protected Vector2 origin;
 
-    /** The width and height of the box */
+    /**
+     * The width and height of the box
+     */
     private Vector2 dimension;
-    /** A cache value for when the user wants to access the dimensions */
+    /**
+     * A cache value for when the user wants to access the dimensions
+     */
     private Vector2 sizeCache;
 
     /// BodyDef Methods
+
     /**
      * Returns the body type for Box2D physics
-     *
+     * <p>
      * If you want to lock a body in place (e.g. a platform) set this value to STATIC.
      * KINEMATIC allows the object to move (and some limited collisions), but ignores
      * external forces (e.g. gravity). DYNAMIC makes this is a full-blown physics object.
@@ -70,7 +81,7 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns the body type for Box2D physics
-     *
+     * <p>
      * If you want to lock a body in place (e.g. a platform) set this value to STATIC.
      * KINEMATIC allows the object to move (and some limited collisions), but ignores
      * external forces (e.g. gravity). DYNAMIC makes this is a full-blown physics object.
@@ -84,18 +95,19 @@ public abstract class GameObject extends GObject{
             super.setBodyType(value);
         }
     }
+
     /**
      * Sets the user data for a Box2d body,
      * used to determine what object type a body is
      */
-    public void setUserData(Object userData){
+    public void setUserData(Object userData) {
         body.setUserData(userData);
     }
 
 
     /**
      * Returns the current position for this physics body
-     *
+     * <p>
      * This method does NOT return a reference to the position vector. Changes to this
      * vector will not affect the body.  However, it returns the same vector each time
      * its is called, and so cannot be used as an allocator.
@@ -108,14 +120,14 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets the current position for this physics body
-     *
+     * <p>
      * This method does not keep a reference to the parameter.
      *
-     * @param value  the current position for this physics body
+     * @param value the current position for this physics body
      */
     public void setPosition(Vector2 value) {
         if (body != null) {
-            body.setTransform(value,body.getAngle());
+            body.setTransform(value, body.getAngle());
         } else {
             super.setPosition(value);
         }
@@ -124,15 +136,15 @@ public abstract class GameObject extends GObject{
     /**
      * Sets the current position for this physics body
      *
-     * @param x  the x-coordinate for this physics body
-     * @param y  the y-coordinate for this physics body
+     * @param x the x-coordinate for this physics body
+     * @param y the y-coordinate for this physics body
      */
     public void setPosition(float x, float y) {
         if (body != null) {
-            positionCache.set(x,y);
-            body.setTransform(positionCache,body.getAngle());
+            positionCache.set(x, y);
+            body.setTransform(positionCache, body.getAngle());
         } else {
-            super.setPosition(x,y);
+            super.setPosition(x, y);
         }
     }
 
@@ -148,12 +160,12 @@ public abstract class GameObject extends GObject{
     /**
      * Sets the x-coordinate for this physics body
      *
-     * @param value  the x-coordinate for this physics body
+     * @param value the x-coordinate for this physics body
      */
     public void setX(float value) {
         if (body != null) {
-            positionCache.set(value,body.getPosition().y);
-            body.setTransform(positionCache,body.getAngle());
+            positionCache.set(value, body.getPosition().y);
+            body.setTransform(positionCache, body.getAngle());
         } else {
             super.setX(value);
         }
@@ -171,12 +183,12 @@ public abstract class GameObject extends GObject{
     /**
      * Sets the y-coordinate for this physics body
      *
-     * @param value  the y-coordinate for this physics body
+     * @param value the y-coordinate for this physics body
      */
     public void setY(float value) {
         if (body != null) {
-            positionCache.set(body.getPosition().x,value);
-            body.setTransform(positionCache,body.getAngle());
+            positionCache.set(body.getPosition().x, value);
+            body.setTransform(positionCache, body.getAngle());
         } else {
             super.setY(value);
         }
@@ -184,7 +196,7 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns the angle of rotation for this body (about the center).
-     *
+     * <p>
      * The value returned is in radians
      *
      * @return the angle of rotation for this body
@@ -196,11 +208,11 @@ public abstract class GameObject extends GObject{
     /**
      * Sets the angle of rotation for this body (about the center).
      *
-     * @param value  the angle of rotation for this body (in radians)
+     * @param value the angle of rotation for this body (in radians)
      */
     public void setAngle(float value) {
         if (body != null) {
-            body.setTransform(body.getPosition(),value);
+            body.setTransform(body.getPosition(), value);
         } else {
             super.setAngle(value);
         }
@@ -208,7 +220,7 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns the linear velocity for this physics body
-     *
+     * <p>
      * This method does NOT return a reference to the velocity vector. Changes to this
      * vector will not affect the body.  However, it returns the same vector each time
      * its is called, and so cannot be used as an allocator.
@@ -221,10 +233,10 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets the linear velocity for this physics body
-     *
+     * <p>
      * This method does not keep a reference to the parameter.
      *
-     * @param value  the linear velocity for this physics body
+     * @param value the linear velocity for this physics body
      */
     public void setLinearVelocity(Vector2 value) {
         if (body != null) {
@@ -246,11 +258,11 @@ public abstract class GameObject extends GObject{
     /**
      * Sets the x-velocity for this physics body
      *
-     * @param value  the x-velocity for this physics body
+     * @param value the x-velocity for this physics body
      */
     public void setVX(float value) {
         if (body != null) {
-            velocityCache.set(value,body.getLinearVelocity().y);
+            velocityCache.set(value, body.getLinearVelocity().y);
             body.setLinearVelocity(velocityCache);
         } else {
             super.setVX(value);
@@ -269,11 +281,11 @@ public abstract class GameObject extends GObject{
     /**
      * Sets the y-velocity for this physics body
      *
-     * @param value  the y-velocity for this physics body
+     * @param value the y-velocity for this physics body
      */
     public void setVY(float value) {
         if (body != null) {
-            velocityCache.set(body.getLinearVelocity().x,value);
+            velocityCache.set(body.getLinearVelocity().x, value);
             body.setLinearVelocity(velocityCache);
         } else {
             super.setVY(value);
@@ -282,7 +294,7 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns the angular velocity for this physics body
-     *
+     * <p>
      * The rate of change is measured in radians per step
      *
      * @return the angular velocity for this physics body
@@ -306,7 +318,7 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns true if the body is active
-     *
+     * <p>
      * An inactive body not participate in collision or dynamics. This state is similar
      * to sleeping except the body will not be woken by other bodies and the body's
      * fixtures will not be placed in the broad-phase. This means the body will not
@@ -321,13 +333,13 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets whether the body is active
-     *
+     * <p>
      * An inactive body not participate in collision or dynamics. This state is similar
      * to sleeping except the body will not be woken by other bodies and the body's
      * fixtures will not be placed in the broad-phase. This means the body will not
      * participate in collisions, ray casts, etc.
      *
-     * @param value  whether the body is active
+     * @param value whether the body is active
      */
     public void setActive(boolean value) {
         if (body != null) {
@@ -339,7 +351,7 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns true if the body is awake
-     *
+     * <p>
      * An sleeping body is one that has come to rest and the physics engine has decided
      * to stop simulating it to save CPU cycles. If a body is awake and collides with a
      * sleeping body, then the sleeping body wakes up. Bodies will also wake up if a
@@ -353,13 +365,13 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets whether the body is awake
-     *
+     * <p>
      * An sleeping body is one that has come to rest and the physics engine has decided
      * to stop simulating it to save CPU cycles. If a body is awake and collides with a
      * sleeping body, then the sleeping body wakes up. Bodies will also wake up if a
      * joint or contact attached to them is destroyed.  You can also wake a body manually.
      *
-     * @param value  whether the body is awake
+     * @param value whether the body is awake
      */
     public void setAwake(boolean value) {
         if (body != null) {
@@ -371,7 +383,7 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns false if this body should never fall asleep
-     *
+     * <p>
      * An sleeping body is one that has come to rest and the physics engine has decided
      * to stop simulating it to save CPU cycles. If a body is awake and collides with a
      * sleeping body, then the sleeping body wakes up. Bodies will also wake up if a
@@ -385,13 +397,13 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets whether the body should ever fall asleep
-     *
+     * <p>
      * An sleeping body is one that has come to rest and the physics engine has decided
      * to stop simulating it to save CPU cycles. If a body is awake and collides with a
      * sleeping body, then the sleeping body wakes up. Bodies will also wake up if a
      * joint or contact attached to them is destroyed.  You can also wake a body manually.
      *
-     * @param value  whether the body should ever fall asleep
+     * @param value whether the body should ever fall asleep
      */
     public void setSleepingAllowed(boolean value) {
         if (body != null) {
@@ -403,14 +415,14 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns true if this body is a bullet
-     *
+     * <p>
      * By default, Box2D uses continuous collision detection (CCD) to prevent dynamic
      * bodies from tunneling through static bodies. Normally CCD is not used between
      * dynamic bodies. This is done to keep performance reasonable. In some game
      * scenarios you need dynamic bodies to use CCD. For example, you may want to shoot
      * a high speed bullet at a stack of dynamic bricks. Without CCD, the bullet might
      * tunnel through the bricks.
-     *
+     * <p>
      * Fast moving objects in Box2D can be labeled as bullets. Bullets will perform CCD
      * with both static and dynamic bodies. You should decide what bodies should be
      * bullets based on your game design.
@@ -423,19 +435,19 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets whether this body is a bullet
-     *
+     * <p>
      * By default, Box2D uses continuous collision detection (CCD) to prevent dynamic
      * bodies from tunneling through static bodies. Normally CCD is not used between
      * dynamic bodies. This is done to keep performance reasonable. In some game
      * scenarios you need dynamic bodies to use CCD. For example, you may want to shoot
      * a high speed bullet at a stack of dynamic bricks. Without CCD, the bullet might
      * tunnel through the bricks.
-     *
+     * <p>
      * Fast moving objects in Box2D can be labeled as bullets. Bullets will perform CCD
      * with both static and dynamic bodies. You should decide what bodies should be
      * bullets based on your game design.
      *
-     * @param value  whether this body is a bullet
+     * @param value whether this body is a bullet
      */
     public void setBullet(boolean value) {
         if (body != null) {
@@ -447,7 +459,7 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns true if this body be prevented from rotating
-     *
+     * <p>
      * This is very useful for characters that should remain upright.
      *
      * @return true if this body be prevented from rotating
@@ -458,10 +470,10 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets whether this body be prevented from rotating
-     *
+     * <p>
      * This is very useful for characters that should remain upright.
      *
-     * @param value  whether this body be prevented from rotating
+     * @param value whether this body be prevented from rotating
      */
     public void setFixedRotation(boolean value) {
         if (body != null) {
@@ -473,7 +485,7 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns the gravity scale to apply to this body
-     *
+     * <p>
      * This allows isolated objects to float.  Be careful with this, since increased
      * gravity can decrease stability.
      *
@@ -485,11 +497,11 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets the gravity scale to apply to this body
-     *
+     * <p>
      * This allows isolated objects to float.  Be careful with this, since increased
      * gravity can decrease stability.
      *
-     * @param value  the gravity scale to apply to this body
+     * @param value the gravity scale to apply to this body
      */
     public void setGravityScale(float value) {
         if (body != null) {
@@ -501,11 +513,11 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns the linear damping for this body.
-     *
+     * <p>
      * Linear damping is use to reduce the linear velocity. Damping is different than
      * friction because friction only occurs with contact. Damping is not a replacement
      * for friction and the two effects should be used together.
-     *
+     * <p>
      * Damping parameters should be between 0 and infinity, with 0 meaning no damping,
      * and infinity meaning full damping. Normally you will use a damping value between
      * 0 and 0.1. Most people avoid linear damping because it makes bodies look floaty.
@@ -518,16 +530,16 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets the linear damping for this body.
-     *
+     * <p>
      * Linear damping is use to reduce the linear velocity. Damping is different than
      * friction because friction only occurs with contact. Damping is not a replacement
      * for friction and the two effects should be used together.
-     *
+     * <p>
      * Damping parameters should be between 0 and infinity, with 0 meaning no damping,
      * and infinity meaning full damping. Normally you will use a damping value between
      * 0 and 0.1. Most people avoid linear damping because it makes bodies look floaty.
      *
-     * @param value  the linear damping for this body.
+     * @param value the linear damping for this body.
      */
     public void setLinearDamping(float value) {
         if (body != null) {
@@ -539,11 +551,11 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns the angular damping for this body.
-     *
+     * <p>
      * Angular damping is use to reduce the angular velocity. Damping is different than
      * friction because friction only occurs with contact. Damping is not a replacement
      * for friction and the two effects should be used together.
-     *
+     * <p>
      * Damping parameters should be between 0 and infinity, with 0 meaning no damping,
      * and infinity meaning full damping. Normally you will use a damping value between
      * 0 and 0.1.
@@ -556,16 +568,16 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets the angular damping for this body.
-     *
+     * <p>
      * Angular damping is use to reduce the angular velocity. Damping is different than
      * friction because friction only occurs with contact. Damping is not a replacement
      * for friction and the two effects should be used together.
-     *
+     * <p>
      * Damping parameters should be between 0 and infinity, with 0 meaning no damping,
      * and infinity meaning full damping. Normally you will use a damping value between
      * 0 and 0.1.
      *
-     * @param value  the angular damping for this body.
+     * @param value the angular damping for this body.
      */
     public void setAngularDamping(float value) {
         if (body != null) {
@@ -576,19 +588,20 @@ public abstract class GameObject extends GObject{
     }
 
     /// FixtureDef Methods
+
     /**
      * Sets the density of this body
-     *
+     * <p>
      * The density is typically measured in usually in kg/m^2. The density can be zero or
      * positive. You should generally use similar densities for all your fixtures. This
      * will improve stacking stability.
      *
-     * @param value  the density of this body
+     * @param value the density of this body
      */
     public void setDensity(float value) {
         super.setDensity(value);
         if (body != null) {
-            for(Fixture f : body.getFixtureList()) {
+            for (Fixture f : body.getFixtureList()) {
                 f.setDensity(value);
             }
         }
@@ -596,19 +609,19 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets the friction coefficient of this body
-     *
+     * <p>
      * The friction parameter is usually set between 0 and 1, but can be any non-negative
      * value. A friction value of 0 turns off friction and a value of 1 makes the friction
      * strong. When the friction force is computed between two shapes, Box2D must combine
      * the friction parameters of the two parent fixtures. This is done with the geometric
      * mean.
      *
-     * @param value  the friction coefficient of this body
+     * @param value the friction coefficient of this body
      */
     public void setFriction(float value) {
         super.setFriction(value);
         if (body != null) {
-            for(Fixture f : body.getFixtureList()) {
+            for (Fixture f : body.getFixtureList()) {
                 f.setFriction(value);
             }
         }
@@ -616,19 +629,19 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets the restitution of this body
-     *
+     * <p>
      * Restitution is used to make objects bounce. The restitution value is usually set
      * to be between 0 and 1. Consider dropping a ball on a table. A value of zero means
      * the ball won't bounce. This is called an inelastic collision. A value of one means
      * the ball's velocity will be exactly reflected. This is called a perfectly elastic
      * collision.
      *
-     * @param value  the restitution of this body
+     * @param value the restitution of this body
      */
     public void setRestitution(float value) {
         super.setRestitution(value);
         if (body != null) {
-            for(Fixture f : body.getFixtureList()) {
+            for (Fixture f : body.getFixtureList()) {
                 f.setRestitution(value);
             }
         }
@@ -636,17 +649,17 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets whether this object is a sensor.
-     *
+     * <p>
      * Sometimes game logic needs to know when two entities overlap yet there should be
      * no collision response. This is done by using sensors. A sensor is an entity that
      * detects collision but does not produce a response.
      *
-     * @param value  whether this object is a sensor.
+     * @param value whether this object is a sensor.
      */
     public void setSensor(boolean value) {
         super.setSensor(value);
         if (body != null) {
-            for(Fixture f : body.getFixtureList()) {
+            for (Fixture f : body.getFixtureList()) {
                 f.setSensor(value);
             }
         }
@@ -654,30 +667,31 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets the filter data for this object
-     *
+     * <p>
      * Collision filtering allows you to prevent collision between fixtures. For example,
      * say you make a character that rides a bicycle. You want the bicycle to collide
      * with the terrain and the character to collide with the terrain, but you don't want
      * the character to collide with the bicycle (because they must overlap). Box2D
      * supports such collision filtering using categories and groups.
-     *
+     * <p>
      * A value of null removes all collision filters.
      *
-     * @param value  the filter data for this object
+     * @param value the filter data for this object
      */
     public void setFilterData(Filter value) {
         super.setFilterData(value);
         if (body != null) {
-            for(Fixture f : body.getFixtureList()) {
+            for (Fixture f : body.getFixtureList()) {
                 f.setFilterData(value);
             }
         }
     }
 
     /// MassData Methods
+
     /**
      * Returns the center of mass of this body
-     *
+     * <p>
      * This method does NOT return a reference to the centroid position. Changes to this
      * vector will not affect the body.  However, it returns the same vector each time
      * its is called, and so cannot be used as an allocator.
@@ -685,15 +699,15 @@ public abstract class GameObject extends GObject{
      * @return the center of mass for this physics body
      */
     public Vector2 getCentroid() {
-        return  (body != null ? body.getLocalCenter() : super.getCentroid());
+        return (body != null ? body.getLocalCenter() : super.getCentroid());
     }
 
     /**
      * Sets the center of mass for this physics body
-     *
+     * <p>
      * This method does not keep a reference to the parameter.
      *
-     * @param value  the center of mass for this physics body
+     * @param value the center of mass for this physics body
      */
     public void setCentroid(Vector2 value) {
         super.setCentroid(value);
@@ -704,23 +718,23 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns the rotational inertia of this body
-     *
+     * <p>
      * For static bodies, the mass and rotational inertia are set to zero. When
      * a body has fixed rotation, its rotational inertia is zero.
      *
      * @return the rotational inertia of this body
      */
     public float getInertia() {
-        return  (body != null ? body.getInertia() : super.getInertia());
+        return (body != null ? body.getInertia() : super.getInertia());
     }
 
     /**
      * Sets the rotational inertia of this body
-     *
+     * <p>
      * For static bodies, the mass and rotational inertia are set to zero. When
      * a body has fixed rotation, its rotational inertia is zero.
      *
-     * @param value  the rotational inertia of this body
+     * @param value the rotational inertia of this body
      */
     public void setInertia(float value) {
         super.setInertia(value);
@@ -731,21 +745,21 @@ public abstract class GameObject extends GObject{
 
     /**
      * Returns the mass of this body
-     *
+     * <p>
      * The value is usually in kilograms.
      *
      * @return the mass of this body
      */
     public float getMass() {
-        return  (body != null ? body.getMass() : super.getMass());
+        return (body != null ? body.getMass() : super.getMass());
     }
 
     /**
      * Sets the mass of this body
-     *
+     * <p>
      * The value is usually in kilograms.
      *
-     * @param value  the mass of this body
+     * @param value the mass of this body
      */
     public void setMass(float value) {
         super.setMass(value);
@@ -765,9 +779,10 @@ public abstract class GameObject extends GObject{
     }
 
     /// Texture Information
+
     /**
      * Returns the object texture for drawing purposes.
-     *
+     * <p>
      * In order for drawing to work properly, you MUST set the drawScale.
      * The drawScale converts the physics units to pixels.
      *
@@ -779,15 +794,15 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets the object texture for drawing purposes.
-     *
+     * <p>
      * In order for drawing to work properly, you MUST set the drawScale.
      * The drawScale converts the physics units to pixels.
      *
-     * @param value  the object texture for drawing purposes.
+     * @param value the object texture for drawing purposes.
      */
     public void setTexture(TextureRegion value) {
         texture = value;
-        origin.set(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
+        origin.set(texture.getRegionWidth() / 2.0f, texture.getRegionHeight() / 2.0f);
     }
 
     /**
@@ -797,13 +812,13 @@ public abstract class GameObject extends GObject{
      */
     public void draw(GameCanvas canvas) {
         if (texture != null) {
-            canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+            canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), 1, 1);
         }
     }
 
     /**
      * Returns the Box2D body for this object.
-     *
+     * <p>
      * You use this body to add joints and apply forces.
      *
      * @return the Box2D body for this object.
@@ -815,11 +830,11 @@ public abstract class GameObject extends GObject{
 
     /**
      * Creates a new simple physics object at the origin.
-     *
+     * <p>
      * REMEMBER: The size is in physics units, not pixels.
      */
     protected GameObject() {
-        this(0,0);
+        this(0, 0);
     }
 
     /**
@@ -831,31 +846,31 @@ public abstract class GameObject extends GObject{
     /**
      * Creates a new simple physics object
      *
-     * @param x  Initial x position in world coordinates
-     * @param y  Initial y position in world coordinates
+     * @param x Initial x position in world coordinates
+     * @param y Initial y position in world coordinates
      */
     protected GameObject(float x, float y) {
-      super (x,y);
+        super(x, y);
 
 
-       dimension = new Vector2();
-          sizeCache = new Vector2();;
+        dimension = new Vector2();
+        sizeCache = new Vector2();
+        ;
         // Set the default drawing scale
-        drawScale = new Vector2(1,1);
+        drawScale = new Vector2(1, 1);
         origin = new Vector2();
         body = null;
     }
 
-    protected  abstract void  resize(float width, float height) ;
+    protected abstract void resize(float width, float height);
 
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
-     *
+     * <p>
      * Implementations of this method should NOT retain a reference to World.
      * That is a tight coupling that we should avoid.
      *
      * @param world Box2D world to store body
-     *
      * @return true if object allocation succeeded
      */
     public boolean activatePhysics(World world) {
@@ -893,21 +908,21 @@ public abstract class GameObject extends GObject{
 
     /**
      * Create new fixtures for this body, defining the shape
-     *
+     * <p>
      * This is the primary method to override for custom physics objects
      */
     protected abstract void createFixtures();
 
     /**
      * Release the fixtures for this body, reseting the shape
-     *
+     * <p>
      * This is the primary method to override for custom physics objects.
      */
     protected abstract void releaseFixtures();
 
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
-     *
+     * <p>
      * This method is called AFTER the collision resolution state. Therefore, it
      * should not be used to process actions or any other gameplay information.  Its
      * primary purpose is to adjust changes to the fixture, which have to take place
@@ -924,10 +939,10 @@ public abstract class GameObject extends GObject{
 
     /**
      * Sets the dimensions of this box
-     *
+     * <p>
      * This method does not keep a reference to the parameter.
      *
-     * @param value  the dimensions of this box
+     * @param value the dimensions of this box
      */
     public void setDimension(Vector2 value) {
         setDimension(value.x, value.y);
@@ -936,8 +951,8 @@ public abstract class GameObject extends GObject{
     /**
      * Sets the dimensions of this box
      *
-     * @param width   The width of this box
-     * @param height  The height of this box
+     * @param width  The width of this box
+     * @param height The height of this box
      */
     public void setDimension(float width, float height) {
         dimension.set(width, height);
@@ -957,10 +972,10 @@ public abstract class GameObject extends GObject{
     /**
      * Sets the box width
      *
-     * @param value  the box width
+     * @param value the box width
      */
     public void setWidth(float value) {
-        sizeCache.set(value,dimension.y);
+        sizeCache.set(value, dimension.y);
         setDimension(sizeCache);
     }
 
@@ -976,10 +991,10 @@ public abstract class GameObject extends GObject{
     /**
      * Sets the box height
      *
-     * @param value  the box height
+     * @param value the box height
      */
     public void setHeight(float value) {
-        sizeCache.set(dimension.x,value);
+        sizeCache.set(dimension.x, value);
         setDimension(sizeCache);
     }
 

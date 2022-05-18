@@ -254,9 +254,14 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"aggro_rate",
+                         "type":"float",
+                         "value":0.1
+                        }, 
+                        {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":8
+                         "value":20
                         }],
                  "rotation":0,
                  "type":"",
@@ -306,42 +311,6 @@
                  "width":100,
                  "x":68.1818181818182,
                  "y":401.515151515152
-                }, 
-                {
-                 "gid":24,
-                 "height":100,
-                 "id":131,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":100,
-                 "x":888,
-                 "y":666
-                }, 
-                {
-                 "gid":24,
-                 "height":100,
-                 "id":132,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":100,
-                 "x":1030,
-                 "y":656
-                }, 
-                {
-                 "gid":24,
-                 "height":100,
-                 "id":138,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":100,
-                 "x":906,
-                 "y":618
                 }, 
                 {
                  "gid":34,

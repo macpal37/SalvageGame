@@ -66,6 +66,12 @@
                  "height":100,
                  "id":95,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"aggro_threshold",
+                         "type":"float",
+                         "value":15
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,

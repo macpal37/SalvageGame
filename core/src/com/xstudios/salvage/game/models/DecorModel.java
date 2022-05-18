@@ -91,7 +91,8 @@ public class DecorModel extends GameObject {
                 frame = 0;
             spriteSheet.setFrame(frame);
         }
-        canvas.draw(spriteSheet, Color.WHITE, origin.x, origin.y, getX() * drawScale.x - origin.x, getY() * drawScale.y - origin.y, getAngle(), scale.x, scale.y);
+        canvas.draw(spriteSheet, Color.WHITE, origin.x, origin.y, getX() * drawScale.x - origin.x,
+                getY() * drawScale.y - origin.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
 
     }
 
