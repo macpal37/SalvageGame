@@ -496,7 +496,6 @@ public class Wall extends GameObject {
     public void setFilmStrip(FilmStrip value) {
         sprite = value;
         sprite.setFrame(getID());
-
     }
 
 

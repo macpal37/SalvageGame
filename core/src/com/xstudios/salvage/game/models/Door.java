@@ -69,14 +69,12 @@ public class Door extends Wall {
 
     public void draw(GameCanvas canvas) {
         tick++;
-
         if (openDoor != null && closedDoor != null) {
             float x = vertices[0];
             float y = vertices[1];
             if (isActive()) {
                 canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x,
                         (y) * drawScale.y, getAngle(), doorScale.x * worldDrawScale.x, doorScale.y * worldDrawScale.y);
-//                    canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], origin.x, 0, x * drawScale.x, (y) * drawScale.y + doorDimension.y / 2f, getAngle(), 1, 1);
             } else if (sprite.getFrame() < 11) {
                 if (tick % 6 == 0) {
                     sprite.setFrame(sprite.getFrame() + 1);
@@ -89,8 +87,6 @@ public class Door extends Wall {
                         (y) * drawScale.y, getAngle(), doorScale.x * worldDrawScale.x, doorScale.y * worldDrawScale.y);
             }
         }
-
-
     }
 
     @Override

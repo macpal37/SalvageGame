@@ -23,6 +23,7 @@ import com.xstudios.salvage.util.FilmStrip;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 
 public class LevelBuilder {
     private JsonReader jsonReader;
@@ -37,6 +38,7 @@ public class LevelBuilder {
     protected Texture woodenChair2;
     protected Texture woodenTable;
     protected Texture monsterTenctacle;
+
 
 //    /**
 //     * The texture for Hazard
@@ -78,6 +80,7 @@ public class LevelBuilder {
     protected Texture swimmingAnimationWBody;
     protected Texture dustAnimation;
     protected Texture plantAnimation;
+    protected Texture plant2Animation;
     protected Texture keyAnimation;
     // Models to be updated
     protected TextureRegion sprite;
@@ -97,6 +100,9 @@ public class LevelBuilder {
     private FilmStrip treasureMonsterAnimation;
 
     private FilmStrip monsterAttackAnimation;
+
+    private FilmStrip monsterAttack2Animation;
+    private FilmStrip monsterWiggleAnimation;
 
     private FilmStrip monsterIdleAnimation;
     private FilmStrip doorAnimation;
@@ -141,6 +147,7 @@ public class LevelBuilder {
         swimmingAnimationWBody = directory.getEntry("models:diver_swimming_w_body", Texture.class);
         dustAnimation = directory.getEntry("models:dust", Texture.class);
         plantAnimation = directory.getEntry("models:plant", Texture.class);
+        plant2Animation = directory.getEntry("models:plant2", Texture.class);
         keyAnimation = directory.getEntry("models:key_animation", Texture.class);
         //Treasure Chest Animations
         treasureKeyAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_key", Texture.class), 2, 21, 42);
@@ -228,7 +235,7 @@ public class LevelBuilder {
     public float div = 25f;
 
     public enum TentacleType {
-        OldAttack, NewAttack, Idle, KILL
+        OldAttack, NewAttack, Idle, KILL, NewAttack2, SmallAttack
     }
 
     public Tentacle createTentacle(float agg_level, float tentacleScale, Wall w, TentacleType type, int lifespan) {
@@ -354,6 +361,7 @@ public class LevelBuilder {
             return null;
     }
 
+    Random rand = new Random();
 
     private Tile[] createTiles(JsonValue tileset, float div, float tileSize) {
         Tile[] tiles = new Tile[tileset.getInt("tilecount")];
@@ -609,8 +617,11 @@ public class LevelBuilder {
                             break;
 
                         case Goal:
+                            GoalDoor gd = new GoalDoor(sx, sy + objectHeight / (div * 2), objectWidth / div, objectHeight / div);
 
-                            gameObjects.add(new GoalDoor(sx, sy + objectHeight / (div * 2), objectWidth / div, objectHeight / div));
+                            gd.setDoorScale((40f / div) * (widthScale / 2), (40f / div) * (heightScale / 4f));
+                            gd.setFilmStrip(doorAnimation.copy());
+                            gameObjects.add(gd);
                             break;
                         case Block:
                             Wall block = new Wall(createVerticies(tile, 0, 0, widthScale, heightScale), sx, sy);
@@ -629,8 +640,10 @@ public class LevelBuilder {
                             switch (tile.id) {
                                 case 0:
 
+//                                    if (rand.nextInt(2) == 1)
                                     decor.setFilmStrip(new FilmStrip(plantAnimation, 1, 6, 6));
-
+//                                    else
+//                                        decor.setFilmStrip(new FilmStrip(plant2Animation, 1, 6, 6));
                                     break;
                                 case 1:
                                     decor.setFilmStrip(new FilmStrip(woodenChair1, 1, 1, 1));
@@ -867,9 +880,11 @@ public class LevelBuilder {
                 goal_door.setFriction(goal.getFloat("friction", 0));
                 goal_door.setRestitution(goal.getFloat("restitution", 0));
                 goal_door.setID(3);
+                goal_door.addTextures(doorCloseTexture, doorOpenTexture);
                 goal_door.setSensor(true);
                 goal_door.setDrawScale(drawScale);
-                goal_door.setTexture(doorOpenTexture);
+                goal_door.initLight(rayHandler);
+//                goal_door.setTexture(doorOpenTexture);
                 goal_door.setName("goal" + goalDoorCounter++);
                 level.addObject(goal_door);
 

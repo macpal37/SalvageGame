@@ -61,6 +61,8 @@
     "models:diver_swimming_w_body": "models/diver_swimming_w_body.png",
     "models:dust": "models/dust.png",
     "models:plant": "models/plant.png",
+    "models:plant2": "models/plant2.png",
+
 
     "models:barrel": "models/barrel.png",
     "models:crate": "models/crate.png",
@@ -83,6 +85,8 @@
       "models:kitchen5": "models/kitchen5.png",
       "models:monster1": "models/monster_animation1.png",
        "models:monster_attack": "models/tentacle_attack_animation.png",
+     "models:monster_attack2": "models/tentacle_attack2_animation.png",
+     "models:monster_wiggle": "models/tentacle_wiggle2_animation.png",
         "models:monster_idle": "models/tentacle_idle.png",
 
 

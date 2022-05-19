@@ -33,6 +33,14 @@ public class Tentacle extends GameObject {
 
     private float[] vertices;
     private FilmStrip tentacleSprite;
+
+    public void setTentacleSprite2(FilmStrip tentacleSprite2) {
+        this.tentacleSprite2 = tentacleSprite2;
+    }
+
+    private FilmStrip tentacleSprite2;
+
+
     protected Fixture geometry;
     private int frame = 0;
     private int life = 0;

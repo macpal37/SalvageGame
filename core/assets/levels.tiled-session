@@ -1,32 +1,246 @@
 {
-    "activeFile": "levels/Golden4.json",
+    "activeFile": "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/route2.json",
     "expandedProjectPaths": [
-        "levels/tilesets",
-        "levels"
+        "levels",
+        "levels/tilesets"
     ],
     "fileStates": {
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/dungeon_out.json": {
+            "scale": 2.058333333333333,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 152.3076923076923,
+                "y": 119.99999999999999
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/dungeon_tileset.json": {
+            "scaleInDock": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/entities_tilesets.json": {
+            "scaleInDock": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/forest_tileset.json": {
+            "scaleInDock": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/house_tileset.json": {
+            "scaleInDock": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/left_house.json": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 72.16666666666666,
+                "y": 79.66666666666666
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/mid_house.json": {
+            "scale": 5.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 79.90909090909092,
+                "y": 80
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/path_to_dungeon.json": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 80.16666666666669,
+                "y": 320
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/path_to_village.json": {
+            "scale": 2.386875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 70.59439643885833,
+                "y": 166.7452212621105
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/right_house.json": {
+            "scale": 5.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 72.0909090909091,
+                "y": 80
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/route2.json": {
+            "scale": 1.59125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 240.3770620581304,
+                "y": 240.06284367635507
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/starting_scene.json": {
+            "scale": 4,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 80.125,
+                "y": 80
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/tile_sprites-20220517T014159Z-001/tile_sprites/id_tiles.json": {
+            "scaleInDock": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/village.json": {
+            "scale": 1.6882291666666667,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 240.19250940951443,
+                "y": 120.24433886592212
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon.json": {
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 229.25,
+                "y": 144
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon1.json": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 190.16666666666669,
+                "y": 209.33333333333334
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon_out.json": {
+            "scale": 4,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 172.375,
+                "y": 151.5
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/left_house.json": {
+            "scale": 4,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 84.125,
+                "y": 108
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/mid_house.json": {
+            "scale": 4,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 52.875,
+                "y": 101.25
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/path_to_dungeon.json": {
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 157.75,
+                "y": 136
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/path_to_village.json": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 142.83333333333331,
+                "y": 153.33333333333331
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/right_house.json": {
+            "scale": 4,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 70.125,
+                "y": 98.75
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/route2.json": {
+            "scale": 4,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 364.625,
+                "y": 207.75
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/starting_scene.json": {
+            "scale": 4,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 111.875,
+                "y": 112
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/test_map.json": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 226.16666666666663,
+                "y": 220
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/village.json": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 431.16666666666663,
+                "y": 192.33333333333331
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/dungeon_tileset.json": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/entities_tilesets.json": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/forest_tileset.json": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/house_tileset.json": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/id_tiles.json": {
+            "scaleInDock": 2
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/route2.json": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 300.5,
+                "y": 231.33333333333334
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/small_outside_tileset.json": {
+            "scaleInDock": 2,
+            "scaleInEditor": 4
+        },
         "levels/Golden0.json": {
             "scale": 0.8512,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 269.0319548872181,
-                "y": 673.7546992481205
+                "x": 270.79417293233087,
+                "y": 673.1672932330828
             }
         },
         "levels/Golden1.json": {
             "scale": 0.3591,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 520.7463102199945,
-                "y": 800.6126427179059
+                "x": 522.1386800334169,
+                "y": 802.0050125313282
             }
         },
         "levels/Golden2.json": {
-            "scale": 0.3591,
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1203.0075187969926,
-                "y": 753.2720690615428
+                "x": 96.5,
+                "y": 711
             }
         },
         "levels/Golden3.json": {
@@ -34,7 +248,7 @@
             "selectedLayer": 2,
             "viewCenter": {
                 "x": 930.1030353661934,
-                "y": 861.8769145084937
+                "y": 864.6616541353384
             }
         },
         "levels/Golden4.json": {
@@ -78,11 +292,11 @@
             }
         },
         "levels/beta_0.json": {
-            "scale": 0.5,
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 501,
-                "y": 501
+                "x": 107.5,
+                "y": 832
             }
         },
         "levels/beta_1.json": {
@@ -97,23 +311,23 @@
             "scale": 0.33,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1250,
-                "y": 749.9999999999999
+                "x": 462.12121212121207,
+                "y": 781.8181818181819
             }
         },
         "levels/beta_3.json": {
             "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 998.4848484848485,
-                "y": 749.9999999999999
+                "x": 628.7878787878789,
+                "y": 845.4545454545455
             }
         },
         "levels/beta_5.json": {
             "scale": 0.125,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1304,
+                "x": 1308,
                 "y": 760
             }
         },
@@ -231,29 +445,24 @@
         }
     },
     "openFiles": [
-        "levels/Golden3.json",
-        "levels/Golden2.json",
-        "levels/Golden4.json",
-        "levels/Golden5.json",
-        "levels/Golden6.json",
-        "levels/Golden7.json",
-        "levels/Golden8.json",
-        "levels/Golden1.json",
-        "levels/Golden0.json"
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/route2.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon1.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/dungeon_tileset.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/house_tileset.json"
     ],
     "project": "levels.tiled-project",
     "recentFiles": [
-        "levels/Golden3.json",
-        "levels/Golden2.json",
-        "levels/Golden0.json",
-        "levels/Golden1.json",
-        "levels/Golden8.json",
-        "levels/Golden7.json",
-        "levels/Golden6.json",
-        "levels/Golden5.json",
-        "levels/Golden4.json",
-        "levels/beta_2.json",
-        "levels/level0.json",
-        "levels/beta_0.json"
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/starting_scene.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/left_house.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/right_house.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/mid_house.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon_out.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/path_to_dungeon.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/village.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/path_to_village.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/entities_tilesets.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/house_tileset.json",
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/forest_tileset.json"
     ]
 }

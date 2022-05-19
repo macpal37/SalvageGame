@@ -61,8 +61,14 @@ public class ItemModel extends DiverObjectModel {
         movement = new Vector2();
 //        light_color = new Color(1f,0.5f,0.5f,0.5f);
         chest_location = new Vector2(0, 0);
+
     }
 
+    @Override
+    public void deactivatePhysics(World world) {
+        super.deactivatePhysics(world);
+        light.dispose();
+    }
 
     @Override
     public void setID(int id) {
