@@ -68,14 +68,14 @@ public class MonsterController {
     private float tick;
 
     private int pounce_time = 0;
-    private int MAX_POUNCE_TIME = 10;
+    private int MAX_POUNCE_TIME = 60;
 
     private float MAX_IDLE_TENTACLES = 10;
     private float MAX_ATTACK_TENTACLES = 5;
 
 
     private float MAX_TARGET_DIST = 10;
-    private float RAND_DIST_RANGE = 15;
+    private float RAND_DIST_RANGE = 5;
     private float ATTACK_DIST_RANGE = 0;
 
     private int MAX_INVINCIBILITY = 50;
@@ -85,6 +85,7 @@ public class MonsterController {
     private int MAX_AGGRESSIVE_TIME;
     private int AGGRESSIVE_LENGTH = 15;
     private int LAST_AGGRESSIVE_LENGTH = 350;
+    private boolean transition_to_aggravated = false;
 
     private PooledList<Vector2> targetLocations;
 
@@ -142,15 +143,24 @@ public class MonsterController {
         return state == FSMState.ATTACK;
     }
 
+    public boolean isAggravated() {
+        return state != FSMState.IDLE || monster.getAggravation() > 3*monster.getAggroLevel()/4;
+    }
+
     public void wallCollision() {
         if (monster != null && state != FSMState.AGGRIVATED) {
             float agg = monster.getAggravation();
 //            if (agg < monster.getAggroLevel() + 1) {
-            //System.out.println("agg rate "+ monster.getAggravationRate());
+            System.out.println("agg rate "+ monster.getAggravationRate());
             monster.setAggravation(agg + monster.getAggravationRate());
 //            }
         }
 
+    }
+
+    public void transitionToAggravated(boolean b) {
+        transition_to_aggravated = b;
+        System.out.println("TRANSITION TO AGGRAVATED");
     }
 
     /**
@@ -169,6 +179,13 @@ public class MonsterController {
                     state = FSMState.GONNA_POUNCE;
                     pounce_time = 0;
                     //monster.setVisionRadius(30);
+                }
+                if(transition_to_aggravated || Math.random() <= .0005) {
+                    state = FSMState.AGGRIVATED;
+                    tick = 0;
+                    monster.setAggravation(monster.getAggroLevel() + monster.getAggravationRate() * 3);
+                    System.out.println(monster.getAggravationRate());
+                    transition_to_aggravated = false;
                 }
                 last_aggression++;
                 break;

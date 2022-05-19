@@ -230,7 +230,6 @@ public class GameController extends ScreenController implements ContactListener 
     private short hazard_collision_mask = 0x000c;
     private short hazard_collision_category = 0x0002;
     private short hazard_collision_group = 1;
-    AudioController audio;
 
 
     // ======================= CONSTRUCTORS =================================
@@ -242,9 +241,9 @@ public class GameController extends ScreenController implements ContactListener 
      * with the Box2d coordinates.  The bounds are in terms of the Box2d
      * world, not the screen.
      */
-    protected GameController(Player player) {
+    protected GameController() {
         this(new Rectangle(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT),
-                new Vector2(0, DEFAULT_GRAVITY), player);
+                new Vector2(0, DEFAULT_GRAVITY));
         pause = false;
         exit_home = false;
         press_restart = false;
@@ -253,17 +252,9 @@ public class GameController extends ScreenController implements ContactListener 
 
     @Override
     public void resize(int width, int height) {
-        camera.getCamera().setToOrtho(false, width, height);
-        camera.getCamera().update();
-        world_scale = new Vector2(width / SCEEN_WIDTH * 40, height / SCEEN_HEIGHT * 40);
-        worldScale.set(width / SCEEN_WIDTH, height / SCEEN_HEIGHT);
-        for (GObject go : level.getAllObjects()) {
-            go.setWorldDrawScale(worldScale.x, worldScale.y);
-        }
-        for (GObject go : level.getAboveObjects()) {
-            go.setWorldDrawScale(worldScale.x, worldScale.y);
-        }
-        reset();
+        super.resize(1280, 720);
+        this.world_scale.x = 1280 / bounds.getWidth();
+        this.world_scale.y = 720 / bounds.getHeight();
     }
 
     public int getTotalLevels() {
@@ -281,8 +272,8 @@ public class GameController extends ScreenController implements ContactListener 
      * @param height  The height in Box2d coordinates
      * @param gravity The downward gravity
      */
-    protected GameController(float width, float height, float gravity, Player player) {
-        this(new Rectangle(0, 0, width, height), new Vector2(0, gravity), player);
+    protected GameController(float width, float height, float gravity) {
+        this(new Rectangle(0, 0, width, height), new Vector2(0, gravity));
     }
 
 //    protected Monster monster;
@@ -301,10 +292,7 @@ public class GameController extends ScreenController implements ContactListener 
      * @param gravity The gravitational force on this Box2d world
      */
 
-    public final float SCEEN_WIDTH = 1280;
-    public final float SCEEN_HEIGHT = 720;
-
-    protected GameController(Rectangle bounds, Vector2 gravity, Player player) {
+    protected GameController(Rectangle bounds, Vector2 gravity) {
 
         this.pauseScreen = new Vector3(0, 0, 0);
         this.tempProjectedHud = new Vector3(0, 0, 0);
@@ -350,10 +338,8 @@ public class GameController extends ScreenController implements ContactListener 
         wallShine.setContactFilter(f2);
         light.setContactFilter(f);
 
-        audio = AudioController.getInstance((float) player.getMusic(), (float) player.getSoundEffects());
-        audio.initialize();
+        AudioController.getInstance().initialize();
         collisionController = new CollisionController();
-        collisionController.setAudio(audio);
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
 
@@ -380,10 +366,6 @@ public class GameController extends ScreenController implements ContactListener 
      */
     public boolean isActive() {
         return active;
-    }
-
-    public AudioController getAudio() {
-        return audio;
     }
 
     public void setLevel(int l) {
@@ -422,14 +404,8 @@ public class GameController extends ScreenController implements ContactListener 
      */
     public void setCanvas(GameCanvas canvas) {
         this.canvas = canvas;
-        this.world_scale.x = canvas.getWidth() / SCEEN_WIDTH * 40f;
-        this.world_scale.y = canvas.getHeight() / SCEEN_HEIGHT * 40f;
-        System.out.println("CANVAS: W: " + canvas.getWidth() + " H: " + canvas.getHeight());
-        System.out.println("WorldScale: " + world_scale.toString());
-//        for (GameObject obj : level.getAllObjects()) {
-//            obj.setDrawScale(world_scale);
-//        }
-//        reset();
+        this.world_scale.x = 1280 / bounds.getWidth();
+        this.world_scale.y = 720 / bounds.getHeight();
     }
 
     /**
@@ -457,7 +433,7 @@ public class GameController extends ScreenController implements ContactListener 
         exit_home = false;
         press_restart = false;
         press_resume = false;
-        audio.dispose();
+        AudioController.getInstance().dispose();
         player = null;
     }
 
@@ -528,7 +504,6 @@ public class GameController extends ScreenController implements ContactListener 
      * param obj The object to add
      */
     protected void addObject(GameObject obj) {
-
         assert inBounds(obj) : "Object is not in bounds";
         obj.activatePhysics(world);
         if (obj instanceof Tentacle)
@@ -565,10 +540,9 @@ public class GameController extends ScreenController implements ContactListener 
         level.getAllObjects().clear();
         level.getAboveObjects().clear();
         addQueue.clear();
-        audio.reset();
+        AudioController.getInstance().reset();
         populateLevel();
     }
-
 
     /**
      * Lays out the game geography.
@@ -576,18 +550,19 @@ public class GameController extends ScreenController implements ContactListener 
     private void populateLevel() {
 
 //        camera.setZoom(1.0f);
-        System.out.println("SCALE:: " + world_scale.toString());
+//        System.out.println("SCALE:: " + world_scale.toString());
         levelBuilder.createLevel(levels[curr_level], level, world_scale, symbol_scale, rayHandler);
         pause = false;
 
         // TODO: will this have the same effect as going through each type, casting, then adding?
         for (GameObject obj : level.getAllObjects()) {
             addObject(obj);
-            System.out.println();
+//            System.out.println();
         }
 
+
         monsterController = new MonsterController(level.getMonster(), getWorldBounds());
-        monsterController.setAudio(audio);
+        monsterController.setAudio(AudioController.getInstance());
 
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
@@ -596,10 +571,10 @@ public class GameController extends ScreenController implements ContactListener 
     }
 
     private void updateGameState() {
-//        System.out.println("game over animation " + game_over_animation_time);
-//        System.out.println("oxygen level "+ level.getDiver().getOxygenLevel() );
+
         if (game_over_animation_time <= 0) {
             if (game_state == state.DYING) {
+
                 game_state = state.EXIT_LOSE;
             } else if (game_state == state.WIN_ANIMATION) {
                 System.out.println(
@@ -611,27 +586,20 @@ public class GameController extends ScreenController implements ContactListener 
         } else if (level.getDiver().getOxygenLevel() <= 0) {
             game_state = state.DYING;
         } else if (reach_target) {
+
             game_state = state.WIN_ANIMATION;
         } else if (pause) {
             game_state = state.PAUSE;
         } else {
             game_state = state.PLAYING;
         }
-
-//        if (level.getDiver().getOxygenLevel() <= 0) {
-//            game_state = state.EXIT_LOSE;
-//        } else if (reach_target) {
-//            game_state = state.EXIT_WIN;
-//        } else if (pause) {
-//            game_state = state.PAUSE;
-//        } else {
-//            game_state = state.PLAYING;
-//        }
     }
 
-
     private void updateDyingState() {
+
         changeLightColor(new Color(0, 0, 0, 0));
+        rayHandler.setAmbientLight(.0001f);
+
     }
 
     private void updatePlayingState() {
@@ -649,8 +617,15 @@ public class GameController extends ScreenController implements ContactListener 
         level.getDiver().setHorizontalMovement(input.getHorizontal() * level.getDiver().getForce());
         level.getDiver().setVerticalMovement(input.getVertical() * level.getDiver().getForce());
 
+        System.out.println("Touching Obstacle: " + level.getDiver().isTouchingObstacle());
+        System.out.println("Latching: " + level.getDiver().isLatching());
+        System.out.println("KickOff: " + input.didKickOff());
+        System.out.println("Boosting: " + level.getDiver().isBoosting());
+        System.out.println("Diver Velocity: " + level.getDiver().getLinearVelocity().len());
+//        System.out.println("Diver Mass: " + level.getDiver().getMass());
+
         // stop boosting when player has slowed down enough
-        if (level.getDiver().getLinearVelocity().len() < 15 && level.getDiver().isBoosting()) {
+        if (level.getDiver().getLinearVelocity().len() < 10 && level.getDiver().isBoosting()) {
             level.getDiver().setBoosting(false);
         }
 
@@ -658,6 +633,7 @@ public class GameController extends ScreenController implements ContactListener 
         if (input.getHorizontal() != 0 || input.getVertical() != 0) {
             level.getDiver().setFacingDir(input.getHorizontal(), input.getVertical());
         }
+
 //        level.getDiver().reduceInvincibleTime();
 //        System.out.println("invincible time " + level.getDiver().getInvincibleTime());
 
@@ -720,7 +696,6 @@ public class GameController extends ScreenController implements ContactListener 
         level.getDiver().updateFlare();
         // manage items/dead body
 
-        level.getDiver().setPickUpOrDrop(input.getOrDropObject());
         level.getDiver().setItem();
 
         level.getDeadBody().setCarried(level.getDiver().hasBody());
@@ -740,7 +715,7 @@ public class GameController extends ScreenController implements ContactListener 
 
         // update audio according to oxygen level
 
-        audio.update(level.getDiver().getOxygenLevel(), level.getDiver().getMaxOxygen());
+        AudioController.getInstance().update(level.getDiver().getOxygenLevel(), level.getDiver().getMaxOxygen());
 
         if (input.didOpenChest()) {
             if (level.getDiver().getTreasureChests().size() > 0) {
@@ -757,12 +732,12 @@ public class GameController extends ScreenController implements ContactListener 
 
         }
 
+
         if (level.getDiver().getBody() != null && !pause) {
 //            cameraController.setCameraPosition(
 //                    (level.getDiver().getX() + 1.5f) * level.getDiver().getDrawScale().x, (level.getDiver().getY() + .5f) * level.getDiver().getDrawScale().y);
             camera.setCameraPosition(
-                    (level.getDiver().getX()) * level.getDiver().getDrawScale().x, (level.getDiver().getY() + .0f) * level.getDiver().getDrawScale().y);
-
+                    (level.getDiver().getX()) * level.getDiver().getDrawScale().x, (level.getDiver().getY()) * level.getDiver().getDrawScale().y);
 
             light.setPosition(
                     camera.getCameraPosition2D().x / (world_scale.x)
@@ -815,12 +790,6 @@ public class GameController extends ScreenController implements ContactListener 
             debug = !debug;
 
         }
-        if (input.didMenu()) {
-            camera.setCameraPosition(STANDARD_HEIGHT / 2, STANDARD_WIDTH / 2);
-            camera.setZoom(1f);
-            listener.exitScreen(this, 2);
-            pause = true;
-        }
 
         // Handle resets
         if (input.didReset() || game_state == state.RESTART) {
@@ -845,7 +814,9 @@ public class GameController extends ScreenController implements ContactListener 
     public void update(float dt) {
 //        worldScale.set(world_scale.x, world_scale.y);
         for (Door door : level.getDoors()) {
-            door.setActive(!door.getUnlock(level.getDiver().getItem()));
+            if (door.isActive()) {
+                door.setActive(!door.getUnlock());
+            }
         }
 //        System.out.println("ScALE: " + world_scale.toString());
         rayHandler.setCombinedMatrix(camera.getCamera().combined.cpy().scl(world_scale.x, world_scale.y, 1f));
@@ -857,10 +828,13 @@ public class GameController extends ScreenController implements ContactListener 
             Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
             Queue<Wall> attack_tentacles = monsterController.getMonster().getKillTentacles();
 
+
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
+
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, Tentacle.TentacleType.NewAttack, 40);
+
                     addQueuedObject(t);
                     t.setGrowRate(5);
                 }
@@ -868,7 +842,9 @@ public class GameController extends ScreenController implements ContactListener 
             while (idle_tentacles.size() > 0) {
                 Wall add_wall = idle_tentacles.poll();
                 if (add_wall != null) {
+
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, Tentacle.TentacleType.Idle, 5000);
+
                     t.setGrowRate(10);
                     t.setType(0);
                     addQueuedObject(t);
@@ -881,7 +857,7 @@ public class GameController extends ScreenController implements ContactListener 
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, Tentacle.TentacleType.KILL, 1000000);
                     t.setType(1);
                     t.setGrowRate(4);
-                    System.out.println("type" + t.getType());
+//                    System.out.println("type" + t.getType());
                     addQueuedObject(t);
                 }
             }
@@ -910,12 +886,10 @@ public class GameController extends ScreenController implements ContactListener 
                 break;
             case PAUSE:
                 InputController input = InputController.getInstance();
-                if (input.isPause()) {
+                if (input.isPause())
                     resume();
-                }
-//                else {
-//                    updatePlayingState();
-//                }
+                // oxygen still drains when paused
+                level.getDiver().changeOxygenLevel(passiveOxygenRate);
                 break;
             // could be useful later but currently just has updates for PLAYING state
 //            case WIN_GAME:
@@ -955,7 +929,7 @@ public class GameController extends ScreenController implements ContactListener 
     }
 
     public void updateDiverLighting() {
-        if (monsterController.isMonsterActive() && level.getMonster().getAggravation() > level.getMonster().getAggroLevel()) {
+        if (monsterController.isMonsterActive() && monsterController.isAggravated()) {
             changeLightColor(monster_color);
         } else if (level.getDiver().getOxygenLevel() < level.getDiver().getMaxOxygen() * .25f) {
             changeLightColor(low_oxygen_color);
@@ -1175,8 +1149,8 @@ public class GameController extends ScreenController implements ContactListener 
                         0.0f, 0.5f * worldScale.x, 0.5f * worldScale.y);
 
                 //draw inventory indicator
-                if (level.getDiver().carryingItem()) {
-                    canvas.draw(keyHud, level.getDiver().getItem().getColor(), (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
+                for (int i = 0; i < level.getDiver().getNumKeys(); i++) {
+                    canvas.draw(keyHud, Color.WHITE, (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
                             tempProjectedOxygen.x - 50,
                             tempProjectedOxygen.y,
                             0.0f, 0.35f * worldScale.x, 0.35f * worldScale.y);
@@ -1202,13 +1176,17 @@ public class GameController extends ScreenController implements ContactListener 
             case PAUSE:
 
                 // camera position tracks the position in game
+                camera.render();
 
                 pauseScreen.x = (float) canvas.getWidth() / 2;
                 pauseScreen.y = (float) canvas.getHeight() / 2;
                 pauseScreen = camera.getCamera().unproject(pauseScreen);
 
+                //the scale is eyeballed, and resizing during the pause moves the camera weird
+                //Solution: not a see through pause screen
                 canvas.draw(pause_screen, Color.WHITE, pause_screen.getWidth() / 2, pause_screen.getHeight() / 2, pauseScreen.x,
-                        pauseScreen.y, 0.0f, 1 * worldScale.x, 0.5f * worldScale.y);
+                        pauseScreen.y, 0.0f, 0.75f, 0.75f);
+
 
                 Vector3 resume_button = new Vector3(0, 0, 0);
                 resume_button.x = (float) canvas.getWidth() / 2;
@@ -1281,9 +1259,8 @@ public class GameController extends ScreenController implements ContactListener 
      */
 
     public void pause() {
-        System.out.println("pause() was called");
+//        System.out.println("pause() was called");
         pause = true;
-
         updateGameState();
     }
 
@@ -1293,7 +1270,7 @@ public class GameController extends ScreenController implements ContactListener 
      * This is usually when it regains focus.
      */
     public void resume() {
-        System.out.println("resume");
+//        System.out.println("resume");
         pause = false;
         updateGameState();
         // TODO Auto-generated method stub

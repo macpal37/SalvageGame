@@ -7,11 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
-import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
@@ -117,6 +115,11 @@ public class DiverModel extends GameObject {
     private final float drift_maxspeed;
 
     /**
+     * the boost input
+     */
+    private final float boost_impulse;
+
+    /**
      * Which direction is the character facing
      */
     private boolean faceRight;
@@ -127,7 +130,9 @@ public class DiverModel extends GameObject {
     /**
      * item that diver is currently carrying
      */
-    private ItemModel current_item;
+    private ArrayList<ItemModel> item_list;
+
+    private int num_keys = 0;
 
     /**
      * dead body that is the target for the level
@@ -304,10 +309,17 @@ public class DiverModel extends GameObject {
         setFixedRotation(true);
 
         swimMaxSpeed = data.getFloat("maxspeed", 0);
+        swimDamping = data.getFloat("damping", 0);
         drift_maxspeed = data.getFloat("drift_maxspeed", 0);
-
-        damping = data.getFloat("damping", 0);
+        boostedMaxSpeed = data.getFloat("boost_maxspeed");
+        boostDamping = data.getFloat("boost_damping");
+        boost_impulse = data.getFloat("boost_impulse");
         force = data.getFloat("force", 0);
+
+        // the current speed and damping
+        maxSpeed = swimMaxSpeed;
+        damping = swimDamping;
+
         MAX_INVINCIBLE_TIME = data.getInt("invincible_time", 20);
 
         dimension = new Vector2();
@@ -327,7 +339,7 @@ public class DiverModel extends GameObject {
         setName("diver");
 
         this.data = data;
-        current_item = null;
+        item_list = new ArrayList<>();
         ping = false;
         movement = new Vector2();
         drift_movement = new Vector2();
@@ -355,18 +367,10 @@ public class DiverModel extends GameObject {
         end2 = new CircleShape();
         cap1 = null;
         cap2 = null;
-        // TODO: Put this in the constants JSON
 
-        boostedMaxSpeed = swimMaxSpeed * 1.5f;
-
-        maxSpeed = swimMaxSpeed;
-        swimDamping = damping;
-
-        boostDamping = damping / 7;
         facingDir = new Vector2(0, 0);
 
         setFixedRotation(false);
-
 
         carrying_body = false;
         dead_body = null;
@@ -594,25 +598,19 @@ public class DiverModel extends GameObject {
         }
         body.setUserData(this);
 
-
-        JsonValue sensorjv = data.get("sensor");
-
-
         // create a sensor to detect wall collisions
         FixtureDef hitboxDef = new FixtureDef();
-        hitboxDef.density = data.getFloat("density", 0);
+        hitboxDef.density = 0; // so we don't add extra mass to the diver
         hitboxDef.isSensor = true;
-        // we don't want this fixture to collide, just act as a sensor
-//        hitboxDef.filter
         hitboxDef.filter.categoryBits = 0x0002;
         hitboxDef.filter.maskBits = 0x0004;
         hitboxDef.filter.groupIndex = 1;
         hitboxShape = new PolygonShape();
-        hitboxShape.setAsBox(getWidth() * 1.6f, getHeight(),
+        hitboxShape.setAsBox(getWidth() * 1.5f, getHeight() * 1.4f,
                 new Vector2(0, 0), 0.0f);
         hitboxDef.shape = hitboxShape;
-//        Fixture hitboxFixture = body.createFixture(hitboxDef);
-//        hitboxFixture.setUserData(hitboxSensorName);
+        Fixture hitboxFixture = body.createFixture(hitboxDef);
+        hitboxFixture.setUserData(hitboxSensorName);
 
         for (FlareModel f : flares) {
             f.activatePhysics(world);
@@ -791,7 +789,7 @@ public class DiverModel extends GameObject {
 
     // TODO: Having a state machine would probably be helpful
     public boolean isSwimming() {
-        return !isLatching() /*&& !isBoosting() */ && movement.len() != 0;
+        return !isLatching() && !isBoosting() && movement.len() != 0;
     }
 
     public boolean isIdling() {
@@ -976,8 +974,7 @@ public class DiverModel extends GameObject {
             setMaxSpeed(boostedMaxSpeed);
             setLinearDamping(boostDamping);
             if (movement.y > 0) {
-//                targetAngleY = 85;
-
+                targetAngleY = 85;
             } else if (movement.y < 0) {
                 targetAngleY = -85;
             }
@@ -990,6 +987,7 @@ public class DiverModel extends GameObject {
                 targetAngleX = 180;
             }
             // TODO: Currently doesn't take movement input. Will need steering in specific dirs only?
+
             if (Math.abs(getVX()) >= getMaxSpeed()) {
                 setVX(Math.signum(getVX()) * getMaxSpeed());
             }
@@ -1019,43 +1017,63 @@ public class DiverModel extends GameObject {
      * Set the current item the diver is carrying
      */
     public void setItem() {
-        if (pickUpOrDrop) {
 
-            if (current_item != null && potential_items.size() == 0) {
-                dropItem();
-            }
             for (ItemModel i : potential_items) {
-                if (i != current_item) {
-                    dropItem();
-                    current_item = i;
-                    current_item.setX(getX());
-                    current_item.setY(getY());
-                    //current_item.setGravityScale(1);
-                    current_item.setCarried(true);
-                    current_item.setKeyActive(true);
+                if (!item_list.contains(i)) {
+                    item_list.add(i);
+                    i.setX(getX());
+                    i.setY(getY());
+                    i.setCarried(true);
+                    i.setKeyActive(true);
+                    if(i.getItemType() == ItemModel.ItemType.KEY){
+                        num_keys++;
+                    }
                     break;
                 }
 
             }
-        }
     }
 
     /**
      * @return if the diver is carrying an item
      */
     public boolean carryingItem() {
-        return current_item != null;
+        return item_list.size() > 0;
     }
 
     /**
-     * @return the current item the diver is carrying
+     * @return the list of current items the diver is carrying
      */
-    public ItemModel getItem() {
-        return current_item;
+    public ArrayList<ItemModel> getItem() {
+        return item_list;
     }
 
-    public void setPickUpOrDrop(boolean val) {
-        pickUpOrDrop = val;
+    /**
+     * @return the number of keys the diver is carrying
+     */
+    public int getNumKeys() {
+        return num_keys;
+    }
+
+    /**
+     * @return the number of keys the diver is carrying
+     */
+    public void reduceNumKeys() {
+        num_keys--;
+    }
+
+    /**
+     * @return the number of keys the diver is carrying
+     */
+    public void incrementNumKeys() {
+        num_keys++;
+    }
+
+    /**
+     * remove an item from diver inventory
+     */
+    public void removeItem(ItemModel i) {
+        item_list.remove(i);
     }
 
     public void addPotentialItem(ItemModel i) {
@@ -1209,26 +1227,24 @@ public class DiverModel extends GameObject {
 
     public void boost() {
         // set impulse in direction of key input
-        float boost = 3f;
-
-        forceCache.set(facingDir.nor().x * boost, facingDir.nor().y * boost);
+        forceCache.set(facingDir.nor().x * boost_impulse, facingDir.nor().y * boost_impulse);
+        body.setLinearVelocity(Vector2.Zero); // make sure to zero out prev velocity just in case
         body.applyLinearImpulse(forceCache, body.getWorldCenter(), true);
-        forceCache.set(movement.nor().x * boost, movement.nor().y * boost);
-        body.applyLinearImpulse(forceCache, body.getPosition(), true);
+        System.out.println("Diver Vel after boost: " + getLinearVelocity().len());
     }
 
-    public void dropItem() {
-        if (current_item != null) {
-            current_item.setGravityScale(0f);
-            current_item.setX(getX());
-            current_item.setY(getY());
-            current_item.setVerticalMovement(0);
-            current_item.setVX(0);
-            current_item.setVY(0);
-            current_item.setCarried(false);
-            current_item = null;
-        }
-    }
+//    public void dropItem() {
+//        if (item_list != null) {
+//            item_list.setGravityScale(0f);
+//            item_list.setX(getX());
+//            item_list.setY(getY());
+//            item_list.setVerticalMovement(0);
+//            item_list.setVX(0);
+//            item_list.setVY(0);
+//            item_list.setCarried(false);
+//            item_list = null;
+//        }
+//    }
 
     public void dropBody() {
         carrying_body = false;

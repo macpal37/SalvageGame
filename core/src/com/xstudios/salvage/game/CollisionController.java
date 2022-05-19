@@ -15,12 +15,6 @@ import com.xstudios.salvage.game.models.*;
 
 public class CollisionController {
 
-    AudioController audio;
-
-    public void setAudio(AudioController a) {
-        audio = a;
-    }
-
     /**
      * remove body from list of potential bodies that diver left and right sensors are touching
      *
@@ -67,17 +61,13 @@ public class CollisionController {
             ((ItemModel) b2.getUserData()).setTouched(true);
             DiverModel diver = (DiverModel) b1.getUserData();
             ItemModel item = (ItemModel) b2.getUserData();
-            if (diver.getItem() != item) {
-                diver.addPotentialItem(item);
-            }
+            diver.addPotentialItem(item);
         }
         if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof ItemModel) {
             ((ItemModel) b1.getUserData()).setTouched(true);
             DiverModel diver = (DiverModel) b2.getUserData();
             ItemModel item = (ItemModel) b1.getUserData();
-            if (diver.getItem() != item) {
-                diver.addPotentialItem(item);
-            }
+            diver.addPotentialItem(item);
         }
     }
 
@@ -162,8 +152,16 @@ public class CollisionController {
 
     public static boolean attemptUnlock(DiverModel diver, Door door) {
         if (diver.getItem() != null) {
-            if (diver.getItem().getID() == door.getID() || diver.getItem().getItemType() == ItemModel.ItemType.DEAD_BODY) {
-
+            ItemModel key = null;
+            for(ItemModel i: diver.getItem()){
+                if(i.getItemType() == ItemModel.ItemType.KEY){
+                    key = i;
+                    break;
+                }
+            }
+            if(key != null) {
+                diver.removeItem(key);
+                diver.reduceNumKeys();
                 return true;
             }
         }
@@ -237,25 +235,15 @@ public class CollisionController {
                 diver.getDiverCollisionBox().equals(fd1) &&
                 b2.getUserData() instanceof HazardModel) {
             HazardModel hazard = (HazardModel) b2.getUserData();
-            return staticHazardCollision(diver, hazard, monster);
+            return staticHazardCollision(diver, hazard, (f2.getUserData() instanceof Tentacle), monster);
         }
         if (b2.getUserData() instanceof DiverModel &&
                 diver.getDiverCollisionBox().equals(fd2) &&
                 b1.getUserData() instanceof HazardModel) {
             HazardModel hazard = (HazardModel) b1.getUserData();
-            return staticHazardCollision(diver, hazard, monster);
+            return staticHazardCollision(diver, hazard, (f1.getUserData() instanceof Tentacle), monster);
         }
 
-        if (b1.getUserData() instanceof DiverModel &&
-                b2.getUserData() instanceof Tentacle) {
-            Tentacle t = (Tentacle) b2.getUserData();
-            audio.idle_roar();
-        }
-        else if (b1.getUserData() instanceof Tentacle &&
-                b2.getUserData() instanceof DiverModel) {
-            Tentacle t = (Tentacle) b1.getUserData();
-            audio.idle_roar();
-        }
         // return 0 if not colliding
         return 0;
     }
@@ -290,11 +278,11 @@ public class CollisionController {
         Object fd2 = b2.getUserData();
         if (b1.getUserData() instanceof DiverModel &&
                 b2.getUserData() instanceof Monster) {
-            audio.idle_roar();
+            AudioController.getInstance().idle_roar();
 
         } else if (b1.getUserData() instanceof Monster &&
                 b2.getUserData() instanceof DiverModel) {
-            audio.idle_roar();
+            AudioController.getInstance().idle_roar();
         }
     }
 
@@ -352,6 +340,7 @@ public class CollisionController {
         Object fd2 = f2.getUserData();
 
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
+
             Wall wall = (Wall) b2.getUserData();
             if (wall.isWall()) {
                 diver.setTouchedWall(wall);
@@ -360,7 +349,7 @@ public class CollisionController {
             if (wall.isCanAlertMonster()) {
                 //AudioController.getInstance().wall_collision(diver.getForce());
                 monsterController.wallCollision();
-                audio.wall_collision(diver.getForce());
+                AudioController.getInstance().wood_collision(diver.getForce());
             }
         } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
             Wall wall = (Wall) b1.getUserData();
@@ -371,21 +360,10 @@ public class CollisionController {
             if (wall.isCanAlertMonster()) {
                 //AudioController.getInstance().wall_collision(diver.getForce());
                 monsterController.wallCollision();
-                audio.wall_collision(diver.getForce());
+                AudioController.getInstance().wood_collision(diver.getForce());
             }
 
         }
-
-//        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall
-//                && !(fd2 instanceof Tentacle) &&
-//                diver.getDiverCollisionBox().equals(fd1)) {
-//            AudioController.getInstance().wall_collision(diver.getForce());
-//        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall
-//                && !(fd1 instanceof Tentacle) &&
-//                diver.getDiverCollisionBox().equals(fd2)) {
-//            AudioController.getInstance().wall_collision(diver.getForce());
-//        }
-
     }
 
     /**
@@ -402,12 +380,11 @@ public class CollisionController {
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
 
-        if (b1.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd1) && b2.getUserData() instanceof Wall
+        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall
         ) {
-
             diver.setTouchedWall(null);
             ((DiverModel) b1.getUserData()).setTouchingObstacle(false);
-        } else if (b2.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd2) && b1.getUserData() instanceof Wall) {
+        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
             diver.setTouchedWall(null);
             ((DiverModel) b2.getUserData()).setTouchingObstacle(false);
         }
@@ -463,9 +440,9 @@ public class CollisionController {
     }
 
 
-    public static float staticHazardCollision(DiverModel diver, HazardModel hazard, MonsterController monster) {
+    public static float staticHazardCollision(DiverModel diver, HazardModel hazard, boolean isTentacle, MonsterController monster) {
 //        System.out.println("Hazard Contact: " + hazard.getOxygenDrain());
-//        System.out.println("START HAZARD COLLISION");
+        System.out.println("START HAZARD COLLISION");
         if (!diver.getStunned() && /*!diver.isInvincible() && */ !monster.isKillState()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
@@ -479,10 +456,12 @@ public class CollisionController {
 
         }
 
+        if(isTentacle) {
+            // TODO: @quimey you can add diver tentacle collision sounds in here
+            monster.transitionToAggravated(true);
+            AudioController.getInstance().idle_roar();
+        }
         diver.setChangeLightFilter(false);
-//        else {
-//            diver.setChangeLightFilter(true);
-//        }
 
         return hazard.getOxygenDrain();
 
