@@ -8,10 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonWriter;
-import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.*;
 import com.xstudios.salvage.assets.AssetDirectory;
 
 
@@ -21,9 +18,11 @@ public class Player {
     private int level;
     JsonValue json;
 
-    public Player(AssetDirectory directory){
+    public Player(){
         System.out.println("inside the player directory");
-        json = directory.getEntry("player", JsonValue.class);
+        FileHandle file = Gdx.files.external("Documents/SalvageGame/save_files/player.json");
+        JsonReader jsonReader = new JsonReader();
+        json = jsonReader.parse(file.reader());
         sound_effects = json.getInt("sound_effects", 2);
         music = json.getInt("music", 2);
         level = json.getInt("level", 1);
@@ -58,7 +57,7 @@ public class Player {
         JsonValue updateLevel = new JsonValue(level);
         JsonValue updateMusic = new JsonValue(music);
         JsonValue updateSoundEffects = new JsonValue(sound_effects);
-        FileHandle file = Gdx.files.local("core/assets/player.json");
+        FileHandle file = Gdx.files.external("Documents/SalvageGame/save_files/player.json");
 
         json.remove("level");
         json.remove("music");

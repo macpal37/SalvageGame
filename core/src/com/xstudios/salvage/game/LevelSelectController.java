@@ -127,20 +127,23 @@ public class LevelSelectController extends ScreenController implements Controlle
                     return false;
                 }
             }
+
             if(t1 != null){
                 int ox1 = t1.getWidth()/2;
                 int oy1 = t1.getHeight()/2;
                 float h1 = ox1 * scale * s;
                 float w1 = oy1 * scale * s;
-                if(((x + w1 > pX && x - w1 < pX) && (flip_y + h1 > pY && flip_y - h1 < pY))){
+                if(((x + w1 > pX && x - w1 < pX) && (flip_y + h1/2 > pY && flip_y - h1/2 < pY))){
                     c = Color.GRAY;
                     if(Gdx.input.isTouched()) clicked = true;
+                    System.out.println("hovering over ship");
                 }
                 canvas.draw(t1, c, ox1, oy1, x, height - y, angle, s * scale, s * scale);
             }
-            if(((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY))){
+            else if(((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY))){
                 c = Color.GRAY;
                 if(Gdx.input.isTouched()) clicked = true;
+                System.out.println("hovering over name");
             }
         }
         canvas.draw(t, c, ox, oy, x, height - y, angle, s * scale, s * scale);

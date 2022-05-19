@@ -155,7 +155,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			loading = null;
 			System.out.println("loaded");
 			// loads player, which stores info about the current save and settings
-			player = new Player(directory);
+			player = new Player();
 			System.out.println("player_loaded");
 			//game controller setup
 

@@ -128,7 +128,6 @@
   },
   "jsons"  : {
     "models:constants":  "models/constants.json",
-    "player": "player.json"
   },
 
   "fonts": {
