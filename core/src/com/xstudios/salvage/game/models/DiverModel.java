@@ -7,11 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
-import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
@@ -127,7 +125,9 @@ public class DiverModel extends GameObject {
     /**
      * item that diver is currently carrying
      */
-    private ItemModel current_item;
+    private ArrayList<ItemModel> item_list;
+
+    private int num_keys = 0;
 
     /**
      * dead body that is the target for the level
@@ -327,7 +327,7 @@ public class DiverModel extends GameObject {
         setName("diver");
 
         this.data = data;
-        current_item = null;
+        item_list = new ArrayList<>();
         ping = false;
         movement = new Vector2();
         drift_movement = new Vector2();
@@ -1023,18 +1023,16 @@ public class DiverModel extends GameObject {
     public void setItem() {
         if (pickUpOrDrop) {
 
-            if (current_item != null && potential_items.size() == 0) {
-                dropItem();
-            }
             for (ItemModel i : potential_items) {
-                if (i != current_item) {
-                    dropItem();
-                    current_item = i;
-                    current_item.setX(getX());
-                    current_item.setY(getY());
-                    //current_item.setGravityScale(1);
-                    current_item.setCarried(true);
-                    current_item.setKeyActive(true);
+                if (!item_list.contains(i)) {
+                    item_list.add(i);
+                    i.setX(getX());
+                    i.setY(getY());
+                    i.setCarried(true);
+                    i.setKeyActive(true);
+                    if(i.getItemType() == ItemModel.ItemType.KEY){
+                        num_keys++;
+                    }
                     break;
                 }
 
@@ -1046,14 +1044,42 @@ public class DiverModel extends GameObject {
      * @return if the diver is carrying an item
      */
     public boolean carryingItem() {
-        return current_item != null;
+        return item_list.size() > 0;
     }
 
     /**
-     * @return the current item the diver is carrying
+     * @return the list of current items the diver is carrying
      */
-    public ItemModel getItem() {
-        return current_item;
+    public ArrayList<ItemModel> getItem() {
+        return item_list;
+    }
+
+    /**
+     * @return the number of keys the diver is carrying
+     */
+    public int getNumKeys() {
+        return num_keys;
+    }
+
+    /**
+     * @return the number of keys the diver is carrying
+     */
+    public void reduceNumKeys() {
+        num_keys--;
+    }
+
+    /**
+     * @return the number of keys the diver is carrying
+     */
+    public void incrementNumKeys() {
+        num_keys++;
+    }
+
+    /**
+     * remove an item from diver inventory
+     */
+    public void removeItem(ItemModel i) {
+        item_list.remove(i);
     }
 
     public void setPickUpOrDrop(boolean val) {
@@ -1219,18 +1245,18 @@ public class DiverModel extends GameObject {
         body.applyLinearImpulse(forceCache, body.getPosition(), true);
     }
 
-    public void dropItem() {
-        if (current_item != null) {
-            current_item.setGravityScale(0f);
-            current_item.setX(getX());
-            current_item.setY(getY());
-            current_item.setVerticalMovement(0);
-            current_item.setVX(0);
-            current_item.setVY(0);
-            current_item.setCarried(false);
-            current_item = null;
-        }
-    }
+//    public void dropItem() {
+//        if (item_list != null) {
+//            item_list.setGravityScale(0f);
+//            item_list.setX(getX());
+//            item_list.setY(getY());
+//            item_list.setVerticalMovement(0);
+//            item_list.setVX(0);
+//            item_list.setVY(0);
+//            item_list.setCarried(false);
+//            item_list = null;
+//        }
+//    }
 
     public void dropBody() {
         carrying_body = false;

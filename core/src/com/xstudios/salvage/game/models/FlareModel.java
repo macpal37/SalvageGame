@@ -61,6 +61,8 @@ public class FlareModel extends DiverObjectModel {
         } catch (Exception e) {
             item_color = Color.WHITE;
         }
+        setFriction(data.getFloat("flare_friction", 2));
+        setFixedRotation(false);
         movement = new Vector2();
         light_color = new Color(1f, 0.5f, 0.5f, color_alpha_val);//Color.BLACK;
         white_light = new Color(1f, 1f, 1f, white_alpha_val);
@@ -122,9 +124,9 @@ public class FlareModel extends DiverObjectModel {
     }
 
 
-    public Color getColor() {
-        return ItemModel.COLOR_OPTIONS[getID()];
-    }
+//    public Color getColor() {
+//        return ItemModel.COLOR_OPTIONS[getID()];
+//    }
 
     /**
      * Release the fixtures for this body, resetting the shape
