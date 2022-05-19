@@ -1,17 +1,16 @@
 package com.xstudios.salvage.game.models;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.xstudios.salvage.game.GameCanvas;
-import com.xstudios.salvage.game.GameObject;
+import com.xstudios.salvage.game.*;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
-import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
@@ -24,13 +23,27 @@ public class TextModel extends GameObject {
     private Fixture geometry;
     private PolygonShape shape;
     private CircleShape circ;
+    private float radius = 10f;
+
+    private Color textColor;
+
+    private BitmapFont font;
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    private String text = "";
 
 
     public TextModel(float x, float y) {
         super(x, y);
 
         circ = new CircleShape();
-        circ.setRadius(0.0625f);
+        circ.setRadius(radius);
+        textColor = new Color(1f, 1f, 1f, 0f);
+        font = GameController.displayFont;
+        font.setColor(textColor);
 
     }
 
@@ -73,21 +86,27 @@ public class TextModel extends GameObject {
         scale.set(x, y);
     }
 
+    public void setDisplay(boolean display) {
+        isDisplay = display;
+    }
 
-    int tick = 0;
+    private boolean isDisplay = false;
+
 
     @Override
     public void draw(GameCanvas canvas) {
-        tick++;
         if (tick % 5 == 0) {
-            int frame = spriteSheet.getFrame();
-            frame++;
-            if (frame >= spriteSheet.getSize())
-                frame = 0;
-            spriteSheet.setFrame(frame);
+            if (isDisplay)
+                if (textColor.a < 1)
+                    textColor.set(1f, 1f, 1f, textColor.a + 0.05f);
+                else if (textColor.a > 0)
+                    textColor.set(1f, 1f, 1f, textColor.a - 0.05f);
+            font.setColor(textColor);
         }
-        canvas.draw(spriteSheet, Color.WHITE, origin.x, origin.y, getX() * drawScale.x - origin.x,
-                getY() * drawScale.y - origin.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
+
+        canvas.drawText(text, font,
+                (getX()) * drawScale.x * worldDrawScale.x, (getY()) * drawScale.y * worldDrawScale.y);
+
 
     }
 

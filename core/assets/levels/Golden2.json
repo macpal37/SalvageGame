@@ -414,6 +414,24 @@
                  "width":100,
                  "x":612,
                  "y":1314
+                }, 
+                {
+                 "gid":47,
+                 "height":100,
+                 "id":125,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"text",
+                         "type":"string",
+                         "value":"Hello\nYo\nPress Q\n"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":242,
+                 "y":713
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -499,7 +517,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":125,
+ "nextobjectid":126,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",

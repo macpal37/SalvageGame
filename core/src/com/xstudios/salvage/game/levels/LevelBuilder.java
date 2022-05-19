@@ -19,6 +19,7 @@ import com.xstudios.salvage.game.models.*;
 
 import com.xstudios.salvage.game.models.TreasureModel.TreasureType;
 import com.xstudios.salvage.util.FilmStrip;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -722,7 +723,7 @@ public class LevelBuilder {
                                         monster.setAggroStrikes(prop.getInt("value"));
                                     else if (prop.getString("name").equals("vision_radius"))
                                         monster.setVisionRadius(prop.getInt("value"));
-                                    System.out.println("ahhhhhhhhhhhhhhhhhhhh " + prop.getFloat("value") + " " + monster.getAggravationRate());
+
                                 }
                             gameObjects.add(monster);
                             break;
@@ -757,6 +758,17 @@ public class LevelBuilder {
                                     k -> new ArrayList<TreasureModel>());
                             chests.get(treasureModel.getID()).add(treasureModel);
                             break;
+                        case Text:
+                            System.out.println("TEXT!!");
+                            TextModel textModel = new TextModel(sx, sy);
+                            if (obj.get("properties") != null)
+                                for (JsonValue prop : obj.get("properties")) {
+                                    if (prop.getString("name").equals("text"))
+                                        textModel.setText(prop.getString("value"));
+                                }
+                            gameObjects.add(textModel);
+                            break;
+
                     }
 
 
@@ -933,6 +945,11 @@ public class LevelBuilder {
                 monster.setDrawScale(drawScale);
                 monster.setName("Monster");
                 level.addObject(monster);
+            } else if (go instanceof TextModel) {
+                TextModel text = (TextModel) go;
+                text.setDrawScale(drawScale);
+                level.getAboveObjects().add(text);
+                level.addObject(text);
             }
         }
 

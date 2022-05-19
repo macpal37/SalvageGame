@@ -265,7 +265,6 @@ public class MonsterController {
 //
 
         changeStateIfApplicable();
-        System.out.println("uhhhhhhhhhhhhhh " + state);
 
         float goal_x = diver.getX() + diver.getVX();
         float goal_y = diver.getY() + diver.getVY();
@@ -322,21 +321,6 @@ public class MonsterController {
 //                if (tick % 5 == 0) {
                 curr_pos = diver.getPosition().cpy();
                 monster.moveMonster(curr_pos);
-//                    if (curr_pos.dst(target_pos) < MAX_TARGET_DIST) {
-//                        int ctr = 0;
-//                        while (curr_pos.dst(target_pos) < 10 && ctr < 10) {
-//                            Random rand = new Random();
-//                            float xpos = rand.nextFloat() * ATTACK_DIST_RANGE;
-//                            float ypos = rand.nextFloat() * ATTACK_DIST_RANGE;
-//                            target_pos = diver.getPosition().cpy().add(xpos, ypos);
-//                            ctr++;
-//                        }
-////                        System.out.println("rippppppppppppppppppppppppppppppppppppp");
-//                    } else {
-//                        curr_pos = (target_pos.cpy().sub(curr_pos).nor()).add(curr_pos);
-////                        System.out.println("sadddddddddddddddddddddddddddddddddd");
-//                    }
-//                }
                 if (tick % 5 == 0) {
                     float best_distance = 10000.0f;
                     float temp_distance = 0.0f;

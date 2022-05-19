@@ -153,13 +153,13 @@ public class CollisionController {
     public static boolean attemptUnlock(DiverModel diver, Door door) {
         if (diver.getItem() != null) {
             ItemModel key = null;
-            for(ItemModel i: diver.getItem()){
-                if(i.getItemType() == ItemModel.ItemType.KEY){
+            for (ItemModel i : diver.getItem()) {
+                if (i.getItemType() == ItemModel.ItemType.KEY) {
                     key = i;
                     break;
                 }
             }
-            if(key != null) {
+            if (key != null) {
                 diver.removeItem(key);
                 diver.reduceNumKeys();
                 return true;
@@ -449,14 +449,13 @@ public class CollisionController {
             diver.resetInvincibleTime();
             ;
 //            diver.resetInvincibleTime();
-        }
-        else if (!diver.getStunned() && /*!diver.isInvincible() && */monster.isKillState()) {
+        } else if (!diver.getStunned() && /*!diver.isInvincible() && */monster.isKillState()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
 
         }
 
-        if(isTentacle) {
+        if (isTentacle) {
             // TODO: @quimey you can add diver tentacle collision sounds in here
             monster.transitionToAggravated(true);
             AudioController.getInstance().idle_roar();
@@ -509,8 +508,6 @@ public class CollisionController {
                 FlareModel f = (FlareModel) b1.getUserData();
 
                 f.turnOffLight(.33f, 1f);
-//                System.out.println("FLARE DIVER");
-
             }
         } else if (b2.getUserData() instanceof FlareModel) {
             if (b1.getUserData() instanceof DiverModel) {
@@ -522,14 +519,12 @@ public class CollisionController {
         }
     }
 
-
     /**
      * Used to tell if the diver and flare are in range of each other
      *
      * @param b1
      * @param b2
      */
-
     public void endDiverFlare(Body b1, Body b2) {
 
         if (b1.getUserData() instanceof FlareModel) {

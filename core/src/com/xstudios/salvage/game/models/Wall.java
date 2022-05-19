@@ -512,6 +512,8 @@ public class Wall extends GameObject {
             canvas.draw(sprite, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.y, getAngle(),
                     40f / 25f * worldDrawScale.x, 40f / 25f * worldDrawScale.y);
         }
+
+
     }
 
     private CircleShape circ = new CircleShape();

@@ -64,6 +64,7 @@ public class GameController extends ScreenController implements ContactListener 
 
     public static BitmapFont displayFont;
 
+
     /**
      * how much the object that's stunning the level.getDiver() is draining their oxygen by
      */
@@ -459,7 +460,7 @@ public class GameController extends ScreenController implements ContactListener 
 //        itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         constants = directory.getEntry("models:constants", JsonValue.class);
 
-        displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
+        displayFont = directory.getEntry("fonts:atlantis_font", BitmapFont.class);
 
 //        deadBodyTexture = new TextureRegion(directory.getEntry("models:dead_body", Texture.class));
         hud = new TextureRegion(directory.getEntry("hud", Texture.class));

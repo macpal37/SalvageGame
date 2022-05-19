@@ -138,8 +138,8 @@
   },
 
   "fonts": {
-    "fonts:lightpixel": {
-      "file": "fonts/LightPixel7.ttf",
+    "fonts:atlantis_font": {
+      "file": "fonts/SalvageFont.ttf",
       "size": 24
     }
   }
