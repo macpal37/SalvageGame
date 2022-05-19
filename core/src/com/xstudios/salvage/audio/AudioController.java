@@ -35,9 +35,7 @@ public class AudioController {
     private float sound_effects_volume;
     private float music_volume;
 
-    public AudioController(float se, float m){
-        sound_effects_volume = se/4;
-        music_volume = m/4;
+    public AudioController(){
         audio = Audio.init();
         SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("audio/heartbeat.wav"));
         SoundBuffer oxygen_alarm_wav = WaveLoader.load(Gdx.files.internal("audio/oxygen_alarm.wav"));
@@ -51,7 +49,6 @@ public class AudioController {
         wall_collision = WaveLoader.load(Gdx.files.internal("audio/wall_collision.wav"));
         wood_collision = WaveLoader.load(Gdx.files.internal("audio/wood_collision.wav"));
         alarm = audio.obtainSource(alarm_wav);
-        oxygen_alarm = audio.obtainSource(alarm_wav);
         heartbeat = audio.obtainSource(heartbeat_wav);
         idle_roar_high = audio.obtainSource(idle_roar_high_wav);
         idle_roar_low = audio.obtainSource(idle_roar_low_wav);
@@ -64,6 +61,7 @@ public class AudioController {
         idle_roar_high.setLooping(false);
         attack_roar.setLooping(false);
         bubbles.setLooping(true);
+
         alarm.setLooping(true);
         music.setVolume(0.3f);
         bubbles.setVolume(0.4f);
@@ -75,14 +73,21 @@ public class AudioController {
         volume_tick = 0.0f;
     }
 
-    public static AudioController getInstance(float se, float m) {
+    public void setUp(float m, float se){
+        music_volume = m;
+        sound_effects_volume = se;
+    };
+
+    public static AudioController getInstance() {
         if (theController == null) {
-            theController = new AudioController(se, m);
+            theController = new AudioController();
         }
         return theController;
     }
 
     public void initialize() {
+        music.setVolume(0.4f * music_volume);
+        bubbles.setVolume(0.4f * sound_effects_volume);
         music.play();
         bubbles.play();
         heartbeat.play();

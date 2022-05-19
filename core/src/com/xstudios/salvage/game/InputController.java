@@ -168,15 +168,6 @@ public class InputController {
     }
 
     /**
-     * Returns true if the player wants to switch to menu.
-     *
-     * @return true if the player wants to switch to menu.
-     */
-    public boolean didMenu() {
-        return menuPressed && !menuPrevious;
-    }
-
-    /**
      * Returns true if the player wants to open a chest
      *
      * @return true if the player wants to open a chest
@@ -277,7 +268,6 @@ public class InputController {
         // Give priority to gamepad results
         resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
         debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
-//        menuPressed = (secondary && menuPressed) || (Gdx.input.isKeyPressed(Keys.ESCAPE));
 
         kickOffPressed = (secondary && kickOffPrevious) || (Gdx.input.isKeyPressed(Keys.SPACE));
 
