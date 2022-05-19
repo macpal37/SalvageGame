@@ -588,6 +588,8 @@ public class GameController extends ScreenController implements ContactListener 
 
     private void updateDyingState() {
         changeLightColor(new Color(0,0,0,0));
+        rayHandler.setAmbientLight(.0001f);
+//        light.setActive(false);
     }
 
     private void updatePlayingState() {
@@ -684,7 +686,6 @@ public class GameController extends ScreenController implements ContactListener 
         level.getDiver().updateFlare();
         // manage items/dead body
 
-        level.getDiver().setPickUpOrDrop(input.getOrDropObject());
         level.getDiver().setItem();
 
         level.getDeadBody().setCarried(level.getDiver().hasBody());
@@ -803,7 +804,9 @@ public class GameController extends ScreenController implements ContactListener 
     public void update(float dt) {
 //        worldScale.set(world_scale.x, world_scale.y);
         for (Door door : level.getDoors()) {
-            door.setActive(!door.getUnlock(level.getDiver().getItem()));
+            if (door.isActive()) {
+                door.setActive(!door.getUnlock());
+            }
         }
 //        System.out.println("ScALE: " + world_scale.toString());
         rayHandler.setCombinedMatrix(camera.getCamera().combined.cpy().scl(world_scale.x, world_scale.y, 1f));
@@ -913,7 +916,7 @@ public class GameController extends ScreenController implements ContactListener 
     }
 
     public void updateDiverLighting() {
-        if (monsterController.isMonsterActive() && level.getMonster().getAggravation() > level.getMonster().getAggroLevel()) {
+        if (monsterController.isMonsterActive() && monsterController.isAggravated()) {
             changeLightColor(monster_color);
         } else if (level.getDiver().getOxygenLevel() < level.getDiver().getMaxOxygen() * .25f) {
             changeLightColor(low_oxygen_color);
@@ -1137,8 +1140,8 @@ public class GameController extends ScreenController implements ContactListener 
                         0.0f, 0.5f * worldScale.x, 0.5f * worldScale.y);
 
                 //draw inventory indicator
-                if (level.getDiver().carryingItem()) {
-                    canvas.draw(keyHud, level.getDiver().getItem().getColor(), (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
+                for(int i = 0; i < level.getDiver().getNumKeys(); i++) {
+                    canvas.draw(keyHud, Color.WHITE, (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
                             tempProjectedOxygen.x - 50,
                             tempProjectedOxygen.y,
                             0.0f, 0.35f * worldScale.x, 0.35f * worldScale.y);

@@ -14,6 +14,7 @@ import com.xstudios.salvage.game.models.*;
 
 
 public class CollisionController {
+
     /**
      * remove body from list of potential bodies that diver left and right sensors are touching
      *
@@ -60,17 +61,13 @@ public class CollisionController {
             ((ItemModel) b2.getUserData()).setTouched(true);
             DiverModel diver = (DiverModel) b1.getUserData();
             ItemModel item = (ItemModel) b2.getUserData();
-            if (diver.getItem() != item) {
-                diver.addPotentialItem(item);
-            }
+            diver.addPotentialItem(item);
         }
         if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof ItemModel) {
             ((ItemModel) b1.getUserData()).setTouched(true);
             DiverModel diver = (DiverModel) b2.getUserData();
             ItemModel item = (ItemModel) b1.getUserData();
-            if (diver.getItem() != item) {
-                diver.addPotentialItem(item);
-            }
+            diver.addPotentialItem(item);
         }
     }
 
@@ -155,8 +152,16 @@ public class CollisionController {
 
     public static boolean attemptUnlock(DiverModel diver, Door door) {
         if (diver.getItem() != null) {
-            if (diver.getItem().getID() == door.getID() || diver.getItem().getItemType() == ItemModel.ItemType.DEAD_BODY) {
-
+            ItemModel key = null;
+            for(ItemModel i: diver.getItem()){
+                if(i.getItemType() == ItemModel.ItemType.KEY){
+                    key = i;
+                    break;
+                }
+            }
+            if(key != null) {
+                diver.removeItem(key);
+                diver.reduceNumKeys();
                 return true;
             }
         }
@@ -230,25 +235,15 @@ public class CollisionController {
                 diver.getDiverCollisionBox().equals(fd1) &&
                 b2.getUserData() instanceof HazardModel) {
             HazardModel hazard = (HazardModel) b2.getUserData();
-            return staticHazardCollision(diver, hazard, monster);
+            return staticHazardCollision(diver, hazard, (f2.getUserData() instanceof Tentacle), monster);
         }
         if (b2.getUserData() instanceof DiverModel &&
                 diver.getDiverCollisionBox().equals(fd2) &&
                 b1.getUserData() instanceof HazardModel) {
             HazardModel hazard = (HazardModel) b1.getUserData();
-            return staticHazardCollision(diver, hazard, monster);
+            return staticHazardCollision(diver, hazard, (f1.getUserData() instanceof Tentacle), monster);
         }
 
-        if (b1.getUserData() instanceof DiverModel &&
-                b2.getUserData() instanceof Tentacle) {
-            Tentacle t = (Tentacle) b2.getUserData();
-            AudioController.getInstance().idle_roar();
-        }
-        else if (b1.getUserData() instanceof Tentacle &&
-                b2.getUserData() instanceof DiverModel) {
-            Tentacle t = (Tentacle) b1.getUserData();
-            AudioController.getInstance().idle_roar();
-        }
         // return 0 if not colliding
         return 0;
     }
@@ -445,9 +440,9 @@ public class CollisionController {
     }
 
 
-    public static float staticHazardCollision(DiverModel diver, HazardModel hazard, MonsterController monster) {
+    public static float staticHazardCollision(DiverModel diver, HazardModel hazard, boolean isTentacle, MonsterController monster) {
 //        System.out.println("Hazard Contact: " + hazard.getOxygenDrain());
-//        System.out.println("START HAZARD COLLISION");
+        System.out.println("START HAZARD COLLISION");
         if (!diver.getStunned() && /*!diver.isInvincible() && */ !monster.isKillState()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
@@ -461,10 +456,12 @@ public class CollisionController {
 
         }
 
+        if(isTentacle) {
+            // TODO: @quimey you can add diver tentacle collision sounds in here
+            monster.transitionToAggravated(true);
+            AudioController.getInstance().idle_roar();
+        }
         diver.setChangeLightFilter(false);
-//        else {
-//            diver.setChangeLightFilter(true);
-//        }
 
         return hazard.getOxygenDrain();
 
