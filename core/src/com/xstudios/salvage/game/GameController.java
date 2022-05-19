@@ -156,6 +156,7 @@ public class GameController extends ScreenController implements ContactListener 
 
     private boolean reach_target = false;
 
+
     private int game_over_animation_time = 60;
     /**
      * ================================LEVELS=================================
@@ -176,7 +177,8 @@ public class GameController extends ScreenController implements ContactListener 
      * level4 - insanely hard key level
      */
     // Beta Release Setup
-    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8"};
+//    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8"};
+    private String[] levels = {"test_level", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8"};
 
 
     private int curr_level;
@@ -526,8 +528,7 @@ public class GameController extends ScreenController implements ContactListener 
      * param obj The object to add
      */
     protected void addObject(GameObject obj) {
-        System.out.println("obj_x: " + obj.getX() + " obj_y: " + obj.getY());
-        System.out.println("bounds_x: " + bounds.x + " bounds_y: " + bounds.y);
+
         assert inBounds(obj) : "Object is not in bounds";
         obj.activatePhysics(world);
         if (obj instanceof Tentacle)
@@ -584,33 +585,36 @@ public class GameController extends ScreenController implements ContactListener 
             addObject(obj);
             System.out.println();
         }
-        System.out.println("added ");
+
         monsterController = new MonsterController(level.getMonster(), getWorldBounds());
         monsterController.setAudio(audio);
 
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
-        System.out.println("level populated");
+
+
     }
 
     private void updateGameState() {
 //        System.out.println("game over animation " + game_over_animation_time);
 //        System.out.println("oxygen level "+ level.getDiver().getOxygenLevel() );
-        if(game_over_animation_time<=0) {
-            if(game_state == state.DYING) {
+        if (game_over_animation_time <= 0) {
+            if (game_state == state.DYING) {
                 game_state = state.EXIT_LOSE;
             } else if (game_state == state.WIN_ANIMATION) {
+                System.out.println(
+                        "Yeah!"
+                );
+
                 game_state = state.EXIT_WIN;
             }
         } else if (level.getDiver().getOxygenLevel() <= 0) {
             game_state = state.DYING;
         } else if (reach_target) {
-            System.out.println("REACH TARGET");
             game_state = state.WIN_ANIMATION;
         } else if (pause) {
             game_state = state.PAUSE;
-        }
-        else {
+        } else {
             game_state = state.PLAYING;
         }
 
@@ -627,7 +631,7 @@ public class GameController extends ScreenController implements ContactListener 
 
 
     private void updateDyingState() {
-        changeLightColor(new Color(0,0,0,0));
+        changeLightColor(new Color(0, 0, 0, 0));
     }
 
     private void updatePlayingState() {
@@ -635,7 +639,7 @@ public class GameController extends ScreenController implements ContactListener 
         InputController input = InputController.getInstance();
 
         if (input.isPause()) {
-            System.out.println("pAUSE??????????????");
+
             if (pause)
                 resume();
             else
@@ -743,7 +747,7 @@ public class GameController extends ScreenController implements ContactListener 
                 TreasureModel tm = level.getDiver().getTreasureChests().pop();
                 tm.openChest();
                 if (tm.getContents() == TreasureModel.TreasureType.Monster) {
-                    Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, LevelBuilder.TentacleType.OldAttack, 30);
+                    Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, Tentacle.TentacleType.OldAttack, 30);
                     tm.setTrap(t);
                     addQueuedObject(t);
                 } else if (tm.getContents() == TreasureModel.TreasureType.Key) {
@@ -768,16 +772,11 @@ public class GameController extends ScreenController implements ContactListener 
                     camera.getCameraPosition2D().x / (world_scale.x)
                     ,
                     camera.getCameraPosition2D().y / (world_scale.y));
-//            System.out.println("Light!: " + light.getPosition().toString());
-//            light.setPosition(
-//                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
-//                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
-//            wallShine.setPosition(
-//                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
-//                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
         }
 
-        // TODO: why wasnt this in marco's code?
+        if (level.getDiver().hasBody())
+            levelBuilder.turnOffInvisibleWalls();
+
 
         updateDiverLighting();
 
@@ -788,6 +787,9 @@ public class GameController extends ScreenController implements ContactListener 
         this.pause = pause;
     }
 
+
+    float globalTick = 0;
+    public static int tick = 0;
 
     /**
      * Returns whether to process the update loop
@@ -805,6 +807,8 @@ public class GameController extends ScreenController implements ContactListener 
         if (listener == null) {
             return true;
         }
+        tick++;
+
 
         // Toggle debug
         if (input.didDebug()) {
@@ -856,8 +860,7 @@ public class GameController extends ScreenController implements ContactListener 
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
-                    System.out.println("CREATE TENTACLE");
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, LevelBuilder.TentacleType.NewAttack, 40);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, Tentacle.TentacleType.NewAttack, 40);
                     addQueuedObject(t);
                     t.setGrowRate(5);
                 }
@@ -865,8 +868,7 @@ public class GameController extends ScreenController implements ContactListener 
             while (idle_tentacles.size() > 0) {
                 Wall add_wall = idle_tentacles.poll();
                 if (add_wall != null) {
-                    System.out.println("...............................................");
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, LevelBuilder.TentacleType.Idle, 100);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, Tentacle.TentacleType.Idle, 5000);
                     t.setGrowRate(10);
                     t.setType(0);
                     addQueuedObject(t);
@@ -876,7 +878,7 @@ public class GameController extends ScreenController implements ContactListener 
             while (attack_tentacles.size() > 0) {
                 Wall add_wall = attack_tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, LevelBuilder.TentacleType.KILL, 1000000);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, Tentacle.TentacleType.KILL, 1000000);
                     t.setType(1);
                     t.setGrowRate(4);
                     System.out.println("type" + t.getType());
@@ -888,8 +890,9 @@ public class GameController extends ScreenController implements ContactListener 
         //** ADDING TENTACLES TO WalL!
 //        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
 //            Wall w = level.getDiver().getTouchedWall();
-//            Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, w, LevelBuilder.TentacleType.Idle, 100);
+//            Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, w, Tentacle.TentacleType.NewAttack2, 1000000);
 //            addQueuedObject(t);
+//            level.getDiver().setTouchedWall(null);
 //        }
 
 //        System.out.println("STATE "+ game_state);
@@ -935,7 +938,7 @@ public class GameController extends ScreenController implements ContactListener 
 //            level.getDiver().setHazardInvincibilityFilter();
 ////            light.setContactFilter(no_hazard_collision_category, no_hazard_collision_group, no_hazard_collision_mask);
 //        } else {
-            level.getDiver().setHazardCollisionFilter();
+        level.getDiver().setHazardCollisionFilter();
 //            light.setContactFilter(hazard_collision_category, hazard_collision_group, hazard_collision_mask);
 //        }
 
@@ -1093,10 +1096,7 @@ public class GameController extends ScreenController implements ContactListener 
         return clicked;
     }
 
-    int tick = 0;
-
     public void draw(float dt) {
-        tick++;
         canvas.clear();
         canvas.begin();
 
@@ -1105,8 +1105,7 @@ public class GameController extends ScreenController implements ContactListener 
                 4 * worldScale.x, 4 * worldScale.y);
 
         for (GameObject obj : level.getAllObjects()) {
-//        for (int i = level.getAllObjects().size() - 1; i >= 0; i--) {
-//            GameObject obj = level.getAllObjects().get(i);
+            obj.setTick(tick);
             if (!(obj instanceof DiverModel))
                 if (!(obj instanceof DecorModel))
                     obj.draw(canvas);

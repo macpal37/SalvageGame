@@ -21,6 +21,16 @@ public class Monster extends GameObject {
     private final float RADIUS = 7;
     private float aggravation = 0.0f;
 
+    public int getAggroStrikes() {
+        return aggroStrikes;
+    }
+
+    public void setAggroStrikes(int aggroStrike) {
+        this.aggroStrikes = aggroStrike;
+    }
+
+    private int aggroStrikes = 4;
+
     /* The Monster's vision represented as a circle*/
     private float visionRadius = 7;
 
@@ -154,9 +164,11 @@ public class Monster extends GameObject {
     public void addTentacle(Wall wall) {
         tentacles.add(wall);
     }
+
     public void addIdleTentacle(Wall wall) {
         idle_tentacles.add(wall);
     }
+
     public void addKillTentacle(Wall wall) {
         kill_tentacles.add(wall);
     }
@@ -177,13 +189,17 @@ public class Monster extends GameObject {
         return tentacles;
     }
 
-    public Queue<Wall> getIdleTentacles() { return idle_tentacles; }
+    public Queue<Wall> getIdleTentacles() {
+        return idle_tentacles;
+    }
 
     public Queue<Wall> getKillTentacles() {
         return kill_tentacles;
     }
 
-    public ArrayList<Wall> getSpawnLocations() { return targetLocations; }
+    public ArrayList<Wall> getSpawnLocations() {
+        return targetLocations;
+    }
 
     public void setAggravation(float temp_aggravation) {
         aggravation = temp_aggravation;

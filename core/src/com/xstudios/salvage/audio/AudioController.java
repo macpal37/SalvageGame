@@ -35,9 +35,9 @@ public class AudioController {
     private float sound_effects_volume;
     private float music_volume;
 
-    public AudioController(float se, float m){
-        sound_effects_volume = se/4;
-        music_volume = m/4;
+    public AudioController(float se, float m) {
+        sound_effects_volume = se / 4;
+        music_volume = m / 4;
         audio = Audio.init();
         SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("audio/heartbeat.wav"));
         SoundBuffer oxygen_alarm_wav = WaveLoader.load(Gdx.files.internal("audio/oxygen_alarm.wav"));
@@ -45,7 +45,8 @@ public class AudioController {
         bubbles = new StreamedSoundSource(Gdx.files.internal("audio/bubbles.ogg"));
         SoundBuffer attack_roar_wav = WaveLoader.load(Gdx.files.internal("audio/attack_roar.wav"));
         SoundBuffer loud_roar_wav = WaveLoader.load(Gdx.files.internal("audio/loud_roar.wav"));
-        SoundBuffer idle_roar_high_wav = WaveLoader.load(Gdx.files.internal("audio/higher_growl.wav"));;
+        SoundBuffer idle_roar_high_wav = WaveLoader.load(Gdx.files.internal("audio/higher_growl.wav"));
+        ;
         SoundBuffer idle_roar_low_wav = WaveLoader.load(Gdx.files.internal("audio/lower_growl.wav"));
         SoundBuffer alarm_wav = WaveLoader.load(Gdx.files.internal("audio/alarm.wav"));
         wall_collision = WaveLoader.load(Gdx.files.internal("audio/wall_collision.wav"));
@@ -90,13 +91,13 @@ public class AudioController {
         //audio.setMasterVolume(0.6f);
     }
 
-    public void setMusic(float v){
-        music_volume = v/4;
+    public void setMusic(float v) {
+        music_volume = v / 4;
         music.setVolume(music_volume * 0.4f);
     }
 
-    public void setSoundEffects(float s){
-        sound_effects_volume = s/4;
+    public void setSoundEffects(float s) {
+        sound_effects_volume = s / 4;
         bubbles.setVolume(sound_effects_volume * 0.4f);
         alarm.setVolume(sound_effects_volume * 0.4f);
     }
@@ -107,15 +108,14 @@ public class AudioController {
 
         float volume = (max_oxygen - oxygen) / max_oxygen;
         heartbeat.setVolume(volume - 0.1f);
-        time_apart = (int)((1-volume) * 200);
-        System.out.println(time_apart);
+        time_apart = (int) ((1 - volume) * 200);
 
-        if (!heartbeat.isPlaying()){
-            if (ticks > last_playing_tick + time_apart){
+
+        if (!heartbeat.isPlaying()) {
+            if (ticks > last_playing_tick + time_apart) {
                 heartbeat.play();
             }
-        }
-        else {
+        } else {
             last_playing_tick = ticks;
         }
 
@@ -144,13 +144,13 @@ public class AudioController {
         float roar_volume = (float) (0.5);
         idle_roar_low.setVolume(roar_volume);
         idle_roar_high.setVolume(roar_volume);
-            if (rand > 0.5) {
-                //idle_roar_high.stop();
-                idle_roar_low.play();
-            } else {
-                //idle_roar_low.stop();
-                idle_roar_high.play();
-            }
+        if (rand > 0.5) {
+            //idle_roar_high.stop();
+            idle_roar_low.play();
+        } else {
+            //idle_roar_low.stop();
+            idle_roar_high.play();
+        }
     }
 
     public void reset() {
@@ -166,7 +166,7 @@ public class AudioController {
     }
 
     public void attack_roar() {
-        if (!attack_roar.isPlaying()){
+        if (!attack_roar.isPlaying()) {
             attack_roar.play();
         }
     }

@@ -220,51 +220,51 @@
             "scaleInEditor": 4
         },
         "levels/Golden0.json": {
-            "scale": 0.8512,
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 270.79417293233087,
-                "y": 673.1672932330828
+                "x": 228.5,
+                "y": 944
             }
         },
         "levels/Golden1.json": {
             "scale": 0.3591,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 522.1386800334169,
-                "y": 802.0050125313282
+                "x": 349.48482316903375,
+                "y": 799.2202729044836
             }
         },
         "levels/Golden2.json": {
-            "scale": 1,
+            "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 96.5,
-                "y": 711
+                "x": 559.0909090909091,
+                "y": 924.2424242424242
             }
         },
         "levels/Golden3.json": {
-            "scale": 0.3591,
+            "scale": 0.33,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 930.1030353661934,
-                "y": 864.6616541353384
+                "x": 689.3939393939394,
+                "y": 681.8181818181819
             }
         },
         "levels/Golden4.json": {
-            "scale": 0.3591,
+            "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1203.0075187969926,
-                "y": 730.9941520467837
+                "x": 1440.909090909091,
+                "y": 921.2121212121212
             }
         },
         "levels/Golden5.json": {
-            "scale": 0.3591,
+            "scale": 0.25,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1567.8084099136731,
-                "y": 753.2720690615428
+                "x": 1142,
+                "y": 948
             }
         },
         "levels/Golden6.json": {
@@ -276,27 +276,27 @@
             }
         },
         "levels/Golden7.json": {
-            "scale": 0.3591,
+            "scale": 0.51,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 2082.985240879978,
-                "y": 847.9532163742691
+                "x": 255.8823529411764,
+                "y": 535.2941176470588
             }
         },
         "levels/Golden8.json": {
-            "scale": 0.3591,
+            "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1918.6856028961292,
-                "y": 672.514619883041
+                "x": 2233.333333333333,
+                "y": 572
             }
         },
         "levels/beta_0.json": {
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 107.5,
-                "y": 832
+                "x": 45.5,
+                "y": 831
             }
         },
         "levels/beta_1.json": {
@@ -312,7 +312,7 @@
             "selectedLayer": 2,
             "viewCenter": {
                 "x": 462.12121212121207,
-                "y": 781.8181818181819
+                "y": 778.7878787878788
             }
         },
         "levels/beta_3.json": {
@@ -335,7 +335,7 @@
             "scale": 0.15275999999999998,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1250.3273108143494,
+                "x": 1253.6004189578425,
                 "y": 752.814873003404
             }
         },
@@ -356,26 +356,26 @@
             }
         },
         "levels/level2.json": {
-            "scale": 0.175275,
+            "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1996.8620738838968,
-                "y": 1503.3518756240194
+                "x": 1771.2121212121212,
+                "y": 1754.5454545454545
             }
         },
         "levels/level3.json": {
-            "scale": 0.35055,
-            "selectedLayer": 0,
+            "scale": 0.75,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 998.4310369419484,
-                "y": 751.6759378120097
+                "x": 1686,
+                "y": 742.6666666666666
             }
         },
         "levels/level4.json": {
             "scale": 0.19,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1794.7368421052633,
+                "x": 1792.1052631578948,
                 "y": 805.2631578947367
             }
         },
@@ -395,12 +395,16 @@
                 "y": 502
             }
         },
+        "levels/tentacle_attack2.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        },
         "levels/test_level.json": {
-            "scale": 0.75,
+            "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1357.3333333333333,
-                "y": 1309.3333333333335
+                "x": 336,
+                "y": 1484
             }
         },
         "levels/tilesets/old_ship_tileset.json": {
@@ -413,7 +417,7 @@
         },
         "levels/tilesets/tentacle_idle.json": {
             "scaleInDock": 1,
-            "scaleInEditor": 1
+            "scaleInEditor": 1.5
         },
         "levels/tilesets/tentacle_tile.json": {
             "scaleInDock": 1,
@@ -428,11 +432,11 @@
             }
         },
         "levels/tutorial2.json": {
-            "scale": 0.4674,
+            "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 748.8232777064612,
-                "y": 502.78134360290977
+                "x": 637.878787878788,
+                "y": 548.4848484848485
             }
         },
         "levels/tutorial3.json": {
@@ -444,6 +448,7 @@
             }
         }
     },
+    "last.imagePath": "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels/tilesets",
     "openFiles": [
         "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/route2.json",
         "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon1.json",
@@ -451,18 +456,24 @@
         "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/house_tileset.json"
     ],
     "project": "levels.tiled-project",
+    "property.type": "int",
     "recentFiles": [
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/starting_scene.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/left_house.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/right_house.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/mid_house.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon_out.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/path_to_dungeon.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/village.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/path_to_village.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/entities_tilesets.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/house_tileset.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/forest_tileset.json"
-    ]
+        "levels/Golden0.json",
+        "levels/Golden4.json",
+        "levels/tentacle_attack2.json",
+        "levels/in_progress.json",
+        "levels/Golden2.json",
+        "levels/level3.json",
+        "levels/level4.json",
+        "levels/level2.json",
+        "levels/tutorial2.json",
+        "levels/tilesets/tentacle_attack.json",
+        "levels/beta_0.json",
+        "levels/tilesets/tentacle_idle.json"
+    ],
+    "tileset.lastUsedFormat": "json",
+    "tileset.tileSize": {
+        "height": 360,
+        "width": 453
+    }
 }

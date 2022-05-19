@@ -64,11 +64,6 @@ public class ItemModel extends DiverObjectModel {
 
     }
 
-    @Override
-    public void deactivatePhysics(World world) {
-        super.deactivatePhysics(world);
-        light.dispose();
-    }
 
     @Override
     public void setID(int id) {
@@ -155,8 +150,6 @@ public class ItemModel extends DiverObjectModel {
         spriteSheet.setFrame(startingFrame);
     }
 
-    int tick = 0;
-
     public void setInChest(boolean b) {
         isInChest = b;
     }
@@ -175,7 +168,7 @@ public class ItemModel extends DiverObjectModel {
 
     @Override
     public void draw(GameCanvas canvas) {
-        System.out.println("key is active? " + isKeyActive());
+
         if (isKeyActive()) {
             if (texture != null) {
                 if (!carried) {

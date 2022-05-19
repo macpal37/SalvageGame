@@ -79,11 +79,8 @@ public class DecorModel extends GameObject {
     }
 
 
-    int tick = 0;
-
     @Override
     public void draw(GameCanvas canvas) {
-        tick++;
         if (tick % 10 == 0) {
             int frame = spriteSheet.getFrame();
             frame++;

@@ -40,7 +40,7 @@ public class GoalDoor extends GameObject {
     private float[] vertices;
 
 
-    private Light light;
+//    private Light light;
 
     /**
      * Returns the dimensions of this box
@@ -200,22 +200,22 @@ public class GoalDoor extends GameObject {
         }
     }
 
-    public void initLight(RayHandler rayHandler) {
-        System.out.println("HEIGHT: " + getHeight());
-        System.out.println("Y: " + getY());
-        light = new PointLight(rayHandler, 100, new Color(255 / 255f, 220 / 255f, 92 / 255f, 0.2f), 15, getX(), getY());
-        Filter f = new Filter();
-        f.categoryBits = 0x0002;
-        f.maskBits = 0x0004;
-        f.groupIndex = 1;
-        light.setContactFilter(f);
-        light.setSoft(true);
-    }
+//    public void initLight(RayHandler rayHandler) {
+//        System.out.println("HEIGHT: " + getHeight());
+//        System.out.println("Y: " + getY());
+//        light = new PointLight(rayHandler, 100, new Color(255 / 255f, 220 / 255f, 92 / 255f, 0.2f), 15, getX(), getY());
+//        Filter f = new Filter();
+//        f.categoryBits = 0x0002;
+//        f.maskBits = 0x0004;
+//        f.groupIndex = 1;
+//        light.setContactFilter(f);
+//        light.setSoft(true);
+//    }
 
     @Override
     public void deactivatePhysics(World world) {
         super.deactivatePhysics(world);
-        light.dispose();
+//        light.dispose();
     }
 
     /**
@@ -249,7 +249,6 @@ public class GoalDoor extends GameObject {
 
     private TextureRegion openDoor;
     private TextureRegion closedDoor;
-    int tick = 0;
 
     public void draw(GameCanvas canvas) {
 //        tick++;

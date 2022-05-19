@@ -198,12 +198,9 @@ public class FlareModel extends DiverObjectModel {
         }
     }
 
-    public int tick = 0;
-
 
     @Override
     public void draw(GameCanvas canvas) {
-        tick++;
 
         if (isActivated || !carried) {
             if (!carried) {
