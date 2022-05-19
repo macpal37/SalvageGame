@@ -3,13 +3,12 @@ package com.xstudios.salvage.game.models;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.xstudios.salvage.game.GameCanvas;
-import com.xstudios.salvage.game.GameObject;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.xstudios.salvage.game.*;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
-import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
@@ -22,10 +21,19 @@ public class TextModel extends GameObject {
 
     private CircleShape circ;
 
+    private String display_text;
 
-    public TextModel(float x, float y) {
+    private boolean isDisplay = false;
+
+    /**
+     * A cache value for the fixture (for resizing)
+     */
+    protected Fixture geometry;
+
+    public TextModel(float x, float y, String s) {
         super(x, y);
 
+        display_text = s;
         circ = new CircleShape();
         circ.setRadius(0.0625f);
 
@@ -49,7 +57,7 @@ public class TextModel extends GameObject {
 
         releaseFixtures();
         fixture.filter.maskBits = -1;
-        fixture.shape = shape;
+        fixture.shape = circ;
 
         geometry = body.createFixture(fixture);
         markDirty(false);
@@ -57,7 +65,10 @@ public class TextModel extends GameObject {
 
     @Override
     protected void releaseFixtures() {
-
+        if (geometry != null) {
+            body.destroyFixture(geometry);
+            geometry = null;
+        }
     }
 
     public Vector2 getScale() {
@@ -71,21 +82,16 @@ public class TextModel extends GameObject {
     }
 
 
-    int tick = 0;
+    public void setDisplay(boolean s) {
+        isDisplay = s;
+    }
 
     @Override
     public void draw(GameCanvas canvas) {
-        tick++;
-        if (tick % 5 == 0) {
-            int frame = spriteSheet.getFrame();
-            frame++;
-            if (frame >= spriteSheet.getSize())
-                frame = 0;
-            spriteSheet.setFrame(frame);
+        if(isDisplay) {
+            canvas.drawText(display_text, GameController.displayFont, (getX() - getWidth() / 3 * 2) * drawScale.x,
+                    (getY() + getHeight() / 3 * 2) * drawScale.y);
         }
-        canvas.draw(spriteSheet, Color.WHITE, origin.x, origin.y, getX() * drawScale.x - origin.x,
-                getY() * drawScale.y - origin.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
-
     }
 
     @Override
