@@ -385,12 +385,11 @@ public class CollisionController {
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
 
-        if (b1.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd1) && b2.getUserData() instanceof Wall
+        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall
         ) {
-
             diver.setTouchedWall(null);
             ((DiverModel) b1.getUserData()).setTouchingObstacle(false);
-        } else if (b2.getUserData() instanceof DiverModel && diver.getHitboxSensorName().equals(fd2) && b1.getUserData() instanceof Wall) {
+        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
             diver.setTouchedWall(null);
             ((DiverModel) b2.getUserData()).setTouchingObstacle(false);
         }

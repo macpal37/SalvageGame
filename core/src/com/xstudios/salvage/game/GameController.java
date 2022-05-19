@@ -501,8 +501,8 @@ public class GameController extends ScreenController implements ContactListener 
      * param obj The object to add
      */
     protected void addObject(GameObject obj) {
-        System.out.println("obj_x: " + obj.getX() + " obj_y: " + obj.getY());
-        System.out.println("bounds_x: " + bounds.x + " bounds_y: " + bounds.y);
+//        System.out.println("obj_x: " + obj.getX() + " obj_y: " + obj.getY());
+//        System.out.println("bounds_x: " + bounds.x + " bounds_y: " + bounds.y);
         assert inBounds(obj) : "Object is not in bounds";
         obj.activatePhysics(world);
         if (obj instanceof Tentacle)
@@ -549,16 +549,16 @@ public class GameController extends ScreenController implements ContactListener 
     private void populateLevel() {
 
 //        camera.setZoom(1.0f);
-        System.out.println("SCALE:: " + world_scale.toString());
+//        System.out.println("SCALE:: " + world_scale.toString());
         levelBuilder.createLevel(levels[curr_level], level, world_scale, symbol_scale, rayHandler);
         pause = false;
 
         // TODO: will this have the same effect as going through each type, casting, then adding?
         for (GameObject obj : level.getAllObjects()) {
             addObject(obj);
-            System.out.println();
+//            System.out.println();
         }
-        System.out.println("added ");
+//        System.out.println("added ");
         monsterController = new MonsterController(level.getMonster(), getWorldBounds());
         monsterController.setAudio(AudioController.getInstance());
 
@@ -577,7 +577,7 @@ public class GameController extends ScreenController implements ContactListener 
         } else if (level.getDiver().getOxygenLevel() <= 0) {
             game_state = state.DYING;
         } else if (reach_target) {
-            System.out.println("REACH TARGET");
+//            System.out.println("REACH TARGET");
             game_state = state.WIN_ANIMATION;
         } else if (pause) {
             game_state = state.PAUSE;
@@ -595,7 +595,7 @@ public class GameController extends ScreenController implements ContactListener 
         InputController input = InputController.getInstance();
 
         if (input.isPause()) {
-            System.out.println("pAUSE??????????????");
+//            System.out.println("pAUSE??????????????");
             if (pause)
                 resume();
             else
@@ -605,8 +605,15 @@ public class GameController extends ScreenController implements ContactListener 
         level.getDiver().setHorizontalMovement(input.getHorizontal() * level.getDiver().getForce());
         level.getDiver().setVerticalMovement(input.getVertical() * level.getDiver().getForce());
 
+        System.out.println("Touching Obstacle: " + level.getDiver().isTouchingObstacle());
+        System.out.println("Latching: " + level.getDiver().isLatching());
+        System.out.println("KickOff: " + input.didKickOff());
+        System.out.println("Boosting: " + level.getDiver().isBoosting());
+        System.out.println("Diver Velocity: " + level.getDiver().getLinearVelocity().len());
+//        System.out.println("Diver Mass: " + level.getDiver().getMass());
+
         // stop boosting when player has slowed down enough
-        if (level.getDiver().getLinearVelocity().len() < 15 && level.getDiver().isBoosting()) {
+        if (level.getDiver().getLinearVelocity().len() < 10 && level.getDiver().isBoosting()) {
             level.getDiver().setBoosting(false);
         }
 
@@ -614,6 +621,7 @@ public class GameController extends ScreenController implements ContactListener 
         if (input.getHorizontal() != 0 || input.getVertical() != 0) {
             level.getDiver().setFacingDir(input.getHorizontal(), input.getVertical());
         }
+
 //        level.getDiver().reduceInvincibleTime();
 //        System.out.println("invincible time " + level.getDiver().getInvincibleTime());
 
@@ -811,7 +819,7 @@ public class GameController extends ScreenController implements ContactListener 
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
-                    System.out.println("CREATE TENTACLE");
+//                    System.out.println("CREATE TENTACLE");
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, LevelBuilder.TentacleType.NewAttack, 40);
                     addQueuedObject(t);
                     t.setGrowRate(5);
@@ -820,7 +828,7 @@ public class GameController extends ScreenController implements ContactListener 
             while (idle_tentacles.size() > 0) {
                 Wall add_wall = idle_tentacles.poll();
                 if (add_wall != null) {
-                    System.out.println("...............................................");
+//                    System.out.println("...............................................");
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, LevelBuilder.TentacleType.Idle, 100);
                     t.setGrowRate(10);
                     t.setType(0);
@@ -834,7 +842,7 @@ public class GameController extends ScreenController implements ContactListener 
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, LevelBuilder.TentacleType.KILL, 1000000);
                     t.setType(1);
                     t.setGrowRate(4);
-                    System.out.println("type" + t.getType());
+//                    System.out.println("type" + t.getType());
                     addQueuedObject(t);
                 }
             }
@@ -1239,7 +1247,7 @@ public class GameController extends ScreenController implements ContactListener 
      */
 
     public void pause() {
-        System.out.println("pause() was called");
+//        System.out.println("pause() was called");
         pause = true;
         updateGameState();
     }
@@ -1250,7 +1258,7 @@ public class GameController extends ScreenController implements ContactListener 
      * This is usually when it regains focus.
      */
     public void resume() {
-        System.out.println("resume");
+//        System.out.println("resume");
         pause = false;
         updateGameState();
         // TODO Auto-generated method stub
