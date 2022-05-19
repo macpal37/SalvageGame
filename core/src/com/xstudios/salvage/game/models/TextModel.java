@@ -3,6 +3,8 @@ package com.xstudios.salvage.game.models;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
 
@@ -19,7 +21,8 @@ public class TextModel extends GameObject {
 
     private FilmStrip spriteSheet;
 
-
+    private Fixture geometry;
+    private PolygonShape shape;
     private CircleShape circ;
 
 

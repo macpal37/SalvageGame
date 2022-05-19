@@ -144,14 +144,14 @@ public class MonsterController {
     }
 
     public boolean isAggravated() {
-        return state != FSMState.IDLE || monster.getAggravation() > 3*monster.getAggroLevel()/4;
+        return state != FSMState.IDLE || monster.getAggravation() > 3 * monster.getAggroLevel() / 4;
     }
 
     public void wallCollision() {
         if (monster != null && state != FSMState.AGGRIVATED) {
             float agg = monster.getAggravation();
 //            if (agg < monster.getAggroLevel() + 1) {
-            System.out.println("agg rate "+ monster.getAggravationRate());
+            System.out.println("agg rate " + monster.getAggravationRate());
             monster.setAggravation(agg + monster.getAggravationRate());
 //            }
         }
@@ -180,7 +180,7 @@ public class MonsterController {
                     pounce_time = 0;
                     //monster.setVisionRadius(30);
                 }
-                if(transition_to_aggravated || Math.random() <= .0005) {
+                if (transition_to_aggravated || Math.random() <= .0005) {
                     state = FSMState.AGGRIVATED;
                     tick = 0;
                     monster.setAggravation(monster.getAggroLevel() + monster.getAggravationRate() * 3);
@@ -254,6 +254,7 @@ public class MonsterController {
      * Change the state of the monster based on aggravation levels
      */
     public void update(float aggravationDrain, DiverModel diver) {
+        tick++;
         if (tick % 50 == 0) {
             if (monster.getAggravation() > 0.0f && state != FSMState.GONNA_POUNCE) {
                 float aggravation = monster.getAggravation() - 0.5f;
