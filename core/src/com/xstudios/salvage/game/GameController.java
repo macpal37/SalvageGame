@@ -718,7 +718,6 @@ public class GameController extends ScreenController implements ContactListener 
         level.getDiver().updateFlare();
         // manage items/dead body
 
-        level.getDiver().setPickUpOrDrop(input.getOrDropObject());
         level.getDiver().setItem();
 
         level.getDeadBody().setCarried(level.getDiver().hasBody());

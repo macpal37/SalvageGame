@@ -1021,7 +1021,6 @@ public class DiverModel extends GameObject {
      * Set the current item the diver is carrying
      */
     public void setItem() {
-        if (pickUpOrDrop) {
 
             for (ItemModel i : potential_items) {
                 if (!item_list.contains(i)) {
@@ -1037,7 +1036,6 @@ public class DiverModel extends GameObject {
                 }
 
             }
-        }
     }
 
     /**
@@ -1080,10 +1078,6 @@ public class DiverModel extends GameObject {
      */
     public void removeItem(ItemModel i) {
         item_list.remove(i);
-    }
-
-    public void setPickUpOrDrop(boolean val) {
-        pickUpOrDrop = val;
     }
 
     public void addPotentialItem(ItemModel i) {

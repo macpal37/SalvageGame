@@ -179,7 +179,7 @@ public class MonsterController {
                     pounce_time = 0;
                     //monster.setVisionRadius(30);
                 }
-                if(transition_to_aggravated) {
+                if(transition_to_aggravated || Math.random() <= .0005) {
                     state = FSMState.AGGRIVATED;
                     tick = 0;
                     monster.setAggravation(monster.getAggroLevel() + monster.getAggravationRate() * 3);
