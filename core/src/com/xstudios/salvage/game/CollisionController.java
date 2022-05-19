@@ -14,13 +14,6 @@ import com.xstudios.salvage.game.models.*;
 
 
 public class CollisionController {
-
-    AudioController audio;
-
-    public void setAudio(AudioController a) {
-        audio = a;
-    }
-
     /**
      * remove body from list of potential bodies that diver left and right sensors are touching
      *
@@ -249,12 +242,12 @@ public class CollisionController {
         if (b1.getUserData() instanceof DiverModel &&
                 b2.getUserData() instanceof Tentacle) {
             Tentacle t = (Tentacle) b2.getUserData();
-            audio.idle_roar();
+            AudioController.getInstance().idle_roar();
         }
         else if (b1.getUserData() instanceof Tentacle &&
                 b2.getUserData() instanceof DiverModel) {
             Tentacle t = (Tentacle) b1.getUserData();
-            audio.idle_roar();
+            AudioController.getInstance().idle_roar();
         }
         // return 0 if not colliding
         return 0;
@@ -290,11 +283,11 @@ public class CollisionController {
         Object fd2 = b2.getUserData();
         if (b1.getUserData() instanceof DiverModel &&
                 b2.getUserData() instanceof Monster) {
-            audio.idle_roar();
+            AudioController.getInstance().idle_roar();
 
         } else if (b1.getUserData() instanceof Monster &&
                 b2.getUserData() instanceof DiverModel) {
-            audio.idle_roar();
+            AudioController.getInstance().idle_roar();
         }
     }
 
@@ -352,6 +345,7 @@ public class CollisionController {
         Object fd2 = f2.getUserData();
 
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
+
             Wall wall = (Wall) b2.getUserData();
             if (wall.isWall()) {
                 diver.setTouchedWall(wall);
@@ -360,7 +354,7 @@ public class CollisionController {
             if (wall.isCanAlertMonster()) {
                 //AudioController.getInstance().wall_collision(diver.getForce());
                 monsterController.wallCollision();
-                audio.wall_collision(diver.getForce());
+                AudioController.getInstance().wood_collision(diver.getForce());
             }
         } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
             Wall wall = (Wall) b1.getUserData();
@@ -371,21 +365,10 @@ public class CollisionController {
             if (wall.isCanAlertMonster()) {
                 //AudioController.getInstance().wall_collision(diver.getForce());
                 monsterController.wallCollision();
-                audio.wall_collision(diver.getForce());
+                AudioController.getInstance().wood_collision(diver.getForce());
             }
 
         }
-
-//        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall
-//                && !(fd2 instanceof Tentacle) &&
-//                diver.getDiverCollisionBox().equals(fd1)) {
-//            AudioController.getInstance().wall_collision(diver.getForce());
-//        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall
-//                && !(fd1 instanceof Tentacle) &&
-//                diver.getDiverCollisionBox().equals(fd2)) {
-//            AudioController.getInstance().wall_collision(diver.getForce());
-//        }
-
     }
 
     /**
