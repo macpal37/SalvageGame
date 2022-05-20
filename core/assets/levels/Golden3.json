@@ -374,7 +374,7 @@
                         {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":16
+                         "value":30
                         }],
                  "rotation":0,
                  "type":"",
@@ -382,6 +382,42 @@
                  "width":100,
                  "x":879.856343707234,
                  "y":207.794274531786
+                }, 
+                {
+                 "gid":47,
+                 "height":100,
+                 "id":98,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"text",
+                         "type":"string",
+                         "value":"Uxe Z to open a treasure chest.\n Some hold keys you'll need.\n Some hold horrors. Good Luck :)"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":309.231411862991,
+                 "y":1169.46532999165
+                }, 
+                {
+                 "gid":47,
+                 "height":100,
+                 "id":99,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"text",
+                         "type":"string",
+                         "value":"Press X to \n drop a flare"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":763.143971038708,
+                 "y":712.768031189084
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -401,7 +437,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":98,
+ "nextobjectid":100,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",

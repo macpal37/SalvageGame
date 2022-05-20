@@ -424,32 +424,14 @@
                         {
                          "name":"text",
                          "type":"string",
-                         "value":"Hello\nYo\nPress Q\n"
+                         "value":"Avoid the spikes"
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":508,
-                 "y":805
-                }, 
-                {
-                 "gid":47,
-                 "height":100,
-                 "id":126,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"text",
-                         "type":"string",
-                         "value":"Hello?1"
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":100,
-                 "x":204,
-                 "y":651
+                 "x":316,
+                 "y":809
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -525,8 +507,8 @@
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":214,
-                 "y":830
+                 "x":130,
+                 "y":818
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -535,7 +517,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":127,
+ "nextobjectid":126,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",

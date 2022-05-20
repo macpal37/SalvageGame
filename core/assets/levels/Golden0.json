@@ -291,7 +291,7 @@
                         {
                          "name":"text",
                          "type":"string",
-                         "value":"Hello"
+                         "value":"Use the arrow keys\n to swim through \nthe wreck"
                         }],
                  "rotation":0,
                  "type":"",
