@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
+import com.xstudios.salvage.game.levels.LevelBuilder;
 import com.xstudios.salvage.util.FilmStrip;
 
 public class TextModel extends GameObject {
@@ -20,6 +21,10 @@ public class TextModel extends GameObject {
     private Fixture geometry;
     private PolygonShape shape;
     private float radius = 2.5f;
+
+    public void setTextPosition(Vector2 textPosition) {
+        this.textPosition = textPosition;
+    }
 
     private Vector2 textPosition;
 
@@ -42,6 +47,10 @@ public class TextModel extends GameObject {
     public TextModel(float x, float y) {
         super(x, y);
         textPosition = new Vector2(x, y);
+
+        setTextActive(false);
+
+
         textColor = new Color(1f, 1f, 1f, 0f);
 
 
@@ -60,7 +69,6 @@ public class TextModel extends GameObject {
         if (body == null) {
             return;
         }
-        System.out.println("TEXT MADE!");
         releaseFixtures();
         FixtureDef textDef = new FixtureDef();
         textDef.isSensor = true;
@@ -97,22 +105,24 @@ public class TextModel extends GameObject {
 
     @Override
     public void draw(GameCanvas canvas) {
-        if (tick % 5 == 0) {
-            if (isDisplay) {
-                if (textColor.a < 1)
-                    textColor.set(1f, 1f, 1f, textColor.a + 0.05f);
-            } else {
-                if (textColor.a > 0)
-                    textColor.set(1f, 1f, 1f, textColor.a - 0.05f);
+
+        if (textActive) {
+
+
+            if (tick % 5 == 0) {
+                if (isDisplay) {
+                    if (textColor.a < 1)
+                        textColor.set(1f, 1f, 1f, textColor.a + 0.05f);
+                } else {
+                    if (textColor.a > 0)
+                        textColor.set(1f, 1f, 1f, textColor.a - 0.05f);
+                }
+                font.setColor(textColor);
             }
 
-
-            font.setColor(textColor);
+            canvas.drawText(text, font,
+                    (textPosition.x) * drawScale.x * worldDrawScale.x, (textPosition.y) * drawScale.y * worldDrawScale.y);
         }
-
-        canvas.drawText(text, font,
-                (textPosition.x) * drawScale.x * worldDrawScale.x, (textPosition.y) * drawScale.y * worldDrawScale.y);
-
 
     }
 
@@ -126,8 +136,11 @@ public class TextModel extends GameObject {
         canvas.drawPhysics(textRadius, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
     }
 
-    public void setTextPos(float v, float y) {
 
+    private boolean textActive;
+
+    public void setTextActive(boolean b) {
+        textActive = b;
     }
 }
 
