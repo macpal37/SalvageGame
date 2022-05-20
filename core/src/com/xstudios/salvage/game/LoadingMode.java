@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.xstudios.salvage.assets.AssetDirectory;
+import com.xstudios.salvage.audio.AudioController;
 import com.xstudios.salvage.util.ScreenListener;
 
 /**
@@ -178,7 +179,9 @@ public class LoadingMode implements Screen {
     private void update(float delta) {
         if (done == false) {
             assets.update(budget);
-            this.progress = assets.getProgress();
+            this.progress = AudioController.getInstance().loading_screen_progress()
+                         /  AudioController.getInstance().loading_screen_length();
+            //this.progress = assets.getProgress();
             if (progress >= 1.0f) {
                 this.progress = 1.0f;
                 done = true;
