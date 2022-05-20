@@ -347,6 +347,9 @@ public class CollisionController {
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
 
             Wall wall = (Wall) b2.getUserData();
+            if (diver.getHitboxSensorName() == f1.getUserData()) {
+
+            }
             if (wall.isWall()) {
                 diver.setTouchedWall(wall);
                 diver.setTouchingObstacle(true);
