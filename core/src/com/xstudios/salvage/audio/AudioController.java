@@ -20,7 +20,8 @@ public class AudioController {
     private BufferedSoundSource idle_roar_low;
     private BufferedSoundSource loud_roar;
     private BufferedSoundSource alarm;
-    private SoundBuffer wall_collision;
+    private BufferedSoundSource wall_collision;
+    private BufferedSoundSource level_transmission;
 
 
     private StreamedSoundSource music;
@@ -49,13 +50,14 @@ public class AudioController {
         SoundBuffer idle_roar_high_wav = WaveLoader.load(Gdx.files.internal("audio/higher_growl.wav"));
         SoundBuffer idle_roar_low_wav = WaveLoader.load(Gdx.files.internal("audio/lower_growl.wav"));
         SoundBuffer alarm_wav = WaveLoader.load(Gdx.files.internal("audio/alarm.wav"));
-        wall_collision = WaveLoader.load(Gdx.files.internal("audio/wall_collision.wav"));
+        SoundBuffer wall_collision_wav = WaveLoader.load(Gdx.files.internal("audio/wall_collision.wav"));
         alarm = audio.obtainSource(alarm_wav);
         heartbeat = audio.obtainSource(heartbeat_wav);
         idle_roar_high = audio.obtainSource(idle_roar_high_wav);
         idle_roar_low = audio.obtainSource(idle_roar_low_wav);
         attack_roar = audio.obtainSource(attack_roar_wav);
         loud_roar = audio.obtainSource(loud_roar_wav);
+        wall_collision = audio.obtainSource(wall_collision_wav);
         music.setLooping(true);
         heartbeat.setLooping(false);
         loud_roar.setLooping(false);
@@ -74,6 +76,7 @@ public class AudioController {
         ticks = 0;
         time_apart = 400;
         volume_tick = 0.0f;
+        idle_roar_high.setVolume(0.6f);
     }
 
     public void setUp(float m, float se) {
@@ -100,7 +103,7 @@ public class AudioController {
         //audio.setMasterVolume(0.6f);
     }
 
-    public void start_level() {
+    public void start_level(int level) {
         music.setVolume(0.4f * music_volume);
         bubbles.setVolume(0.4f * sound_effects_volume);
         music.play();
@@ -109,6 +112,12 @@ public class AudioController {
         heartbeat.setVolume(0.0f);
         last_playing_tick = 0;
         ticks = 0;
+        if (level == 0 || level == 5){
+        SoundBuffer level_transmission_wav = WaveLoader.load(Gdx.files.internal("audio/levels/" + level +".wav"));
+        level_transmission = audio.obtainSource(level_transmission_wav);
+        level_transmission.setVolume(0.35f);
+        level_transmission.play();
+        level_transmission.setLooping(false);}
         //audio.setMasterVolume(0.6f);
     }
 
@@ -121,6 +130,7 @@ public class AudioController {
         sound_effects_volume = s / 4;
         bubbles.setVolume(sound_effects_volume * 0.4f);
         alarm.setVolume(sound_effects_volume * 0.4f);
+        wall_collision.setVolume(0.3f * sound_effects_volume);
     }
 
     public void update(float oxygen, float max_oxygen) {
@@ -144,13 +154,17 @@ public class AudioController {
 
     public void wall_collision(float force) {
         //float volume = (force)/20.f;
-        audio.play(wall_collision, 0.7f * sound_effects_volume);
+       // audio.play(wall_collision, 0.7f * sound_effects_volume);
     }
 
 
     public void wood_collision(float force) {
         //float volume = (force)/20.f;
-        audio.play(wall_collision, 0.3f * sound_effects_volume);
+        if (!wall_collision.isPlaying()){
+            wall_collision.play();
+            //audio.play(wall_collision, 0.3f * sound_effects_volume);
+        }
+        //audio.play(wall_collision, 0.3f * sound_effects_volume);
     }
 
     public void chase() {
@@ -161,14 +175,9 @@ public class AudioController {
 
     public void idle_roar() {
         double rand = Math.random();
-        float roar_volume = (float) (0.5);
-        idle_roar_low.setVolume(roar_volume);
-        idle_roar_high.setVolume(roar_volume);
-        if (rand > 0.5) {
-            //idle_roar_high.stop();
-            idle_roar_low.play();
-        } else {
-            //idle_roar_low.stop();
+//        float roar_volume = (float) (0.5);
+//        idle_roar_low.setVolume(roar_volume);
+        if (!idle_roar_high.isPlaying()){
             idle_roar_high.play();
         }
     }

@@ -218,7 +218,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		}
 		//GAME
 		else if (screen == controller) {
-			controller.reset();
+			//controller.reset();
 			//pause >> menu
 			if (exitCode == 2) {
 				controller.setDefaultPosition();

@@ -340,7 +340,6 @@ public class GameController extends ScreenController implements ContactListener 
         wallShine.setContactFilter(f2);
         light.setContactFilter(f);
 
-        AudioController.getInstance().start_level();
         collisionController = new CollisionController();
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
@@ -569,7 +568,7 @@ public class GameController extends ScreenController implements ContactListener 
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
 
-
+        AudioController.getInstance().start_level(curr_level);
     }
 
     private void updateGameState() {
@@ -601,7 +600,7 @@ public class GameController extends ScreenController implements ContactListener 
 
         changeLightColor(new Color(0, 0, 0, 0));
         rayHandler.setAmbientLight(.0001f);
-
+        AudioController.getInstance().dying();
     }
 
     private void updatePlayingState() {
