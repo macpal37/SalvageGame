@@ -38,10 +38,10 @@ public class MonsterController {
          * The monster is idle
          */
         IDLE,
-        /**
-         * The monster is transitioning to being aggravated and warning the player
-         */
-        GONNA_POUNCE,
+//        /**
+//         * The monster is transitioning to being aggravated and warning the player
+//         */
+//        GONNA_POUNCE,
         /**
          * The monster is aggravated
          */
@@ -84,7 +84,7 @@ public class MonsterController {
     private int last_aggression = 0;
     private int MAX_AGGRESSIVE_TIME;
     private int AGGRESSIVE_LENGTH = 15;
-    private int LAST_AGGRESSIVE_LENGTH = 350;
+    private int LAST_AGGRESSIVE_LENGTH = 400;
     private boolean transition_to_aggravated = false;
 
     private PooledList<Vector2> targetLocations;
@@ -260,7 +260,7 @@ public class MonsterController {
     public void update(float aggravationDrain, DiverModel diver) {
         tick++;
         if (tick % 50 == 0) {
-            if (monster.getAggravation() > 0.0f && state != FSMState.GONNA_POUNCE) {
+            if (monster.getAggravation() > 0.0f) { //&& state != FSMState.GONNA_POUNCE) {
                 float aggravation = monster.getAggravation() - 0.5f;
                 monster.setAggravation(aggravation);
             }
@@ -325,7 +325,7 @@ public class MonsterController {
 //                if (tick % 5 == 0) {
                 curr_pos = diver.getPosition().cpy();
                 monster.moveMonster(curr_pos);
-                if (tick % 5 == 0) {
+                if (tick % 3 == 0) {
                     float best_distance = 10000.0f;
                     float temp_distance = 0.0f;
                     Wall final_loc = null;
@@ -350,9 +350,9 @@ public class MonsterController {
                 }
                 break;
 
-            case GONNA_POUNCE:
-                audio.attack_roar();
-                break;
+//            case GONNA_POUNCE:
+//                audio.attack_roar();
+//                break;
 
             case ATTACK:
                 if (!hasRoared) {

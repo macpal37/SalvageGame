@@ -14,7 +14,6 @@ public class AudioController {
 
     private Audio audio;
     private BufferedSoundSource heartbeat;
-    private BufferedSoundSource oxygen_alarm;
     private BufferedSoundSource attack_roar;
     private BufferedSoundSource idle_roar_high;
     private BufferedSoundSource idle_roar_low;
@@ -41,7 +40,6 @@ public class AudioController {
 
         audio = Audio.init();
         SoundBuffer heartbeat_wav = WaveLoader.load(Gdx.files.internal("audio/heartbeat.wav"));
-        SoundBuffer oxygen_alarm_wav = WaveLoader.load(Gdx.files.internal("audio/oxygen_alarm.wav"));
         music = new StreamedSoundSource(Gdx.files.internal("audio/background.ogg"));
         bubbles = new StreamedSoundSource(Gdx.files.internal("audio/bubbles.ogg"));
         loading_screen = new StreamedSoundSource(Gdx.files.internal("audio/loading_screen.ogg"));
@@ -112,13 +110,15 @@ public class AudioController {
         heartbeat.setVolume(0.0f);
         last_playing_tick = 0;
         ticks = 0;
-        if (level == 0 || level == 5){
-        SoundBuffer level_transmission_wav = WaveLoader.load(Gdx.files.internal("audio/levels/" + level +".wav"));
-        level_transmission = audio.obtainSource(level_transmission_wav);
-        level_transmission.setVolume(0.35f);
-        level_transmission.play();
-        level_transmission.setLooping(false);}
-        //audio.setMasterVolume(0.6f);
+
+        //levels
+        if (level == 0 || level == 5) {
+            SoundBuffer level_transmission_wav = WaveLoader.load(Gdx.files.internal("audio/levels/" + level +".wav"));
+            level_transmission = audio.obtainSource(level_transmission_wav);
+            level_transmission.setVolume(0.35f);
+            level_transmission.play();
+            level_transmission.setLooping(false);
+        }
     }
 
     public void setMusic(float v) {
@@ -168,15 +168,11 @@ public class AudioController {
     }
 
     public void chase() {
-        //float volume = (force)/20.f;
         music.play();
         alarm.play();
     }
 
     public void idle_roar() {
-        double rand = Math.random();
-//        float roar_volume = (float) (0.5);
-//        idle_roar_low.setVolume(roar_volume);
         if (!idle_roar_high.isPlaying()){
             idle_roar_high.play();
         }
@@ -244,7 +240,6 @@ public class AudioController {
     public boolean is_loud_roaring() {
         return loud_roar.isPlaying();
     }
-
 
 }
 

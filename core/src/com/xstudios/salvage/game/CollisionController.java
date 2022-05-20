@@ -459,6 +459,7 @@ public class CollisionController {
             // TODO: @quimey you can add diver tentacle collision sounds in here
             Tentacle tentacle = (Tentacle) fixture.getUserData();
             if (tentacle.getType() == Tentacle.TentacleType.Idle){
+                tentacle.setStartGrowing(false);
                 monster.transitionToAggravated(true);
             }
 //            else if (tentacle.getType() == Tentacle.TentacleType.KILL){
