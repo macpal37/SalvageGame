@@ -605,11 +605,11 @@ public class GameController extends ScreenController implements ContactListener 
         level.getDiver().setHorizontalMovement(input.getHorizontal() * level.getDiver().getForce());
         level.getDiver().setVerticalMovement(input.getVertical() * level.getDiver().getForce());
 
-        System.out.println("Touching Obstacle: " + level.getDiver().isTouchingObstacle());
-        System.out.println("Latching: " + level.getDiver().isLatching());
-        System.out.println("KickOff: " + input.didKickOff());
-        System.out.println("Boosting: " + level.getDiver().isBoosting());
-        System.out.println("Diver Velocity: " + level.getDiver().getLinearVelocity().len());
+//        System.out.println("Touching Obstacle: " + level.getDiver().isTouchingObstacle());
+//        System.out.println("Latching: " + level.getDiver().isLatching());
+//        System.out.println("KickOff: " + input.didKickOff());
+//        System.out.println("Boosting: " + level.getDiver().isBoosting());
+//        System.out.println("Diver Velocity: " + level.getDiver().getLinearVelocity().len());
 //        System.out.println("Diver Mass: " + level.getDiver().getMass());
 
         // stop boosting when player has slowed down enough

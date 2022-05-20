@@ -286,7 +286,7 @@ public class DiverModel extends GameObject {
     }
 
     public void setMaxOxygen(float max) {
-        System.out.println("Maxed Out!");
+//        System.out.println("Maxed Out!");
         maxOxygenLevel = max;
         oxygenLevel = max;
     }
@@ -827,8 +827,9 @@ public class DiverModel extends GameObject {
         if (isLatching()) {
             if (touchedWall != null)
                 targetAngle = touchedWall.getTentacleRotation() + 270;
-            else
-                targetAngle = 0;
+            // Do not uncomment this! When latching, if you rotate to no longer be touching the wall, your target angle will be set to be to the right, which is not what we want
+//            else
+//                targetAngle = 0;
         } else {
 
             targetAngle = (isSwimming() || isBoosting()) ? targetAngleX + ((targetAngleX == 0) ? targetAngleY : -targetAngleY) : getDynamicAngle();
@@ -840,19 +841,26 @@ public class DiverModel extends GameObject {
         float angle = 0.4f * 3;
         int buffer = 5;
         int flip = 180;
+
         if (Math.abs(dist) >= 180 - buffer * 5) {
             dist += (dist > 0) ? -flip : flip;
             faceRight = !faceRight;
             if (Math.abs(dist) >= 90) {
-                dist += (dist > 0) ? -flip : flip;
+                dist += (dist > 0) ? -flip / 2.0f : flip / 2.0f;
                 faceRight = !faceRight;
             } else {
                 turnFrames = 4;
             }
         }
+
+        System.out.println("Target Angle: " + targetAngle);
+        System.out.println("Diver Dynamic Angle: " + getDynamicAngle());
+        System.out.println("Diff: " + dist);
+
 //        float coAngle = 180 * angle / (float) Math.PI;
 
-        float newAngle = angle * ((isLatching()) ? ((isBoosting()) ? 2 : 2) : 1);
+//        float newAngle = angle * ((isLatching()) ? ((isBoosting()) ? 2 : 2) : 1);
+        float newAngle = angle * (Math.abs(dist) / 30);
         float coAngle = angle;
 
 
@@ -1208,11 +1216,17 @@ public class DiverModel extends GameObject {
     }
 
     public void boost() {
-        // set impulse in direction of key input
-        forceCache.set(facingDir.nor().x * boost_impulse, facingDir.nor().y * boost_impulse);
+        // set impulse in direction of the target angle
+        // compute the x and y components given that point lies along unit circle
+        // eg. cos(theta) = a / h -> cos(theta) * h = a where h = 1
+        double angle_rad = Math.toRadians(targetAngle);
+        float dir_x = (float) Math.cos(angle_rad);
+        float dir_y = (float) Math.sin(angle_rad);
+        forceCache.set(dir_x * boost_impulse, dir_y * boost_impulse);
+//        forceCache.set(facingDir.nor().x * boost_impulse, facingDir.nor().y * boost_impulse);
         body.setLinearVelocity(Vector2.Zero); // make sure to zero out prev velocity just in case
         body.applyLinearImpulse(forceCache, body.getWorldCenter(), true);
-        System.out.println("Diver Vel after boost: " + getLinearVelocity().len());
+//        System.out.println("Diver Vel after boost: " + getLinearVelocity().len());
     }
 
     public void dropItem() {
