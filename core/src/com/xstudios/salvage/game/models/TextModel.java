@@ -51,7 +51,7 @@ public class TextModel extends GameObject {
         setTextActive(false);
 
 
-        textColor = new Color(1f, 1f, 1f, 0f);
+        textColor = new Color(1f, 1f, 1f, 1f);
 
 
     }
@@ -106,23 +106,23 @@ public class TextModel extends GameObject {
     @Override
     public void draw(GameCanvas canvas) {
 
-        if (textActive) {
+//        if (textActive) {
+//
+//
+//            if (tick % 5 == 0) {
+//                if (isDisplay) {
+//                    if (textColor.a < 1)
+//                        textColor.set(1f, 1f, 1f, textColor.a + 0.05f);
+//                } else {
+//                    if (textColor.a > 0)
+//                        textColor.set(1f, 1f, 1f, textColor.a - 0.05f);
+//                }
+//                font.setColor(textColor);
+//            }
 
-
-            if (tick % 5 == 0) {
-                if (isDisplay) {
-                    if (textColor.a < 1)
-                        textColor.set(1f, 1f, 1f, textColor.a + 0.05f);
-                } else {
-                    if (textColor.a > 0)
-                        textColor.set(1f, 1f, 1f, textColor.a - 0.05f);
-                }
-                font.setColor(textColor);
-            }
-
-            canvas.drawText(text, font,
-                    (textPosition.x) * drawScale.x * worldDrawScale.x, (textPosition.y) * drawScale.y * worldDrawScale.y);
-        }
+        canvas.drawText(text, font,
+                (textPosition.x) * drawScale.x * worldDrawScale.x, (textPosition.y) * drawScale.y * worldDrawScale.y);
+//        }
 
     }
 

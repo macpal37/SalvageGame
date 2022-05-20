@@ -179,12 +179,10 @@ public class GameController extends ScreenController implements ContactListener 
      * level4 - insanely hard key level
      */
     // Beta Release Setup
-//    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8"};
-    private String[] levels = {"test_level", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8"};
 
+    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8", "Golden0", "Golden1", "Golden2"};
 
     private int curr_level;
-
 
     private enum state {
         PLAYING,
@@ -320,7 +318,7 @@ public class GameController extends ScreenController implements ContactListener 
         monster_color = new Color(1f, 0f, 0f, .4f);
 
         light = new PointLight(rayHandler, 100, Color.BLACK, normal_light_radius - 5f, 0, 0);
-        wallShine = new PointLight(rayHandler, 100, Color.BLUE, normal_light_radius - 5f, 0, 0);
+        wallShine = new PointLight(rayHandler, 100, Color.BLUE, normal_light_radius - 10f, 0, 0);
         wallShine.setSoft(true);
 
         int r = 225, g = 103, b = 30;
@@ -574,12 +572,11 @@ public class GameController extends ScreenController implements ContactListener 
 
         if (game_over_animation_time <= 0) {
             if (game_state == state.DYING) {
-
+                light.setDistance(0);
+                wallShine.setDistance(0);
                 game_state = state.EXIT_LOSE;
             } else if (game_state == state.WIN_ANIMATION) {
-                System.out.println(
-                        "Yeah!"
-                );
+
 
                 game_state = state.EXIT_WIN;
             }
@@ -722,7 +719,11 @@ public class GameController extends ScreenController implements ContactListener 
                 TreasureModel tm = level.getDiver().getTreasureChests().pop();
                 tm.openChest();
                 if (tm.getContents() == TreasureModel.TreasureType.Monster) {
-                    Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, Tentacle.TentacleType.OldAttack, 30);
+                    Vector2 v = level.getDiver().getPosition();
+                    Vector2 u = tm.getPosition();
+                    float angle = (float) Math.atan2(v.x - u.x, v.y - u.y) + (float) Math.PI / 16f * 17;
+
+                    Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, Tentacle.TentacleType.NewAttack, 30, -angle);
                     tm.setTrap(t);
                     addQueuedObject(t);
                 } else if (tm.getContents() == TreasureModel.TreasureType.Key) {
@@ -833,11 +834,10 @@ public class GameController extends ScreenController implements ContactListener 
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     Tentacle t;
-                    if(tick % 2 == 0){
+                    if (tick % 2 == 0) {
                         t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.6f, add_wall, Tentacle.TentacleType.NewAttack, 120);
                         t.setGrowRate(10);
-                    }
-                    else {
+                    } else {
                         t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.45f, add_wall, Tentacle.TentacleType.NewAttack, 50);
                         t.setGrowRate(4);
                     }
@@ -939,12 +939,10 @@ public class GameController extends ScreenController implements ContactListener 
         if (monsterController.isMonsterActive()) {
             if (monsterController.isAggravated()) {
                 changeLightColor(monster_color);
-            }
-            else if (monsterController.isKillState()) {
-                if (tick % 2  == 0){
+            } else if (monsterController.isKillState()) {
+                if (tick % 2 == 0) {
                     changeLightColor(monster_color);
-                }
-                else {
+                } else {
                     changeLightColor(low_oxygen_color);
                 }
 
@@ -958,10 +956,12 @@ public class GameController extends ScreenController implements ContactListener 
         if (level.getDiver().getStunned()) {
             if (light.getDistance() > stun_light_radius) {
                 light.setDistance(light.getDistance() - 1);
+                wallShine.setDistance(wallShine.getDistance() - 0.25f);
             }
         } else {
             if (light.getDistance() < normal_light_radius) {
                 light.setDistance(light.getDistance() + 1);
+                wallShine.setDistance(wallShine.getDistance() + 0.25f);
             }
         }
 

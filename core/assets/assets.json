@@ -66,7 +66,7 @@
     "models:dust": "models/dust.png",
     "models:plant": "models/plant.png",
     "models:plant2": "models/plant2.png",
-
+  "models:exit_door": "models/exit_door_animation.png",
 
     "models:barrel": "models/barrel.png",
     "models:crate": "models/crate.png",
@@ -140,11 +140,11 @@
   "fonts": {
     "fonts:atlantis_font": {
       "file": "fonts/SalvageFont.ttf",
-      "size": 24
+      "size": 16
     },
     "fonts:atlantis_font2": {
           "file": "fonts/SalvageFont2.ttf",
-          "size": 24
+          "size": 20
         }
   }
 }

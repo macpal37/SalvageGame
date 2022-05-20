@@ -1,8 +1,8 @@
 {
-    "activeFile": "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/route2.json",
+    "activeFile": "levels/Golden2.json",
     "expandedProjectPaths": [
-        "levels",
-        "levels/tilesets"
+        "levels/tilesets",
+        "levels"
     ],
     "fileStates": {
         "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/dungeon_out.json": {
@@ -220,51 +220,51 @@
             "scaleInEditor": 4
         },
         "levels/Golden0.json": {
-            "scale": 0.75,
+            "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 483.3333333333333,
-                "y": 741.3333333333333
+                "x": 567,
+                "y": 650
             }
         },
         "levels/Golden1.json": {
-            "scale": 1,
-            "selectedLayer": 2,
+            "scale": 0.33,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 336.5,
-                "y": 980
+                "x": 768.181818181818,
+                "y": 721.2121212121212
             }
         },
         "levels/Golden2.json": {
-            "scale": 1,
+            "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1035.5,
-                "y": 686
+                "x": 940,
+                "y": 848
             }
         },
         "levels/Golden3.json": {
-            "scale": 0.33,
+            "scale": 0.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 689.3939393939394,
-                "y": 681.8181818181819
+                "x": 571,
+                "y": 890
             }
         },
         "levels/Golden4.json": {
-            "scale": 0.33,
+            "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1440.909090909091,
-                "y": 921.2121212121212
+                "x": 1252,
+                "y": 440
             }
         },
         "levels/Golden5.json": {
-            "scale": 1,
-            "selectedLayer": 1,
+            "scale": 0.5,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 1249.5,
-                "y": 800
+                "x": 1193,
+                "y": 836
             }
         },
         "levels/Golden6.json": {
@@ -276,19 +276,19 @@
             }
         },
         "levels/Golden7.json": {
-            "scale": 0.51,
+            "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 179.41176470588238,
-                "y": 533.3333333333334
+                "x": 1583.3333333333335,
+                "y": 806.0606060606061
             }
         },
         "levels/Golden8.json": {
             "scale": 0.75,
-            "selectedLayer": 1,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 2288.6666666666665,
-                "y": 570.6666666666666
+                "x": 556.6666666666665,
+                "y": 1390.6666666666665
             }
         },
         "levels/beta_0.json": {
@@ -403,7 +403,7 @@
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 336,
+                "x": 337,
                 "y": 1484
             }
         },
@@ -412,6 +412,14 @@
             "scaleInEditor": 1
         },
         "levels/tilesets/tentacle_attack.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/tilesets/tentacle_attack2.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/tilesets/tentacle_attack3.json": {
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
@@ -450,26 +458,34 @@
     },
     "last.imagePath": "/Users/marcopalomino/Documents/Spring2022/SalvageGame/core/assets/levels/tilesets",
     "openFiles": [
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/route2.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon1.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/dungeon_tileset.json",
-        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/house_tileset.json"
+        "levels/Golden3.json",
+        "levels/Golden2.json",
+        "levels/Golden5.json",
+        "levels/Golden7.json",
+        "levels/Golden8.json",
+        "levels/tilesets/tentacle_attack.json",
+        "levels/tilesets/tentacle_attack2.json",
+        "levels/test_level.json",
+        "levels/tilesets/tentacle_attack3.json",
+        "levels/tilesets/old_ship_tileset.json",
+        "levels/Golden0.json",
+        "levels/Golden1.json"
     ],
     "project": "levels.tiled-project",
     "property.type": "int",
     "recentFiles": [
-        "levels/Golden0.json",
-        "levels/Golden4.json",
-        "levels/tentacle_attack2.json",
-        "levels/in_progress.json",
-        "levels/Golden2.json",
-        "levels/level3.json",
-        "levels/level4.json",
-        "levels/level2.json",
-        "levels/tutorial2.json",
+        "levels/tilesets/old_ship_tileset.json",
+        "levels/tilesets/tentacle_attack3.json",
+        "levels/test_level.json",
+        "levels/tilesets/tentacle_attack2.json",
         "levels/tilesets/tentacle_attack.json",
-        "levels/beta_0.json",
-        "levels/tilesets/tentacle_idle.json"
+        "levels/Golden3.json",
+        "levels/Golden1.json",
+        "levels/Golden0.json",
+        "levels/Golden8.json",
+        "levels/Golden7.json",
+        "levels/Golden5.json",
+        "levels/Golden2.json"
     ],
     "tileset.lastUsedFormat": "json",
     "tileset.tileSize": {
