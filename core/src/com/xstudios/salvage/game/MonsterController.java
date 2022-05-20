@@ -75,7 +75,7 @@ public class MonsterController {
 
 
     private float MAX_TARGET_DIST = 10;
-    private float RAND_DIST_RANGE = 5;
+    private float RAND_DIST_RANGE = 10;
     private float ATTACK_DIST_RANGE = 0;
 
     private int MAX_INVINCIBILITY = 50;
@@ -355,13 +355,14 @@ public class MonsterController {
                     roar_pause = tick;
                     audio.loud_roar_play(hasRoared);
                     monster.setVisionRadius(10);
-                    diver.setStunCooldown(300);
+                    diver.setStunCooldown(100);
                     diver.setStunned(true);
+
                     //diver.changeOxygenLevel(-diver.getOxygenLevel() + 3);
                     hasRoared = true;
                     roar_pause = tick;
 //                    monster.setAggravation(100000.0f);
-                } else if (tick - roar_pause > 300) {
+                } else if (tick - roar_pause > 100) {
 //                    monster.setAggravation(100000.0f);
 //                    diver.changeOxygenLevel(2);
                     monster.moveMonster(diver.getPosition());

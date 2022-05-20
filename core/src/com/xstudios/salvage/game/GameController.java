@@ -217,6 +217,7 @@ public class GameController extends ScreenController implements ContactListener 
     private Color stun_color;
     private Color low_oxygen_color;
     private Color monster_color;
+    private Color kill_monster_color;
     private float stun_light_radius = 5f;
     private float normal_light_radius = 15f;
 
@@ -339,7 +340,7 @@ public class GameController extends ScreenController implements ContactListener 
         wallShine.setContactFilter(f2);
         light.setContactFilter(f);
 
-        AudioController.getInstance().initialize();
+        AudioController.getInstance().reset();
         collisionController = new CollisionController();
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
@@ -833,12 +834,24 @@ public class GameController extends ScreenController implements ContactListener 
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
-
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, Tentacle.TentacleType.NewAttack, 40);
-
                     addQueuedObject(t);
-                    t.setGrowRate(5);
+                    if(tick % 2 == 0){
+                        t.setGrowRate(5);
+                    }
+                    else {
+                        t.setGrowRate(10);
+                        t.setMaxLifeSpan(60);
+                        t.setScale( 0.5f,0.5f);
+                    }
                 }
+//                Wall slow = tentacles.poll();
+//                if (slow != null && slow.canSpawnTentacle()) {
+//                    Tentacle t_slow = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, slow, Tentacle.TentacleType.NewAttack, 75);
+//                    t_slow.setGrowRate(10);
+//                    t_slow.setScale( 0.7f,0.7f);
+//                    addQueuedObject(t_slow);
+//                }
             }
             while (idle_tentacles.size() > 0) {
                 Wall add_wall = idle_tentacles.poll();
@@ -930,8 +943,19 @@ public class GameController extends ScreenController implements ContactListener 
     }
 
     public void updateDiverLighting() {
-        if (monsterController.isMonsterActive() && monsterController.isAggravated()) {
-            changeLightColor(monster_color);
+        if (monsterController.isMonsterActive()) {
+            if (monsterController.isAggravated()) {
+                changeLightColor(monster_color);
+            }
+            else if (monsterController.isKillState()) {
+                if (tick % 2  == 0){
+                    changeLightColor(monster_color);
+                }
+                else {
+                    changeLightColor(low_oxygen_color);
+                }
+
+            }
         } else if (level.getDiver().getOxygenLevel() < level.getDiver().getMaxOxygen() * .25f) {
             changeLightColor(low_oxygen_color);
         } else {

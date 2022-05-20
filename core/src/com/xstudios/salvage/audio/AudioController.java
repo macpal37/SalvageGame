@@ -26,6 +26,7 @@ public class AudioController {
 
     private StreamedSoundSource music;
     private StreamedSoundSource bubbles;
+    private StreamedSoundSource loading_screen;
     private int ticks;
     private int last_playing_tick;
     private int time_apart;
@@ -43,10 +44,10 @@ public class AudioController {
         SoundBuffer oxygen_alarm_wav = WaveLoader.load(Gdx.files.internal("audio/oxygen_alarm.wav"));
         music = new StreamedSoundSource(Gdx.files.internal("audio/background.ogg"));
         bubbles = new StreamedSoundSource(Gdx.files.internal("audio/bubbles.ogg"));
+        loading_screen = new StreamedSoundSource(Gdx.files.internal("audio/loadingscreen.ogg"));
         SoundBuffer attack_roar_wav = WaveLoader.load(Gdx.files.internal("audio/attack_roar.wav"));
         SoundBuffer loud_roar_wav = WaveLoader.load(Gdx.files.internal("audio/loud_roar.wav"));
         SoundBuffer idle_roar_high_wav = WaveLoader.load(Gdx.files.internal("audio/higher_growl.wav"));
-        ;
         SoundBuffer idle_roar_low_wav = WaveLoader.load(Gdx.files.internal("audio/lower_growl.wav"));
         SoundBuffer alarm_wav = WaveLoader.load(Gdx.files.internal("audio/alarm.wav"));
         wall_collision = WaveLoader.load(Gdx.files.internal("audio/wall_collision.wav"));
@@ -64,6 +65,7 @@ public class AudioController {
         idle_roar_high.setLooping(false);
         attack_roar.setLooping(false);
         bubbles.setLooping(true);
+        loading_screen.setLooping(false);
 
         alarm.setLooping(true);
         music.setVolume(0.3f);
@@ -138,8 +140,7 @@ public class AudioController {
 
     public void wood_collision(float force) {
         //float volume = (force)/20.f;
-        audio.play(wood_collision, 0.3f * sound_effects_volume);
-
+        audio.play(wall_collision, 0.3f * sound_effects_volume);
     }
 
     public void chase() {
@@ -173,6 +174,16 @@ public class AudioController {
         music.dispose();
         audio.dispose();
     }
+
+    public void loading_screen() {
+        loading_screen.setVolume(0.4f);
+        loading_screen.play();
+    }
+
+    public Boolean is_loading() {
+        return loading_screen.isPlaying();
+    }
+
 
     public void attack_roar() {
         if (!attack_roar.isPlaying()) {

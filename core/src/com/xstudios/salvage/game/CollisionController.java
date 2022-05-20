@@ -235,13 +235,13 @@ public class CollisionController {
                 diver.getDiverCollisionBox().equals(fd1) &&
                 b2.getUserData() instanceof HazardModel) {
             HazardModel hazard = (HazardModel) b2.getUserData();
-            return staticHazardCollision(diver, hazard, (f2.getUserData() instanceof Tentacle), monster);
+            return staticHazardCollision(diver, hazard, f2, (f2.getUserData() instanceof Tentacle), monster);
         }
         if (b2.getUserData() instanceof DiverModel &&
                 diver.getDiverCollisionBox().equals(fd2) &&
                 b1.getUserData() instanceof HazardModel) {
             HazardModel hazard = (HazardModel) b1.getUserData();
-            return staticHazardCollision(diver, hazard, (f1.getUserData() instanceof Tentacle), monster);
+            return staticHazardCollision(diver, hazard, f1, (f1.getUserData() instanceof Tentacle), monster);
         }
 
         // return 0 if not colliding
@@ -440,7 +440,7 @@ public class CollisionController {
     }
 
 
-    public static float staticHazardCollision(DiverModel diver, HazardModel hazard, boolean isTentacle, MonsterController monster) {
+    public static float staticHazardCollision(DiverModel diver, HazardModel hazard, Fixture fixture, boolean isTentacle, MonsterController monster) {
 //        System.out.println("Hazard Contact: " + hazard.getOxygenDrain());
         System.out.println("START HAZARD COLLISION");
         if (!diver.getStunned() && /*!diver.isInvincible() && */ !monster.isKillState()) {
@@ -457,8 +457,15 @@ public class CollisionController {
 
         if (isTentacle) {
             // TODO: @quimey you can add diver tentacle collision sounds in here
-            monster.transitionToAggravated(true);
-            AudioController.getInstance().idle_roar();
+            Tentacle tentacle = (Tentacle) fixture.getUserData();
+            if (tentacle.getType() == 0){
+                monster.transitionToAggravated(true);
+                AudioController.getInstance().attack_roar();
+            }
+            else if (tentacle.getType() == 1){
+                return (hazard.getOxygenDrain() * 7.5f);
+            }
+            //AudioController.getInstance().idle_roar();
         }
         diver.setChangeLightFilter(false);
 

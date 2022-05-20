@@ -346,23 +346,24 @@ public class Tentacle extends GameObject {
             }
 
 
-            if (wiggleFrame == 17)
+            if (wiggleFrame == 17){
                 wiggleFrame = 0;
-            tentacleSprite2.setFrame(wiggleFrame);
+                tentacleSprite2.setFrame(wiggleFrame); }
         }
 
 
         if (frame >= 0 && isActive()) {
             tentacleSprite.setFrame(frame);
-            if (wiggleFrame == 0)
+            if (wiggleFrame == 0) {
                 canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x,
-                        (getY()) * drawScale.y + pivot.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
-            else
+                        (getY()) * drawScale.y + pivot.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y); }
+            else {
                 canvas.draw(tentacleSprite2, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x,
-                        (getY()) * drawScale.y + pivot.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
+                        (getY()) * drawScale.y + pivot.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y); }
         }
-
     }
+
+
 
 
     public void despawn() {
