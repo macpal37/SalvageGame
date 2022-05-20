@@ -216,6 +216,7 @@ public class GameController extends ScreenController implements ContactListener 
     private Color stun_color;
     private Color low_oxygen_color;
     private Color monster_color;
+    private Color kill_monster_color;
     private float stun_light_radius = 5f;
     private float normal_light_radius = 15f;
 
@@ -338,7 +339,6 @@ public class GameController extends ScreenController implements ContactListener 
         wallShine.setContactFilter(f2);
         light.setContactFilter(f);
 
-        AudioController.getInstance().initialize();
         collisionController = new CollisionController();
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
@@ -433,7 +433,7 @@ public class GameController extends ScreenController implements ContactListener 
         exit_home = false;
         press_restart = false;
         press_resume = false;
-        AudioController.getInstance().dispose();
+        //AudioController.getInstance().dispose();
         player = null;
     }
 
@@ -569,7 +569,7 @@ public class GameController extends ScreenController implements ContactListener 
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
 
-
+        AudioController.getInstance().start_level(curr_level);
     }
 
     private void updateGameState() {
@@ -601,7 +601,7 @@ public class GameController extends ScreenController implements ContactListener 
 
         changeLightColor(new Color(0, 0, 0, 0));
         rayHandler.setAmbientLight(.0001f);
-
+        AudioController.getInstance().dying();
     }
 
     private void updatePlayingState() {
@@ -834,18 +834,24 @@ public class GameController extends ScreenController implements ContactListener 
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
-
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, Tentacle.TentacleType.NewAttack, 40);
-
+                    Tentacle t;
+                    if(tick % 2 == 0){
+                        t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.6f, add_wall, Tentacle.TentacleType.NewAttack, 120);
+                        t.setGrowRate(10);
+                    }
+                    else {
+                        t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.45f, add_wall, Tentacle.TentacleType.NewAttack, 50);
+                        t.setGrowRate(4);
+                    }
                     addQueuedObject(t);
-                    t.setGrowRate(5);
                 }
             }
+
             while (idle_tentacles.size() > 0) {
                 Wall add_wall = idle_tentacles.poll();
                 if (add_wall != null) {
 
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, Tentacle.TentacleType.Idle, 5000);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, Tentacle.TentacleType.Idle, 100);
 
                     t.setGrowRate(10);
                     t.setType(0);
@@ -853,10 +859,11 @@ public class GameController extends ScreenController implements ContactListener 
 //                AudioController.getInstance().roar();
                 }
             }
+
             while (attack_tentacles.size() > 0) {
                 Wall add_wall = attack_tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, Tentacle.TentacleType.KILL, 1000000);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, Tentacle.TentacleType.KILL, 200);
                     t.setType(1);
                     t.setGrowRate(4);
 //                    System.out.println("type" + t.getType());
@@ -931,8 +938,19 @@ public class GameController extends ScreenController implements ContactListener 
     }
 
     public void updateDiverLighting() {
-        if (monsterController.isMonsterActive() && monsterController.isAggravated()) {
-            changeLightColor(monster_color);
+        if (monsterController.isMonsterActive()) {
+            if (monsterController.isAggravated()) {
+                changeLightColor(monster_color);
+            }
+            else if (monsterController.isKillState()) {
+                if (tick % 2  == 0){
+                    changeLightColor(monster_color);
+                }
+                else {
+                    changeLightColor(low_oxygen_color);
+                }
+
+            }
         } else if (level.getDiver().getOxygenLevel() < level.getDiver().getMaxOxygen() * .25f) {
             changeLightColor(low_oxygen_color);
         } else {

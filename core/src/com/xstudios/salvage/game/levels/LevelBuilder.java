@@ -175,7 +175,7 @@ public class LevelBuilder {
         monsterAttackAnimation = new FilmStrip(directory.getEntry("models:monster_attack", Texture.class), 5, 6, 30);
         monsterIdleAnimation = new FilmStrip(directory.getEntry("models:monster_idle", Texture.class), 5, 6, 30);
         monsterAttack2Animation = new FilmStrip(directory.getEntry("models:monster_attack2", Texture.class), 6, 5, 30);
-        monsterAttack3Animation = new FilmStrip(directory.getEntry("models:monster_attack3", Texture.class), 6, 5, 30);
+        monsterAttack3Animation = new FilmStrip(directory.getEntry("models:monster_attack3", Texture.class), 5, 6, 30);
         monsterWiggleAnimation = new FilmStrip(directory.getEntry("models:monster_wiggle", Texture.class), 6, 3, 18);
 
         doorAnimation = new FilmStrip(directory.getEntry("models:door_animation", Texture.class), 1, 12, 12);

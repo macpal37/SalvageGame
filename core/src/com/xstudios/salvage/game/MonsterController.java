@@ -38,10 +38,10 @@ public class MonsterController {
          * The monster is idle
          */
         IDLE,
-        /**
-         * The monster is transitioning to being aggravated and warning the player
-         */
-        GONNA_POUNCE,
+//        /**
+//         * The monster is transitioning to being aggravated and warning the player
+//         */
+//        GONNA_POUNCE,
         /**
          * The monster is aggravated
          */
@@ -75,7 +75,7 @@ public class MonsterController {
 
 
     private float MAX_TARGET_DIST = 10;
-    private float RAND_DIST_RANGE = 5;
+    private float RAND_DIST_RANGE = 10;
     private float ATTACK_DIST_RANGE = 0;
 
     private int MAX_INVINCIBILITY = 50;
@@ -84,7 +84,7 @@ public class MonsterController {
     private int last_aggression = 0;
     private int MAX_AGGRESSIVE_TIME;
     private int AGGRESSIVE_LENGTH = 15;
-    private int LAST_AGGRESSIVE_LENGTH = 350;
+    private int LAST_AGGRESSIVE_LENGTH = 400;
     private boolean transition_to_aggravated = false;
 
     private PooledList<Vector2> targetLocations;
@@ -176,11 +176,15 @@ public class MonsterController {
 
             case IDLE:
                 if (aggravation > monster.getAggroLevel() && last_aggression > LAST_AGGRESSIVE_LENGTH) {
-                    state = FSMState.GONNA_POUNCE;
+                    AudioController.getInstance().attack_roar();
+                    state = FSMState.AGGRIVATED;
+                    tick = 0;
                     pounce_time = 0;
+                    monster.setAggressiveLength(AGGRESSIVE_LENGTH);
                     //monster.setVisionRadius(30);
                 }
                 if (transition_to_aggravated || Math.random() <= .0005) {
+                    AudioController.getInstance().attack_roar();
                     state = FSMState.AGGRIVATED;
                     tick = 0;
                     monster.setAggravation(monster.getAggroLevel() + monster.getAggravationRate() * 3);
@@ -190,17 +194,17 @@ public class MonsterController {
                 last_aggression++;
                 break;
 
-            case GONNA_POUNCE:
-                if (pounce_time > MAX_POUNCE_TIME) {
-                    state = FSMState.AGGRIVATED;
-                    //total_aggressive_time = 0;
-                    monster.setAggressiveLength(AGGRESSIVE_LENGTH);
-                    tick = 0;
-//                    monster.setAggressiveLength((int) (MAX_INVINCIBILITY * aggravation / aggrivation_threshold));
-                } else {
-                    pounce_time++;
-                }
-                break;
+//            case GONNA_POUNCE:
+//                if (pounce_time > MAX_POUNCE_TIME) {
+//                    state = FSMState.AGGRIVATED;
+//                    //total_aggressive_time = 0;
+//                    monster.setAggressiveLength(AGGRESSIVE_LENGTH);
+//                    tick = 0;
+////                    monster.setAggressiveLength((int) (MAX_INVINCIBILITY * aggravation / aggrivation_threshold));
+//                } else {
+//                    pounce_time++;
+//                }
+//                break;
 
             case AGGRIVATED:
                 System.out.println("Aggravation length " + monster.getAggressiveLength());
@@ -256,7 +260,7 @@ public class MonsterController {
     public void update(float aggravationDrain, DiverModel diver) {
         tick++;
         if (tick % 50 == 0) {
-            if (monster.getAggravation() > 0.0f && state != FSMState.GONNA_POUNCE) {
+            if (monster.getAggravation() > 0.0f) { //&& state != FSMState.GONNA_POUNCE) {
                 float aggravation = monster.getAggravation() - 0.5f;
                 monster.setAggravation(aggravation);
             }
@@ -321,7 +325,7 @@ public class MonsterController {
 //                if (tick % 5 == 0) {
                 curr_pos = diver.getPosition().cpy();
                 monster.moveMonster(curr_pos);
-                if (tick % 5 == 0) {
+                if (tick % 3 == 0) {
                     float best_distance = 10000.0f;
                     float temp_distance = 0.0f;
                     Wall final_loc = null;
@@ -346,22 +350,23 @@ public class MonsterController {
                 }
                 break;
 
-            case GONNA_POUNCE:
-                audio.attack_roar();
-                break;
+//            case GONNA_POUNCE:
+//                audio.attack_roar();
+//                break;
 
             case ATTACK:
                 if (!hasRoared) {
                     roar_pause = tick;
                     audio.loud_roar_play(hasRoared);
                     monster.setVisionRadius(10);
-                    diver.setStunCooldown(300);
+                    diver.setStunCooldown(150);
                     diver.setStunned(true);
+
                     //diver.changeOxygenLevel(-diver.getOxygenLevel() + 3);
                     hasRoared = true;
                     roar_pause = tick;
 //                    monster.setAggravation(100000.0f);
-                } else if (tick - roar_pause > 300) {
+                } else if (tick - roar_pause > 150) {
 //                    monster.setAggravation(100000.0f);
 //                    diver.changeOxygenLevel(2);
                     monster.moveMonster(diver.getPosition());
