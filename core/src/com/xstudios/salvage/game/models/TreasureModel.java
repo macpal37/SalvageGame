@@ -57,7 +57,6 @@ public class TreasureModel extends ObstacleModel {
     private Light light;
     boolean nearChest;
 
-    int tick = 0;
 
     public TreasureModel(float[] points, float x, float y, float ox, float oy, float div) {
         super(points, x + ox / div, y + oy / div);
@@ -162,7 +161,6 @@ public class TreasureModel extends ObstacleModel {
         }
         FixtureDef treasureRadDef = new FixtureDef();
         treasureRadDef.isSensor = true;
-        // we don't want this fixture to collide, just act as a sensor
         treasureRadDef.filter.maskBits = -1;
         treasureRadius = new CircleShape();
         treasureRadius.setRadius(openRadius);
@@ -234,7 +232,6 @@ public class TreasureModel extends ObstacleModel {
 
     @Override
     public void draw(GameCanvas canvas) {
-        tick++;
         if (nearChest && suspenseSprite.getFrame() < 35) {
             light.setActive(true);
             if (lightColor.a < 0.4f)
@@ -286,13 +283,10 @@ public class TreasureModel extends ObstacleModel {
                     if (sprite.getFrame() < 35)
                         if (tick % 2 == 0)
                             sprite.setFrame(sprite.getFrame() + 1);
-
                     if (sprite.getFrame() == 33) {
                         trap.setActive(true);
                         trap.setStartGrowing(true);
-
                     }
-
                     break;
                 case Flare:
                     if (tick % 4 == 0)
@@ -307,5 +301,8 @@ public class TreasureModel extends ObstacleModel {
             trap.draw(canvas);
         if (keyReward != null && !keyReward.isCarried())
             keyReward.draw(canvas);
+        canvas.draw(texture, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x,
+                getY() * drawScale.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
+
     }
 }

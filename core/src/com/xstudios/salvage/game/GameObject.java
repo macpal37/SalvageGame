@@ -40,6 +40,14 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
  * and fixture information into a single interface.
  */
 public abstract class GameObject extends GObject {
+
+    public void setTick(int tick) {
+        this.tick = tick;
+    }
+
+    protected int tick = 0;
+
+
     /**
      * The physics body for Box2D.
      */

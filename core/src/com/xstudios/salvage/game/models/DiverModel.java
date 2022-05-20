@@ -796,7 +796,6 @@ public class DiverModel extends GameObject {
         return !isLatching() && !isBoosting() && movement.isZero();
     }
 
-    int tick = 0;
     boolean stroke = false;
 
     public float getDynamicAngle() {
@@ -889,7 +888,6 @@ public class DiverModel extends GameObject {
 //        tick++;
         // possible states: swimming, idling/drifting, latching, boosting
         if (isSwimming()) { // player is actively using the arrow keys
-            System.out.println("IS SWIMMING");
 
             // set custom max speed and damping values
             setMaxSpeed(swimMaxSpeed);
@@ -1308,7 +1306,6 @@ public class DiverModel extends GameObject {
             f.draw(canvas);
         }
 
-        tick++;
         float effect = faceRight ? 1.0f : -1.0f;
         float flip = bodyFlip ? -1.0f : 1.0f;
         float angle = getAngle();

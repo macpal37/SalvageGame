@@ -61,6 +61,7 @@ public class ItemModel extends DiverObjectModel {
         movement = new Vector2();
 //        light_color = new Color(1f,0.5f,0.5f,0.5f);
         chest_location = new Vector2(0, 0);
+
     }
 
 
@@ -149,8 +150,6 @@ public class ItemModel extends DiverObjectModel {
         spriteSheet.setFrame(startingFrame);
     }
 
-    int tick = 0;
-
     public void setInChest(boolean b) {
         isInChest = b;
     }
@@ -169,7 +168,6 @@ public class ItemModel extends DiverObjectModel {
 
     @Override
     public void draw(GameCanvas canvas) {
-//        System.out.println("key is active? " + isKeyActive());
         if (isKeyActive()) {
             if (texture != null) {
                 if (!carried) {
