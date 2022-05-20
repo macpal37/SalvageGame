@@ -452,19 +452,18 @@ public class CollisionController {
         } else if (!diver.getStunned() && /*!diver.isInvincible() && */monster.isKillState()) {
             diver.setStunned(true);
             diver.setStunCooldown(hazard.getStunDuration());
-
+            return (hazard.getOxygenDrain() * 4.0f);
         }
 
         if (isTentacle) {
             // TODO: @quimey you can add diver tentacle collision sounds in here
             Tentacle tentacle = (Tentacle) fixture.getUserData();
-            if (tentacle.getType() == 0){
+            if (tentacle.getType() == Tentacle.TentacleType.Idle){
                 monster.transitionToAggravated(true);
-                AudioController.getInstance().attack_roar();
             }
-            else if (tentacle.getType() == 1){
-                return (hazard.getOxygenDrain() * 7.5f);
-            }
+//            else if (tentacle.getType() == Tentacle.TentacleType.KILL){
+//                return (hazard.getOxygenDrain() * 7.5f);
+//            }
             //AudioController.getInstance().idle_roar();
         }
         diver.setChangeLightFilter(false);

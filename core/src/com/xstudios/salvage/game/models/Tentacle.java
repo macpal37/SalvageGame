@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 public class Tentacle extends GameObject {
 
+
     public enum TentacleType {
         OldAttack, NewAttack, Idle, KILL, NewAttack2, SmallAttack
     }
@@ -53,6 +54,7 @@ public class Tentacle extends GameObject {
     private int extend_frame_length = 16;
     private int total_frames = 30;
     private int type;
+    private TentacleType tentacleType;
 
 
     private Wall spawnWall;
@@ -97,6 +99,9 @@ public class Tentacle extends GameObject {
         }
     }
 
+    public TentacleType getTentacleType() {
+        return tentacleType;
+    }
 
     public FilmStrip getTentacleSprite() {
         return tentacleSprite;
@@ -258,8 +263,6 @@ public class Tentacle extends GameObject {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-
-
         canvas.drawPhysics(circ, Color.GREEN, getX(), getY(), drawScale.x, drawScale.y);
         for (HazardModel hm : collisionBoxes) {
             hm.drawDebug(canvas);
@@ -303,8 +306,8 @@ public class Tentacle extends GameObject {
         this.type = type;
     }
 
-    public int getType() {
-        return this.type;
+    public TentacleType getType() {
+        return this.tentacleType;
     }
 
     int grow_rate = 10;
@@ -406,8 +409,6 @@ public class Tentacle extends GameObject {
             bodyinfo.active = false;
         }
     }
-
-    TentacleType tentacleType = TentacleType.NewAttack;
 
     public void setTentacleType(TentacleType type) {
         tentacleType = type;

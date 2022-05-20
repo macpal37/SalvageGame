@@ -340,7 +340,7 @@ public class GameController extends ScreenController implements ContactListener 
         wallShine.setContactFilter(f2);
         light.setContactFilter(f);
 
-        AudioController.getInstance().reset();
+        AudioController.getInstance().start_level();
         collisionController = new CollisionController();
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
@@ -435,7 +435,7 @@ public class GameController extends ScreenController implements ContactListener 
         exit_home = false;
         press_restart = false;
         press_resume = false;
-        AudioController.getInstance().dispose();
+        //AudioController.getInstance().dispose();
         player = null;
     }
 
@@ -834,30 +834,24 @@ public class GameController extends ScreenController implements ContactListener 
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, Tentacle.TentacleType.NewAttack, 40);
-                    addQueuedObject(t);
+                    Tentacle t;
                     if(tick % 2 == 0){
-                        t.setGrowRate(5);
+                        t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, Tentacle.TentacleType.NewAttack, 40);
+                        t.setGrowRate(2);
                     }
                     else {
+                        t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.6f, add_wall, Tentacle.TentacleType.NewAttack, 120);
                         t.setGrowRate(10);
-                        t.setMaxLifeSpan(60);
-                        t.setScale( 0.5f,0.5f);
                     }
+                    addQueuedObject(t);
                 }
-//                Wall slow = tentacles.poll();
-//                if (slow != null && slow.canSpawnTentacle()) {
-//                    Tentacle t_slow = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, slow, Tentacle.TentacleType.NewAttack, 75);
-//                    t_slow.setGrowRate(10);
-//                    t_slow.setScale( 0.7f,0.7f);
-//                    addQueuedObject(t_slow);
-//                }
             }
+
             while (idle_tentacles.size() > 0) {
                 Wall add_wall = idle_tentacles.poll();
                 if (add_wall != null) {
 
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, Tentacle.TentacleType.Idle, 5000);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, Tentacle.TentacleType.Idle, 100);
 
                     t.setGrowRate(10);
                     t.setType(0);
@@ -865,10 +859,11 @@ public class GameController extends ScreenController implements ContactListener 
 //                AudioController.getInstance().roar();
                 }
             }
+
             while (attack_tentacles.size() > 0) {
                 Wall add_wall = attack_tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, Tentacle.TentacleType.KILL, 1000000);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, Tentacle.TentacleType.KILL, 200);
                     t.setType(1);
                     t.setGrowRate(4);
 //                    System.out.println("type" + t.getType());

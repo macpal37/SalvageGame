@@ -21,7 +21,6 @@ public class AudioController {
     private BufferedSoundSource loud_roar;
     private BufferedSoundSource alarm;
     private SoundBuffer wall_collision;
-    private SoundBuffer wood_collision;
 
 
     private StreamedSoundSource music;
@@ -44,14 +43,13 @@ public class AudioController {
         SoundBuffer oxygen_alarm_wav = WaveLoader.load(Gdx.files.internal("audio/oxygen_alarm.wav"));
         music = new StreamedSoundSource(Gdx.files.internal("audio/background.ogg"));
         bubbles = new StreamedSoundSource(Gdx.files.internal("audio/bubbles.ogg"));
-        loading_screen = new StreamedSoundSource(Gdx.files.internal("audio/loadingscreen.ogg"));
+        loading_screen = new StreamedSoundSource(Gdx.files.internal("audio/loading_screen.ogg"));
         SoundBuffer attack_roar_wav = WaveLoader.load(Gdx.files.internal("audio/attack_roar.wav"));
         SoundBuffer loud_roar_wav = WaveLoader.load(Gdx.files.internal("audio/loud_roar.wav"));
         SoundBuffer idle_roar_high_wav = WaveLoader.load(Gdx.files.internal("audio/higher_growl.wav"));
         SoundBuffer idle_roar_low_wav = WaveLoader.load(Gdx.files.internal("audio/lower_growl.wav"));
         SoundBuffer alarm_wav = WaveLoader.load(Gdx.files.internal("audio/alarm.wav"));
         wall_collision = WaveLoader.load(Gdx.files.internal("audio/wall_collision.wav"));
-        wood_collision = WaveLoader.load(Gdx.files.internal("audio/wood_collision.wav"));
         alarm = audio.obtainSource(alarm_wav);
         heartbeat = audio.obtainSource(heartbeat_wav);
         idle_roar_high = audio.obtainSource(idle_roar_high_wav);
@@ -99,6 +97,18 @@ public class AudioController {
         bubbles.play();
         heartbeat.play();
         heartbeat.setVolume(0.0f);
+        //audio.setMasterVolume(0.6f);
+    }
+
+    public void start_level() {
+        music.setVolume(0.4f * music_volume);
+        bubbles.setVolume(0.4f * sound_effects_volume);
+        music.play();
+        bubbles.play();
+        heartbeat.play();
+        heartbeat.setVolume(0.0f);
+        last_playing_tick = 0;
+        ticks = 0;
         //audio.setMasterVolume(0.6f);
     }
 
@@ -178,6 +188,14 @@ public class AudioController {
     public void loading_screen() {
         loading_screen.setVolume(0.4f);
         loading_screen.play();
+    }
+
+    public float loading_screen_length() {
+        return loading_screen.getDuration() - 6.3f;
+    }
+
+    public float loading_screen_progress() {
+        return loading_screen.getPlaybackPosition();
     }
 
     public Boolean is_loading() {
