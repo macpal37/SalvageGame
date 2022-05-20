@@ -180,7 +180,7 @@ public class GameController extends ScreenController implements ContactListener 
      */
     // Beta Release Setup
 //    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8"};
-    private String[] levels = {"test_level", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8"};
+    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8", "Golden9", "Golden10", "Golden"};
 
 
     private int curr_level;
