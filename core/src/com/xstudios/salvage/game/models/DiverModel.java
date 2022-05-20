@@ -1169,6 +1169,13 @@ public class DiverModel extends GameObject {
         }
     }
 
+    public void setTick(int tick) {
+        super.setTick(tick);
+        for (FlareModel f: flares) {
+            f.setTick(tick);
+        }
+    }
+
     public ArrayList<FlareModel> getFlares() {
         return flares;
     }

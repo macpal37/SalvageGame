@@ -250,7 +250,6 @@ public class Tentacle extends GameObject {
      */
     public void setStartGrowing(boolean startGrowing) {
         this.startGrowing = startGrowing;
-        System.out.println("start growing: " + startGrowing + " frame " + frame + " total frame " + extend_frame_length);
     }
 
     public boolean isStartGrowing() {
