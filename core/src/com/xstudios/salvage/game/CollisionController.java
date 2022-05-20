@@ -553,11 +553,13 @@ public class CollisionController {
         if (b1.getUserData() instanceof FlareModel) {
             if (b2.getUserData() instanceof FlareModel) {
                 FlareModel f = (FlareModel) b1.getUserData();
+                if (b1 != b2) {
+                    f.turnOffLight(.4f, .8f);
+                    FlareModel f2 = (FlareModel) b2.getUserData();
 
-                f.turnOffLight(.4f, .8f);
-                FlareModel f2 = (FlareModel) b2.getUserData();
+                    f2.turnOffLight(.4f, .8f);
+                }
 
-                f2.turnOffLight(.4f, .8f);
 //                System.out.println("FLARE Flare");
 
             }
@@ -576,13 +578,15 @@ public class CollisionController {
 
         if (b1.getUserData() instanceof FlareModel) {
             if (b2.getUserData() instanceof FlareModel) {
-                FlareModel f = (FlareModel) b1.getUserData();
-                f.turnOnLight();
+                if (b1 != b2) {
+                    FlareModel f = (FlareModel) b1.getUserData();
+                    f.turnOnLight();
 
-                FlareModel f2 = (FlareModel) b2.getUserData();
+                    FlareModel f2 = (FlareModel) b2.getUserData();
 
-                f2.turnOnLight();
+                    f2.turnOnLight();
 //                System.out.println("end flare flare");
+                }
             }
         }
     }

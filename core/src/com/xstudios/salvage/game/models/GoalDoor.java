@@ -157,7 +157,7 @@ public class GoalDoor extends GameObject {
         geometry = null;
 
         feedback = new TextModel(x, y);
-        feedback.setTextPos(x + width, y);
+        feedback.setTextPosition(x + width, y);
 
         feedback.setText("You need to\n rescue your\n friend!");
         // Initialize

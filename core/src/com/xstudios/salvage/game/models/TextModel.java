@@ -22,8 +22,8 @@ public class TextModel extends GameObject {
     private PolygonShape shape;
     private float radius = 2.5f;
 
-    public void setTextPosition(Vector2 textPosition) {
-        this.textPosition = textPosition;
+    public void setTextPosition(float x, float y) {
+        this.textPosition.set(x, y);
     }
 
     private Vector2 textPosition;

@@ -239,8 +239,8 @@
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 559.5,
-                "y": 623
+                "x": 1035.5,
+                "y": 686
             }
         },
         "levels/Golden3.json": {
@@ -260,11 +260,11 @@
             }
         },
         "levels/Golden5.json": {
-            "scale": 0.25,
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1142,
-                "y": 948
+                "x": 1249.5,
+                "y": 800
             }
         },
         "levels/Golden6.json": {

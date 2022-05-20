@@ -217,7 +217,7 @@ public class GameController extends ScreenController implements ContactListener 
     private Color low_oxygen_color;
     private Color monster_color;
     private float stun_light_radius = 5f;
-    private float normal_light_radius = 15f;
+    private float normal_light_radius = 18f;
 
     private RayHandler rayHandler;
 
@@ -318,8 +318,8 @@ public class GameController extends ScreenController implements ContactListener 
         low_oxygen_color = new Color(0f, .2f, .7f, .3f);
         monster_color = new Color(1f, 0f, 0f, .4f);
 
-        light = new PointLight(rayHandler, 100, Color.BLACK, normal_light_radius, 0, 0);
-        wallShine = new PointLight(rayHandler, 100, Color.BLUE, 8, 0, 0);
+        light = new PointLight(rayHandler, 100, Color.BLACK, normal_light_radius - 5f, 0, 0);
+        wallShine = new PointLight(rayHandler, 100, Color.BLUE, normal_light_radius - 5f, 0, 0);
         wallShine.setSoft(true);
 
         int r = 225, g = 103, b = 30;
@@ -457,8 +457,6 @@ public class GameController extends ScreenController implements ContactListener 
         flareAnimation = directory.getEntry("models:flare_animation", Texture.class);
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
 //        itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
-        constants = directory.getEntry("models:constants", JsonValue.class);
-
         displayFont = directory.getEntry("fonts:atlantis_font", BitmapFont.class);
 
         displayFont2 = directory.getEntry("fonts:atlantis_font2", BitmapFont.class);
@@ -1091,14 +1089,14 @@ public class GameController extends ScreenController implements ContactListener 
 
             obj.draw(canvas);
         }
-        level.getDiver().draw(canvas);
+
 
         canvas.end();
         if (!debug) {
             rayHandler.updateAndRender();
         }
         canvas.begin();
-
+        level.getDiver().draw(canvas);
         switch (game_state) {
             case PLAYING:
 
