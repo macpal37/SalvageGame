@@ -283,6 +283,7 @@ public class GDXRoot extends Game implements ScreenListener {
 
 		//LEVEL SELECT
 		else if (screen == level_select_controller) {
+			level_select_controller.dispose();
 			//level select >> main menu
 			if (exitCode == 0)
 				switch_screen(menu_controller, directory, canvas);

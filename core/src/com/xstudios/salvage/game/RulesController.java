@@ -116,14 +116,18 @@ public class RulesController extends ScreenController implements ControllerListe
         canvas.begin();
         if(press_left) {
             canvas.draw(one, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            help_draw(inactive_left, canvas.getWidth()/14, canvas.getHeight()/2, false);
-            right = help_draw(active_right, canvas.getWidth() - canvas.getWidth()/14, canvas.getHeight()/2, true);
+            help_draw(inactive_left, canvas.getWidth()/18,
+                    canvas.getHeight()/2 - canvas.getHeight()/20, false);
+            right = help_draw(active_right, canvas.getWidth() - canvas.getWidth()/18,
+                    canvas.getHeight()/2 - canvas.getHeight()/20, true);
             left = !right;
         }
         else{
             canvas.draw(two, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            help_draw(inactive_right, canvas.getWidth() - canvas.getWidth()/14, canvas.getHeight()/2, false);
-            left = help_draw(active_left, canvas.getWidth()/14, canvas.getHeight()/2, true);
+            help_draw(inactive_right, canvas.getWidth() - canvas.getWidth()/18,
+                    canvas.getHeight()/2 - canvas.getHeight()/20, false);
+            left = help_draw(active_left, canvas.getWidth()/18,
+                    canvas.getHeight()/2 - canvas.getHeight()/20, true);
             System.out.println("we are in the image2");
             right = !left;
         }

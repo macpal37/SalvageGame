@@ -174,20 +174,6 @@ public class LevelSelectController extends ScreenController implements Controlle
         help_draw_line(width/2, 2 * height - height/6, 11, 1.0f);
         help_draw_line(width/2 + width/12, 2 * height + height/10 - height/20, 12, -0.2f);
 
-//        int[][] measurements = {
-//                new int[]{width / 6, height / 2},
-//                new int[]{width / 2, height / 4},
-//                new int[]{width - width / 6, height / 4},
-//                new int[]{width - width / 5, height - height / 4},
-//                new int[]{width / 2, height - height / 3},
-//                new int[]{width / 5, height},
-//                new int[]{width / 4, 2 * height - height / 2},
-//                new int[]{width / 2, height + height / 6},
-//                new int[]{width - width / 5, height + height / 4},
-//                new int[]{width - width / 3, 2 * height - height / 3},
-//                new int[]{width / 2 - width / 12, 2 * height - height / 10},
-//                new int[]{width - width / 4, 2 * height + height / 5},
-//        };
         Boolean[] levels = {
                 help_draw_level(width/6, height/2, 1),
                 help_draw_level(width/2, height/4, 2),
@@ -280,7 +266,7 @@ public class LevelSelectController extends ScreenController implements Controlle
      */
 
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-
+        System.out.println("level_clicked" + level_clicked);
         if(press_main_menu)
             listener.exitScreen(this, 0);
 
