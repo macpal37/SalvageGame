@@ -160,17 +160,19 @@ public class LevelSelectController extends ScreenController implements Controlle
         press_main_menu = help_draw(main_menu, width/7,height/7, true, 0, null, 0, false, 1f);
 
         //lines
-        help_draw_line(width/3, height/2, 2, 0.8f);
-        help_draw_line(width - width/3, height/3, 3, 0.2f);
+        help_draw_line(width/3, height/2 - height/20, 2, 0.8f);
+        help_draw_line(width - width/3, height/3 - height/20, 3, 0.2f);
         help_draw_line(width - width/7, height/2, 4, -1.5f);
-        help_draw_line(width - width/3, height - height/5, 5, 0);
+        help_draw_line(width - width/3, height - height/5 - height/20, 5, 0);
         help_draw_line(width/3, height - height/6, 6, 1f);
         help_draw_line(width/5, height + height/4, 7, -1f);
         help_draw_line(width/3, height + height/3, 8, 1f);
-        help_draw_line(width - width/3, height + height/4, 9, 0);
-        help_draw_line(width - width/4, height + height/2, 10, 1f);
-        help_draw_line(width/2, 2 * height - height/6, 11, 0.7f);
-        help_draw_line(width/2 + width/12, 2 * height + height/10, 12, -0.2f);
+        //
+        help_draw_line(width - width/3, height + height/4 - height/40, 9, 0);
+        //
+        help_draw_line(width - width/4, height + height/2, 10, -1.5f);
+        help_draw_line(width/2, 2 * height - height/6, 11, 1.0f);
+        help_draw_line(width/2 + width/12, 2 * height + height/10 - height/20, 12, -0.2f);
 
 //        int[][] measurements = {
 //                new int[]{width / 6, height / 2},
