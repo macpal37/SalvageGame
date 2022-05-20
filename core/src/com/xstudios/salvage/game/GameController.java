@@ -1304,7 +1304,7 @@ public class GameController extends ScreenController implements ContactListener 
         collisionController.startDiverDeadBodyCollision(body1, body2);
         collisionController.startDiverMonsterCollision(body1, body2);
         collisionController.startFlareTentacleCollision(fix1, fix2);
-
+        collisionController.startDiverTextCollision(fix1, fix2);
         collisionController.startDiverTreasureCollision(fix1, fix2);
 
         collisionController.startFlareFlare(body1, body2);
@@ -1339,7 +1339,7 @@ public class GameController extends ScreenController implements ContactListener 
         collisionController.removeDiverSensorTouching(level.getDiver(), fix1, fix2);
         collisionController.endDiverItemCollision(body1, body2);
         collisionController.endDiverHazardCollision(fix1, fix2, level.getDiver());
-
+        collisionController.endDiverTextCollision(fix1, fix2);
         collisionController.endDiverTreasureCollision(fix1, fix2);
 
         collisionController.endFlareFlare(body1, body2);

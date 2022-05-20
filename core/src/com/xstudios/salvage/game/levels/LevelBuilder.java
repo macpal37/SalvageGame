@@ -6,6 +6,7 @@ import box2dLight.RayHandler;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -876,7 +877,6 @@ public class LevelBuilder {
                 obstacle.setName("obstacle");
                 level.addObject(obstacle);
             } else if (go instanceof Wall) {
-
                 Wall obj = (Wall) go;
                 obj.setWall(true);
                 obj.setBodyType(BodyDef.BodyType.StaticBody);
@@ -930,8 +930,7 @@ public class LevelBuilder {
                 goal_door.setTexture(doorOpenTexture);
                 goal_door.setSensor(true);
                 goal_door.setDrawScale(drawScale);
-//                goal_door.initLight(rayHandler);
-//                goal_door.setTexture(doorOpenTexture);
+                goal_door.setFont(directory.getEntry("fonts:atlantis_font", BitmapFont.class));
                 goal_door.setName("goal" + goalDoorCounter++);
                 level.addObject(goal_door);
 
@@ -948,6 +947,8 @@ public class LevelBuilder {
             } else if (go instanceof TextModel) {
                 TextModel text = (TextModel) go;
                 text.setDrawScale(drawScale);
+                text.setFont(directory.getEntry("fonts:atlantis_font", BitmapFont.class));
+                text.setSensor(true);
                 level.getAboveObjects().add(text);
                 level.addObject(text);
             }

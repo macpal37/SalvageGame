@@ -161,7 +161,6 @@ public class TreasureModel extends ObstacleModel {
         }
         FixtureDef treasureRadDef = new FixtureDef();
         treasureRadDef.isSensor = true;
-        // we don't want this fixture to collide, just act as a sensor
         treasureRadDef.filter.maskBits = -1;
         treasureRadius = new CircleShape();
         treasureRadius.setRadius(openRadius);

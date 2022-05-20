@@ -4,6 +4,7 @@ import box2dLight.Light;
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -39,6 +40,11 @@ public class GoalDoor extends GameObject {
      */
     private float[] vertices;
 
+    private TextModel feedback;
+
+    public void setFont(BitmapFont font) {
+        this.feedback.setFont(font);
+    }
 
 //    private Light light;
 
@@ -150,6 +156,9 @@ public class GoalDoor extends GameObject {
         vertices = new float[8];
         geometry = null;
 
+        feedback = new TextModel(x, y);
+
+        feedback.setText("You need to rescue your friend!");
         // Initialize
         resize(width, height);
     }
@@ -213,9 +222,22 @@ public class GoalDoor extends GameObject {
 //    }
 
     @Override
+    public boolean activatePhysics(World world) {
+        super.activatePhysics(world);
+        feedback.activatePhysics(world);
+        return true;
+    }
+
+    @Override
     public void deactivatePhysics(World world) {
         super.deactivatePhysics(world);
-//        light.dispose();
+        feedback.deactivatePhysics(world);
+    }
+
+    @Override
+    public void setDrawScale(Vector2 value) {
+        super.setDrawScale(value);
+        feedback.setDrawScale(value);
     }
 
     /**
@@ -251,6 +273,8 @@ public class GoalDoor extends GameObject {
     private TextureRegion closedDoor;
 
     public void draw(GameCanvas canvas) {
+
+        feedback.draw(canvas);
 //        tick++;
 //        if (openDoor != null && closedDoor != null) {
 //            float x = vertices[0];
