@@ -29,6 +29,8 @@ public class RulesController extends ScreenController implements ControllerListe
     protected Texture two;
 
     protected Texture menu;
+    protected Texture rules;
+
     protected Texture active_right;
     protected Texture active_left;
     protected Texture inactive_right;
@@ -66,6 +68,7 @@ public class RulesController extends ScreenController implements ControllerListe
         two = directory.getEntry("two", Texture.class);
 
         menu = directory.getEntry("rules_menu", Texture.class);
+        rules = directory.getEntry("rules_title", Texture.class);
 
         active_right = directory.getEntry("active_right", Texture.class);
         active_left = directory.getEntry("active_left", Texture.class);
@@ -79,6 +82,8 @@ public class RulesController extends ScreenController implements ControllerListe
         one = null;
         two = null;
         menu = null;
+        rules = null;
+
         active_right = null;
         active_left = null;
         inactive_right = null;
@@ -131,7 +136,8 @@ public class RulesController extends ScreenController implements ControllerListe
             System.out.println("we are in the image2");
             right = !left;
         }
-        press_menu = help_draw(menu, width/12, height - height/10, true);
+        press_menu = help_draw(menu, width/12, height - height/14, true);
+        help_draw(rules, width/2, height - height/12, false);
         canvas.end();
     }
 
