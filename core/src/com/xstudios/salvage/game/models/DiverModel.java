@@ -7,11 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GObject;
 import com.xstudios.salvage.game.GameCanvas;
-import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.util.FilmStrip;
 import com.xstudios.salvage.util.PooledList;
@@ -132,7 +130,9 @@ public class DiverModel extends GameObject {
     /**
      * item that diver is currently carrying
      */
-    private ItemModel current_item;
+    private ArrayList<ItemModel> item_list;
+
+    private int num_keys = 0;
 
     /**
      * dead body that is the target for the level
@@ -339,7 +339,7 @@ public class DiverModel extends GameObject {
         setName("diver");
 
         this.data = data;
-        current_item = null;
+        item_list = new ArrayList<>();
         ping = false;
         movement = new Vector2();
         drift_movement = new Vector2();
@@ -796,7 +796,6 @@ public class DiverModel extends GameObject {
         return !isLatching() && !isBoosting() && movement.isZero();
     }
 
-    int tick = 0;
     boolean stroke = false;
 
     public float getDynamicAngle() {
@@ -889,7 +888,6 @@ public class DiverModel extends GameObject {
 //        tick++;
         // possible states: swimming, idling/drifting, latching, boosting
         if (isSwimming()) { // player is actively using the arrow keys
-            System.out.println("IS SWIMMING");
 
             // set custom max speed and damping values
             setMaxSpeed(swimMaxSpeed);
@@ -942,7 +940,7 @@ public class DiverModel extends GameObject {
             setMaxSpeed(boostedMaxSpeed);
             setLinearDamping(boostDamping);
 
-            // TODO: may need some tweaking for
+            // TODO: may need some tweaking for steering
 
             // if the movement angle is within 30 deg of the velocity angle
             // do not apply any force.
@@ -994,43 +992,63 @@ public class DiverModel extends GameObject {
      * Set the current item the diver is carrying
      */
     public void setItem() {
-        if (pickUpOrDrop) {
 
-            if (current_item != null && potential_items.size() == 0) {
-                dropItem();
-            }
             for (ItemModel i : potential_items) {
-                if (i != current_item) {
-                    dropItem();
-                    current_item = i;
-                    current_item.setX(getX());
-                    current_item.setY(getY());
-                    //current_item.setGravityScale(1);
-                    current_item.setCarried(true);
-                    current_item.setKeyActive(true);
+                if (!item_list.contains(i)) {
+                    item_list.add(i);
+                    i.setX(getX());
+                    i.setY(getY());
+                    i.setCarried(true);
+                    i.setKeyActive(true);
+                    if(i.getItemType() == ItemModel.ItemType.KEY){
+                        num_keys++;
+                    }
                     break;
                 }
 
             }
-        }
     }
 
     /**
      * @return if the diver is carrying an item
      */
     public boolean carryingItem() {
-        return current_item != null;
+        return item_list.size() > 0;
     }
 
     /**
-     * @return the current item the diver is carrying
+     * @return the list of current items the diver is carrying
      */
-    public ItemModel getItem() {
-        return current_item;
+    public ArrayList<ItemModel> getItem() {
+        return item_list;
     }
 
-    public void setPickUpOrDrop(boolean val) {
-        pickUpOrDrop = val;
+    /**
+     * @return the number of keys the diver is carrying
+     */
+    public int getNumKeys() {
+        return num_keys;
+    }
+
+    /**
+     * @return the number of keys the diver is carrying
+     */
+    public void reduceNumKeys() {
+        num_keys--;
+    }
+
+    /**
+     * @return the number of keys the diver is carrying
+     */
+    public void incrementNumKeys() {
+        num_keys++;
+    }
+
+    /**
+     * remove an item from diver inventory
+     */
+    public void removeItem(ItemModel i) {
+        item_list.remove(i);
     }
 
     public void addPotentialItem(ItemModel i) {
@@ -1126,6 +1144,13 @@ public class DiverModel extends GameObject {
         }
     }
 
+    public void setTick(int tick) {
+        super.setTick(tick);
+        for (FlareModel f: flares) {
+            f.setTick(tick);
+        }
+    }
+
     public ArrayList<FlareModel> getFlares() {
         return flares;
     }
@@ -1196,19 +1221,6 @@ public class DiverModel extends GameObject {
 //        System.out.println("Diver Vel after boost: " + getLinearVelocity().len());
     }
 
-    public void dropItem() {
-        if (current_item != null) {
-            current_item.setGravityScale(0f);
-            current_item.setX(getX());
-            current_item.setY(getY());
-            current_item.setVerticalMovement(0);
-            current_item.setVX(0);
-            current_item.setVY(0);
-            current_item.setCarried(false);
-            current_item = null;
-        }
-    }
-
     public void dropBody() {
         carrying_body = false;
     }
@@ -1269,7 +1281,6 @@ public class DiverModel extends GameObject {
             f.draw(canvas);
         }
 
-        tick++;
         float effect = faceRight ? 1.0f : -1.0f;
         float flip = bodyFlip ? -1.0f : 1.0f;
         float angle = getAngle();

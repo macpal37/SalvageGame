@@ -15,6 +15,12 @@ import com.xstudios.salvage.util.FilmStrip;
 import java.util.ArrayList;
 
 public class Tentacle extends GameObject {
+
+
+    public enum TentacleType {
+        OldAttack, NewAttack, Idle, KILL, NewAttack2, SmallAttack
+    }
+
     /**
      * Shape information for this physics object
      */
@@ -33,6 +39,14 @@ public class Tentacle extends GameObject {
 
     private float[] vertices;
     private FilmStrip tentacleSprite;
+
+    public void setTentacleSprite2(FilmStrip tentacleSprite2) {
+        this.tentacleSprite2 = tentacleSprite2;
+    }
+
+    private FilmStrip tentacleSprite2;
+
+
     protected Fixture geometry;
     private int frame = 0;
     private int life = 0;
@@ -40,6 +54,7 @@ public class Tentacle extends GameObject {
     private int extend_frame_length = 16;
     private int total_frames = 30;
     private int type;
+    private TentacleType tentacleType;
 
 
     private Wall spawnWall;
@@ -50,9 +65,9 @@ public class Tentacle extends GameObject {
         spawnWall = wall;
         spawnWall.setHasTentcle(true);
         setAngle(wall.getTentacleRotation() / 180 * (float) Math.PI);
-        System.out.println("length " + len);
+
         extend_frame_length = 16;
-        System.out.println("extend frame length: " + extend_frame_length);
+
     }
 
     public Tentacle() {
@@ -84,6 +99,9 @@ public class Tentacle extends GameObject {
         }
     }
 
+    public TentacleType getTentacleType() {
+        return tentacleType;
+    }
 
     public FilmStrip getTentacleSprite() {
         return tentacleSprite;
@@ -180,12 +198,11 @@ public class Tentacle extends GameObject {
             life++;
 
         if (life > maxLifeSpan && startGrowing) {
-//        System.out.println("frame " + frame + " max life span " + extend_frame_length);
-//        if (frame >= extend_frame_length && frame < total_frames - extend_frame_length && startGrowing) {
             setStartGrowing(false);
         }
-//TODO fix the collision boxes thing
-        if (tentacleType != LevelBuilder.TentacleType.Idle) {
+
+
+        if (tentacleType != TentacleType.Idle) {
             if (frame == 1) {
                 collisionBoxes[0].setActive(true);
             }
@@ -233,10 +250,6 @@ public class Tentacle extends GameObject {
      */
     public void setStartGrowing(boolean startGrowing) {
         this.startGrowing = startGrowing;
-        System.out.println("start growing: " + startGrowing + " frame " + frame + " total frame " + extend_frame_length);
-//        if(!startGrowing && frame < extend_frame_length) {
-//            frame = total_frames - frame;
-//        }
     }
 
     public boolean isStartGrowing() {
@@ -249,8 +262,6 @@ public class Tentacle extends GameObject {
 
     @Override
     public void drawDebug(GameCanvas canvas) {
-
-
         canvas.drawPhysics(circ, Color.GREEN, getX(), getY(), drawScale.x, drawScale.y);
         for (HazardModel hm : collisionBoxes) {
             hm.drawDebug(canvas);
@@ -275,7 +286,6 @@ public class Tentacle extends GameObject {
         scale.set(x, y);
     }
 
-    int tick = 0;
 
     public Vector2 pivot = new Vector2(0, 0);
 
@@ -295,8 +305,8 @@ public class Tentacle extends GameObject {
         this.type = type;
     }
 
-    public int getType() {
-        return this.type;
+    public TentacleType getType() {
+        return this.tentacleType;
     }
 
     int grow_rate = 10;
@@ -307,34 +317,55 @@ public class Tentacle extends GameObject {
 
     boolean dead = false;
 
+
+    int wiggleFrame = 0;
+
     @Override
     public void draw(GameCanvas canvas) {
         update();
-
-        tick++;
 
         if (frame >= 29) {
             frame = -1;
             dead = true;
         }
 
-        if (startGrowing && frame < extend_frame_length) {
+
+        if (startGrowing && frame < extend_frame_length && wiggleFrame == 0) {
             if (tick % grow_rate == 0) {
                 frame++;
             }
-        } else if (!startGrowing && frame > 0) {
+
+
+        } else if (!startGrowing && frame > 0 && wiggleFrame == 0) {
             if (tick % grow_rate == 0) {
                 frame++;
             }
+        } else if (frame >= extend_frame_length && tentacleSprite2 != null && wiggleFrame == 0)
+            wiggleFrame = 1;
+        if (wiggleFrame > 0 && tentacleSprite2 != null) {
+            if (tick % grow_rate == 0) {
+                wiggleFrame++;
+            }
+
+
+            if (wiggleFrame == 17){
+                wiggleFrame = 0;
+                tentacleSprite2.setFrame(wiggleFrame); }
         }
+
 
         if (frame >= 0 && isActive()) {
             tentacleSprite.setFrame(frame);
-            canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x,
-                    (getY()) * drawScale.y + pivot.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
+            if (wiggleFrame == 0) {
+                canvas.draw(tentacleSprite, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x,
+                        (getY()) * drawScale.y + pivot.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y); }
+            else {
+                canvas.draw(tentacleSprite2, Color.WHITE, 0, 0, (getX()) * drawScale.x + pivot.x,
+                        (getY()) * drawScale.y + pivot.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y); }
         }
-
     }
+
+
 
 
     public void despawn() {
@@ -378,9 +409,7 @@ public class Tentacle extends GameObject {
         }
     }
 
-    LevelBuilder.TentacleType tentacleType = LevelBuilder.TentacleType.NewAttack;
-
-    public void setTentacleType(LevelBuilder.TentacleType type) {
+    public void setTentacleType(TentacleType type) {
         tentacleType = type;
     }
 }

@@ -4,6 +4,7 @@ import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -63,6 +64,7 @@ public class GameController extends ScreenController implements ContactListener 
     protected Texture main_menu;
 
     public static BitmapFont displayFont;
+    public static BitmapFont displayFont2;
 
     /**
      * how much the object that's stunning the level.getDiver() is draining their oxygen by
@@ -156,6 +158,7 @@ public class GameController extends ScreenController implements ContactListener 
 
     private boolean reach_target = false;
 
+
     private int game_over_animation_time = 60;
     /**
      * ================================LEVELS=================================
@@ -176,12 +179,11 @@ public class GameController extends ScreenController implements ContactListener 
      * level4 - insanely hard key level
      */
     // Beta Release Setup
-    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8"};
+//    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8"};
+    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8", "Golden9", "Golden10", "Golden11", "Golden12"};
 
 
     private int curr_level;
-
-    private TextureRegion test;
 
 
     private enum state {
@@ -214,6 +216,7 @@ public class GameController extends ScreenController implements ContactListener 
     private Color stun_color;
     private Color low_oxygen_color;
     private Color monster_color;
+    private Color kill_monster_color;
     private float stun_light_radius = 5f;
     private float normal_light_radius = 15f;
 
@@ -336,7 +339,6 @@ public class GameController extends ScreenController implements ContactListener 
         wallShine.setContactFilter(f2);
         light.setContactFilter(f);
 
-        AudioController.getInstance().initialize();
         collisionController = new CollisionController();
         physicsController = new PhysicsController(10, 5);
         world.setContactListener(this);
@@ -351,6 +353,7 @@ public class GameController extends ScreenController implements ContactListener 
         height = Gdx.graphics.getHeight();
 
     }
+
     public void setCameraPositionNormal() {
         camera.setCameraPosition(640, 360);
         camera.render();
@@ -430,11 +433,12 @@ public class GameController extends ScreenController implements ContactListener 
         exit_home = false;
         press_restart = false;
         press_resume = false;
-        AudioController.getInstance().dispose();
+        //AudioController.getInstance().dispose();
         player = null;
     }
 
     Texture plantAnimation;
+
 
     /**
      * Gather the assets for this controller.
@@ -446,7 +450,6 @@ public class GameController extends ScreenController implements ContactListener 
      */
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the tiles
-        test = new TextureRegion(directory.getEntry("m", Texture.class));
         levelBuilder.setDirectory(directory);
 
         levelBuilder.gatherAssets(directory);
@@ -456,7 +459,9 @@ public class GameController extends ScreenController implements ContactListener 
 //        itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
         constants = directory.getEntry("models:constants", JsonValue.class);
 
-        displayFont = directory.getEntry("fonts:lightpixel", BitmapFont.class);
+        displayFont = directory.getEntry("fonts:atlantis_font", BitmapFont.class);
+
+        displayFont2 = directory.getEntry("fonts:atlantis_font2", BitmapFont.class);
 
 //        deadBodyTexture = new TextureRegion(directory.getEntry("models:dead_body", Texture.class));
         hud = new TextureRegion(directory.getEntry("hud", Texture.class));
@@ -501,8 +506,6 @@ public class GameController extends ScreenController implements ContactListener 
      * param obj The object to add
      */
     protected void addObject(GameObject obj) {
-//        System.out.println("obj_x: " + obj.getX() + " obj_y: " + obj.getY());
-//        System.out.println("bounds_x: " + bounds.x + " bounds_y: " + bounds.y);
         assert inBounds(obj) : "Object is not in bounds";
         obj.activatePhysics(world);
         if (obj instanceof Tentacle)
@@ -558,26 +561,32 @@ public class GameController extends ScreenController implements ContactListener 
             addObject(obj);
 //            System.out.println();
         }
-//        System.out.println("added ");
+
         monsterController = new MonsterController(level.getMonster(), getWorldBounds());
         monsterController.setAudio(AudioController.getInstance());
 
         level.getDiver().initFlares(rayHandler);
         level.getDiver().setFlareFilmStrip(new FilmStrip(flareAnimation, 1, 4, 4));
-        System.out.println("level populated");
+
+        AudioController.getInstance().start_level(curr_level);
     }
 
     private void updateGameState() {
-        if(game_over_animation_time<=0) {
-            if(game_state == state.DYING) {
+
+        if (game_over_animation_time <= 0) {
+            if (game_state == state.DYING) {
+
                 game_state = state.EXIT_LOSE;
             } else if (game_state == state.WIN_ANIMATION) {
+                System.out.println(
+                        "Yeah!"
+                );
+
                 game_state = state.EXIT_WIN;
             }
         } else if (level.getDiver().getOxygenLevel() <= 0) {
             game_state = state.DYING;
         } else if (reach_target) {
-//            System.out.println("REACH TARGET");
             game_state = state.WIN_ANIMATION;
         } else if (pause) {
             game_state = state.PAUSE;
@@ -587,7 +596,10 @@ public class GameController extends ScreenController implements ContactListener 
     }
 
     private void updateDyingState() {
-        changeLightColor(new Color(0,0,0,0));
+
+        changeLightColor(new Color(0, 0, 0, 0));
+        rayHandler.setAmbientLight(.0001f);
+        AudioController.getInstance().dying();
     }
 
     private void updatePlayingState() {
@@ -595,7 +607,6 @@ public class GameController extends ScreenController implements ContactListener 
         InputController input = InputController.getInstance();
 
         if (input.isPause()) {
-//            System.out.println("pAUSE??????????????");
             if (pause)
                 resume();
             else
@@ -684,7 +695,6 @@ public class GameController extends ScreenController implements ContactListener 
         level.getDiver().updateFlare();
         // manage items/dead body
 
-        level.getDiver().setPickUpOrDrop(input.getOrDropObject());
         level.getDiver().setItem();
 
         level.getDeadBody().setCarried(level.getDiver().hasBody());
@@ -711,7 +721,7 @@ public class GameController extends ScreenController implements ContactListener 
                 TreasureModel tm = level.getDiver().getTreasureChests().pop();
                 tm.openChest();
                 if (tm.getContents() == TreasureModel.TreasureType.Monster) {
-                    Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, LevelBuilder.TentacleType.OldAttack, 30);
+                    Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, Tentacle.TentacleType.OldAttack, 30);
                     tm.setTrap(t);
                     addQueuedObject(t);
                 } else if (tm.getContents() == TreasureModel.TreasureType.Key) {
@@ -726,7 +736,7 @@ public class GameController extends ScreenController implements ContactListener 
 //            cameraController.setCameraPosition(
 //                    (level.getDiver().getX() + 1.5f) * level.getDiver().getDrawScale().x, (level.getDiver().getY() + .5f) * level.getDiver().getDrawScale().y);
             camera.setCameraPosition(
-                    (level.getDiver().getX()) * level.getDiver().getDrawScale().x, (level.getDiver().getY()) * level.getDiver().getDrawScale().y );
+                    (level.getDiver().getX()) * level.getDiver().getDrawScale().x, (level.getDiver().getY()) * level.getDiver().getDrawScale().y);
 
             light.setPosition(
                     camera.getCameraPosition2D().x / (world_scale.x)
@@ -736,16 +746,11 @@ public class GameController extends ScreenController implements ContactListener 
                     camera.getCameraPosition2D().x / (world_scale.x)
                     ,
                     camera.getCameraPosition2D().y / (world_scale.y));
-//            System.out.println("Light!: " + light.getPosition().toString());
-//            light.setPosition(
-//                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
-//                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
-//            wallShine.setPosition(
-//                    (level.getDiver().getX() * level.getDiver().getDrawScale().x) / 40f,
-//                    (level.getDiver().getY() * level.getDiver().getDrawScale().y) / 40f);
         }
 
-        // TODO: why wasnt this in marco's code?
+        if (level.getDiver().hasBody())
+            levelBuilder.turnOffInvisibleWalls();
+
 
         updateDiverLighting();
 
@@ -756,6 +761,9 @@ public class GameController extends ScreenController implements ContactListener 
         this.pause = pause;
     }
 
+
+    float globalTick = 0;
+    public static int tick = 0;
 
     /**
      * Returns whether to process the update loop
@@ -773,6 +781,8 @@ public class GameController extends ScreenController implements ContactListener 
         if (listener == null) {
             return true;
         }
+        tick++;
+
 
         // Toggle debug
         if (input.didDebug()) {
@@ -803,7 +813,9 @@ public class GameController extends ScreenController implements ContactListener 
     public void update(float dt) {
 //        worldScale.set(world_scale.x, world_scale.y);
         for (Door door : level.getDoors()) {
-            door.setActive(!door.getUnlock(level.getDiver().getItem()));
+            if (door.isActive()) {
+                door.setActive(!door.getUnlock());
+            }
         }
 //        System.out.println("ScALE: " + world_scale.toString());
         rayHandler.setCombinedMatrix(camera.getCamera().combined.cpy().scl(world_scale.x, world_scale.y, 1f));
@@ -819,27 +831,35 @@ public class GameController extends ScreenController implements ContactListener 
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
-//                    System.out.println("CREATE TENTACLE");
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.4f, add_wall, LevelBuilder.TentacleType.NewAttack, 40);
+                    Tentacle t;
+                    if(tick % 2 == 0){
+                        t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.6f, add_wall, Tentacle.TentacleType.NewAttack, 120);
+                        t.setGrowRate(10);
+                    }
+                    else {
+                        t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.45f, add_wall, Tentacle.TentacleType.NewAttack, 50);
+                        t.setGrowRate(4);
+                    }
                     addQueuedObject(t);
-                    t.setGrowRate(5);
                 }
             }
+
             while (idle_tentacles.size() > 0) {
                 Wall add_wall = idle_tentacles.poll();
                 if (add_wall != null) {
-//                    System.out.println("...............................................");
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, LevelBuilder.TentacleType.Idle, 100);
+
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, Tentacle.TentacleType.Idle, 100);
                     t.setGrowRate(10);
                     t.setType(0);
                     addQueuedObject(t);
 //                AudioController.getInstance().roar();
                 }
             }
+
             while (attack_tentacles.size() > 0) {
                 Wall add_wall = attack_tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
-                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, LevelBuilder.TentacleType.KILL, 1000000);
+                    Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .6f, add_wall, Tentacle.TentacleType.KILL, 200);
                     t.setType(1);
                     t.setGrowRate(4);
 //                    System.out.println("type" + t.getType());
@@ -851,8 +871,9 @@ public class GameController extends ScreenController implements ContactListener 
         //** ADDING TENTACLES TO WalL!
 //        if (level.getDiver().getTouchedWall() != null && level.getDiver().getTouchedWall().canSpawnTentacle()) {
 //            Wall w = level.getDiver().getTouchedWall();
-//            Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, w, LevelBuilder.TentacleType.Idle, 100);
+//            Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, w, Tentacle.TentacleType.NewAttack2, 1000000);
 //            addQueuedObject(t);
+//            level.getDiver().setTouchedWall(null);
 //        }
 
 //        System.out.println("STATE "+ game_state);
@@ -896,7 +917,7 @@ public class GameController extends ScreenController implements ContactListener 
 //            level.getDiver().setHazardInvincibilityFilter();
 ////            light.setContactFilter(no_hazard_collision_category, no_hazard_collision_group, no_hazard_collision_mask);
 //        } else {
-            level.getDiver().setHazardCollisionFilter();
+        level.getDiver().setHazardCollisionFilter();
 //            light.setContactFilter(hazard_collision_category, hazard_collision_group, hazard_collision_mask);
 //        }
 
@@ -913,8 +934,19 @@ public class GameController extends ScreenController implements ContactListener 
     }
 
     public void updateDiverLighting() {
-        if (monsterController.isMonsterActive() && level.getMonster().getAggravation() > level.getMonster().getAggroLevel()) {
-            changeLightColor(monster_color);
+        if (monsterController.isMonsterActive()) {
+            if (monsterController.isAggravated()) {
+                changeLightColor(monster_color);
+            }
+            else if (monsterController.isKillState()) {
+                if (tick % 2  == 0){
+                    changeLightColor(monster_color);
+                }
+                else {
+                    changeLightColor(low_oxygen_color);
+                }
+
+            }
         } else if (level.getDiver().getOxygenLevel() < level.getDiver().getMaxOxygen() * .25f) {
             changeLightColor(low_oxygen_color);
         } else {
@@ -1054,10 +1086,7 @@ public class GameController extends ScreenController implements ContactListener 
         return clicked;
     }
 
-    int tick = 0;
-
     public void draw(float dt) {
-        tick++;
         canvas.clear();
         canvas.begin();
 
@@ -1066,8 +1095,7 @@ public class GameController extends ScreenController implements ContactListener 
                 4 * worldScale.x, 4 * worldScale.y);
 
         for (GameObject obj : level.getAllObjects()) {
-//        for (int i = level.getAllObjects().size() - 1; i >= 0; i--) {
-//            GameObject obj = level.getAllObjects().get(i);
+            obj.setTick(tick);
             if (!(obj instanceof DiverModel))
                 if (!(obj instanceof DecorModel))
                     obj.draw(canvas);
@@ -1137,8 +1165,8 @@ public class GameController extends ScreenController implements ContactListener 
                         0.0f, 0.5f * worldScale.x, 0.5f * worldScale.y);
 
                 //draw inventory indicator
-                if (level.getDiver().carryingItem()) {
-                    canvas.draw(keyHud, level.getDiver().getItem().getColor(), (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
+                for (int i = 0; i < level.getDiver().getNumKeys(); i++) {
+                    canvas.draw(keyHud, Color.WHITE, (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
                             tempProjectedOxygen.x - 50,
                             tempProjectedOxygen.y,
                             0.0f, 0.35f * worldScale.x, 0.35f * worldScale.y);
@@ -1172,7 +1200,7 @@ public class GameController extends ScreenController implements ContactListener 
 
                 //the scale is eyeballed, and resizing during the pause moves the camera weird
                 //Solution: not a see through pause screen
-                canvas.draw(pause_screen, Color.WHITE, pause_screen.getWidth()/2, pause_screen.getHeight()/2, pauseScreen.x,
+                canvas.draw(pause_screen, Color.WHITE, pause_screen.getWidth() / 2, pause_screen.getHeight() / 2, pauseScreen.x,
                         pauseScreen.y, 0.0f, 0.75f, 0.75f);
 
 
@@ -1291,7 +1319,7 @@ public class GameController extends ScreenController implements ContactListener 
         collisionController.startDiverDeadBodyCollision(body1, body2);
         collisionController.startDiverMonsterCollision(body1, body2);
         collisionController.startFlareTentacleCollision(fix1, fix2);
-
+        collisionController.startDiverTextCollision(fix1, fix2);
         collisionController.startDiverTreasureCollision(fix1, fix2);
 
         collisionController.startFlareFlare(body1, body2);
@@ -1326,7 +1354,7 @@ public class GameController extends ScreenController implements ContactListener 
         collisionController.removeDiverSensorTouching(level.getDiver(), fix1, fix2);
         collisionController.endDiverItemCollision(body1, body2);
         collisionController.endDiverHazardCollision(fix1, fix2, level.getDiver());
-
+        collisionController.endDiverTextCollision(fix1, fix2);
         collisionController.endDiverTreasureCollision(fix1, fix2);
 
         collisionController.endFlareFlare(body1, body2);

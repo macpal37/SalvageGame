@@ -36,9 +36,9 @@ public class ItemModel extends DiverObjectModel {
     private Light light;
 
 
-    public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.YELLOW, Color.CYAN};
+//    public static final Color[] COLOR_OPTIONS = {Color.BLUE, Color.RED, Color.CHARTREUSE, Color.YELLOW, Color.CYAN};
 
-    Color item_color;
+//    Color item_color;
 
     boolean isInChest;
     Vector2 chest_location;
@@ -52,22 +52,23 @@ public class ItemModel extends DiverObjectModel {
         this.item_type = item_type;
 
         // TODO: doesn't it never enter this try?
-        try {
-            item_color = COLOR_OPTIONS[getID()];
-        } catch (Exception e) {
-            item_color = Color.WHITE;
-        }
+//        try {
+//            item_color = COLOR_OPTIONS[getID()];
+//        } catch (Exception e) {
+//            item_color = Color.WHITE;
+//        }
         setName(item_type + "" + getID());
         movement = new Vector2();
 //        light_color = new Color(1f,0.5f,0.5f,0.5f);
         chest_location = new Vector2(0, 0);
+
     }
 
 
     @Override
     public void setID(int id) {
         super.setID(id);
-        item_color = COLOR_OPTIONS[getID()];
+//        item_color = COLOR_OPTIONS[getID()];
         setName(item_type + "" + id);
     }
 
@@ -83,9 +84,9 @@ public class ItemModel extends DiverObjectModel {
     }
 
 
-    public Color getColor() {
-        return ItemModel.COLOR_OPTIONS[getID()];
-    }
+//    public Color getColor() {
+//        return ItemModel.COLOR_OPTIONS[getID()];
+//    }
 
     /**
      * Release the fixtures for this body, resetting the shape
@@ -149,8 +150,6 @@ public class ItemModel extends DiverObjectModel {
         spriteSheet.setFrame(startingFrame);
     }
 
-    int tick = 0;
-
     public void setInChest(boolean b) {
         isInChest = b;
     }
@@ -169,7 +168,6 @@ public class ItemModel extends DiverObjectModel {
 
     @Override
     public void draw(GameCanvas canvas) {
-        System.out.println("key is active? " + isKeyActive());
         if (isKeyActive()) {
             if (texture != null) {
                 if (!carried) {
@@ -181,7 +179,7 @@ public class ItemModel extends DiverObjectModel {
                             frame = 0;
                         spriteSheet.setFrame(frame);
                     }
-                    canvas.draw(spriteSheet, ItemModel.COLOR_OPTIONS[getID()], origin.x * 2, origin.y * 2, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
+                    canvas.draw(spriteSheet, Color.WHITE, origin.x * 2, origin.y * 2, getX() * drawScale.x, getY() * drawScale.y, getAngle(), 0.25f, 0.25f);
                 }
                 if (!carried && isTouched) {
                     canvas.drawText("Press q", GameController.displayFont, (getX() - getWidth() * 1.25f) * drawScale.x, (getY() + getHeight() * 1.5f) * drawScale.y);

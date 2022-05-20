@@ -79,6 +79,8 @@ public class GDXRoot extends Game implements ScreenListener {
 		level_select_controller.setScreenListener(this);
 		settings_controller.setScreenListener(this);
 
+		AudioController.getInstance().loading_screen();
+
 		setScreen(loading);
 
 	}
@@ -173,6 +175,10 @@ public class GDXRoot extends Game implements ScreenListener {
 			Gdx.graphics.setCursor(Gdx.graphics.newCursor(pm, 0, 0));
 			pm.dispose();
 
+//			if(!AudioController.getInstance().is_loading()){
+//				switch_screen(menu_controller, directory, canvas);
+//			}
+
 			//loading >> menu
 			switch_screen(menu_controller, directory, canvas);
 		}
@@ -212,7 +218,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		}
 		//GAME
 		else if (screen == controller) {
-			controller.reset();
+			//controller.reset();
 			//pause >> menu
 			if (exitCode == 2) {
 				controller.setDefaultPosition();
