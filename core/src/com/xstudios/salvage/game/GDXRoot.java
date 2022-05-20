@@ -39,6 +39,8 @@ public class GDXRoot extends Game implements ScreenListener {
 
 	private SettingsController settings_controller;
 
+	private RulesController rules_controller;
+
 	private Player player;
 
 	private int current;
@@ -73,11 +75,15 @@ public class GDXRoot extends Game implements ScreenListener {
 		level_select_controller = new LevelSelectController();
 		level_select_controller.setCameraController(cameraController, canvas.getWidth(), canvas.getHeight());
 
+		rules_controller = new RulesController();
+		rules_controller.setCameraController(cameraController);
+
 		loading.setScreenListener(this);
 		game_over_controller.setScreenListener(this);
 		menu_controller.setScreenListener(this);
 		level_select_controller.setScreenListener(this);
 		settings_controller.setScreenListener(this);
+		rules_controller.setScreenListener(this);
 
 		setScreen(loading);
 
@@ -199,6 +205,19 @@ public class GDXRoot extends Game implements ScreenListener {
 				player.save();
 				Gdx.app.exit();
 			}
+
+			if(exitCode == 3){
+				switch_screen(rules_controller, directory, canvas);
+			}
+		}
+		//Rules
+		else if (screen == rules_controller){
+			rules_controller.dispose();
+
+			//rules >> menu
+			if(exitCode == 0){
+				switch_screen(menu_controller, directory, canvas);
+			}
 		}
 		//Setting
 		else if (screen == settings_controller) {
@@ -209,10 +228,10 @@ public class GDXRoot extends Game implements ScreenListener {
 				switch_screen(menu_controller, directory, canvas);
 			}
 
+
 		}
 		//GAME
 		else if (screen == controller) {
-			controller.reset();
 			//pause >> menu
 			if (exitCode == 2) {
 				controller.setDefaultPosition();

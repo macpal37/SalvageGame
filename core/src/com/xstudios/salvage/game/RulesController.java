@@ -21,67 +21,36 @@ import com.xstudios.salvage.audio.AudioController;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class SettingsController extends ScreenController implements ControllerListener {
+public class RulesController extends ScreenController implements ControllerListener {
     // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
     /** Background texture for start-up */
-    private Texture background;
-
     /** Background Texture */
+    protected Texture one;
+    protected Texture two;
+
     protected Texture menu;
-    protected Texture reset;
-    protected Texture settings;
-    protected Texture tentacles;
-    protected Texture music;
-    protected Texture sound_effects;
-
-    protected Texture confirmation;
-    protected Texture yes;
-    protected Texture no;
-
-    protected Texture line;
-    protected Texture box;
+    protected Texture active_right;
+    protected Texture active_left;
+    protected Texture inactive_right;
+    protected Texture inactive_left;
 
     private boolean press_menu;
-    private boolean press_reset;
-    private boolean confirmation_screen;
-    private boolean press_yes;
-    private boolean press_no;
+    private boolean press_left;
+    private boolean press_right;
 
-    private boolean music_box;
-    private boolean sound_effects_box;
+    private boolean left;
+    private boolean right;
 
-    private int music_volume;
-    private int sound_effects_volume;
-
-    private int tick1;
-    private int tick2;
-
-    private int segment;
-
-    Player player;
-
-    public SettingsController() {
-
-
+    public RulesController() {
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
 
         press_menu = false;
+        press_left = true;
+        press_right = false;
 
-        music_box = false;
-        sound_effects_box = false;
-
-        tick1 = 2;
-        tick2 = 2;
-    }
-
-    //sets Player
-    public void setPlayer(Player player){
-        this.player = player;
-        music_volume = player.getMusic();
-        tick1 = music_volume;
-        sound_effects_volume = player.getSoundEffects();
-        tick2 = sound_effects_volume;
+        right = false;
+        left = true;
     }
 
     //sets CameraController
@@ -93,106 +62,72 @@ public class SettingsController extends ScreenController implements ControllerLi
     }
 
     public void gatherAssets(AssetDirectory directory) {
-        background =  directory.getEntry( "background:settings", Texture.class );
-        settings = directory.getEntry("settings", Texture.class);
-        menu = directory.getEntry("menu", Texture.class);
-        music = directory.getEntry("music", Texture.class);
-        sound_effects = directory.getEntry("sound_effects", Texture.class);
-        reset = directory.getEntry("reset", Texture.class);
-        tentacles = directory.getEntry("screen_tentacles", Texture.class);
-        line = directory.getEntry("bar", Texture.class);
-        box = directory.getEntry("slider", Texture.class);
-        confirmation = directory.getEntry("confirmation", Texture.class);
-        yes = directory.getEntry("yes", Texture.class);
-        no = directory.getEntry("no", Texture.class);
+        one = directory.getEntry("one", Texture.class);
+        two = directory.getEntry("two", Texture.class);
+
+        menu = directory.getEntry("rules_menu", Texture.class);
+
+        active_right = directory.getEntry("active_right", Texture.class);
+        active_left = directory.getEntry("active_left", Texture.class);
+
+        inactive_right = directory.getEntry("inactive_right", Texture.class);
+        inactive_left = directory.getEntry("inactive_left", Texture.class);
     }
 
     //dispose
     public void dispose(){
-        background = null;
-        active = false;
+        one = null;
+        two = null;
         menu = null;
-        settings = null;
-        music = null;
-        sound_effects = null;
-        reset = null;
-        line = null;
-        box = null;
-        confirmation = null;
-        yes = null;
-        no = null;
+        active_right = null;
+        active_left = null;
+        inactive_right = null;
+        inactive_left = null;
 
         press_menu = false;
-        press_reset= false;
-        confirmation_screen = false;
-        segment = 0;
+        press_left = true;
+        press_right = false;
+        active = false;
     }
 
-    //helps in the draw function
     private boolean help_draw(Texture t, int x, int y, boolean tint){
+        int ox = t.getWidth()/2;
+        int oy = t.getHeight()/2;
         Color c = Color.WHITE;
         boolean clicked = false;
-
-        //if tint is true, then the image can be changed color(interactive)
-        if(tint){
-            //mouse position
+        if(tint) {
             int pX = Gdx.input.getX();
             int pY = Gdx.input.getY();
             // Flip to match graphics coordinates
             int flip_y = canvas.getHeight() - y;
-            float w = scale * t.getWidth();
-            float h = scale * t.getHeight();
+            float w = scale * ox;
+            float h = scale * oy;
 
-            //if true, then image tint is gray
-            if((x + w >= pX && x <= pX) && (flip_y >= pY && flip_y - h <= pY)){
+            if ((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)) {
                 c = Color.GRAY;
-                //if true(touched), then clicked is true
-                if(Gdx.input.isTouched()) clicked = true;
+                if (Gdx.input.isTouched()) clicked = true;
             }
         }
-        //draws
-        canvas.draw(t, c, 0, 0, x, y, 0, scale, scale);
+        canvas.draw(t, c, ox, oy, x, y, 0, scale, scale);
         return clicked;
     }
 
     private void draw() {
         canvas.begin();
-   
-        canvas.draw(background, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        canvas.draw(tentacles, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        press_menu = help_draw(menu, width/30, height - height/12, true);
-
-        help_draw(settings, width/14, height - height/4 - height/20, false);
-
-        help_draw(music, width/14, height - height/4 - height/20 - height/10, false);
-
-        help_draw(line, width/14, height - height/2, false);
-
-        if(!music_box) {
-            music_box = help_draw(box, width/14 + segment * tick1, height - height / 2 - height / 24, true);
+        if(press_left) {
+            canvas.draw(one, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            help_draw(inactive_left, canvas.getWidth()/14, canvas.getHeight()/2, false);
+            right = help_draw(active_right, canvas.getWidth() - canvas.getWidth()/14, canvas.getHeight()/2, true);
+            left = !right;
         }
-        else help_draw(box, width / 14 + segment * tick1, height - height / 2 - height / 24, true);
-
-        help_draw(sound_effects, width/14, height/2 - height/7, false);
-
-        help_draw(line, width/14, height/2 - height/5 - height/20, false);
-
-        if(!sound_effects_box) {
-            sound_effects_box = help_draw(box, width/14 + segment * tick2, height / 2 - height / 5 - height / 11, true);
+        else{
+            canvas.draw(two, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            help_draw(inactive_right, canvas.getWidth() - canvas.getWidth()/14, canvas.getHeight()/2, false);
+            left = help_draw(active_left, canvas.getWidth()/14, canvas.getHeight()/2, true);
+            System.out.println("we are in the image2");
+            right = !left;
         }
-        else help_draw(box, width/14 + segment * tick2, height / 2 - height / 5 - height / 11, true);
-
-        press_reset = help_draw(reset, width/14, height/7 - height/20, true);
-
-        if(confirmation_screen) {
-            canvas.draw(confirmation, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            press_yes = help_draw(yes, width - width/3 - width/20 - width/40 - width/40, height/2 - height/6+ height/80, true);
-            press_no = help_draw(no, width/3 + width/20, height/2 - height/6, true);
-        }
-
-
-
+        press_menu = help_draw(menu, width/12, height - height/10, true);
         canvas.end();
     }
 
@@ -223,7 +158,6 @@ public class SettingsController extends ScreenController implements ControllerLi
      */
     public void resize(int width, int height) {
         super.resize(width, height);
-        segment = (int)((line.getWidth() - box.getWidth()/2) * scale)/4;
     }
 
     /**
@@ -276,34 +210,19 @@ public class SettingsController extends ScreenController implements ControllerLi
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if(press_reset){
-            confirmation_screen = true;
-        }
-        else if(confirmation_screen){
-            if(press_yes) {
-                player.setLevel(1);
-                tick1 = 2;
-                tick2 = 2;
-                press_yes = false;
-                confirmation_screen = false;
-            }
-            else if(press_no) {
-                press_no = false;
-                confirmation_screen = false;
-            }
-        }
-        else if(music_box) music_box = false;
-        else if(sound_effects_box) sound_effects_box = false;
-        else if(press_menu) {
+        if(press_menu) {
             listener.exitScreen(this, 0);
         }
-
-        player.setMusic(tick1);
-        player.setSoundEffects(tick2);
-        player.save();
-
-        AudioController.getInstance().setMusic((float)tick1);
-        AudioController.getInstance().setSoundEffects((float)tick2);
+        else if(right){
+            press_right = true;
+            press_left = false;
+            System.out.println("we are in the right of touchup");
+        }
+        else if(left) {
+            press_left = true;
+            press_right = false;
+            System.out.println("we are in the left of touchup");
+        }
 
         return true;
     }
@@ -402,23 +321,6 @@ public class SettingsController extends ScreenController implements ControllerLi
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        if(!confirmation_screen) {
-            int total = segment * 5;
-            int max = screenX - width / 14;
-            int start = width / 14;
-            int ticks = max / segment;
-            if (music_box) {
-                if (max >= start && max <= total)
-                    tick1 = (ticks <= 4) ? ticks : 4;
-            }
-            AudioController.getInstance().setMusic((float) tick1);
-            if (sound_effects_box) {
-                if (max >= start && max <= total)
-                    tick2 = (ticks <= 4) ? ticks : 4;
-            }
-            AudioController.getInstance().setSoundEffects((float) tick2);
-        }
-
         return true;
     }
 

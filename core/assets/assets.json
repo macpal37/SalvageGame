@@ -1,5 +1,13 @@
 {
   "textures": {
+    "rules" : "ui/rules.png",
+    "rules_menu" : "ui/rules_menu.png",
+    "one" : "ui/one.png",
+    "two" : "ui/two.png",
+    "inactive_right" : "ui/inactive_right.png",
+    "inactive_left" : "ui/inactive_left.png",
+    "active_right" : "ui/active_right.png",
+    "active_left" : "ui/active_left.png",
     "confirmation" : "ui/confirmation.png",
     "yes" : "ui/yes.png",
     "no" : "ui/no.png",

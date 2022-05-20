@@ -61,13 +61,7 @@ public class AudioController {
         idle_roar_high.setLooping(false);
         attack_roar.setLooping(false);
         bubbles.setLooping(true);
-
         alarm.setLooping(true);
-        music.setVolume(0.3f);
-        bubbles.setVolume(0.4f);
-        alarm.setVolume(0.4f);
-        music.setVolume(0.4f * music_volume);
-        bubbles.setVolume(0.4f * sound_effects_volume);
         ticks = 0;
         time_apart = 400;
         volume_tick = 0.0f;
@@ -111,7 +105,7 @@ public class AudioController {
         ticks++;
 
         float volume = (max_oxygen - oxygen) / max_oxygen;
-        heartbeat.setVolume(volume - 0.1f);
+        heartbeat.setVolume((volume - 0.1f) * sound_effects_volume);
         time_apart = (int)((1-volume) * 200);
         System.out.println(time_apart);
 
@@ -147,8 +141,8 @@ public class AudioController {
     public void idle_roar() {
         double rand = Math.random();
         float roar_volume = (float) (0.5);
-        idle_roar_low.setVolume(roar_volume);
-        idle_roar_high.setVolume(roar_volume);
+        idle_roar_low.setVolume(roar_volume * sound_effects_volume);
+        idle_roar_high.setVolume(roar_volume * sound_effects_volume);
             if (rand > 0.5) {
                 //idle_roar_high.stop();
                 idle_roar_low.play();
@@ -184,7 +178,7 @@ public class AudioController {
             attack_roar.stop();
             idle_roar_low.stop();
             idle_roar_high.stop();
-            loud_roar.setVolume(1.0f);
+            loud_roar.setVolume(1.0f * sound_effects_volume);
             loud_roar.play();
         }
     }
@@ -193,8 +187,7 @@ public class AudioController {
         attack_roar.stop();
         idle_roar_low.stop();
         idle_roar_high.stop();
-        music.setVolume(0.2f - volume_tick);
-        music.setVolume(0.2f - volume_tick);
+        music.setVolume((0.2f - volume_tick) * music_volume) ;
         volume_tick -= 0.01f;
         time_apart += 10;
     }
