@@ -5,6 +5,7 @@ import box2dLight.RayHandler;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.GObject;
+import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.game.models.*;
 
@@ -137,6 +139,7 @@ public class LevelBuilder {
         this.directory = directory;
     }
 
+
     public void gatherAssets(AssetDirectory directory) {
         kitchenSet = new Texture[5];
         for (int i = 1; i <= kitchenSet.length; i++) {
@@ -189,6 +192,8 @@ public class LevelBuilder {
         barrelTexture = new TextureRegion(directory.getEntry("models:barrel", Texture.class));
 
         deadBodyTexture = new TextureRegion(directory.getEntry("models:dead_body", Texture.class));
+
+
     }
 
     enum TileType {
@@ -304,19 +309,18 @@ public class LevelBuilder {
                             t.getY() - height / div / 8 * (float) Math.cos(t.getAngle()) + 25 / div * (float) Math.sin(t.getAngle()));
                     break;
             }
-
             t.setScale(tentacleScale, tentacleScale);
             HazardModel[] boxes = new HazardModel[4];
             int tCount = 0;
             float tileHieght = tileset.getFloat("tileheight");
             float originAngle = 0;
             for (JsonValue tileJson : tileset.get("tiles")) {
+
                 float x = 0;
                 float y = 0;
+
                 ArrayList<Float> verticies = new ArrayList<>();
                 for (JsonValue o : tileJson.get("objectgroup").get("objects")) {
-
-
                     if (o.getString("name").equals("Origin")) {
                         x = round(o.getFloat("x"));
                         y = round(o.getFloat("y"));
@@ -325,16 +329,11 @@ public class LevelBuilder {
                         t.setPivot((-x * t.getScale().x) * (float) Math.cos(t.getAngle())
                                         + (tileHieght - y) * t.getScale().y * (float) Math.sin(t.getAngle())
                                 , (-(tileHieght - y) * t.getScale().y) * (float) Math.cos(t.getAngle()) +
-
                                         (-x * t.getScale().x) * (float) Math.sin(t.getAngle())
                         );
-
                     } else {
-
                         x = round(o.getFloat("x")) / div - width / div + width / div / 6;
                         y = round(o.getFloat("y")) / div + height / div;
-
-
                         verticies.clear();
                         if (o.get("polygon") != null) {
 
@@ -930,7 +929,7 @@ public class LevelBuilder {
                 goal_door.setTexture(doorOpenTexture);
                 goal_door.setSensor(true);
                 goal_door.setDrawScale(drawScale);
-                goal_door.setFont(directory.getEntry("fonts:atlantis_font", BitmapFont.class));
+                goal_door.setFont(GameController.displayFont2);
                 goal_door.setName("goal" + goalDoorCounter++);
                 level.addObject(goal_door);
 
@@ -947,7 +946,7 @@ public class LevelBuilder {
             } else if (go instanceof TextModel) {
                 TextModel text = (TextModel) go;
                 text.setDrawScale(drawScale);
-                text.setFont(directory.getEntry("fonts:atlantis_font", BitmapFont.class));
+                text.setFont(GameController.displayFont);
                 text.setSensor(true);
                 level.getAboveObjects().add(text);
                 level.addObject(text);

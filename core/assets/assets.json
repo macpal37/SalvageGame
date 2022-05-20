@@ -141,6 +141,10 @@
     "fonts:atlantis_font": {
       "file": "fonts/SalvageFont.ttf",
       "size": 24
-    }
+    },
+    "fonts:atlantis_font2": {
+          "file": "fonts/SalvageFont2.ttf",
+          "size": 24
+        }
   }
 }

@@ -594,14 +594,14 @@ public class CollisionController {
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof TextModel && f2.getUserData().equals("Text")) {
-            TextModel treasureModel = (TextModel) b2.getUserData();
-            System.out.println("Text Touch!");
-            treasureModel.setDisplay(true);
+            TextModel textModel = (TextModel) b2.getUserData();
+            textModel.setTextActive(true);
+            textModel.setDisplay(true);
 
         } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof TextModel && f1.getUserData().equals("Text")) {
-            TextModel treasureModel = (TextModel) b2.getUserData();
-            System.out.println("Text Touch!");
-            treasureModel.setDisplay(true);
+            TextModel textModel = (TextModel) b2.getUserData();
+            textModel.setTextActive(true);
+            textModel.setDisplay(true);
         }
     }
 
@@ -611,14 +611,14 @@ public class CollisionController {
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
         if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof TextModel && f2.getUserData().equals("Text")) {
-            TextModel treasureModel = (TextModel) b2.getUserData();
-            System.out.println("Text Touch!");
-            treasureModel.setDisplay(false);
+            TextModel textModel = (TextModel) b2.getUserData();
+            textModel.setTextActive(false);
+            textModel.setDisplay(false);
 
         } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof TextModel && f1.getUserData().equals("Text")) {
-            TextModel treasureModel = (TextModel) b2.getUserData();
-            System.out.println("Text Touch!");
-            treasureModel.setDisplay(false);
+            TextModel textModel = (TextModel) b2.getUserData();
+            textModel.setTextActive(false);
+            textModel.setDisplay(false);
         }
 
 

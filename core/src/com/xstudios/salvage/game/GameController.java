@@ -4,6 +4,7 @@ import box2dLight.PointLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -63,7 +64,7 @@ public class GameController extends ScreenController implements ContactListener 
     protected Texture main_menu;
 
     public static BitmapFont displayFont;
-
+    public static BitmapFont displayFont2;
 
     /**
      * how much the object that's stunning the level.getDiver() is draining their oxygen by
@@ -183,8 +184,6 @@ public class GameController extends ScreenController implements ContactListener 
 
 
     private int curr_level;
-
-    private TextureRegion test;
 
 
     private enum state {
@@ -440,6 +439,7 @@ public class GameController extends ScreenController implements ContactListener 
 
     Texture plantAnimation;
 
+
     /**
      * Gather the assets for this controller.
      * <p>
@@ -450,7 +450,6 @@ public class GameController extends ScreenController implements ContactListener 
      */
     public void gatherAssets(AssetDirectory directory) {
         // Allocate the tiles
-        test = new TextureRegion(directory.getEntry("m", Texture.class));
         levelBuilder.setDirectory(directory);
 
         levelBuilder.gatherAssets(directory);
@@ -461,6 +460,8 @@ public class GameController extends ScreenController implements ContactListener 
         constants = directory.getEntry("models:constants", JsonValue.class);
 
         displayFont = directory.getEntry("fonts:atlantis_font", BitmapFont.class);
+
+        displayFont2 = directory.getEntry("fonts:atlantis_font2", BitmapFont.class);
 
 //        deadBodyTexture = new TextureRegion(directory.getEntry("models:dead_body", Texture.class));
         hud = new TextureRegion(directory.getEntry("hud", Texture.class));
