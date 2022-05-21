@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.xstudios.salvage.audio.AudioController;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.util.FilmStrip;
@@ -283,9 +284,19 @@ public class TreasureModel extends ObstacleModel {
 
                     break;
                 case Monster:
+
                     if (sprite.getFrame() < 35)
-                        if (tick % 2 == 0)
+                        if (tick % 2 == 0) {
                             sprite.setFrame(sprite.getFrame() + 1);
+
+
+                            if (sprite.getFrame() == 35) {
+
+                                AudioController.getInstance().attack_roar();
+                            }
+
+                        }
+
                     if (sprite.getFrame() == 33) {
                         trap.setActive(true);
                         trap.setStartGrowing(true);

@@ -913,9 +913,6 @@ public class DiverModel extends GameObject {
 
 
                     int swimmFrame = swimFrame + ((active_flare) ? 64 : 0);
-
-
-                    System.out.println("SWIMM: " + swimmFrame);
                     diverSprites.get(diverState).setFrame(swimmFrame);
                 }
             }

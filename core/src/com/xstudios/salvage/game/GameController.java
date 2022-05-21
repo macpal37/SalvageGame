@@ -182,7 +182,7 @@ public class GameController extends ScreenController implements ContactListener 
     // Beta Release Setup
 
 
-    private String[] levels = {"Golden6", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden7", "Golden8", "Golden6", "Golden9", "Golden10", "Golden11", "Golden12"};
+    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden7", "Golden8", "Golden6", "Golden9", "Golden10", "Golden11", "Golden12"};
 
     private int curr_level;
 
@@ -557,15 +557,13 @@ public class GameController extends ScreenController implements ContactListener 
      */
     private void populateLevel() {
 
-//        camera.setZoom(1.0f);
-//        System.out.println("SCALE:: " + world_scale.toString());
+
         levelBuilder.createLevel(levels[curr_level], level, world_scale, symbol_scale, rayHandler);
         pause = false;
 
         // TODO: will this have the same effect as going through each type, casting, then adding?
         for (GameObject obj : level.getAllObjects()) {
             addObject(obj);
-//            System.out.println();
         }
 
         monsterController = new MonsterController(level.getMonster(), getWorldBounds());
@@ -582,7 +580,7 @@ public class GameController extends ScreenController implements ContactListener 
         if (game_over_animation_time <= 0) {
             if (game_state == state.DYING) {
                 light.setDistance(0);
-                wallShine.setDistance(0);
+//                wallShine.setDistance(0);
                 game_state = state.EXIT_LOSE;
             } else if (game_state == state.WIN_ANIMATION) {
 
@@ -754,8 +752,7 @@ public class GameController extends ScreenController implements ContactListener 
             } else {
                 level.getDiver().changeOxygenLevel(passiveOxygenRate);
             }
-            System.out.println("Active: " + activeOxygenRate);
-            System.out.println("Passive: " + passiveOxygenRate);
+
         }
 
 
@@ -774,6 +771,7 @@ public class GameController extends ScreenController implements ContactListener 
 
                     Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, Tentacle.TentacleType.NewAttack, 30, -angle);
                     tm.setTrap(t);
+
                     addQueuedObject(t);
                 } else if (tm.getContents() == TreasureModel.TreasureType.Key) {
                     level.getDiver().setChestOpen(true);
@@ -990,14 +988,14 @@ public class GameController extends ScreenController implements ContactListener 
         if (level.getDiver().getStunned()) {
             if (light.getDistance() > stun_light_radius) {
                 light.setDistance(light.getDistance() - 1);
-//                wallShine.setDistance(wallShine.getDistance() - 0.25f);
+                wallShine.setDistance(wallShine.getDistance() - 0.25f / 4);
             } else {
                 light.setDistance(stun_light_radius);
             }
         } else {
             if (light.getDistance() < normal_light_radius) {
                 light.setDistance(light.getDistance() + 1);
-//                wallShine.setDistance(wallShine.getDistance() + 0.25f);
+                wallShine.setDistance(wallShine.getDistance() + 0.25f / 4);
             } else {
                 light.setDistance(normal_light_radius);
 //                wallShine.setDistance(normal_light_radius - 10);

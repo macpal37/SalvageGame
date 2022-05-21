@@ -104,7 +104,7 @@ public class AudioController {
         //levels
         int path = 0;
         if (level < 4) {
-            path = level;
+            path = level + 10;
         } else if (level >= 4) {
             path = (int) (Math.random() * 5);
         }
