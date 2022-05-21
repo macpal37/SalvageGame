@@ -1,7 +1,7 @@
 {
   "textures": {
     "rules_title" : "ui/rules_title.png",
-    "rules" : "ui/rules.png",
+    "rules" : "ui/Rules.png",
     "rules_menu" : "ui/rules_menu.png",
     "one" : "ui/one.png",
     "two" : "ui/two.png",
