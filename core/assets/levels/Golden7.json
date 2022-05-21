@@ -32,18 +32,6 @@
                  "y":1049.39715178635
                 }, 
                 {
-                 "gid":15,
-                 "height":200,
-                 "id":273,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":100,
-                 "x":1600.41238724341,
-                 "y":1049.39715178635
-                }, 
-                {
                  "gid":37,
                  "height":100,
                  "id":204,
@@ -112,7 +100,7 @@
                         {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":15.5
+                         "value":140
                         }],
                  "rotation":0,
                  "type":"",
@@ -150,6 +138,12 @@
                  "height":100,
                  "id":211,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"starting_oxygen",
+                         "type":"int",
+                         "value":300
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,

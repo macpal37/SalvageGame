@@ -94,7 +94,7 @@
                         {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":120
+                         "value":200
                         }],
                  "rotation":0,
                  "type":"",
@@ -566,6 +566,7 @@
         }],
  "nextlayerid":5,
  "nextobjectid":131,
+
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",

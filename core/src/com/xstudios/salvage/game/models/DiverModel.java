@@ -50,7 +50,7 @@ public class DiverModel extends GameObject {
     }
 
     private PooledList<TreasureModel> treasureChests = new PooledList<>();
-
+    private boolean chest_open = false;
 
     private int minFlareDist = 5;
 
@@ -1000,24 +1000,29 @@ public class DiverModel extends GameObject {
         }
     }
 
+    public void setChestOpen(boolean b) {
+        chest_open = b;
+    }
+
     /**
      * Set the current item the diver is carrying
      */
     public void setItem() {
-
-        for (ItemModel i : potential_items) {
-            if (!item_list.contains(i)) {
-                item_list.add(i);
-                i.setX(getX());
-                i.setY(getY());
-                i.setCarried(true);
-                i.setKeyActive(true);
-                if (i.getItemType() == ItemModel.ItemType.KEY) {
-                    num_keys++;
+        if (chest_open) {
+            for (ItemModel i : potential_items) {
+                if (!item_list.contains(i)) {
+                    item_list.add(i);
+                    i.setX(getX());
+                    i.setY(getY());
+                    i.setCarried(true);
+                    i.setKeyActive(true);
+                    if (i.getItemType() == ItemModel.ItemType.KEY) {
+                        num_keys++;
+                    }
+                    chest_open = false;
+                    break;
                 }
-                break;
             }
-
         }
     }
 

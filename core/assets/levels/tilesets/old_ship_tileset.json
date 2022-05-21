@@ -907,6 +907,11 @@
                  "value":"Monster"
                 }, 
                 {
+                 "name":"random_attack_chance",
+                 "type":"float",
+                 "value":0.01
+                }, 
+                {
                  "name":"tentacle_size",
                  "type":"float",
                  "value":1
