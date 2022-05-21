@@ -311,7 +311,7 @@ public class SettingsController extends ScreenController implements ControllerLi
         player.save();
 
         AudioController.getInstance().setMusic((float)tick1);
-        AudioController.getInstance().setSoundEffects((float)tick2);
+        AudioController.getInstance().set_sound_effect_volume((float)tick2);
 
         return true;
     }
@@ -424,7 +424,7 @@ public class SettingsController extends ScreenController implements ControllerLi
                 if (max >= start && max <= total)
                     tick2 = (ticks <= 4) ? ticks : 4;
             }
-            AudioController.getInstance().setSoundEffects((float) tick2);
+            AudioController.getInstance().set_sound_effect_volume((float) tick2);
         }
 
         return true;
