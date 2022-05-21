@@ -540,6 +540,9 @@ public class GameController extends ScreenController implements ContactListener 
         level.getAboveObjects().clear();
         addQueue.clear();
         AudioController.getInstance().reset();
+        if(monsterController != null) {
+            monsterController.reset();
+        }
         populateLevel();
     }
 
@@ -596,6 +599,11 @@ public class GameController extends ScreenController implements ContactListener 
         changeLightColor(new Color(0, 0, 0, 0));
         rayHandler.setAmbientLight(.0001f);
         AudioController.getInstance().dying();
+
+        light.setPosition(
+                camera.getCameraPosition2D().x / (world_scale.x)
+                ,
+                camera.getCameraPosition2D().y / (world_scale.y));
     }
 
     private void updatePlayingState() {
@@ -933,17 +941,15 @@ public class GameController extends ScreenController implements ContactListener 
     }
 
     public void updateDiverLighting() {
-        if (monsterController.isMonsterActive()) {
-            if (monsterController.isAggravated()) {
-                changeLightColor(monster_color);
-            } else if (monsterController.isKillState()) {
-                if (tick % 2 == 0) {
+       if (monsterController.isMonsterActive() && monsterController.isKillState()) {
+                if (tick % 2  == 0){
                     changeLightColor(monster_color);
                 } else {
                     changeLightColor(low_oxygen_color);
                 }
 
-            }
+        } else if (monsterController.isMonsterActive() && monsterController.isAggravated()) {
+            changeLightColor(monster_color);
         } else if (level.getDiver().getOxygenLevel() < level.getDiver().getMaxOxygen() * .25f) {
             changeLightColor(low_oxygen_color);
         } else {

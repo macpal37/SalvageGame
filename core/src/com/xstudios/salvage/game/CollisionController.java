@@ -560,15 +560,14 @@ public class CollisionController {
             if (b2.getUserData() instanceof FlareModel) {
                 FlareModel f = (FlareModel) b1.getUserData();
                 if (b1 != b2) {
-                    f.turnOffLight(.4f, .8f);
+                    f.turnOffLight(.2f, .8f);
                     FlareModel f2 = (FlareModel) b2.getUserData();
 
+                    f2.turnOffLight(.2f, .8f);
 
-                    f2.turnOffLight(.4f, .8f);
-                }
 
 //                System.out.println("FLARE Flare");
-
+                }
             }
         }
     }
