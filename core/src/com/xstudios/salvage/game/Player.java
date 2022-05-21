@@ -20,7 +20,6 @@ public class Player {
     private int sound_effects;
     private int music;
     private int level;
-//    JsonValue json;
 
     public Player(AssetDirectory directory){
         System.out.println("inside the player directory");
@@ -84,27 +83,13 @@ public class Player {
             FileHandle file = Gdx.files.external("salvage_save_files/player.json");
             Json json = new Json();
             file.writeString(json.toJson(this),false);
-//            file.writeString(json.toJson(JsonWriter.OutputType.json),false);
         } else {
-//            JsonValue updateLevel = new JsonValue(level);
-//            JsonValue updateMusic = new JsonValue(music);
-//            JsonValue updateSoundEffects = new JsonValue(sound_effects);
-
-//        json.remove("level");
-//        json.remove("music");
-//        json.remove("sound_effects");
-//
-//            json.addChild("level", updateLevel);
-//            json.addChild("music", updateMusic);
-//            json.addChild("sound_effects", updateSoundEffects);
             System.out.println("Saving file");
 
             FileHandle file = Gdx.files.local("player.json");
             Json json = new Json();
-//            json.setWriter(JsonWriter.OutputType.json);
             System.out.println(json.toJson(this, Player.class));
             file.writeString(json.toJson(this, Player.class),true);
-//            file.writeString(json.toJson(JsonWriter.OutputType.json),false);
         }
 
     }
