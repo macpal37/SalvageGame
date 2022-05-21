@@ -20,7 +20,7 @@ public class Player {
     private int sound_effects;
     private int music;
     private int level;
-    JsonValue json;
+//    JsonValue json;
 
     public Player(AssetDirectory directory){
         System.out.println("inside the player directory");
@@ -32,7 +32,7 @@ public class Player {
             FileHandle file = Gdx.files.external("salvage_save_files/player.json");
             if (file.exists()) {
                 JsonReader reader = new JsonReader();
-                json = reader.parse(file);
+                JsonValue json = reader.parse(file);
                 sound_effects = json.getInt("sound_effects", 2);
                 music = json.getInt("music", 2);
                 level = json.getInt("level", 1);
@@ -42,7 +42,7 @@ public class Player {
                 level = 1;
             }
         } else {
-            json = directory.getEntry("player", JsonValue.class);
+            JsonValue json = directory.getEntry("player", JsonValue.class);
             sound_effects = json.getInt("sound_effects", 2);
             music = json.getInt("music", 2);
             level = json.getInt("level", 1);
@@ -80,24 +80,31 @@ public class Player {
 
     public void save() {
 
-        JsonValue updateLevel = new JsonValue(level);
-        JsonValue updateMusic = new JsonValue(music);
-        JsonValue updateSoundEffects = new JsonValue(sound_effects);
-
-        json.remove("level");
-        json.remove("music");
-        json.remove("sound_effects");
-
-        json.addChild("level", updateLevel);
-        json.addChild("music", updateMusic);
-        json.addChild("sound_effects", updateSoundEffects);
-
         if (isMac()) {
             FileHandle file = Gdx.files.external("salvage_save_files/player.json");
-            file.writeString(json.toJson(JsonWriter.OutputType.json),false);
+            Json json = new Json();
+            file.writeString(json.toJson(this),false);
+//            file.writeString(json.toJson(JsonWriter.OutputType.json),false);
         } else {
-            FileHandle file = Gdx.files.local("core/assets/player.json");
-            file.writeString(json.toJson(JsonWriter.OutputType.json),false);
+//            JsonValue updateLevel = new JsonValue(level);
+//            JsonValue updateMusic = new JsonValue(music);
+//            JsonValue updateSoundEffects = new JsonValue(sound_effects);
+
+//        json.remove("level");
+//        json.remove("music");
+//        json.remove("sound_effects");
+//
+//            json.addChild("level", updateLevel);
+//            json.addChild("music", updateMusic);
+//            json.addChild("sound_effects", updateSoundEffects);
+            System.out.println("Saving file");
+
+            FileHandle file = Gdx.files.local("player.json");
+            Json json = new Json();
+//            json.setWriter(JsonWriter.OutputType.json);
+            System.out.println(json.toJson(this, Player.class));
+            file.writeString(json.toJson(this, Player.class),true);
+//            file.writeString(json.toJson(JsonWriter.OutputType.json),false);
         }
 
     }
