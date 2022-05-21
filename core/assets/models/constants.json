@@ -16,7 +16,7 @@
 		"maxspeed": 13.0,
 		"boost_maxspeed": 17.0,
 		"boost_impulse": 2.5,
-		"boost_damping": 0.25,
+		"boost_damping": 0.5,
 		"max_oxygen": 150,
 		"invincible_time": 200,
 		"drift_maxspeed": 0.70,
