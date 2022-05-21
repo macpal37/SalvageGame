@@ -110,6 +110,8 @@ public class LevelBuilder {
     private FilmStrip monsterAttack3Animation;
     private FilmStrip monsterWiggleAnimation;
 
+    private FilmStrip fishAnimation;
+
     private FilmStrip monsterIdleAnimation;
     private FilmStrip doorAnimation;
 
@@ -181,6 +183,8 @@ public class LevelBuilder {
         monsterWiggleAnimation = new FilmStrip(directory.getEntry("models:monster_wiggle", Texture.class), 6, 3, 18);
 
         doorAnimation = new FilmStrip(directory.getEntry("models:door_animation", Texture.class), 1, 12, 12);
+
+        fishAnimation = new FilmStrip(directory.getEntry("models:fish_animation", Texture.class), 4, 4, 16);
 
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
         keyTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
@@ -698,6 +702,11 @@ public class LevelBuilder {
                                     decor.setFilmStrip(new FilmStrip(woodenTable, 1, 1, 1));
                                     decor.setScale(1 / 3f, 1 / 3f);
                                     break;
+                                case 4:
+
+                                    decor.setFilmStrip(fishAnimation.copy());
+                                    decor.setAnimSleep(rand.nextFloat() * 50 + 50);
+                                    break;
                                 case 11:
                                 case 12:
                                 case 13:
@@ -902,8 +911,8 @@ public class LevelBuilder {
                 diver = (DiverModel) go;
                 diver.setStunned(false);
                 diver.setTexture(diverTexture);
-                diver.addFilmStrip(new FilmStrip(swimmingAnimation, 12, 6, 72));
-                diver.addFilmStrip(new FilmStrip(swimmingAnimationWBody, 4, 12, 48));
+                diver.addFilmStrip(new FilmStrip(swimmingAnimation, 13, 6, 78));
+                diver.addFilmStrip(new FilmStrip(swimmingAnimationWBody, 13, 6, 78));
                 diver.setPingTexture(pingTexture);
                 diver.setDrawScale(drawScale);
                 diver.setName("diver");

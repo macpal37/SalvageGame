@@ -10,7 +10,7 @@ public class ObstacleModel extends Wall {
 
     public ObstacleModel(float[] points, float x, float y) {
         super(points, x, y);
-
+        drift_movement = new Vector2(2f, 2f);
     }
 
     @Override
@@ -38,6 +38,52 @@ public class ObstacleModel extends Wall {
         }
 
     }
+
+    private Vector2 drift_movement;
+    private float maxSpeed;
+
+    public float getMaxSpeed() {
+        return maxSpeed;
+    }
+
+
+    public float getHorizontalDriftMovement() {
+        return drift_movement.x;
+    }
+
+    public float getVerticalDriftMovement() {
+        return drift_movement.y;
+    }
+
+    public void setDriftMovement(float x_val, float y_val) {
+
+        drift_movement.x = x_val;
+        drift_movement.y = y_val;
+
+
+    }
+
+    public void applyForce() {
+        float desired_xvel = 0;
+        float desired_yvel = 0;
+        float max_impulse = 15f;
+        float max_impulse_drift = 2f;
+
+        desired_xvel = getVX() + Math.signum(getHorizontalDriftMovement()) * max_impulse_drift;
+        desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
+        desired_yvel = getVY() + Math.signum(getVerticalDriftMovement()) * max_impulse_drift;
+        desired_yvel = Math.max(Math.min(desired_yvel, getMaxSpeed()), -getMaxSpeed());
+
+        float xvel_change = desired_xvel - getVX();
+        float yvel_change = desired_yvel - getVY();
+
+        float x_impulse = body.getMass() * xvel_change;
+        float y_impulse = body.getMass() * yvel_change;
+
+        body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x,
+                body.getWorldCenter().y, true);
+    }
+
 
     public Vector2 scale = new Vector2(1, 1);
 
