@@ -87,7 +87,7 @@
                         {
                          "name":"starting_oxygen",
                          "type":"int",
-                         "value":25
+                         "value":35
                         }],
                  "rotation":0,
                  "type":"",
@@ -129,7 +129,7 @@
                         {
                          "name":"oxygen_rewarded",
                          "type":"float",
-                         "value":10
+                         "value":15
                         }],
                  "rotation":0,
                  "type":"",
@@ -137,18 +137,6 @@
                  "width":100,
                  "x":88.5041551246537,
                  "y":760.277718587968
-                }, 
-                {
-                 "gid":34,
-                 "height":100,
-                 "id":66,
-                 "name":"",
-                 "rotation":321.896084194653,
-                 "type":"",
-                 "visible":true,
-                 "width":100,
-                 "x":334.176506973494,
-                 "y":795.532458601277
                 }, 
                 {
                  "gid":47,
@@ -167,6 +155,24 @@
                  "width":100,
                  "x":200.363636363636,
                  "y":1275.45454545455
+                }, 
+                {
+                 "gid":47,
+                 "height":100,
+                 "id":69,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"text",
+                         "type":"string",
+                         "value":"You gain oxygen when \nyou pickup the body.\n"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":291.333333333333,
+                 "y":724.666666666667
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -178,25 +184,7 @@
          "draworder":"topdown",
          "id":2,
          "name":"Foreground",
-         "objects":[
-                {
-                 "gid":26,
-                 "height":100,
-                 "id":67,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"aggro_threshold",
-                         "type":"float",
-                         "value":2000000
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":100,
-                 "x":442.898913951546,
-                 "y":718.337510442774
-                }],
+         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -204,7 +192,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":69,
+ "nextobjectid":70,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",
