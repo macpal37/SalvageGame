@@ -562,6 +562,7 @@ public class CollisionController {
                 if (b1 != b2) {
                     f.turnOffLight(.4f, .8f);
                     FlareModel f2 = (FlareModel) b2.getUserData();
+                }
 
 
                 f.turnOffLight(.2f, .8f);
