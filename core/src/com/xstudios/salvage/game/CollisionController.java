@@ -467,6 +467,9 @@ public class CollisionController {
 //            }
             //AudioController.getInstance().idle_roar();
         }
+        else {
+            AudioController.getInstance().metal_collision(diver.getForce());
+        }
         diver.setChangeLightFilter(false);
 
         return hazard.getOxygenDrain();
