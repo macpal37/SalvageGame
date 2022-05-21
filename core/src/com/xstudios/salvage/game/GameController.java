@@ -1178,8 +1178,8 @@ public class GameController extends ScreenController implements ContactListener 
                 //draw inventory indicator
                 for (int i = 0; i < level.getDiver().getNumKeys(); i++) {
                     canvas.draw(keyHud, Color.WHITE, (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
-                            tempProjectedOxygen.x - 50,
-                            tempProjectedOxygen.y,
+                            items.x - 20,
+                            items.y,
                             0.0f, 0.35f * worldScale.x, 0.35f * worldScale.y);
 
                 }
@@ -1190,7 +1190,7 @@ public class GameController extends ScreenController implements ContactListener 
 
                 for (int i = 0; i < level.getDiver().getRemainingFlares(); i++) {
                     canvas.draw(flareHud, Color.WHITE, (float) flareHud.getRegionWidth(), (float) flareHud.getRegionHeight() / 2,
-                            (float) items.x,
+                            (float) items.x - (i * 10),
                             items.y,
                             0.0f, 0.2f * worldScale.x, 0.2f * worldScale.y);
                 }
