@@ -226,7 +226,7 @@ public class MonsterController {
                         //monster.setVisionRadius(50);
                         monster.setAggravation((8 * monster.getAggravation()) / 10.0f);
                         last_aggression = 0;
-                    } else if (total_aggressive_time >= MAX_AGGRESSIVE_TIME) {
+                    } else if (total_aggressive_time >= (MAX_AGGRESSIVE_TIME / 2.0f)) {
                         //                    if (aggravation > (monster.getAggroLevel() * 20.0f)) {
                         //                        state = FSMState.ATTACK;
                         //                    }
@@ -234,6 +234,9 @@ public class MonsterController {
                     } else {
                         monster.reduceAggressiveLength();
                     }
+                }
+                else {
+                    monster.reduceAggressiveLength();
                 }
                 attack_tick++;
                 total_aggressive_time++;
