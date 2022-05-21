@@ -30,6 +30,7 @@ public class AudioController {
     private int ticks;
     private int last_playing_tick;
     private int time_apart;
+    private int idle_ticks;
 
     private float volume_tick;
 
@@ -107,14 +108,15 @@ public class AudioController {
         set_sound_effect_volume(sound_effects_volume);
 
         //levels
-        if (level == 0 || level == 4 || level == 5) {
-            SoundBuffer level_transmission_wav = WaveLoader.load(Gdx.files.internal("audio/levels/" + level +".wav"));
-            level_transmission = audio.obtainSource(level_transmission_wav);
-            //level_transmission.setVolume(0.35f);
-            set_sound_effect_volume(sound_effects_volume);
-            level_transmission.play();
-            level_transmission.setLooping(false);
+        String path = "static";
+        if (level ==1){
+            path = "1";
         }
+        SoundBuffer level_transmission_wav = WaveLoader.load(Gdx.files.internal("audio/levels/" + path +".wav"));
+        level_transmission = audio.obtainSource(level_transmission_wav);
+        set_sound_effect_volume(sound_effects_volume);
+        level_transmission.play();
+        level_transmission.setLooping(false);
     }
 
     public void setMusic(float v) {
@@ -161,8 +163,11 @@ public class AudioController {
     }
 
     public void idle_roar() {
-        if (idle_roar.getPlaybackPosition() > idle_roar.getDuration() || idle_roar.getPlaybackPosition() == 0.0f ){
+        if (idle_ticks > 5){
             idle_roar.play();
+        }
+        else {
+            idle_ticks++;
         }
     }
 
@@ -188,7 +193,7 @@ public class AudioController {
     }
 
     public void loading_screen() {
-        loading_screen.setVolume(sound_effects_volume * 0.5f);
+        loading_screen.setVolume(0.4f);
         loading_screen.play();
     }
 
@@ -235,8 +240,6 @@ public class AudioController {
         bubbles.stop();
         music.stop();
         white_noise.setVolume(sound_effects_volume * 0.05f);
-        volume_tick -= 0.01f;
-        time_apart += 10;
     }
 
     public boolean is_loud_roaring() {
@@ -247,12 +250,13 @@ public class AudioController {
         sound_effects_volume = volume;
         alarm.setVolume(sound_effects_volume * 0.05f);
         attack_roar.setVolume(sound_effects_volume * 0.75f);
-        idle_roar.setVolume(sound_effects_volume * 0.05f);
+        idle_roar.setVolume(sound_effects_volume * 0.1f);
         loud_roar.setVolume(sound_effects_volume * 0.5f);
         bubbles.setVolume(sound_effects_volume * 0.2f);
         white_noise.setVolume(sound_effects_volume * 0.07f);
+        loading_screen.setVolume(sound_effects_volume * 0.4f);
         if (level_transmission != null){
-            level_transmission.setVolume(sound_effects_volume * 0.15f);
+            level_transmission.setVolume(sound_effects_volume * 0.1f);
         }
     }
 
