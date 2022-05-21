@@ -462,7 +462,7 @@ public class DiverModel extends GameObject {
     }
 
     public void setDeadBody(DeadBodyModel b) {
-        b.setOxygenRewarded(maxOxygenLevel * .25f);
+        b.setOxygenRewarded(maxOxygenLevel / 6);
         dead_body = b;
     }
 

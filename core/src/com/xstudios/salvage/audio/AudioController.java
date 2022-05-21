@@ -145,7 +145,7 @@ public class AudioController {
 
     public void wood_collision(float force) {
         if (!wood_collision.isPlaying()) {
-            wood_collision.setVolume(sound_effects_volume * 0.1f);
+            wood_collision.setVolume(sound_effects_volume * 0.5f);
             wood_collision.play();
         }
     }
