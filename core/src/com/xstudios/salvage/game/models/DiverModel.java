@@ -838,7 +838,11 @@ public class DiverModel extends GameObject {
     }
 
     public void applyForce() {
+
+        float rotation_scale;
+
         if (isLatching()) {
+            rotation_scale = 10;
             if (touchedWall != null)
                 // tentaclerotation is the direction of a wall as specified in the level editor
                 targetAngle = touchedWall.getTentacleRotation() + 270;
@@ -846,6 +850,7 @@ public class DiverModel extends GameObject {
 //            else
 //                targetAngle = 0;
         } else {
+            rotation_scale = 45;
             // set the target angle to be the direction of movement
             if (movement.len() != 0) {
                 targetAngle = movement.angleDeg();
@@ -862,9 +867,9 @@ public class DiverModel extends GameObject {
         // if between 0 and -135 degrees, rotate left
         // otherwise, flip
         if (angleDiff <= 135 && angleDiff >= 0) {
-            body.setAngularVelocity(-Math.abs(angleDiff) / 30);
+            body.setAngularVelocity(-Math.abs(angleDiff) / rotation_scale);
         } else if (angleDiff >= -135 && angleDiff < 0) {
-            body.setAngularVelocity(Math.abs(angleDiff) / 30);
+            body.setAngularVelocity(Math.abs(angleDiff) / rotation_scale);
         } else {
             faceRight = !faceRight;
             turnFrames = 4;
