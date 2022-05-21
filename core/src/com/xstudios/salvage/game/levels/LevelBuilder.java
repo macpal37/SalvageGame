@@ -899,8 +899,8 @@ public class LevelBuilder {
                 diver = (DiverModel) go;
                 diver.setStunned(false);
                 diver.setTexture(diverTexture);
-                diver.addFilmStrip(new FilmStrip(swimmingAnimation, 12, 6, 72));
-                diver.addFilmStrip(new FilmStrip(swimmingAnimationWBody, 4, 12, 48));
+                diver.addFilmStrip(new FilmStrip(swimmingAnimation, 13, 6, 78));
+                diver.addFilmStrip(new FilmStrip(swimmingAnimationWBody, 13, 6, 78));
                 diver.setPingTexture(pingTexture);
                 diver.setDrawScale(drawScale);
                 diver.setName("diver");

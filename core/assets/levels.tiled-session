@@ -231,7 +231,7 @@
             "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1251.5151515151513,
+                "x": 1248.4848484848485,
                 "y": 751.5151515151515
             }
         },
@@ -255,8 +255,8 @@
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 14,
-                "y": 730
+                "x": 1100,
+                "y": 750
             }
         },
         "levels/Golden5.json": {
@@ -264,7 +264,7 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 1250,
-                "y": 800
+                "y": 750
             }
         },
         "levels/Golden6.json": {
@@ -279,7 +279,7 @@
             "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1399.9999999999998,
+                "x": 1400,
                 "y": 751.5151515151515
             }
         },

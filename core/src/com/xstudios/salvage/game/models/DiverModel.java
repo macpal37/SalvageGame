@@ -907,7 +907,7 @@ public class DiverModel extends GameObject {
                         swimFrame = 0;
 
 
-                    int swimmFrame = swimFrame + ((active_flare) ? 58 : 0);
+                    int swimmFrame = swimFrame + ((active_flare) ? 64 : 0);
 
 
                     System.out.println("SWIMM: " + swimmFrame);
@@ -1312,7 +1312,7 @@ public class DiverModel extends GameObject {
                     if (idleFrame >= 16) {
                         idleFrame = 0;
                     }
-                    int totalIdleFrame = idleFrame + ((active_flare) ? 42 : 24);
+                    int totalIdleFrame = idleFrame + ((active_flare) ? 48 : 24);
 
                     diverSprites.get(diverState).setFrame(totalIdleFrame);
 
