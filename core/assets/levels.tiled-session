@@ -236,10 +236,10 @@
             }
         },
         "levels/Golden2.json": {
-            "scale": 0.5,
+            "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 536,
+                "x": 1288,
                 "y": 900
             }
         },
