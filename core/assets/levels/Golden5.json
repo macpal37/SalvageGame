@@ -129,6 +129,11 @@
                          "value":6.5
                         }, 
                         {
+                         "name":"kill_strikes",
+                         "type":"int",
+                         "value":40
+                        }, 
+                        {
                          "name":"random_attack_chance",
                          "type":"float",
                          "value":60
