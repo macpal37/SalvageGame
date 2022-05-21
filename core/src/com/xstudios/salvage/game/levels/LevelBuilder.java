@@ -865,7 +865,8 @@ public class LevelBuilder {
                 level.addObject(door);
             } else if (go instanceof ObstacleModel) {
                 ObstacleModel obstacle = (ObstacleModel) go;
-                obstacle.setWall(true);
+                // TODO: One day we will be able to kick off of obstacles
+//                obstacle.setWall(true);
                 obstacle.setBodyType(BodyDef.BodyType.DynamicBody);
                 obstacle.setSensor(false);
                 obstacle.setFixedRotation(false);
