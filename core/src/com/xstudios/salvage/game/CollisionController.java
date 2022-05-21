@@ -14,7 +14,6 @@ import com.xstudios.salvage.game.models.*;
 
 
 public class CollisionController {
-
     /**
      * remove body from list of potential bodies that diver left and right sensors are touching
      *

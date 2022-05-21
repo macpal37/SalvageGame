@@ -8,11 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonWriter;
-import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.*;
 import com.xstudios.salvage.assets.AssetDirectory;
 
 
@@ -34,17 +30,17 @@ public class Player {
                 JsonValue json = reader.parse(file);
                 sound_effects = json.getInt("sound_effects", 2);
                 music = json.getInt("music", 2);
-                level = 12;//json.getInt("level", 12);
+                level = json.getInt("level", 1);
             } else {
                 sound_effects = 2;
                 music = 2;
-                level = 12;
+                level = 1;
             }
         } else {
             JsonValue json = directory.getEntry("player", JsonValue.class);
             sound_effects = json.getInt("sound_effects", 2);
             music = json.getInt("music", 2);
-            level = 12;//json.getInt("level", 12);
+            level = json.getInt("level", 1);
         }
     }
 

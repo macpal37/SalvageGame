@@ -666,6 +666,22 @@
                  "height":100,
                  "id":559,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"aggro_rate",
+                         "type":"float",
+                         "value":0.01
+                        }, 
+                        {
+                         "name":"aggro_threshold",
+                         "type":"float",
+                         "value":6.5
+                        }, 
+                        {
+                         "name":"random_attack_chance",
+                         "type":"float",
+                         "value":65
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,

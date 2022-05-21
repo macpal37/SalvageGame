@@ -185,7 +185,8 @@
                  "visible":true,
                  "width":100,
                  "x":392,
-                 "y":350
+
+                 "y":351
                 }, 
                 {
                  "gid":35,
@@ -196,8 +197,10 @@
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":322,
-                 "y":348
+
+                 "x":317.5,
+                 "y":353
+
                 }, 
                 {
                  "gid":34,
@@ -249,7 +252,12 @@
                         {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":140
+                         "value":10
+                        }, 
+                        {
+                         "name":"random_attack_chance",
+                         "type":"float",
+                         "value":60
                         }],
                  "rotation":0,
                  "type":"",
@@ -297,6 +305,16 @@
                  "type":"",
                  "visible":true,
                  "width":100,
+
+                 "x":130.197368421053,
+                 "y":831.671052631579
+                }, 
+                {
+                 "gid":48,
+                 "height":100,
+                 "id":36,
+                 "name":"",
+
                  "x":141.945488721805,
                  "y":835.195488721805
                 }, 
@@ -311,10 +329,51 @@
                          "type":"string",
                          "value":"Your friends \n are dead"
                         }],
+
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":100,
+
+                 "x":453,
+                 "y":955
+                }, 
+                {
+                 "gid":48,
+                 "height":100,
+                 "id":37,
+                 "name":"",
+                 "rotation":305.437920611018,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":947.746184842085,
+                 "y":981.728237763876
+                }, 
+                {
+                 "gid":48,
+                 "height":100,
+                 "id":39,
+                 "name":"",
+                 "rotation":330.629850173039,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":547.202929420927,
+                 "y":609.367708186132
+                }, 
+                {
+                 "gid":48,
+                 "height":100,
+                 "id":40,
+                 "name":"",
+                 "rotation":330.629850173039,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":547.202929420927,
+                 "y":609.367708186132
+
                  "x":555.028195488722,
                  "y":797.18045112782
                 }, 
@@ -353,6 +412,7 @@
                  "width":100,
                  "x":452.819548872181,
                  "y":279.088345864662
+
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -361,7 +421,9 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":39,
+
+ "nextobjectid":41,
+
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",

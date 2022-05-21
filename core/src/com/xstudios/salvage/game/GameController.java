@@ -54,8 +54,9 @@ public class GameController extends ScreenController implements ContactListener 
     protected TextureRegion keys;
     private Vector3 tempProjectedHud;
     private Vector3 tempProjectedOxygen;
+    private Vector3 oxygen_hud;
     private Vector3 pauseScreen;
-
+    private Vector3 items;
     //pause
     protected Texture pause_screen;
     protected Texture black_spot;
@@ -297,6 +298,8 @@ public class GameController extends ScreenController implements ContactListener 
         this.pauseScreen = new Vector3(0, 0, 0);
         this.tempProjectedHud = new Vector3(0, 0, 0);
         this.tempProjectedOxygen = new Vector3(0, 0, 0);
+        this.oxygen_hud = new Vector3(0, 0, 0);
+        this.items = new Vector3(0, 0, 0);
         world = new World(gravity.scl(1), false);
         this.bounds = new Rectangle(bounds);
         worldScale = new Vector2(1, 1);
@@ -352,7 +355,6 @@ public class GameController extends ScreenController implements ContactListener 
         height = Gdx.graphics.getHeight();
 
     }
-
     public void setCameraPositionNormal() {
         camera.setCameraPosition(640, 360);
         camera.render();
@@ -432,7 +434,7 @@ public class GameController extends ScreenController implements ContactListener 
         exit_home = false;
         press_restart = false;
         press_resume = false;
-        //AudioController.getInstance().dispose();
+
         player = null;
     }
 
@@ -540,9 +542,11 @@ public class GameController extends ScreenController implements ContactListener 
         level.getAboveObjects().clear();
         addQueue.clear();
         AudioController.getInstance().reset();
+
         if(monsterController != null) {
             monsterController.reset();
         }
+
         populateLevel();
     }
 
@@ -682,15 +686,18 @@ public class GameController extends ScreenController implements ContactListener 
         // set forces from ocean currents
         level.getDiver().setDriftMovement(physicsController.getCurrentVector(level.getDiver().getPosition()).x,
                 physicsController.getCurrentVector(level.getDiver().getPosition()).y);
+
+        for (ObstacleModel obst : level.obstacleModels) {
+            obst.setDriftMovement(physicsController.getCurrentVector(level.getDiver().getPosition()).x,
+                    physicsController.getCurrentVector(level.getDiver().getPosition()).y);
+        }
+
         // apply forces for movement
         if (!level.getDiver().getStunned()) {
             level.getDiver().applyForce();
-//            System.out.println("APPLY FORCE????????????");
+
         }
 
-        // do the ping
-//        level.getDiver().setPing(input.didOpenChest());
-//        level.getDiver().setPingDirection(level.getDeadBody().getPosition());
 
         // flare management
         if (input.dropFlare()) {
@@ -812,7 +819,7 @@ public class GameController extends ScreenController implements ContactListener 
      * The core gameplay loop of this world.
      * <p>
      * This method contains the specific update code for this mini-game. It does
-     * not handle collisions, as those are managed by the parent class WorldController.
+     * not handle collisions, as those are managetd by the parent class WorldController.
      * This method is called after input is read, but before collisions are resolved.
      * The very last thing that it should do is apply forces to the appropriate objects.
      *
@@ -825,10 +832,8 @@ public class GameController extends ScreenController implements ContactListener 
                 door.setActive(!door.getUnlock());
             }
         }
-//        System.out.println("ScALE: " + world_scale.toString());
         rayHandler.setCombinedMatrix(camera.getCamera().combined.cpy().scl(world_scale.x, world_scale.y, 1f));
 
-//        System.out.println("isMonsterActive");
         if (monsterController.isMonsterActive()) {
             monsterController.update(hostileOxygenDrain, level.getDiver());
             Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
@@ -884,7 +889,6 @@ public class GameController extends ScreenController implements ContactListener 
 //            level.getDiver().setTouchedWall(null);
 //        }
 
-//        System.out.println("STATE "+ game_state);
         switch (game_state) {
             case DYING:
                 game_over_animation_time--;
@@ -904,13 +908,7 @@ public class GameController extends ScreenController implements ContactListener 
                 // oxygen still drains when paused
                 level.getDiver().changeOxygenLevel(passiveOxygenRate);
                 break;
-            // could be useful later but currently just has updates for PLAYING state
-//            case WIN_GAME:
-//
-//            break;
-//            case LOSE_GAME:
-//
-//            break;
+
         }
 
 
@@ -921,16 +919,10 @@ public class GameController extends ScreenController implements ContactListener 
 
         //deal with hazard stun
 
-//        if (level.getDiver().isInvincible()) {
-//            level.getDiver().setHazardInvincibilityFilter();
-////            light.setContactFilter(no_hazard_collision_category, no_hazard_collision_group, no_hazard_collision_mask);
-//        } else {
         level.getDiver().setHazardCollisionFilter();
-//            light.setContactFilter(hazard_collision_category, hazard_collision_group, hazard_collision_mask);
-//        }
+
 
         if (level.getDiver().getStunCooldown() > 0) {
-//            System.out.println("PAIN: " + hostileOxygenDrain);
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
             level.getDiver().setStunCooldown(level.getDiver().getStunCooldown() - 1);
         } else {
@@ -942,12 +934,12 @@ public class GameController extends ScreenController implements ContactListener 
     }
 
     public void updateDiverLighting() {
-       if (monsterController.isMonsterActive() && monsterController.isKillState()) {
-                if (tick % 2  == 0){
-                    changeLightColor(monster_color);
-                } else {
-                    changeLightColor(low_oxygen_color);
-                }
+        if (monsterController.isMonsterActive() && monsterController.isKillState()) {
+            if (tick % 2 == 0) {
+                changeLightColor(monster_color);
+            } else {
+                changeLightColor(low_oxygen_color);
+            }
 
         } else if (monsterController.isMonsterActive() && monsterController.isAggravated()) {
             changeLightColor(monster_color);
@@ -1122,26 +1114,16 @@ public class GameController extends ScreenController implements ContactListener 
         switch (game_state) {
             case PLAYING:
 
-                tempProjectedHud.x = (float) canvas.getWidth() / 2;
-                tempProjectedHud.y = 0f;
-                tempProjectedHud = camera.getCamera().unproject(tempProjectedHud);
-
-                //draw hud background
-
-                canvas.draw(hud, Color.WHITE, hud.getRegionWidth() / 2, hud.getRegionHeight(),
-                        tempProjectedHud.x, tempProjectedHud.y,
-                        0.0f, 1, 0.5f);
-
                 //draw remaining oxygen
-                tempProjectedOxygen.x = (float) canvas.getWidth() / 5.5f;
-                tempProjectedOxygen.y = (45 * canvas.getHeight()) / 1080;
-                tempProjectedOxygen = camera.getCamera().unproject(tempProjectedOxygen);
+                oxygen_hud.x = (float) canvas.getWidth() / 4 - canvas.getWidth()/40;
+                oxygen_hud.y = (float) canvas.getHeight() / 25;
+                oxygen_hud = camera.getCamera().unproject(oxygen_hud);
 
                 if (level.getDiver().getStunCooldown() % 20 > 10) {
 
                     canvas.draw(oxygen, Color.BLUE, 0, (float) oxygen.getRegionHeight() / 2,
-                            (float) tempProjectedOxygen.x,
-                            tempProjectedOxygen.y,
+                            (float) oxygen_hud.x,
+                            oxygen_hud.y,
                             0.0f,
                             1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()) * worldScale.x,
                             0.5f * worldScale.y
@@ -1149,47 +1131,68 @@ public class GameController extends ScreenController implements ContactListener 
 
                 } else if (level.getDiver().getOxygenLevel() < level.getDiver().getMaxOxygen() / 4 && tick % 25 > (level.getDiver().getOxygenLevel() / 2)) {
                     canvas.draw(oxygen, Color.BLUE, 0, (float) oxygen.getRegionHeight() / 2,
-                            (float) tempProjectedOxygen.x,
-                            tempProjectedOxygen.y,
+                            (float) oxygen_hud.x,
+                            oxygen_hud.y,
                             0.0f,
                             1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()) * worldScale.x,
                             0.5f * worldScale.y
                     );
                 } else {
                     canvas.draw(oxygen, Color.WHITE, 0, (float) oxygen.getRegionHeight() / 2,
-                            (float) tempProjectedOxygen.x,
-                            tempProjectedOxygen.y,
+                            (float) oxygen_hud.x,
+                            oxygen_hud.y,
                             0.0f,
                             1f * (level.getDiver().getOxygenLevel() / (float) level.getDiver().getMaxOxygen()) * worldScale.x,
                             0.5f * worldScale.y
                     );
                 }
 
+                items.x = (float) canvas.getWidth()/5;
+                items.y = (float) canvas.getHeight()/25;
+                items = camera.getCamera().unproject(items);
+
+                oxygen_hud.x = (float) canvas.getWidth() / 2;
+                oxygen_hud.y = (float) canvas.getHeight() / 25;
+                oxygen_hud = camera.getCamera().unproject(oxygen_hud);
 
                 canvas.draw(oxygenText, Color.WHITE, (float) oxygenText.getRegionWidth() / 2, (float) oxygenText.getRegionHeight() / 2,
-                        tempProjectedHud.x, tempProjectedOxygen.y,
+                        (float) oxygen_hud.x,
+                        oxygen_hud.y,
                         0.0f, 0.5f * worldScale.x, 0.5f * worldScale.y);
+
+                items.x = (float) canvas.getWidth()/5 - flareHud.getRegionWidth()/2;
+                items.y = (float) canvas.getHeight()/25;
+                items = camera.getCamera().unproject(items);
 
                 //draw inventory indicator
                 for (int i = 0; i < level.getDiver().getNumKeys(); i++) {
                     canvas.draw(keyHud, Color.WHITE, (float) keyHud.getRegionWidth(), (float) keyHud.getRegionHeight() / 2,
-                            tempProjectedOxygen.x - 50,
-                            tempProjectedOxygen.y,
+                            items.x - 20,
+                            items.y,
                             0.0f, 0.35f * worldScale.x, 0.35f * worldScale.y);
 
                 }
+
+                items.x = (float) canvas.getWidth()/5;
+                items.y = (float) canvas.getHeight()/25;
+                items = camera.getCamera().unproject(items);
+
+                for (int i = 0; i < level.getDiver().getRemainingFlares(); i++) {
+                    canvas.draw(flareHud, Color.WHITE, (float) flareHud.getRegionWidth(), (float) flareHud.getRegionHeight() / 2,
+                            (float) items.x - (i * 10),
+                            items.y,
+                            0.0f, 0.2f * worldScale.x, 0.2f * worldScale.y);
+                }
+
+                items.x = (float) canvas.getWidth() - canvas.getWidth()/5;
+                items.y = (float) canvas.getHeight()/25;
+                items = camera.getCamera().unproject(items);
 
                 //draw body indicator
                 if (level.getDiver().hasBody()) {
-                    canvas.draw(bodyHud, Color.WHITE, 0, (float) bodyHud.getRegionHeight() / 2,
-                            tempProjectedHud.x + 50 + (camera.getCameraPosition2D().x - tempProjectedOxygen.x),
-                            tempProjectedOxygen.y,
-                            0.0f, 0.35f * worldScale.x, 0.35f * worldScale.y);
-                }
-                for (int i = 0; i < level.getDiver().getRemainingFlares(); i++) {
-                    canvas.draw(flareHud, Color.WHITE, (float) flareHud.getRegionWidth(), (float) flareHud.getRegionHeight() / 2,
-                            tempProjectedOxygen.x - 10 * i,
-                            tempProjectedOxygen.y,
+                    canvas.draw(bodyHud, Color.WHITE, (float) bodyHud.getRegionWidth() / 2, (float) bodyHud.getRegionHeight() / 2,
+                            (float) items.x,
+                            items.y,
                             0.0f, 0.35f * worldScale.x, 0.35f * worldScale.y);
                 }
 
