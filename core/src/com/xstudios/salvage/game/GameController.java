@@ -217,7 +217,7 @@ public class GameController extends ScreenController implements ContactListener 
     private Color low_oxygen_color;
     private Color monster_color;
     private Color kill_monster_color;
-    private float stun_light_radius = 5f;
+    private float stun_light_radius = 7f;
     private float normal_light_radius = 13f;
     private float wall_shine_radius = 8f;
 
