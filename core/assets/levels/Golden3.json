@@ -392,14 +392,14 @@
                         {
                          "name":"text",
                          "type":"string",
-                         "value":"Uxe Z to open a treasure chest.\n Some hold keys you'll need.\n Some hold horrors. Good Luck :)"
+                         "value":"You'll need a key \nto move forward"
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":309.231411862991,
-                 "y":1169.46532999165
+                 "x":740.866054023949,
+                 "y":467.710944026738
                 }, 
                 {
                  "gid":47,
@@ -416,8 +416,26 @@
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":763.143971038708,
-                 "y":712.768031189084
+                 "x":894.026733500418,
+                 "y":707.198551935394
+                }, 
+                {
+                 "gid":47,
+                 "height":100,
+                 "id":100,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"text",
+                         "type":"string",
+                         "value":"Treasure isn't the only thing\n these treasure chests hold"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":300.877192982456,
+                 "y":1149.97215260373
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -437,7 +455,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":100,
+ "nextobjectid":102,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",

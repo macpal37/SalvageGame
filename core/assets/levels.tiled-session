@@ -9,16 +9,32 @@
             "scale": 0.8512,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 549.2246240601504,
-                "y": 549.812030075188
+                "x": 548.0498120300751,
+                "y": 858.7875939849625
             }
         },
         "levels/Golden1.json": {
-            "scale": 1,
+            "scale": 0.33,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1249.5,
-                "y": 750
+                "x": 637.8787878787878,
+                "y": 1145.4545454545455
+            }
+        },
+        "levels/Golden10.json": {
+            "scale": 0.23648214285714284,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1401.7971758664955,
+                "y": 854.1871177225705
+            }
+        },
+        "levels/Golden11.json": {
+            "scale": 0.23648214285714284,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1401.7971758664955,
+                "y": 854.1871177225705
             }
         },
         "levels/Golden2.json": {
@@ -34,7 +50,7 @@
             "selectedLayer": 2,
             "viewCenter": {
                 "x": 973.2664995822892,
-                "y": 359.2314118629909
+                "y": 359.23141186299085
             }
         },
         "levels/Golden4.json": {
@@ -97,8 +113,8 @@
             "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1986.3636363636363,
-                "y": 293.9393939393939
+                "x": 1056.0606060606062,
+                "y": 290.909090909091
             }
         },
         "levels/GoldenSomething.json": {
@@ -145,8 +161,8 @@
             "scale": 0.125,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1304,
-                "y": 760
+                "x": 1300,
+                "y": 752
             }
         },
         "levels/in_progress.json": {
@@ -281,7 +297,9 @@
         "levels/GoldenSomething.json",
         "levels/GoldenAnother.json",
         "levels/GoldenOneMore.json",
-        "levels/GoldenSmaller.json"
+        "levels/GoldenSmaller.json",
+        "levels/Golden10.json",
+        "levels/beta_5.json"
     ],
     "project": "levels.tiled-project",
     "recentFiles": [
