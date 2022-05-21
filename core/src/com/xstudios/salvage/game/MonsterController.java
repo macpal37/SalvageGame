@@ -230,7 +230,7 @@ public class MonsterController {
                     monster.reduceAggressiveLength();
                 }
                 total_aggressive_time++;
-                System.out.println("agg time tot " + total_aggressive_time);
+                System.out.println("agg time tot " + total_aggressive_time + " " + MAX_AGGRESSIVE_TIME);
                 break;
 
             case ATTACK:

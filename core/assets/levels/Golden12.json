@@ -296,7 +296,7 @@
                         {
                          "name":"aggro_rate",
                          "type":"float",
-                         "value":0.03
+                         "value":0.06
                         }, 
                         {
                          "name":"aggro_threshold",
@@ -304,9 +304,14 @@
                          "value":5
                         }, 
                         {
+                         "name":"kill_strikes",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
                          "name":"random_attack_chance",
                          "type":"float",
-                         "value":75
+                         "value":95
                         }, 
                         {
                          "name":"tentacle_size",
