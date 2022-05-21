@@ -1147,9 +1147,9 @@ public class GameController extends ScreenController implements ContactListener 
 
 
         canvas.end();
-        if (!debug) {
+//        if (!debug) {
             rayHandler.updateAndRender();
-        }
+//        }
         canvas.begin();
         level.getDiver().draw(canvas);
         switch (game_state) {
@@ -1281,13 +1281,13 @@ public class GameController extends ScreenController implements ContactListener 
 
         canvas.end();
 
-        if (debug) {
-            canvas.beginDebug();
-            for (GameObject obj : level.getAllObjects()) {
-                obj.drawDebug(canvas);
-            }
-            canvas.endDebug();
-        }
+//        if (debug) {
+//            canvas.beginDebug();
+//            for (GameObject obj : level.getAllObjects()) {
+//                obj.drawDebug(canvas);
+//            }
+//            canvas.endDebug();
+//        }
 
     }
 
