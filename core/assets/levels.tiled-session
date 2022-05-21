@@ -5,36 +5,234 @@
         "levels"
     ],
     "fileStates": {
-        "levels/Golden0.json": {
-            "scale": 0.8512,
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/dungeon_out.json": {
+            "scale": 2.058333333333333,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 152.3076923076923,
+                "y": 119.99999999999999
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/dungeon_tileset.json": {
+            "scaleInDock": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/entities_tilesets.json": {
+            "scaleInDock": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/forest_tileset.json": {
+            "scaleInDock": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/house_tileset.json": {
+            "scaleInDock": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/left_house.json": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 72.16666666666666,
+                "y": 79.66666666666666
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/mid_house.json": {
+            "scale": 5.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 546.875,
-                "y": 858.7875939849625
+                "x": 79.90909090909092,
+                "y": 80
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/path_to_dungeon.json": {
+            "scale": 3,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 80.16666666666669,
+                "y": 320
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/path_to_village.json": {
+            "scale": 2.386875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 70.59439643885833,
+                "y": 166.7452212621105
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/right_house.json": {
+            "scale": 5.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 72.0909090909091,
+                "y": 80
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/route2.json": {
+            "scale": 1.59125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 240.3770620581304,
+                "y": 240.06284367635507
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/starting_scene.json": {
+            "scale": 4,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 80.125,
+                "y": 80
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/tile_sprites-20220517T014159Z-001/tile_sprites/id_tiles.json": {
+            "scaleInDock": 1
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/map/village.json": {
+            "scale": 1.6882291666666667,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 240.19250940951443,
+                "y": 120.24433886592212
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon.json": {
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 229.25,
+                "y": 144
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon1.json": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 190.16666666666669,
+                "y": 209.33333333333334
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/dungeon_out.json": {
+            "scale": 4,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 172.375,
+                "y": 151.5
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/left_house.json": {
+            "scale": 4,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 84.125,
+                "y": 108
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/mid_house.json": {
+            "scale": 4,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 52.875,
+                "y": 101.25
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/path_to_dungeon.json": {
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 157.75,
+                "y": 136
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/path_to_village.json": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 142.83333333333331,
+                "y": 153.33333333333331
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/right_house.json": {
+            "scale": 4,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 70.125,
+                "y": 98.75
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/route2.json": {
+            "scale": 4,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 364.625,
+                "y": 207.75
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/starting_scene.json": {
+            "scale": 4,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 111.875,
+                "y": 112
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/test_map.json": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 226.16666666666663,
+                "y": 220
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/maps/village.json": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 431.16666666666663,
+                "y": 192.33333333333331
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/dungeon_tileset.json": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/entities_tilesets.json": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/forest_tileset.json": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/house_tileset.json": {
+            "scaleInDock": 2,
+            "scaleInEditor": 3
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/id_tiles.json": {
+            "scaleInDock": 2
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/route2.json": {
+            "scale": 3,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 300.5,
+                "y": 231.33333333333334
+            }
+        },
+        "/Users/marcopalomino/Documents/Spring2022/Class/CS3110/CS3110Project/PokemonGame/assets/tile_sprites/small_outside_tileset.json": {
+            "scaleInDock": 2,
+            "scaleInEditor": 4
+        },
+        "levels/Golden0.json": {
+            "scale": 0.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 550,
+                "y": 550
             }
         },
         "levels/Golden1.json": {
             "scale": 0.33,
-            "selectedLayer": 3,
-            "viewCenter": {
-                "x": 637.8787878787878,
-                "y": 1145.4545454545455
-            }
-        },
-        "levels/Golden10.json": {
-            "scale": 0.23648214285714284,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1401.7971758664955,
-                "y": 845.7298195272975
-            }
-        },
-        "levels/Golden11.json": {
-            "scale": 0.23648214285714284,
-            "selectedLayer": 1,
-            "viewCenter": {
-                "x": 1401.7971758664955,
-                "y": 854.1871177225705
+                "x": 1251.5151515151513,
+                "y": 751.5151515151515
             }
         },
         "levels/Golden12.json": {
@@ -46,99 +244,67 @@
             }
         },
         "levels/Golden2.json": {
-            "scale": 0.25,
+            "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1302,
-                "y": 752
+                "x": 1300,
+                "y": 749.3333333333333
             }
         },
         "levels/Golden3.json": {
-            "scale": 0.3591,
-            "selectedLayer": 2,
-            "viewCenter": {
-                "x": 973.2664995822892,
-                "y": 359.23141186299085
-            }
-        },
-        "levels/Golden4.json": {
-            "scale": 0.3591,
-            "selectedLayer": 2,
-            "viewCenter": {
-                "x": 1353.3834586466166,
-                "y": 751.8796992481205
-            }
-        },
-        "levels/Golden5.json": {
-            "scale": 0.33,
-            "selectedLayer": 1,
-            "viewCenter": {
-                "x": 1527.2727272727275,
-                "y": 800.0000000000001
-            }
-        },
-        "levels/Golden6.json": {
             "scale": 0.5,
-            "selectedLayer": 1,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 876,
+                "x": 1350,
                 "y": 750
             }
         },
-        "levels/Golden7.json": {
-            "scale": 0.3591,
-            "selectedLayer": 1,
-            "viewCenter": {
-                "x": 1654.1353383458647,
-                "y": 751.8796992481205
-            }
-        },
-        "levels/Golden8.json": {
-            "scale": 0.3591,
-            "selectedLayer": 1,
-            "viewCenter": {
-                "x": 3103.5923141186304,
-                "y": 854.9150654413813
-            }
-        },
-        "levels/GoldenAnother.json": {
-            "scale": 0.25,
-            "selectedLayer": 1,
-            "viewCenter": {
-                "x": 1398,
-                "y": 852
-            }
-        },
-        "levels/GoldenOneMore.json": {
-            "scale": 0.33,
-            "selectedLayer": 1,
-            "viewCenter": {
-                "x": 1398.4848484848485,
-                "y": 851.5151515151515
-            }
-        },
-        "levels/GoldenSmaller.json": {
-            "scale": 0.33,
-            "selectedLayer": 1,
-            "viewCenter": {
-                "x": 1056.0606060606062,
-                "y": 290.909090909091
-            }
-        },
-        "levels/GoldenSomething.json": {
-            "scale": 0.25,
-            "selectedLayer": 2,
-            "viewCenter": {
-                "x": 1398,
-                "y": 852
-            }
-        },
-        "levels/beta_0.json": {
+        "levels/Golden4.json": {
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 499,
-                "y": 500
+                "x": 14,
+                "y": 730
+            }
+        },
+        "levels/Golden5.json": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1250,
+                "y": 800
+            }
+        },
+        "levels/Golden6.json": {
+            "scale": 0.3591,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 2261.208576998051,
+                "y": 803.3973823447508
+            }
+        },
+        "levels/Golden7.json": {
+            "scale": 0.33,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1399.9999999999998,
+                "y": 751.5151515151515
+            }
+        },
+        "levels/Golden8.json": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1400,
+                "y": 849.3333333333334
+            }
+        },
+        "levels/beta_0.json": {
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 45.5,
+                "y": 831
             }
         },
         "levels/beta_1.json": {
@@ -146,39 +312,39 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 748.9130434782608,
-                "y": 499.9999999999999
+                "y": 501.0869565217392
             }
         },
         "levels/beta_2.json": {
             "scale": 0.33,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1250,
-                "y": 751.5151515151516
+                "x": 462.12121212121207,
+                "y": 778.7878787878788
             }
         },
         "levels/beta_3.json": {
             "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 998.4848484848485,
-                "y": 751.5151515151516
+                "x": 628.7878787878789,
+                "y": 845.4545454545455
             }
         },
         "levels/beta_5.json": {
             "scale": 0.125,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1300,
-                "y": 752
+                "x": 1308,
+                "y": 760
             }
         },
         "levels/in_progress.json": {
             "scale": 0.15275999999999998,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1247.0542026708565,
-                "y": 752.8148730034043
+                "x": 1253.6004189578425,
+                "y": 752.814873003404
             }
         },
         "levels/level0.json": {
@@ -198,26 +364,26 @@
             }
         },
         "levels/level2.json": {
-            "scale": 0.175275,
+            "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1996.8620738838968,
-                "y": 1503.3518756240194
+                "x": 1771.2121212121212,
+                "y": 1754.5454545454545
             }
         },
         "levels/level3.json": {
-            "scale": 0.35055,
-            "selectedLayer": 0,
+            "scale": 0.75,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 998.4310369419484,
-                "y": 751.6759378120097
+                "x": 1686,
+                "y": 742.6666666666666
             }
         },
         "levels/level4.json": {
             "scale": 0.19,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 1794.7368421052633,
+                "x": 1792.1052631578948,
                 "y": 805.2631578947367
             }
         },
@@ -233,16 +399,20 @@
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 749,
-                "y": 500
+                "x": 750,
+                "y": 502
             }
         },
+        "levels/tentacle_attack2.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
+        },
         "levels/test_level.json": {
-            "scale": 0.75,
+            "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1357.3333333333333,
-                "y": 1309.3333333333335
+                "x": 337,
+                "y": 1484
             }
         },
         "levels/tilesets/old_ship_tileset.json": {
@@ -253,9 +423,17 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
-        "levels/tilesets/tentacle_idle.json": {
+        "levels/tilesets/tentacle_attack2.json": {
             "scaleInDock": 1,
             "scaleInEditor": 1
+        },
+        "levels/tilesets/tentacle_attack3.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "levels/tilesets/tentacle_idle.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1.5
         },
         "levels/tilesets/tentacle_tile.json": {
             "scaleInDock": 1,
@@ -270,19 +448,19 @@
             }
         },
         "levels/tutorial2.json": {
-            "scale": 0.4674,
+            "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 748.8232777064612,
-                "y": 502.78134360290977
+                "x": 637.878787878788,
+                "y": 548.4848484848485
             }
         },
         "levels/tutorial3.json": {
             "scale": 0.4674,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 749.893025246042,
-                "y": 500.64184852374837
+                "x": 748.8232777064612,
+                "y": 502.78134360290977
             }
         }
     },
@@ -310,18 +488,19 @@
         "levels/beta_5.json"
     ],
     "project": "levels.tiled-project",
+    "property.type": "float",
     "recentFiles": [
-        "levels/Golden0.json",
         "levels/Golden3.json",
-        "levels/Golden4.json",
+        "levels/Golden2.json",
+        "levels/Golden0.json",
+        "levels/Golden1.json",
+        "levels/Golden5.json",
         "levels/Golden7.json",
         "levels/Golden8.json",
-        "levels/Golden2.json",
-        "levels/Golden5.json",
-        "levels/Golden6.json",
-        "levels/Golden1.json",
-        "levels/beta_0.json",
-        "levels/beta_1.json",
-        "levels/beta_2.json"
+        "levels/Golden4.json",
+        "levels/tilesets/old_ship_tileset.json",
+        "levels/tilesets/tentacle_attack3.json",
+        "levels/test_level.json",
+        "levels/tilesets/tentacle_attack2.json"
     ]
 }
