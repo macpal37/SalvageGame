@@ -778,6 +778,7 @@ public class GameController extends ScreenController implements ContactListener 
                 }
             }
 
+
         }
 
 
@@ -875,16 +876,17 @@ public class GameController extends ScreenController implements ContactListener 
             Queue<Wall> attack_tentacles = monsterController.getMonster().getKillTentacles();
 
             while (agg_tentacles.size() > 0) {
+                System.out.println(agg_tentacles.size());
                 Wall add_wall = agg_tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     Tentacle t;
-                    if (tick % 4 == 0) {
-                        t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.6f, add_wall, Tentacle.TentacleType.NewAttack, 120);
-                        t.setGrowRate(10);
-                        addQueuedObject(t);
-                    } else /*if (tick % 2 == 0) */ {
+                    if (Math.random() <= 0.75) {
                         t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.45f, add_wall, Tentacle.TentacleType.NewAttack, 50);
                         t.setGrowRate(4);
+                        addQueuedObject(t);
+                    } else {
+                        t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.6f, add_wall, Tentacle.TentacleType.NewAttack, 120);
+                        t.setGrowRate(10);
                         addQueuedObject(t);
                     }
                 }

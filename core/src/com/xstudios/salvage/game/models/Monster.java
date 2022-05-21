@@ -161,7 +161,7 @@ public class Monster extends GameObject {
         tentacle.setFilmStrip(tentacleAttackSprite.copy());
     }
 
-    public void addTentacle(Wall wall) {
+    public void addAggTentacle(Wall wall) {
         agg_tentacles.add(wall);
     }
 

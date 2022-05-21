@@ -202,6 +202,7 @@ public class MonsterController {
                     curr_idle_length = 0;
                     transition_to_aggravated = false;
                     state = FSMState.AGGRIVATED;
+                    attack_tick++;
                     //monster.setVisionRadius(30);
                 }
                 else if ((transition_to_aggravated || ((tick % 25 == 0) && ((int)(Math.random()*1000) <= (int)(RANDOM_ATTACK_CHANGE)))) &&  last_aggression > LAST_AGGRESSIVE_LENGTH) {
@@ -212,6 +213,7 @@ public class MonsterController {
                     monster.setAggravation(monster.getAggroLevel() + (monster.getAggravationRate() * 3));
                     transition_to_aggravated = false;
                     state = FSMState.AGGRIVATED;
+                    attack_tick++;
                     //curr_idle_length = 0;
                 }
                 last_aggression++;
@@ -219,14 +221,14 @@ public class MonsterController {
 
             case AGGRIVATED:
              //   System.out.println("Aggravation length " + monster.getAggressiveLength());
-                if (attack_tick > 10) {
+               // if (attack_tick > 10) {
                     if (aggravation <= monster.getAggroLevel() || monster.getAggressiveLength() <= 0) {
                         //                    monster.reduceInvincibilityTime();
                         state = FSMState.IDLE;
                         //monster.setVisionRadius(50);
                         monster.setAggravation((8 * monster.getAggravation()) / 10.0f);
                         last_aggression = 0;
-                    } else if (total_aggressive_time >= (MAX_AGGRESSIVE_TIME / 2.0f)) {
+                    } else if (attack_tick > monster.getAggroStrikes()) {
                         //                    if (aggravation > (monster.getAggroLevel() * 20.0f)) {
                         //                        state = FSMState.ATTACK;
                         //                    }
@@ -234,11 +236,8 @@ public class MonsterController {
                     } else {
                         monster.reduceAggressiveLength();
                     }
-                }
-                else {
-                    monster.reduceAggressiveLength();
-                }
-                attack_tick++;
+                //}
+                //attack_tick++;
                 total_aggressive_time++;
                 System.out.println("agg time tot " + total_aggressive_time + " " + MAX_AGGRESSIVE_TIME);
                 break;
@@ -282,8 +281,6 @@ public class MonsterController {
             }
         }
 
-//
-
         changeStateIfApplicable();
 
         float goal_x = diver.getX() + diver.getVX();
@@ -324,27 +321,27 @@ public class MonsterController {
             case AGGRIVATED:
 //                if (tick % 5 == 0) {
                 monster.moveMonster(diver.getPosition());
-                if (tick % 2 == 0) {
+                if (tick %2 == 0) {
                     float best_distance = 10000.0f;
                     float temp_distance = 0.0f;
                     Wall final_loc = null;
+                    int wall_tick = 0;
                     for (Wall wall : monster.getSpawnLocations()) {
-                        if (wall.canSpawnTentacle()) {
-                            Vector2 location = wall.getPosition();
-                            temp_distance = (float) Math.sqrt(
-                                    Math.pow((double) (goal_x - location.x), 2) +
-                                            Math.pow((double) (goal_y - location.y), 2)
-                            );
-                            if (temp_distance < best_distance) {
-                                best_distance = temp_distance;
-                                final_loc = wall;
+                        if (wall_tick % 2 == 0) {
+                            if (wall.canSpawnTentacle()) {
+//                                Vector2 location = wall.getPosition();
+//                                temp_distance = (float) Math.sqrt(
+//                                        Math.pow((double) (goal_x - location.x), 2) +
+//                                                Math.pow((double) (goal_y - location.y), 2)
+//                                );
+//                                if (temp_distance < best_distance) {
+//                                    best_distance = temp_distance;
+//                                    final_loc = wall;
+//                                }
+                                monster.addAggTentacle(wall);
                             }
                         }
-                    }
-                    if (final_loc != null) {
-                        //System.out.println(final_loc);
-                        monster.addTentacle(final_loc);
-                        //monster.setAggravation(0.0f);
+                        wall_tick++;
                     }
                 }
                 break;
@@ -379,17 +376,17 @@ public class MonsterController {
 //                    temp_distance = 0.0f;
 //                    final_loc = null;
                         for (Wall wall : monster.getSpawnLocations()) {
-                            if (wall.canSpawnTentacle()) {
-                                Vector2 location = wall.getPosition();
-                                temp_distance = (float) Math.sqrt(
-                                        Math.pow((double) (goal_x - location.x), 2) +
-                                                Math.pow((double) (goal_y - location.y), 2)
-                                );
-                                if (temp_distance < best_distance) {
-                                    best_distance = temp_distance;
-                                    final_loc = wall;
+                                if (wall.canSpawnTentacle()) {
+                                    Vector2 location = wall.getPosition();
+                                    temp_distance = (float) Math.sqrt(
+                                            Math.pow((double) (goal_x - location.x), 2) +
+                                                    Math.pow((double) (goal_y - location.y), 2)
+                                    );
+                                    if (temp_distance < best_distance) {
+                                        best_distance = temp_distance;
+                                        final_loc = wall;
+                                    }
                                 }
-                            }
                         }
                         if (final_loc != null) {
                             //System.out.println(final_loc);
