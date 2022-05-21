@@ -70,7 +70,7 @@ public class MenuController extends ScreenController implements ControllerListen
     }
 
     public void setCameraPositionNormal() {
-        camera.setCameraPosition(640, 360);
+        camera.setCameraPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
         camera.render();
     }
 

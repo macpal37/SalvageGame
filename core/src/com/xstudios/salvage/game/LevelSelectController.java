@@ -73,6 +73,7 @@ public class LevelSelectController extends ScreenController implements Controlle
         }
     }
 
+
     public void setLocked(int level){
         locked = level;
     }
@@ -91,7 +92,7 @@ public class LevelSelectController extends ScreenController implements Controlle
     }
 
     public void setCameraPositionNormal() {
-        camera.setCameraPosition(640, 360);
+        camera.setCameraPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
         camera.render();
     }
 
