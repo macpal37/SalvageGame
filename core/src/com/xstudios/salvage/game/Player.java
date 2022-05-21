@@ -34,17 +34,17 @@ public class Player {
                 JsonValue json = reader.parse(file);
                 sound_effects = json.getInt("sound_effects", 2);
                 music = json.getInt("music", 2);
-                level = json.getInt("level", 1);
+                level = 12;//json.getInt("level", 12);
             } else {
                 sound_effects = 2;
                 music = 2;
-                level = 1;
+                level = 12;
             }
         } else {
             JsonValue json = directory.getEntry("player", JsonValue.class);
             sound_effects = json.getInt("sound_effects", 2);
             music = json.getInt("music", 2);
-            level = json.getInt("level", 1);
+            level = 12;//json.getInt("level", 12);
         }
     }
 

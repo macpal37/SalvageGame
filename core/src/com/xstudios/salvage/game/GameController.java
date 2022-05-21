@@ -840,14 +840,15 @@ public class GameController extends ScreenController implements ContactListener 
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     Tentacle t;
-                    if (tick % 2 == 0) {
+                    if (tick % 6 == 0) {
                         t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.6f, add_wall, Tentacle.TentacleType.NewAttack, 120);
                         t.setGrowRate(10);
-                    } else {
+                        addQueuedObject(t);
+                    } else if (tick % 2 == 0) {
                         t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.45f, add_wall, Tentacle.TentacleType.NewAttack, 50);
                         t.setGrowRate(4);
+                        addQueuedObject(t);
                     }
-                    addQueuedObject(t);
                 }
             }
 
