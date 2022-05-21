@@ -280,12 +280,17 @@
                         {
                          "name":"aggro_rate",
                          "type":"float",
-                         "value":0.1
+                         "value":0.01
                         }, 
                         {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":30
+                         "value":5
+                        }, 
+                        {
+                         "name":"random_attack_chance",
+                         "type":"float",
+                         "value":75
                         }, 
                         {
                          "name":"tentacle_size",
