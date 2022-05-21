@@ -96,7 +96,7 @@ public class MenuController extends ScreenController implements ControllerListen
         press_select_level = false;
         press_setting = false;
         press_rules = false;
-
+        press_quit = false;
         release = false;
     }
 
