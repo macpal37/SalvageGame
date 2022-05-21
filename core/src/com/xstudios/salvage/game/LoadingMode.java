@@ -179,10 +179,14 @@ public class LoadingMode implements Screen {
     private void update(float delta) {
         if (done == false) {
             assets.update(budget);
-            System.out.println("uhhh " + AudioController.getInstance().loading_screen_progress()
-                         /  AudioController.getInstance().loading_screen_length());
-            this.progress = Math.min(assets.getProgress(),Math.abs(AudioController.getInstance().loading_screen_progress()
-                         /  AudioController.getInstance().loading_screen_length()));
+            float audio_progress = Math.abs(AudioController.getInstance().loading_screen_progress()
+                    /  AudioController.getInstance().loading_screen_length());
+            if (audio_progress > 0.0f){
+                this.progress = Math.min(assets.getProgress(),audio_progress);
+            }
+            else {
+                this.progress = assets.getProgress();
+            }
             if (progress >= 1.0f) {
                 this.progress = 1.0f;
                 done = true;
