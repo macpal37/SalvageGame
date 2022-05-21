@@ -225,7 +225,6 @@ public class Monster extends GameObject {
         return invincibility_time;
     }
 
-
     public void reduceAggressiveLength() {
         invincibility_time--;
     }

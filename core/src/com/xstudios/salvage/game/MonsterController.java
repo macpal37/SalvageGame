@@ -72,7 +72,7 @@ public class MonsterController {
 
     private float MAX_IDLE_TENTACLES = 10;
     private float MAX_ATTACK_TENTACLES = 5;
-    private float RANDOM_ATTACK_CHANGE = 0.001f;
+    private float RANDOM_ATTACK_CHANGE = 0.00001f;
 
     private float MAX_IDLE_LENGTH = 700;
     private float curr_idle_length = 0;
@@ -203,7 +203,7 @@ public class MonsterController {
                     curr_idle_length = 0;
                     //monster.setVisionRadius(30);
                 }
-                else if (transition_to_aggravated || Math.random() <= RANDOM_ATTACK_CHANGE) {
+                else if (transition_to_aggravated || Math.random() <= (double) RANDOM_ATTACK_CHANGE) {
                     AudioController.getInstance().attack_roar();
                     state = FSMState.AGGRIVATED;
                     tick = 0;
