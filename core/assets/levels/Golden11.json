@@ -990,9 +990,19 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"aggro_rate",
+                         "type":"float",
+                         "value":0.01
+                        }, 
+                        {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":50
+                         "value":5.4
+                        }, 
+                        {
+                         "name":"random_attack_chance",
+                         "type":"float",
+                         "value":72
                         }],
                  "rotation":0,
                  "type":"",
