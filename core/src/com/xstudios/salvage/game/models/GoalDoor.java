@@ -1,16 +1,21 @@
 package com.xstudios.salvage.game.models;
 
+import box2dLight.Light;
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.game.GameCanvas;
 import com.xstudios.salvage.game.GameObject;
+import com.xstudios.salvage.util.FilmStrip;
 
 /**
  * Box-shaped model to support collisions.
- *
+ * <p>
  * Unless otherwise specified, the center of mass is as the center.
  */
 public class GoalDoor extends GameObject {
@@ -34,6 +39,14 @@ public class GoalDoor extends GameObject {
      * Cache of the polygon vertices (for resizing)
      */
     private float[] vertices;
+
+    private TextModel feedback;
+
+    public void setFont(BitmapFont font) {
+        this.feedback.setFont(font);
+    }
+
+//    private Light light;
 
     /**
      * Returns the dimensions of this box
@@ -143,6 +156,10 @@ public class GoalDoor extends GameObject {
         vertices = new float[8];
         geometry = null;
 
+        feedback = new TextModel(x, y);
+        feedback.setTextPosition(x + width, y);
+
+//        feedback.setText("You need to\n rescue your\n friend!");
         // Initialize
         resize(width, height);
     }
@@ -193,6 +210,37 @@ public class GoalDoor extends GameObject {
         }
     }
 
+//    public void initLight(RayHandler rayHandler) {
+//        System.out.println("HEIGHT: " + getHeight());
+//        System.out.println("Y: " + getY());
+//        light = new PointLight(rayHandler, 100, new Color(255 / 255f, 220 / 255f, 92 / 255f, 0.2f), 15, getX(), getY());
+//        Filter f = new Filter();
+//        f.categoryBits = 0x0002;
+//        f.maskBits = 0x0004;
+//        f.groupIndex = 1;
+//        light.setContactFilter(f);
+//        light.setSoft(true);
+//    }
+
+    @Override
+    public boolean activatePhysics(World world) {
+        super.activatePhysics(world);
+        feedback.activatePhysics(world);
+        return true;
+    }
+
+    @Override
+    public void deactivatePhysics(World world) {
+        super.deactivatePhysics(world);
+        feedback.deactivatePhysics(world);
+    }
+
+    @Override
+    public void setDrawScale(Vector2 value) {
+        super.setDrawScale(value);
+        feedback.setDrawScale(value);
+    }
+
 
     /**
      * Draws the outline of the physics body.
@@ -204,5 +252,38 @@ public class GoalDoor extends GameObject {
     public void drawDebug(GameCanvas canvas) {
         canvas.drawPhysics(shape, Color.YELLOW, getX(), getY(), getAngle(), drawScale.x, drawScale.y);
     }
+
+    public Vector2 doorScale = new Vector2();
+
+    public void setDoorScale(float w, float h) {
+        doorScale.set(w, h);
+    }
+
+    protected FilmStrip sprite;
+
+    public void setFilmStrip(FilmStrip value) {
+        sprite = value;
+        sprite.setFrame(0);
+    }
+
+
+    private TextureRegion openDoor;
+    private TextureRegion closedDoor;
+
+    public void draw(GameCanvas canvas) {
+
+//        feedback.draw(canvas);
+        if (tick % 10 == 0)
+            sprite.setFrame(sprite.getFrame() + 1);
+        if (sprite.getFrame() >= 24)
+            sprite.setFrame(0);
+
+        canvas.draw(sprite, Color.WHITE, 0, 0, getX() * drawScale.x,
+                (getY() - dimension.y / 2) * drawScale.y, getAngle(), doorScale.x * worldDrawScale.x, doorScale.y * worldDrawScale.y * 1.05f);
+
+    }
+
+
 }
+
 

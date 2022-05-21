@@ -100,7 +100,6 @@ public class LevelSelectController extends ScreenController implements Controlle
         help_draw(line, x, y, false, level, null, angle, true, 0.9f);
     }
 
-
     private boolean help_draw_level(int x, int y, int l){
         return help_draw(name_list.get(l - 1), x, y, true, l, level_list.get(l - 1), 0, false, 2f);
     }

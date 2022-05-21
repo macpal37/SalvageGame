@@ -61,13 +61,15 @@ public class FlareModel extends DiverObjectModel {
         } catch (Exception e) {
             item_color = Color.WHITE;
         }
+        setFriction(data.getFloat("flare_friction", 2));
+        setFixedRotation(false);
         movement = new Vector2();
         light_color = new Color(1f, 0.5f, 0.5f, color_alpha_val);//Color.BLACK;
         white_light = new Color(1f, 1f, 1f, white_alpha_val);
         setCarried(true);
         drawScale.set(40, 40);
         isActivated = false;
-        shape.setAsBox(.27f, .05f, new Vector2(.15f, -.45f), 0);
+        shape.setAsBox(.27f, .05f, new Vector2(-.15f, 0), 0);
     }
 
 
@@ -122,9 +124,9 @@ public class FlareModel extends DiverObjectModel {
     }
 
 
-    public Color getColor() {
-        return ItemModel.COLOR_OPTIONS[getID()];
-    }
+//    public Color getColor() {
+//        return ItemModel.COLOR_OPTIONS[getID()];
+//    }
 
     /**
      * Release the fixtures for this body, resetting the shape
@@ -198,12 +200,9 @@ public class FlareModel extends DiverObjectModel {
         }
     }
 
-    public int tick = 0;
-
 
     @Override
     public void draw(GameCanvas canvas) {
-        tick++;
 
         if (isActivated || !carried) {
             if (!carried) {
@@ -231,11 +230,11 @@ public class FlareModel extends DiverObjectModel {
                             frame = 0;
                         flareSprite.setFrame(frame);
                     }
-//                        System.out.println("flickering");
                 }
 
             }
-            canvas.draw(flareSprite, Color.WHITE, origin.x + 50, origin.y + 50, getX() * drawScale.x, getY() * drawScale.y, getAngle() - (float) Math.PI / 2, .36f, .36f);
+            if (!isCarried())
+                canvas.draw(flareSprite, Color.WHITE, origin.x + 50, origin.y + 50, getX() * drawScale.x, getY() * drawScale.y, getAngle() - (float) Math.PI / 2, .36f, .36f);
             light.setPosition(getX() / worldDrawScale.x, getY() / worldDrawScale.y);
 //            light.setPosition(getX() + 25 / 32f, getY() - 10 / 32f);
             light.setActive(true);

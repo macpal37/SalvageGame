@@ -897,9 +897,19 @@
                  "value":6
                 }, 
                 {
+                 "name":"kill_strikes",
+                 "type":"int",
+                 "value":3
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
                  "value":"Monster"
+                }, 
+                {
+                 "name":"random_attack_chance",
+                 "type":"float",
+                 "value":0.01
                 }, 
                 {
                  "name":"tentacle_size",
@@ -1288,7 +1298,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {
@@ -1597,6 +1606,11 @@
                  "name":"model_type",
                  "type":"string",
                  "value":"Text"
+                }, 
+                {
+                 "name":"text",
+                 "type":"string",
+                 "value":""
                 }]
         }, 
         {

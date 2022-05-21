@@ -5,7 +5,9 @@ import box2dLight.RayHandler;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -14,15 +16,18 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.xstudios.salvage.assets.AssetDirectory;
 import com.xstudios.salvage.game.GObject;
+import com.xstudios.salvage.game.GameController;
 import com.xstudios.salvage.game.GameObject;
 import com.xstudios.salvage.game.models.*;
 
 import com.xstudios.salvage.game.models.TreasureModel.TreasureType;
 import com.xstudios.salvage.util.FilmStrip;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 
 public class LevelBuilder {
     private JsonReader jsonReader;
@@ -37,6 +42,7 @@ public class LevelBuilder {
     protected Texture woodenChair2;
     protected Texture woodenTable;
     protected Texture monsterTenctacle;
+
 
 //    /**
 //     * The texture for Hazard
@@ -76,8 +82,10 @@ public class LevelBuilder {
     protected TextureRegion doorCloseTexture;
     protected Texture swimmingAnimation;
     protected Texture swimmingAnimationWBody;
+
     protected Texture dustAnimation;
     protected Texture plantAnimation;
+    protected Texture plant2Animation;
     protected Texture keyAnimation;
     // Models to be updated
     protected TextureRegion sprite;
@@ -85,7 +93,7 @@ public class LevelBuilder {
     protected TextureRegion crateTexture;
     protected TextureRegion barrelTexture;
     protected TextureRegion wallBackTexture;
-
+    protected TextureRegion treatureChestOverlay;
     // Models to be updated
     protected DiverModel diver;
 
@@ -98,9 +106,22 @@ public class LevelBuilder {
 
     private FilmStrip monsterAttackAnimation;
 
+    private FilmStrip monsterAttack2Animation;
+    private FilmStrip monsterAttack3Animation;
+    private FilmStrip monsterWiggleAnimation;
+
     private FilmStrip monsterIdleAnimation;
     private FilmStrip doorAnimation;
 
+    private FilmStrip exitDoorAnimation;
+
+    private ArrayList<Wall> invisibleWalls = new ArrayList<>();
+
+    public void turnOffInvisibleWalls() {
+        for (Wall w : invisibleWalls)
+            w.setActive(false);
+
+    }
 
     /**
      * A hashmap used for assigning contents to treasure chests. may be destroyed once level is created
@@ -119,6 +140,7 @@ public class LevelBuilder {
     public void setDirectory(AssetDirectory directory) {
         this.directory = directory;
     }
+
 
     public void gatherAssets(AssetDirectory directory) {
         kitchenSet = new Texture[5];
@@ -141,18 +163,24 @@ public class LevelBuilder {
         swimmingAnimationWBody = directory.getEntry("models:diver_swimming_w_body", Texture.class);
         dustAnimation = directory.getEntry("models:dust", Texture.class);
         plantAnimation = directory.getEntry("models:plant", Texture.class);
+        plant2Animation = directory.getEntry("models:plant2", Texture.class);
         keyAnimation = directory.getEntry("models:key_animation", Texture.class);
         //Treasure Chest Animations
         treasureKeyAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_key", Texture.class), 2, 21, 42);
         treasureOpenAnimation = new FilmStrip(directory.getEntry("models:treasure_chest", Texture.class), 1, 14, 14);
         treasureMonsterAnimation = new FilmStrip(directory.getEntry("models:treasure_chest_w_monster", Texture.class), 1, 36, 36);
+        treatureChestOverlay = new TextureRegion(directory.getEntry("models:treasure_chest_overlay", Texture.class));
+        exitDoorAnimation = new FilmStrip(directory.getEntry("models:exit_door", Texture.class), 1, 25, 25);
 
         monsterTenctacle = directory.getEntry("models:monster1", Texture.class);
 
         monsterAttackAnimation = new FilmStrip(directory.getEntry("models:monster_attack", Texture.class), 5, 6, 30);
         monsterIdleAnimation = new FilmStrip(directory.getEntry("models:monster_idle", Texture.class), 5, 6, 30);
+        monsterAttack2Animation = new FilmStrip(directory.getEntry("models:monster_attack2", Texture.class), 6, 5, 30);
+        monsterAttack3Animation = new FilmStrip(directory.getEntry("models:monster_attack3", Texture.class), 5, 6, 30);
+        monsterWiggleAnimation = new FilmStrip(directory.getEntry("models:monster_wiggle", Texture.class), 6, 3, 18);
 
-        doorAnimation = new FilmStrip(directory.getEntry("models:door_animation", Texture.class), 2, 6, 12);
+        doorAnimation = new FilmStrip(directory.getEntry("models:door_animation", Texture.class), 1, 12, 12);
 
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
         keyTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
@@ -166,6 +194,8 @@ public class LevelBuilder {
         barrelTexture = new TextureRegion(directory.getEntry("models:barrel", Texture.class));
 
         deadBodyTexture = new TextureRegion(directory.getEntry("models:dead_body", Texture.class));
+
+
     }
 
     enum TileType {
@@ -227,11 +257,11 @@ public class LevelBuilder {
     //    public float div = 25f;
     public float div = 25f;
 
-    public enum TentacleType {
-        OldAttack, NewAttack, Idle, KILL
+    public Tentacle createTentacle(float agg_level, float tentacleScale, Wall w, Tentacle.TentacleType type, int lifespan) {
+        return createTentacle(agg_level, tentacleScale, w, type, lifespan, w.getTentacleRotation() / 180 * (float) Math.PI);
     }
 
-    public Tentacle createTentacle(float agg_level, float tentacleScale, Wall w, TentacleType type, int lifespan) {
+    public Tentacle createTentacle(float agg_level, float tentacleScale, Wall w, Tentacle.TentacleType type, int lifespan, float angle) {
 
         float tScale = 2f / 3;
         if (w.canSpawnTentacle()) {
@@ -246,10 +276,31 @@ public class LevelBuilder {
                     t.setFilmStrip(new FilmStrip(monsterTenctacle, 1, 30, 30));
                     tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_tile.json"));
                     break;
+
                 case NewAttack:
                     t = new Tentacle(w, agg_level);
-                    t.setFilmStrip(monsterAttackAnimation.copy());
-                    tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_attack.json"));
+                    switch (rand.nextInt(3)) {
+                        case 2:
+                            t.setFilmStrip(monsterAttack3Animation.copy());
+                            tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_attack3.json"));
+                            break;
+                        case 1:
+                            t.setFilmStrip(monsterAttack2Animation.copy());
+                            t.setTentacleSprite2(monsterWiggleAnimation.copy());
+                            tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_attack2.json"));
+                            break;
+                        case 0:
+                            t.setFilmStrip(monsterAttackAnimation.copy());
+                            tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_attack.json"));
+                            break;
+                    }
+
+                    break;
+                case KILL:
+                case NewAttack2:
+                    t = new Tentacle(w, agg_level);
+                    t.setFilmStrip(monsterAttack3Animation.copy());
+                    tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_attack3.json"));
                     break;
                 case Idle:
 
@@ -259,28 +310,23 @@ public class LevelBuilder {
                     tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_idle.json"));
                     width = tileset.getFloat("imagewidth");
                     height = tileset.getFloat("imageheight");
-                    t.setPosition(t.getX(), t.getY() - height / div / 8 * (float) Math.cos(t.getAngle()));
+                    t.setPosition(t.getX() + 25 / div * (float) Math.cos(t.getAngle()),
+                            t.getY() - height / div / 8 * (float) Math.cos(t.getAngle()) + 25 / div * (float) Math.sin(t.getAngle()));
                     break;
-                case KILL:
-                    t = new Tentacle(w, agg_level);
-                    t.setFilmStrip(monsterAttackAnimation.copy());
-                    tileset = jsonReader.parse(Gdx.files.internal("levels/tilesets/tentacle_attack.json"));
-                    break;
-
             }
-
+            t.setAngle(angle);
             t.setScale(tentacleScale, tentacleScale);
             HazardModel[] boxes = new HazardModel[4];
             int tCount = 0;
             float tileHieght = tileset.getFloat("tileheight");
             float originAngle = 0;
             for (JsonValue tileJson : tileset.get("tiles")) {
+
                 float x = 0;
                 float y = 0;
+
                 ArrayList<Float> verticies = new ArrayList<>();
                 for (JsonValue o : tileJson.get("objectgroup").get("objects")) {
-
-
                     if (o.getString("name").equals("Origin")) {
                         x = round(o.getFloat("x"));
                         y = round(o.getFloat("y"));
@@ -289,14 +335,11 @@ public class LevelBuilder {
                         t.setPivot((-x * t.getScale().x) * (float) Math.cos(t.getAngle())
                                         + (tileHieght - y) * t.getScale().y * (float) Math.sin(t.getAngle())
                                 , (-(tileHieght - y) * t.getScale().y) * (float) Math.cos(t.getAngle()) +
-
                                         (-x * t.getScale().x) * (float) Math.sin(t.getAngle())
                         );
-
                     } else {
                         x = round(o.getFloat("x")) / div - width / div + width / div / 6;
                         y = round(o.getFloat("y")) / div + height / div;
-
                         verticies.clear();
                         if (o.get("polygon") != null) {
 
@@ -345,7 +388,7 @@ public class LevelBuilder {
             t.setFriction(0.4f);
             t.setRestitution(0.1f);
             t.setDrawScale(drawScale);
-
+            System.out.println("Tentacele Created!!");
             t.setStartGrowing(true);
             t.setMaxLifeSpan(lifespan);
             t.setName("tentacle");
@@ -354,6 +397,7 @@ public class LevelBuilder {
             return null;
     }
 
+    Random rand = new Random();
 
     private Tile[] createTiles(JsonValue tileset, float div, float tileSize) {
         Tile[] tiles = new Tile[tileset.getInt("tilecount")];
@@ -508,7 +552,7 @@ public class LevelBuilder {
                     dust.setBodyType(BodyDef.BodyType.StaticBody);
                     dust.setSensor(true);
                     dust.setDrawScale(drawScale);
-//                    gameObjects.add(dust);
+                    gameObjects.add(dust);
                     ii++;
                     if (ii == width) {
                         ii = 0;
@@ -549,6 +593,7 @@ public class LevelBuilder {
                                     if (prop.getString("name").equals("starting_oxygen"))
                                         d.setMaxOxygen(prop.getInt("value"));
                                 }
+                            d.setAngle(rotation);
                             gameObjects.add(d);
                             break;
                         case DeadBody:
@@ -590,7 +635,8 @@ public class LevelBuilder {
                             gameObjects.add(door);
                             break;
                         case Obstacle:
-                            ObstacleModel obstacle = new ObstacleModel(createVerticies(tile, 0, 0, widthScale / 2, heightScale / 2), sx, sy);
+                            ObstacleModel obstacle = new ObstacleModel(createVerticies(tile, 0, 0,
+                                    widthScale / 2, heightScale / 2), sx + objectWidth / div / 2, sy + objectHeight / div / 2);
                             switch (tile.id) {
                                 case 0:
                                     obstacle.setTexture(barrelTexture);
@@ -603,19 +649,25 @@ public class LevelBuilder {
                                 default:
                                     System.out.println("Unknown Object?");
                             }
-                            obstacle.setAngle(rotation);
+
+                            obstacle.setAngle(rand.nextFloat() * (float) Math.PI * 2f);
                             obstacle.setCanAlertMonster(true);
                             gameObjects.add(obstacle);
                             break;
 
                         case Goal:
+                            GoalDoor gd = new GoalDoor(sx, sy + objectHeight / (div * 2) - 5 / div, objectWidth / div, objectHeight / div);
 
-                            gameObjects.add(new GoalDoor(sx, sy + objectHeight / (div * 2), objectWidth / div, objectHeight / div));
+
+                            gd.setDoorScale((40f / div) * (widthScale / 2), (40f / div) * (heightScale / 4f));
+                            gd.setFilmStrip(doorAnimation.copy());
+                            gameObjects.add(gd);
                             break;
                         case Block:
                             Wall block = new Wall(createVerticies(tile, 0, 0, widthScale, heightScale), sx, sy);
                             block.setInvisible(true);
                             block.setAngle(rotation);
+                            invisibleWalls.add(block);
                             gameObjects.add(block);
                             break;
                         case Hazard:
@@ -629,8 +681,10 @@ public class LevelBuilder {
                             switch (tile.id) {
                                 case 0:
 
-                                    decor.setFilmStrip(new FilmStrip(plantAnimation, 1, 6, 6));
-
+                                    if (rand.nextInt(2) == 1)
+                                        decor.setFilmStrip(new FilmStrip(plantAnimation, 1, 6, 6));
+                                    else
+                                        decor.setFilmStrip(new FilmStrip(plant2Animation, 1, 6, 6));
                                     break;
                                 case 1:
                                     decor.setFilmStrip(new FilmStrip(woodenChair1, 1, 1, 1));
@@ -653,7 +707,7 @@ public class LevelBuilder {
                                     decor.setScale(1 / 3f, 1 / 3f);
                                     break;
                                 default:
-                                    System.out.println("Unknown Object?");
+
 
                             }
                             decor.setScale(decor.getScale().x * objectWidth / tileSize, decor.getScale().y * objectHeight / tileSize);
@@ -669,12 +723,18 @@ public class LevelBuilder {
                             if (obj.get("properties") != null)
                                 for (JsonValue prop : obj.get("properties")) {
                                     if (prop.getString("name").equals("aggro_rate")) {
-                                        monster.setAggravationRate(prop.getFloat("value"));
-                                        System.out.println("ahhhhhhhhhhhhhhhhhhhh " + prop.getFloat("value") + " " + monster.getAggravationRate());
+                                        float aggro = prop.getFloat("value") * 10f;
+                                        System.out.println("");
+                                        monster.setAggravationRate(aggro);
                                     } else if (prop.getString("name").equals("aggro_threshold"))
                                         monster.setAggroLevel(prop.getInt("value"));
+                                    else if (prop.getString("name").equals("kill_strike"))
+                                        monster.setAggroStrikes(prop.getInt("value"));
                                     else if (prop.getString("name").equals("vision_radius"))
                                         monster.setVisionRadius(prop.getInt("value"));
+                                    else if (prop.getString("name").equals("random_attack_chance"))
+                                        monster.setRandomAttackChance(prop.getFloat("value"));
+
 
                                 }
                             gameObjects.add(monster);
@@ -710,6 +770,16 @@ public class LevelBuilder {
                                     k -> new ArrayList<TreasureModel>());
                             chests.get(treasureModel.getID()).add(treasureModel);
                             break;
+                        case Text:
+                            TextModel textModel = new TextModel(sx, sy);
+                            if (obj.get("properties") != null)
+                                for (JsonValue prop : obj.get("properties")) {
+                                    if (prop.getString("name").equals("text"))
+                                        textModel.setText(prop.getString("value"));
+                                }
+                            gameObjects.add(textModel);
+                            break;
+
                     }
 
 
@@ -731,12 +801,10 @@ public class LevelBuilder {
             ItemModel key = new ItemModel(key_chest.getX(), key_chest.getY() + 10f,
                     constants.get("key"), ItemModel.ItemType.KEY);
 
-            System.out.println("key x: " + key_chest.getX() + " key y: " + key_chest.getY());
             key.setFilmStrip(new FilmStrip(keyAnimation, 1, 6, 6));
 //            key.setAngle(rotation);
             key.setID(key_chest.getID());
             // this key will not be active/visible?
-            System.out.println("entered create key: " + key.isActive());
             key.setKeyActive(false);
             key.setInChest(true);
             key_chest.setKeyReward(key);
@@ -791,6 +859,7 @@ public class LevelBuilder {
                 treasureModel.setMass(10f);
                 treasureModel.setFriction(0.4f);
                 treasureModel.setRestitution(0.1f);
+                treasureModel.setTexture(treatureChestOverlay);
                 treasureModel.setName("treasure");
                 level.addObject(treasureModel);
             } else if (go instanceof Door) {
@@ -805,6 +874,8 @@ public class LevelBuilder {
                 level.addObject(door);
             } else if (go instanceof ObstacleModel) {
                 ObstacleModel obstacle = (ObstacleModel) go;
+                // TODO: One day we will be able to kick off of obstacles
+//                obstacle.setWall(true);
                 obstacle.setBodyType(BodyDef.BodyType.DynamicBody);
                 obstacle.setSensor(false);
                 obstacle.setFixedRotation(false);
@@ -816,7 +887,6 @@ public class LevelBuilder {
                 obstacle.setName("obstacle");
                 level.addObject(obstacle);
             } else if (go instanceof Wall) {
-
                 Wall obj = (Wall) go;
                 obj.setWall(true);
                 obj.setBodyType(BodyDef.BodyType.StaticBody);
@@ -832,7 +902,7 @@ public class LevelBuilder {
                 diver = (DiverModel) go;
                 diver.setStunned(false);
                 diver.setTexture(diverTexture);
-                diver.addFilmStrip(new FilmStrip(swimmingAnimation, 4, 12, 48));
+                diver.addFilmStrip(new FilmStrip(swimmingAnimation, 12, 6, 72));
                 diver.addFilmStrip(new FilmStrip(swimmingAnimationWBody, 4, 12, 48));
                 diver.setPingTexture(pingTexture);
                 diver.setDrawScale(drawScale);
@@ -867,9 +937,11 @@ public class LevelBuilder {
                 goal_door.setFriction(goal.getFloat("friction", 0));
                 goal_door.setRestitution(goal.getFloat("restitution", 0));
                 goal_door.setID(3);
+                goal_door.setTexture(doorOpenTexture);
                 goal_door.setSensor(true);
                 goal_door.setDrawScale(drawScale);
-                goal_door.setTexture(doorOpenTexture);
+                goal_door.setFont(GameController.displayFont2);
+                goal_door.setFilmStrip(exitDoorAnimation.copy());
                 goal_door.setName("goal" + goalDoorCounter++);
                 level.addObject(goal_door);
 
@@ -883,6 +955,13 @@ public class LevelBuilder {
                 monster.setDrawScale(drawScale);
                 monster.setName("Monster");
                 level.addObject(monster);
+            } else if (go instanceof TextModel) {
+                TextModel text = (TextModel) go;
+                text.setDrawScale(drawScale);
+                text.setFont(GameController.displayFont);
+                text.setSensor(true);
+                level.getAboveObjects().add(text);
+                level.addObject(text);
             }
         }
 
