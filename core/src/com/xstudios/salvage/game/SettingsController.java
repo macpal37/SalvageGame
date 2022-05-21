@@ -60,15 +60,11 @@ public class SettingsController extends ScreenController implements ControllerLi
 
     Player player;
 
-    AudioController audio;
-
     public SettingsController() {
 
 
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
-
-        segment = (width/2 - width/9 - width/14)/4;
 
         press_menu = false;
         press_reset = false;
