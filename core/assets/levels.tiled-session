@@ -239,16 +239,16 @@
             "scale": 0.5,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 538,
-                "y": 912
+                "x": 536,
+                "y": 900
             }
         },
         "levels/Golden3.json": {
             "scale": 0.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 586,
-                "y": 896
+                "x": 28,
+                "y": 914
             }
         },
         "levels/Golden4.json": {
@@ -260,11 +260,11 @@
             }
         },
         "levels/Golden5.json": {
-            "scale": 0.5,
-            "selectedLayer": 0,
+            "scale": 0.75,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 1250,
-                "y": 750
+                "x": 652,
+                "y": 777.3333333333333
             }
         },
         "levels/Golden6.json": {

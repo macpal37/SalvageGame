@@ -65,6 +65,8 @@ public class LevelModel {
         return doors;
     }
 
+    public ArrayList<ObstacleModel> obstacleModels = new ArrayList<>();
+
     public ArrayList<Tentacle> getTentacles() {
         return tentacles;
     }
@@ -87,7 +89,9 @@ public class LevelModel {
 
             monster = (Monster) obj;
         }
-        if (obj instanceof Door) {
+        if (obj instanceof ObstacleModel) {
+            obstacleModels.add((ObstacleModel) obj);
+        } else if (obj instanceof Door) {
             doors.add((Door) obj);
         } else if (obj instanceof DiverModel) {
             diver = (DiverModel) obj;
