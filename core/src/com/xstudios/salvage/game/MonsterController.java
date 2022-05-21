@@ -131,7 +131,6 @@ public class MonsterController {
         roar_pause = 0;
         monster.setAggressiveLength(AGGRESSIVE_LENGTH);
 
-        //monster.setVisionRadius(40);
         MAX_AGGRESSIVE_TIME = monster.getAggressiveLength() * monster.getAggroStrikes();
         RANDOM_ATTACK_CHANGE = monster.getRandomAttackChance();
     }
@@ -244,7 +243,6 @@ public class MonsterController {
                 state = FSMState.IDLE; // If debugging is off
                 break;
         }
-//        System.out.println("STATE " + state);
     }
 
 
