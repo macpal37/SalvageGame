@@ -84,11 +84,11 @@ public class DecorModel extends GameObject {
 
         if (tick % 10 == 0) {
             int frame = spriteSheet.getFrame();
-
             frame++;
             if (frame >= spriteSheet.getSize() && tick % ((int) animSleep) == 0)
                 frame = 0;
-            spriteSheet.setFrame(frame);
+            if (frame < spriteSheet.getSize())
+                spriteSheet.setFrame(frame);
         }
         canvas.draw(spriteSheet, Color.WHITE, origin.x, origin.y, getX() * drawScale.x - origin.x,
                 getY() * drawScale.y - origin.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);

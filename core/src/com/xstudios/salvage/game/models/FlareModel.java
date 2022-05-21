@@ -144,7 +144,7 @@ public class FlareModel extends DiverObjectModel {
         if (body == null) {
             return;
         }
-        System.out.println("IN FLARE CREATE FIXTURES");
+
         releaseFixtures();
         fixture.filter.maskBits = 0x004;
         fixture.filter.groupIndex = 5;
