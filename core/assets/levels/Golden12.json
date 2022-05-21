@@ -306,7 +306,7 @@
                         {
                          "name":"kill_strikes",
                          "type":"int",
-                         "value":6
+                         "value":10
                         }, 
                         {
                          "name":"random_attack_chance",
