@@ -37,9 +37,7 @@ public class AudioController {
     private float sound_effects_volume;
     private float music_volume;
 
-
     public AudioController() {
-
         audio = Audio.init();
         sound_effects_volume = 1.0f;
         music_volume = 1.0f;
@@ -79,12 +77,10 @@ public class AudioController {
         volume_tick = 0.0f;
     }
 
-    public void setUp(float m, float se) {
+    public void setUp(float m, float se){
         music_volume = m;
         sound_effects_volume = se;
     }
-
-    ;
 
     public static AudioController getInstance() {
         if (theController == null) {
@@ -135,7 +131,6 @@ public class AudioController {
         float volume = (max_oxygen - oxygen) / max_oxygen;
         heartbeat.setVolume(sound_effects_volume * (volume - 0.1f) * 0.75f);
         time_apart = (int) ((1 - volume) * 200);
-
 
         if (!heartbeat.isPlaying()) {
             if (ticks > last_playing_tick + time_apart) {

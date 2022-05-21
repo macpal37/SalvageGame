@@ -39,10 +39,13 @@ public class MenuController extends ScreenController implements ControllerListen
     protected Texture select_level;
     protected Texture setting;
     protected Texture tentacles;
+    protected Texture rules;
 
     private boolean press_quit;
     private boolean press_select_level;
     private boolean press_setting;
+
+    private boolean press_rules;
 
     private boolean release;
 
@@ -54,6 +57,7 @@ public class MenuController extends ScreenController implements ControllerListen
         press_select_level = false;
         press_setting = false;
         press_quit = false;
+        press_rules = false;
         release = false;
     }
 
@@ -65,6 +69,12 @@ public class MenuController extends ScreenController implements ControllerListen
         camera.render();
     }
 
+    public void setCameraPositionNormal() {
+        camera.setCameraPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+        camera.render();
+    }
+
+
     public void gatherAssets(AssetDirectory directory) {
         background = directory.getEntry("background:menu", Texture.class);
         title = directory.getEntry("title", Texture.class);
@@ -72,6 +82,7 @@ public class MenuController extends ScreenController implements ControllerListen
         setting = directory.getEntry("setting", Texture.class);
         select_level = directory.getEntry("select_level", Texture.class);
         tentacles = directory.getEntry("screen_tentacles", Texture.class);
+        rules = directory.getEntry("rules", Texture.class);
     }
 
     public void dispose(){
@@ -80,8 +91,11 @@ public class MenuController extends ScreenController implements ControllerListen
         quit = null;
         setting = null;
         select_level = null;
+        rules = null;
+
         press_select_level = false;
         press_setting = false;
+        press_rules = false;
         press_quit = false;
         release = false;
     }
@@ -116,7 +130,9 @@ public class MenuController extends ScreenController implements ControllerListen
 
         press_select_level = help_draw(select_level, width/3, height - height/3 - height/12, true);
 
-        press_setting = help_draw(setting, width/3, height/2 - height/10, true);
+        press_rules = help_draw(rules, width/3, height/2 - height/25, true);
+
+        press_setting = help_draw(setting, width/3, height/3, true);
 
         press_quit = help_draw(quit, width/3, height/6 + height/20, true);
 
@@ -201,6 +217,10 @@ public class MenuController extends ScreenController implements ControllerListen
         else if(press_quit){
             listener.exitScreen(this, 2);
         }
+        else if(press_rules) {
+            listener.exitScreen(this, 3);
+        }
+
         return true;
     }
 

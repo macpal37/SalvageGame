@@ -12,6 +12,7 @@ public class DesktopLauncher {
         // Resolution 16:9
         config.setWindowedMode(1280, 720);
         config.disableAudio(true);
+        config.setTitle("Salvage");
 //        config.setFullscreenMode(new DI);
         GLFW.glfwInit();
 

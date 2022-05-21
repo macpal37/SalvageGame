@@ -64,14 +64,15 @@ public class LevelSelectController extends ScreenController implements Controlle
         main_menu = directory.getEntry("main_menu", Texture.class);
         level = directory.getEntry("level", Texture.class);
         line = directory.getEntry("line", Texture.class);
-        for(int i = 1; i < 13; i++){
+        for(int i = 1; i < 14; i++){
             level_list.add(directory.getEntry(Integer.toString(i), Texture.class));
         }
 
-        for(int a = 1; a < 13; a++){
+        for(int a = 1; a < 14; a++){
             name_list.add(directory.getEntry("name" + a, Texture.class));
         }
     }
+
 
     public void setLocked(int level){
         locked = level;
@@ -90,10 +91,15 @@ public class LevelSelectController extends ScreenController implements Controlle
         press_main_menu = false;
     }
 
+    public void setCameraPositionNormal() {
+        camera.setCameraPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+        camera.render();
+    }
+
+
     private void help_draw_line(int x, int y, int level, float angle){
         help_draw(line, x, y, false, level, null, angle, true, 0.9f);
     }
-
 
     private boolean help_draw_level(int x, int y, int l){
         return help_draw(name_list.get(l - 1), x, y, true, l, level_list.get(l - 1), 0, false, 2f);
@@ -122,23 +128,26 @@ public class LevelSelectController extends ScreenController implements Controlle
 
             if(level != 0){
                 if(level > locked) {
+                    int ox1 = t1.getWidth()/2;
+                    int oy1 = t1.getHeight()/2;
                     c = Color.GRAY;
-                    canvas.draw(t, c, ox, oy, x, height - y, 0,s *  scale, s * scale);
+                    canvas.draw(t1, c, ox1, oy1, x, height - y, angle, s * scale, s * scale);
                     return false;
                 }
             }
+
             if(t1 != null){
                 int ox1 = t1.getWidth()/2;
                 int oy1 = t1.getHeight()/2;
                 float h1 = ox1 * scale * s;
-                float w1 = oy1 * scale * s;
-                if(((x + w1 > pX && x - w1 < pX) && (flip_y + h1 > pY && flip_y - h1 < pY))){
+                float w1 = 1.5f * oy1 * scale * s;
+                if(((x + w1 > pX && x - w1 < pX) && (flip_y + h1/2 > pY && flip_y - h1/2 < pY))){
                     c = Color.GRAY;
                     if(Gdx.input.isTouched()) clicked = true;
                 }
                 canvas.draw(t1, c, ox1, oy1, x, height - y, angle, s * scale, s * scale);
             }
-            if(((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY))){
+            else if(((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY))){
                 c = Color.GRAY;
                 if(Gdx.input.isTouched()) clicked = true;
             }
@@ -157,32 +166,19 @@ public class LevelSelectController extends ScreenController implements Controlle
         press_main_menu = help_draw(main_menu, width/7,height/7, true, 0, null, 0, false, 1f);
 
         //lines
-        help_draw_line(width/3, height/2, 2, 0.8f);
-        help_draw_line(width - width/3, height/3, 3, 0.2f);
+        help_draw_line(width/3, height/2 - height/20, 2, 0.8f);
+        help_draw_line(width - width/3, height/3 - height/20, 3, 0.2f);
         help_draw_line(width - width/7, height/2, 4, -1.5f);
-        help_draw_line(width - width/3, height - height/5, 5, 0);
+        help_draw_line(width - width/3, height - height/5 - height/20, 5, 0);
         help_draw_line(width/3, height - height/6, 6, 1f);
         help_draw_line(width/5, height + height/4, 7, -1f);
         help_draw_line(width/3, height + height/3, 8, 1f);
-        help_draw_line(width - width/3, height + height/4, 9, 0);
-        help_draw_line(width - width/4, height + height/2, 10, 1f);
-        help_draw_line(width/2, 2 * height - height/6, 11, 0.7f);
-        help_draw_line(width/2 + width/12, 2 * height + height/10, 12, -0.2f);
+        help_draw_line(width - width/3, height + height/4 - height/40, 9, 0);
+        help_draw_line(width - width/4, height + height/2 - height/10, 10, 1.5f);
+        help_draw_line(width/2, 2 * height - height/6 - height/10, 11, 1.0f);
+        help_draw_line(width/2 - width/13, 2 * height - height/10, 12, 0f);
+        help_draw_line(width/2 + width/20, 2 * height + height/6, 13, -1.8f);
 
-//        int[][] measurements = {
-//                new int[]{width / 6, height / 2},
-//                new int[]{width / 2, height / 4},
-//                new int[]{width - width / 6, height / 4},
-//                new int[]{width - width / 5, height - height / 4},
-//                new int[]{width / 2, height - height / 3},
-//                new int[]{width / 5, height},
-//                new int[]{width / 4, 2 * height - height / 2},
-//                new int[]{width / 2, height + height / 6},
-//                new int[]{width - width / 5, height + height / 4},
-//                new int[]{width - width / 3, 2 * height - height / 3},
-//                new int[]{width / 2 - width / 12, 2 * height - height / 10},
-//                new int[]{width - width / 4, 2 * height + height / 5},
-//        };
         Boolean[] levels = {
                 help_draw_level(width/6, height/2, 1),
                 help_draw_level(width/2, height/4, 2),
@@ -193,9 +189,11 @@ public class LevelSelectController extends ScreenController implements Controlle
                 help_draw_level(width/4, 2 * height - height/2, 7),
                 help_draw_level(width/2, height + height/6, 8),
                 help_draw_level(width - width/5, height + height/4, 9),
-                help_draw_level(width - width/3, 2 * height - height/3, 10),
-                help_draw_level(width/2 - width/12, 2 * height - height/10, 11),
-                help_draw_level(width - width/4, 2 * height + height/5, 12)};
+                help_draw_level(width - width/3, 2 * height - height/3 - height/10, 10),
+                help_draw_level(width/2 - width/12, 2 * height - height/5, 11),
+                help_draw_level(width - width/4 - width/10, 2 * height, 12),
+                help_draw_level(width/2 - width/7, 2 * height + height/3, 13)
+        };
 
 
     //clicked level
@@ -275,7 +273,6 @@ public class LevelSelectController extends ScreenController implements Controlle
      */
 
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-
         if(press_main_menu)
             listener.exitScreen(this, 0);
 

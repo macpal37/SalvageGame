@@ -907,7 +907,7 @@ public class DiverModel extends GameObject {
                         swimFrame = 0;
 
 
-                    int swimmFrame = swimFrame + ((active_flare) ? 58 : 0);
+                    int swimmFrame = swimFrame + ((active_flare) ? 64 : 0);
 
 
                     System.out.println("SWIMM: " + swimmFrame);
@@ -1127,18 +1127,16 @@ public class DiverModel extends GameObject {
         if (num_flares > 0 && active_flare) {
             FlareModel f = flares.get(num_flares - 1);
             if (flare_duration < MAX_FLARE_DURATION) {
-
                 f.setActivated(true);
-                f.setX((getX() + (25 / 32f * (float) Math.cos(getAngle()))) * worldDrawScale.x);
-                f.setY((getY() + (25 / 32f * (float) Math.sin(getAngle()))) * worldDrawScale.y);
+                f.setX((getX() + (50 / 32f * (float) Math.cos(getAngle())) * ((faceRight) ? 1 : -1)) * worldDrawScale.x);
+                f.setY((getY() + (50 / 32f * (float) Math.sin(getAngle())) * ((faceRight) ? 1 : -1)) * worldDrawScale.y);
                 f.setAngle(getAngle());
                 flare_duration++;
-//                System.out.println("FLARe IS ACTIVE");
             } else {
 //                f.setActivated(false);
                 f.setCarried(false);
-                f.setX((getX() + (25 / 32f * (float) Math.cos(getAngle()))) * worldDrawScale.x);
-                f.setY((getY() + (25 / 32f * (float) Math.sin(getAngle()))) * worldDrawScale.y);
+                f.setX((getX() + (50 / 32f * (float) Math.cos(getAngle())) * ((faceRight) ? 1 : -1)) * worldDrawScale.x);
+                f.setY((getY() + (50 / 32f * (float) Math.sin(getAngle())) * ((faceRight) ? 1 : -1)) * worldDrawScale.y);
                 f.setAngle(0);
                 f.setVX(0);
                 f.setVY(0);
@@ -1317,7 +1315,7 @@ public class DiverModel extends GameObject {
                     if (idleFrame >= 16) {
                         idleFrame = 0;
                     }
-                    int totalIdleFrame = idleFrame + ((active_flare) ? 42 : 24);
+                    int totalIdleFrame = idleFrame + ((active_flare) ? 48 : 24);
 
                     diverSprites.get(diverState).setFrame(totalIdleFrame);
 
