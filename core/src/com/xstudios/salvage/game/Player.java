@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.*;
+import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.xstudios.salvage.assets.AssetDirectory;
 
 
@@ -78,12 +79,14 @@ public class Player {
         if (isMac()) {
             FileHandle file = Gdx.files.external("salvage_save_files/player.json");
             Json json = new Json();
+            json.setOutputType(OutputType.json);
             file.writeString(json.toJson(this),false);
         } else {
             System.out.println("Saving file");
 
             FileHandle file = Gdx.files.local("player.json");
             Json json = new Json();
+            json.setOutputType(OutputType.json);
             System.out.println(json.toJson(this, Player.class));
             file.writeString(json.toJson(this, Player.class),false);
         }
