@@ -684,6 +684,24 @@
                  "width":100,
                  "x":2154.20889452162,
                  "y":781.562441632185
+                }, 
+                {
+                 "gid":4,
+                 "height":100,
+                 "id":203,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"starting_oxygen",
+                         "type":"int",
+                         "value":200
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":230,
+                 "y":194
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -714,7 +732,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":203,
+ "nextobjectid":204,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",
