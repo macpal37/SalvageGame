@@ -157,8 +157,9 @@ public class GoalDoor extends GameObject {
         geometry = null;
 
         feedback = new TextModel(x, y);
+        feedback.setTextPosition(x + width, y);
 
-        feedback.setText("You need to rescue your friend!");
+//        feedback.setText("You need to\n rescue your\n friend!");
         // Initialize
         resize(width, height);
     }
@@ -240,6 +241,7 @@ public class GoalDoor extends GameObject {
         feedback.setDrawScale(value);
     }
 
+
     /**
      * Draws the outline of the physics body.
      * <p>
@@ -264,36 +266,21 @@ public class GoalDoor extends GameObject {
         sprite.setFrame(0);
     }
 
-    public void addTextures(TextureRegion closed, TextureRegion open) {
-        openDoor = open;
-        closedDoor = closed;
-    }
 
     private TextureRegion openDoor;
     private TextureRegion closedDoor;
 
     public void draw(GameCanvas canvas) {
 
-        feedback.draw(canvas);
-//        tick++;
-//        if (openDoor != null && closedDoor != null) {
-//            float x = vertices[0];
-//            float y = vertices[1];
-//            if (sprite.getFrame() == 0) {
-//                canvas.draw(closedDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x,
-//                        (y) * drawScale.y, getAngle(), doorScale.x * worldDrawScale.x, doorScale.y * worldDrawScale.y);
-//            } else if (sprite.getFrame() < 11) {
-//                if (tick % 6 == 0) {
-//                    sprite.setFrame(sprite.getFrame() + 1);
-//                }
-//                canvas.draw(sprite, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x,
-//                        (y) * drawScale.y, getAngle(), doorScale.x * worldDrawScale.x, doorScale.y * worldDrawScale.y);
-//
-//            } else {
-//                canvas.draw(openDoor, ItemModel.COLOR_OPTIONS[getID()], 0, 0, x * drawScale.x,
-//                        (y) * drawScale.y, getAngle(), doorScale.x * worldDrawScale.x, doorScale.y * worldDrawScale.y);
-//            }
-//        }
+//        feedback.draw(canvas);
+        if (tick % 10 == 0)
+            sprite.setFrame(sprite.getFrame() + 1);
+        if (sprite.getFrame() >= 24)
+            sprite.setFrame(0);
+
+        canvas.draw(sprite, Color.WHITE, 0, 0, getX() * drawScale.x,
+                (getY() - dimension.y / 2) * drawScale.y, getAngle(), doorScale.x * worldDrawScale.x, doorScale.y * worldDrawScale.y * 1.05f);
+
     }
 
 

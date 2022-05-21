@@ -22,6 +22,12 @@ public class TextModel extends GameObject {
     private PolygonShape shape;
     private float radius = 2.5f;
 
+    public void setTextPosition(float x, float y) {
+        this.textPosition.set(x, y);
+    }
+
+    private Vector2 textPosition;
+
     private Color textColor;
 
     public void setFont(BitmapFont font) {
@@ -40,9 +46,12 @@ public class TextModel extends GameObject {
 
     public TextModel(float x, float y) {
         super(x, y);
+        textPosition = new Vector2(x, y);
+
         setTextActive(false);
 
-        textColor = new Color(1f, 1f, 1f, 0f);
+
+        textColor = new Color(1f, 1f, 1f, 1f);
 
 
     }
@@ -97,23 +106,23 @@ public class TextModel extends GameObject {
     @Override
     public void draw(GameCanvas canvas) {
 
-        if (textActive) {
+//        if (textActive) {
+//
+//
+//            if (tick % 5 == 0) {
+//                if (isDisplay) {
+//                    if (textColor.a < 1)
+//                        textColor.set(1f, 1f, 1f, textColor.a + 0.05f);
+//                } else {
+//                    if (textColor.a > 0)
+//                        textColor.set(1f, 1f, 1f, textColor.a - 0.05f);
+//                }
+//                font.setColor(textColor);
+//            }
 
-
-            if (tick % 5 == 0) {
-                if (isDisplay) {
-                    if (textColor.a < 1)
-                        textColor.set(1f, 1f, 1f, textColor.a + 0.05f);
-                } else {
-                    if (textColor.a > 0)
-                        textColor.set(1f, 1f, 1f, textColor.a - 0.05f);
-                }
-                font.setColor(textColor);
-            }
-
-            canvas.drawText(text, font,
-                    (getX()) * drawScale.x * worldDrawScale.x, (getY()) * drawScale.y * worldDrawScale.y);
-        }
+        canvas.drawText(text, font,
+                (textPosition.x) * drawScale.x * worldDrawScale.x, (textPosition.y) * drawScale.y * worldDrawScale.y);
+//        }
 
     }
 
@@ -126,6 +135,7 @@ public class TextModel extends GameObject {
     public void drawDebug(GameCanvas canvas) {
         canvas.drawPhysics(textRadius, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
     }
+
 
     private boolean textActive;
 

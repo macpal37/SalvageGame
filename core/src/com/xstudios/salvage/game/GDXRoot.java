@@ -180,6 +180,7 @@ public class GDXRoot extends Game implements ScreenListener {
 //			}
 
 			//loading >> menu
+			AudioController.getInstance().initialize();
 			switch_screen(menu_controller, directory, canvas);
 		}
 		//MENU
@@ -222,6 +223,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			//pause >> menu
 			if (exitCode == 2) {
 				controller.setDefaultPosition();
+				AudioController.getInstance().reset();
 				switch_screen(menu_controller, directory, canvas);
 			}
 
@@ -260,6 +262,7 @@ public class GDXRoot extends Game implements ScreenListener {
 			//game over >> next level, will be main menu if next level doesn't exist
 			if (exitCode == 2) {
 				//main menu instead
+				AudioController.getInstance().reset();
 				if (current >= total_levels)
 					switch_screen(menu_controller, directory, canvas);
 					//next level

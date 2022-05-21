@@ -45,8 +45,20 @@
                 }, 
                 {
                  "gid":16,
-                 "height":198.148590098729,
+                 "height":204.148590098729,
                  "id":92,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":7.64443497407504,
+                 "y":852.94992542084
+                }, 
+                {
+                 "gid":16,
+                 "height":204.148590098729,
+                 "id":127,
                  "name":"",
                  "rotation":0,
                  "type":"",
@@ -82,7 +94,7 @@
                         {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":15
+                         "value":120
                         }],
                  "rotation":0,
                  "type":"",
@@ -517,7 +529,8 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":126,
+ "nextobjectid":128,
+
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",

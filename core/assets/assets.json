@@ -22,7 +22,6 @@
     "next" : "ui/next.png",
     "try_again" : "ui/try_again.png",
     "game_over" : "background/game_over_background.png",
-    "m": "background/m.jpg",
     "title": "ui/salvage.png",
     "screen_tentacles": "ui/screen_tentacles.png",
     "quit": "ui/quit.png",
@@ -66,7 +65,7 @@
     "models:dust": "models/dust.png",
     "models:plant": "models/plant.png",
     "models:plant2": "models/plant2.png",
-
+  "models:exit_door": "models/exit_door_animation.png",
 
     "models:barrel": "models/barrel.png",
     "models:crate": "models/crate.png",
@@ -140,11 +139,11 @@
   "fonts": {
     "fonts:atlantis_font": {
       "file": "fonts/SalvageFont.ttf",
-      "size": 24
+      "size": 16
     },
     "fonts:atlantis_font2": {
           "file": "fonts/SalvageFont2.ttf",
-          "size": 24
+          "size": 20
         }
   }
 }

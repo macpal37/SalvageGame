@@ -252,12 +252,15 @@ public class TreasureModel extends ObstacleModel {
             }
             canvas.draw(idleSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x,
                     getY() * drawScale.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
-        } else if (suspenseSprite.getFrame() < 35) {
-            if (tick % 5 == 0)
-                suspenseSprite.setFrame(suspenseSprite.getFrame() + 1);
-            canvas.draw(suspenseSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x,
-                    getY() * drawScale.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
-        } else {
+
+        }
+//        else if (suspenseSprite.getFrame() < 35) {
+//            if (tick % 5 == 0)
+//                suspenseSprite.setFrame(suspenseSprite.getFrame() + 1);
+//            canvas.draw(suspenseSprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x,
+//                    getY() * drawScale.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
+//        }
+        else {
             canvas.draw(sprite, Color.WHITE, origin.x / scale.x, origin.y / scale.y, getX() * drawScale.x,
                     getY() * drawScale.y, getAngle(), scale.x * worldDrawScale.x, scale.y * worldDrawScale.y);
 
