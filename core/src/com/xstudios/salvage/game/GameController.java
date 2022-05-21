@@ -179,12 +179,11 @@ public class GameController extends ScreenController implements ContactListener 
      * level4 - insanely hard key level
      */
     // Beta Release Setup
-//    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8"};
-    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8", "Golden9", "Golden10", "Golden11", "Golden12"};
 
+
+    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8", "Golden0", "Golden1", "Golden2"};
 
     private int curr_level;
-
 
     private enum state {
         PLAYING,
@@ -218,7 +217,7 @@ public class GameController extends ScreenController implements ContactListener 
     private Color monster_color;
     private Color kill_monster_color;
     private float stun_light_radius = 5f;
-    private float normal_light_radius = 15f;
+    private float normal_light_radius = 18f;
 
     private RayHandler rayHandler;
 
@@ -319,8 +318,8 @@ public class GameController extends ScreenController implements ContactListener 
         low_oxygen_color = new Color(0f, .2f, .7f, .3f);
         monster_color = new Color(1f, 0f, 0f, .4f);
 
-        light = new PointLight(rayHandler, 100, Color.BLACK, normal_light_radius, 0, 0);
-        wallShine = new PointLight(rayHandler, 100, Color.BLUE, 8, 0, 0);
+        light = new PointLight(rayHandler, 100, Color.BLACK, normal_light_radius - 5f, 0, 0);
+        wallShine = new PointLight(rayHandler, 100, Color.BLUE, normal_light_radius - 10f, 0, 0);
         wallShine.setSoft(true);
 
         int r = 225, g = 103, b = 30;
@@ -457,8 +456,6 @@ public class GameController extends ScreenController implements ContactListener 
         flareAnimation = directory.getEntry("models:flare_animation", Texture.class);
         background = new TextureRegion(directory.getEntry("background:ocean", Texture.class));
 //        itemTexture = new TextureRegion(directory.getEntry("models:key", Texture.class));
-        constants = directory.getEntry("models:constants", JsonValue.class);
-
         displayFont = directory.getEntry("fonts:atlantis_font", BitmapFont.class);
 
         displayFont2 = directory.getEntry("fonts:atlantis_font2", BitmapFont.class);
@@ -565,7 +562,6 @@ public class GameController extends ScreenController implements ContactListener 
 //            System.out.println();
         }
 
-
         monsterController = new MonsterController(level.getMonster(), getWorldBounds());
         monsterController.setAudio(AudioController.getInstance());
 
@@ -579,19 +575,17 @@ public class GameController extends ScreenController implements ContactListener 
 
         if (game_over_animation_time <= 0) {
             if (game_state == state.DYING) {
-
+                light.setDistance(0);
+                wallShine.setDistance(0);
                 game_state = state.EXIT_LOSE;
             } else if (game_state == state.WIN_ANIMATION) {
-                System.out.println(
-                        "Yeah!"
-                );
+
 
                 game_state = state.EXIT_WIN;
             }
         } else if (level.getDiver().getOxygenLevel() <= 0) {
             game_state = state.DYING;
         } else if (reach_target) {
-
             game_state = state.WIN_ANIMATION;
         } else if (pause) {
             game_state = state.PAUSE;
@@ -617,7 +611,6 @@ public class GameController extends ScreenController implements ContactListener 
         InputController input = InputController.getInstance();
 
         if (input.isPause()) {
-
             if (pause)
                 resume();
             else
@@ -627,11 +620,11 @@ public class GameController extends ScreenController implements ContactListener 
         level.getDiver().setHorizontalMovement(input.getHorizontal() * level.getDiver().getForce());
         level.getDiver().setVerticalMovement(input.getVertical() * level.getDiver().getForce());
 
-        System.out.println("Touching Obstacle: " + level.getDiver().isTouchingObstacle());
-        System.out.println("Latching: " + level.getDiver().isLatching());
-        System.out.println("KickOff: " + input.didKickOff());
-        System.out.println("Boosting: " + level.getDiver().isBoosting());
-        System.out.println("Diver Velocity: " + level.getDiver().getLinearVelocity().len());
+//        System.out.println("Touching Obstacle: " + level.getDiver().isTouchingObstacle());
+//        System.out.println("Latching: " + level.getDiver().isLatching());
+//        System.out.println("KickOff: " + input.didKickOff());
+//        System.out.println("Boosting: " + level.getDiver().isBoosting());
+//        System.out.println("Diver Velocity: " + level.getDiver().getLinearVelocity().len());
 //        System.out.println("Diver Mass: " + level.getDiver().getMass());
 
         // stop boosting when player has slowed down enough
@@ -732,7 +725,11 @@ public class GameController extends ScreenController implements ContactListener 
                 TreasureModel tm = level.getDiver().getTreasureChests().pop();
                 tm.openChest();
                 if (tm.getContents() == TreasureModel.TreasureType.Monster) {
-                    Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, Tentacle.TentacleType.OldAttack, 30);
+                    Vector2 v = level.getDiver().getPosition();
+                    Vector2 u = tm.getPosition();
+                    float angle = (float) Math.atan2(v.x - u.x, v.y - u.y) + (float) Math.PI / 16f * 17;
+
+                    Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, Tentacle.TentacleType.NewAttack, 30, -angle);
                     tm.setTrap(t);
                     addQueuedObject(t);
                 } else if (tm.getContents() == TreasureModel.TreasureType.Key) {
@@ -843,11 +840,10 @@ public class GameController extends ScreenController implements ContactListener 
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     Tentacle t;
-                    if(tick % 2 == 0){
+                    if (tick % 2 == 0) {
                         t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.6f, add_wall, Tentacle.TentacleType.NewAttack, 120);
                         t.setGrowRate(10);
-                    }
-                    else {
+                    } else {
                         t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.45f, add_wall, Tentacle.TentacleType.NewAttack, 50);
                         t.setGrowRate(4);
                     }
@@ -860,7 +856,6 @@ public class GameController extends ScreenController implements ContactListener 
                 if (add_wall != null) {
 
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, Tentacle.TentacleType.Idle, 100);
-
                     t.setGrowRate(10);
                     t.setType(0);
                     addQueuedObject(t);
@@ -949,8 +944,7 @@ public class GameController extends ScreenController implements ContactListener 
        if (monsterController.isMonsterActive() && monsterController.isKillState()) {
                 if (tick % 2  == 0){
                     changeLightColor(monster_color);
-                }
-                else {
+                } else {
                     changeLightColor(low_oxygen_color);
                 }
 
@@ -965,10 +959,12 @@ public class GameController extends ScreenController implements ContactListener 
         if (level.getDiver().getStunned()) {
             if (light.getDistance() > stun_light_radius) {
                 light.setDistance(light.getDistance() - 1);
+                wallShine.setDistance(wallShine.getDistance() - 0.25f);
             }
         } else {
             if (light.getDistance() < normal_light_radius) {
                 light.setDistance(light.getDistance() + 1);
+                wallShine.setDistance(wallShine.getDistance() + 0.25f);
             }
         }
 
@@ -1114,14 +1110,14 @@ public class GameController extends ScreenController implements ContactListener 
 
             obj.draw(canvas);
         }
-        level.getDiver().draw(canvas);
+
 
         canvas.end();
         if (!debug) {
             rayHandler.updateAndRender();
         }
         canvas.begin();
-
+        level.getDiver().draw(canvas);
         switch (game_state) {
             case PLAYING:
 
