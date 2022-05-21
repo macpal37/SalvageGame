@@ -1,240 +1,188 @@
 package com.xstudios.salvage.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.xstudios.salvage.assets.AssetDirectory;
-import com.xstudios.salvage.util.ScreenListener;
-import java.util.ArrayList;
+import com.xstudios.salvage.audio.AudioController;
 
 /**
  * Class that provides a loading screen for the state of the game.
- * <p>
+ *
  * You still DO NOT need to understand this class for this lab.  We will talk about this
  * class much later in the course.  This class provides a basic template for a loading
  * screen to be used at the start of the game or between levels.  Feel free to adopt
  * this to your needs.
- * <p>
+ *
  * You will note that this mode has some textures that are not loaded by the AssetManager.
- * You are never required to load through the e.  But doing this will block
+ * You are never required to load through the AssetManager.  But doing this will block
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
+public class RulesController extends ScreenController implements ControllerListener {
+    // There are TWO asset managers.  One to load the loading screen.  The other to load the assets
+    /** Background texture for start-up */
+    /** Background Texture */
+    protected Texture one;
+    protected Texture two;
 
-public class LevelSelectController extends ScreenController implements ControllerListener{
+    protected Texture menu;
+    protected Texture rules;
 
-    private Texture main_menu;
-    private Texture background;
-    private Texture level;
-    private Texture line;
-    private Texture lock;
+    protected Texture active_right;
+    protected Texture active_left;
+    protected Texture inactive_right;
+    protected Texture inactive_left;
 
-    private int level_clicked;
-    private boolean press_main_menu;
-    private ArrayList<Texture> level_list;
-    private ArrayList<Texture> name_list;
+    private boolean press_menu;
+    private boolean press_left;
+    private boolean press_right;
 
-    private int locked;
+    private boolean left;
+    private boolean right;
 
-    private int total_levels;
-
-    public LevelSelectController() {
-        level_list = new ArrayList<>();
-        name_list = new ArrayList<>();
-        level_clicked = 0;
-        press_main_menu = false;
+    public RulesController() {
         width = Gdx.graphics.getWidth();
         height = Gdx.graphics.getHeight();
+
+        press_menu = false;
+        press_left = true;
+        press_right = false;
+
+        right = false;
+        left = true;
     }
 
-    public void setCameraController(CameraController cameraController, int w, int h) {
+    //sets CameraController
+    public void setCameraController(CameraController cameraController) {
         this.camera = cameraController;
         camera.setCameraPosition(width/2, height/2);
         camera.setBounds(width/2, height/2, width, height);
         camera.render();
     }
 
-    @Override
     public void gatherAssets(AssetDirectory directory) {
-        background = directory.getEntry("background:level_select", Texture.class);
-        main_menu = directory.getEntry("main_menu", Texture.class);
-        level = directory.getEntry("level", Texture.class);
-        line = directory.getEntry("line", Texture.class);
-        for(int i = 1; i < 14; i++){
-            level_list.add(directory.getEntry(Integer.toString(i), Texture.class));
-        }
+        one = directory.getEntry("one", Texture.class);
+        two = directory.getEntry("two", Texture.class);
 
-        for(int a = 1; a < 14; a++){
-            name_list.add(directory.getEntry("name" + a, Texture.class));
-        }
+        menu = directory.getEntry("rules_menu", Texture.class);
+        rules = directory.getEntry("rules_title", Texture.class);
+
+        active_right = directory.getEntry("active_right", Texture.class);
+        active_left = directory.getEntry("active_left", Texture.class);
+
+        inactive_right = directory.getEntry("inactive_right", Texture.class);
+        inactive_left = directory.getEntry("inactive_left", Texture.class);
     }
 
+    //dispose
+    public void dispose(){
+        one = null;
+        two = null;
+        menu = null;
+        rules = null;
 
-    public void setLocked(int level){
-        locked = level;
+        active_right = null;
+        active_left = null;
+        inactive_right = null;
+        inactive_left = null;
+
+        press_menu = false;
+        press_left = true;
+        press_right = false;
+        active = false;
     }
 
-    public void setTotalLevels(int level){
-        total_levels = level;
-    }
-
-    public void dispose() {
-        background = null;
-        main_menu = null;
-        level = null;
-        line = null;
-        level_clicked = 0;
-        press_main_menu = false;
-    }
-
-    public void setCameraPositionNormal() {
-        camera.setCameraPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
-        camera.render();
-    }
-
-
-    private void help_draw_line(int x, int y, int level, float angle){
-        help_draw(line, x, y, false, level, null, angle, true, 0.9f);
-    }
-
-    private boolean help_draw_level(int x, int y, int l){
-        return help_draw(name_list.get(l - 1), x, y, true, l, level_list.get(l - 1), 0, false, 2f);
-    }
-
-    private boolean help_draw(Texture t, int x, int y, boolean tint, int level, Texture t1, float angle, boolean line, float s){
+    private boolean help_draw(Texture t, int x, int y, boolean tint){
         int ox = t.getWidth()/2;
         int oy = t.getHeight()/2;
-
         Color c = Color.WHITE;
-
         boolean clicked = false;
-        if(line) {
-            if (level > locked) return false;
-            else {
-                canvas.draw(t, c, ox, oy, x, height - y, angle, s * scale, s * scale);
-                return true;
-            }
-        }
-        if(tint){
+        if(tint) {
             int pX = Gdx.input.getX();
             int pY = Gdx.input.getY();
-            float flip_y = y - (int)(height/2 - camera.getCameraPosition2D().y);
-            float w = scale * s * ox;
-            float h = scale * s * oy;
+            // Flip to match graphics coordinates
+            int flip_y = canvas.getHeight() - y;
+            float w = scale * ox;
+            float h = scale * oy;
 
-            if(level != 0){
-                if(level > locked) {
-                    int ox1 = t1.getWidth()/2;
-                    int oy1 = t1.getHeight()/2;
-                    c = Color.GRAY;
-                    canvas.draw(t1, c, ox1, oy1, x, height - y, angle, s * scale, s * scale);
-                    return false;
-                }
-            }
-
-            if(t1 != null){
-                int ox1 = t1.getWidth()/2;
-                int oy1 = t1.getHeight()/2;
-                float h1 = ox1 * scale * s;
-                float w1 = 1.5f * oy1 * scale * s;
-                if(((x + w1 > pX && x - w1 < pX) && (flip_y + h1/2 > pY && flip_y - h1/2 < pY))){
-                    c = Color.GRAY;
-                    if(Gdx.input.isTouched()) clicked = true;
-                }
-                canvas.draw(t1, c, ox1, oy1, x, height - y, angle, s * scale, s * scale);
-            }
-            else if(((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY))){
+            if ((x + w > pX && x - w < pX) && (flip_y + h > pY && flip_y - h < pY)) {
                 c = Color.GRAY;
-                if(Gdx.input.isTouched()) clicked = true;
+                if (Gdx.input.isTouched()) clicked = true;
             }
         }
-        canvas.draw(t, c, ox, oy, x, height - y, angle, s * scale, s * scale);
+        canvas.draw(t, c, ox, oy, x, y, 0, scale, scale);
         return clicked;
     }
 
     private void draw() {
-        canvas.clear();
         canvas.begin();
-
-        canvas.draw(background, Color.WHITE, 0, -1 * height * 2, width,  height * 3);
-
-        //menu
-        press_main_menu = help_draw(main_menu, width/7,height/7, true, 0, null, 0, false, 1f);
-
-        //lines
-        help_draw_line(width/3, height/2 - height/20, 2, 0.8f);
-        help_draw_line(width - width/3, height/3 - height/20, 3, 0.2f);
-        help_draw_line(width - width/7, height/2, 4, -1.5f);
-        help_draw_line(width - width/3, height - height/5 - height/20, 5, 0);
-        help_draw_line(width/3, height - height/6, 6, 1f);
-        help_draw_line(width/5, height + height/4, 7, -1f);
-        help_draw_line(width/3, height + height/3, 8, 1f);
-        help_draw_line(width - width/3, height + height/4 - height/40, 9, 0);
-        help_draw_line(width - width/4, height + height/2 - height/10, 10, 1.5f);
-        help_draw_line(width/2, 2 * height - height/6 - height/10, 11, 1.0f);
-        help_draw_line(width/2 - width/13, 2 * height - height/10, 12, 0f);
-        help_draw_line(width/2 + width/20, 2 * height + height/6, 13, -1.8f);
-
-        Boolean[] levels = {
-                help_draw_level(width/6, height/2, 1),
-                help_draw_level(width/2, height/4, 2),
-                help_draw_level(width - width/6, height/4, 3),
-                help_draw_level(width - width/5, height - height/4, 4),
-                help_draw_level(width/2, height - height/3, 5),
-                help_draw_level(width/5, height, 6),
-                help_draw_level(width/4, 2 * height - height/2, 7),
-                help_draw_level(width/2, height + height/6, 8),
-                help_draw_level(width - width/5, height + height/4, 9),
-                help_draw_level(width - width/3, 2 * height - height/3 - height/10, 10),
-                help_draw_level(width/2 - width/12, 2 * height - height/5, 11),
-                help_draw_level(width - width/4 - width/10, 2 * height, 12),
-                help_draw_level(width/2 - width/7, 2 * height + height/3, 13)
-        };
-
-
-    //clicked level
-        for(int i = 0; i < levels.length; i++){
-            if(levels[i])
-                level_clicked = i + 1;
+        if(press_left) {
+            canvas.draw(one, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            help_draw(inactive_left, canvas.getWidth()/18,
+                    canvas.getHeight()/2 - canvas.getHeight()/20, false);
+            right = help_draw(active_right, canvas.getWidth() - canvas.getWidth()/18,
+                    canvas.getHeight()/2 - canvas.getHeight()/20, true);
+            left = !right;
         }
+        else{
+            canvas.draw(two, Color.WHITE, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            help_draw(inactive_right, canvas.getWidth() - canvas.getWidth()/18,
+                    canvas.getHeight()/2 - canvas.getHeight()/20, false);
+            left = help_draw(active_left, canvas.getWidth()/18,
+                    canvas.getHeight()/2 - canvas.getHeight()/20, true);
+            right = !left;
+        }
+        press_menu = help_draw(menu, width/12, height - height/14, true);
+        help_draw(rules, width/2, height - height/12, false);
         canvas.end();
-
     }
 
 
     // ADDITIONAL SCREEN METHODS
-
     /**
      * Called when the Screen should render itself.
-     * <p>
+     *
      * We defer to the other methods update() and draw().  However, it is VERY important
      * that we only quit AFTER a draw.
      *
      * @param delta Number of seconds since last animation frame
      */
     public void render(float delta) {
-
         if (active) {
             draw();
         }
     }
 
     /**
+     * Called when the Screen is resized.
+     *
+     * This can happen at any point during a non-paused state but will never happen
+     * before a call to show().
+     *
+     * @param width  The new width in pixels
+     * @param height The new height in pixels
+     */
+    public void resize(int width, int height) {
+        super.resize(width, height);
+    }
+
+    /**
      * Called when the Screen is paused.
-     * <p>
+     *
      * This is usually when it's not active or visible on screen. An Application is
      * also paused before it is destroyed.
      */
     public void pause() {
         // TODO Auto-generated method stub
+
     }
+
     /**
      * Called when the Screen is resumed from a paused state.
-     * <p>
+     *
      * This is usually when it regains focus.
      */
     public void resume() {
@@ -243,10 +191,9 @@ public class LevelSelectController extends ScreenController implements Controlle
     }
 
     // PROCESSING PLAYER INPUT
-
     /**
      * Called when the screen was touched or a mouse button was pressed.
-     * <p>
+     *
      * This method checks to see if the play button is available and if the click
      * is in the bounds of the play button.  If so, it signals the that the button
      * has been pressed and is currently down. Any mouse button is accepted.
@@ -262,7 +209,7 @@ public class LevelSelectController extends ScreenController implements Controlle
 
     /**
      * Called when a finger was lifted or a mouse button was released.
-     * <p>
+     *
      * This method checks to see if the play button is currently pressed down. If so,
      * it signals the that the player is ready to go.
      *
@@ -271,20 +218,25 @@ public class LevelSelectController extends ScreenController implements Controlle
      * @param pointer the button or touch finger number
      * @return whether to hand the event to other listeners.
      */
-
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if(press_main_menu)
+        if(press_menu) {
             listener.exitScreen(this, 0);
-
-        else if (level_clicked >= 1)
-            listener.exitScreen(this, level_clicked);
+        }
+        else if(right){
+            press_right = true;
+            press_left = false;
+        }
+        else if(left) {
+            press_left = true;
+            press_right = false;
+        }
 
         return true;
     }
 
     /**
      * Called when a button on the Controller was pressed.
-     * <p>
+     *
      * The buttonCode is controller specific. This listener only supports the start
      * button on an X-Box controller.  This outcome of this method is identical to
      * pressing (but not releasing) the play button.
@@ -299,7 +251,7 @@ public class LevelSelectController extends ScreenController implements Controlle
 
     /**
      * Called when a button on the Controller was released.
-     * <p>
+     *
      * The buttonCode is controller specific. This listener only supports the start
      * button on an X-Box controller.  This outcome of this method is identical to
      * releasing the the play button after pressing it.
@@ -307,8 +259,8 @@ public class LevelSelectController extends ScreenController implements Controlle
      * @param controller The game controller
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
+     * @return whether to hand the event to other listeners.
      */
-
     public boolean buttonUp (Controller controller, int buttonCode) {
         return true;
     }
@@ -347,7 +299,7 @@ public class LevelSelectController extends ScreenController implements Controlle
     /**
      * Called when the mouse was moved without any buttons being pressed. (UNSUPPORTED)
      *
-     * @param screenX the x-coordinate of the mouse on the screen
+     * @param screenX the x-coordinate of the mouse on the
      * @param screenY the y-coordinate of the mouse on the screen
      * @return whether to hand the event to other listeners.
      */
@@ -360,18 +312,10 @@ public class LevelSelectController extends ScreenController implements Controlle
      *
      * @param dx the amount of horizontal scroll
      * @param dy the amount of vertical scroll
+     *
      * @return whether to hand the event to other listeners.
      */
     public boolean scrolled(float dx, float dy) {
-        float y = camera.getCameraPosition2D().y;
-
-        if((y + dy * 40.0f  > height/2  && dy > 0) || (y + dy * 40.0f < (-1 * height))  && dy < 0) {
-            camera.setCameraPosition(width/2, camera.getCameraPosition2D().y);
-        }
-        else
-            camera.setCameraPosition(width/2, camera.getCameraPosition2D().y + dy * 40.0f);
-        camera.render();
-
         return true;
     }
 
@@ -394,28 +338,26 @@ public class LevelSelectController extends ScreenController implements Controlle
      *
      * @param controller The game controller
      */
-    public void connected(Controller controller) {
-    }
+    public void connected (Controller controller) {}
 
     /**
      * Called when a controller is disconnected. (UNSUPPORTED)
      *
      * @param controller The game controller
      */
-    public void disconnected(Controller controller) {
-    }
+    public void disconnected (Controller controller) {}
 
     /**
      * Called when an axis on the Controller moved. (UNSUPPORTED)
-     * <p>
+     *
      * The axisCode is controller specific. The axis value is in the range [-1, 1].
      *
      * @param controller The game controller
-     * @param axisCode   The axis moved
-     * @param value      The axis value, -1 to 1
+     * @param axisCode 	The axis moved
+     * @param value 	The axis value, -1 to 1
      * @return whether to hand the event to other listeners.
      */
-    public boolean axisMoved(Controller controller, int axisCode, float value) {
+    public boolean axisMoved (Controller controller, int axisCode, float value) {
         return true;
     }
 
