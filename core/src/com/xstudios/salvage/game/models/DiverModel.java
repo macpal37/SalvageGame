@@ -862,10 +862,14 @@ public class DiverModel extends GameObject {
         // if between 0 and 135 degrees, rotate right
         // if between 0 and -135 degrees, rotate left
         // otherwise, flip
+
+        float angleVel = Math.abs(angleDiff) / 30 * ((isLatching()) ? 3f : 1f);
+        ;
+
         if (angleDiff <= 135 && angleDiff >= 0) {
-            body.setAngularVelocity(-Math.abs(angleDiff) / 30);
+            body.setAngularVelocity(-angleVel);
         } else if (angleDiff >= -135 && angleDiff < 0) {
-            body.setAngularVelocity(Math.abs(angleDiff) / 30);
+            body.setAngularVelocity(angleVel);
         } else {
             faceRight = !faceRight;
             turnFrames = 4;
@@ -950,7 +954,7 @@ public class DiverModel extends GameObject {
         } else if (isLatching()) { // player is latched onto a wall
             body.setLinearVelocity(0, 0);
         } else if (isBoosting()) { // player has kicked off a wall and may or may not be steering
-            setMaxSpeed(boostedMaxSpeed);
+            setMaxSpeed(boostedMaxSpeed * 2.0f);
             setLinearDamping(boostDamping);
 
             // TODO: may need some tweaking for steering

@@ -338,7 +338,7 @@ public class CollisionController {
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
 
-        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall) {
+        if (b1.getUserData() instanceof DiverModel && f1.getUserData().equals("DiverBox") && b2.getUserData() instanceof Wall) {
 
             Wall wall = (Wall) b2.getUserData();
             if (wall.isWall()) {
@@ -350,7 +350,7 @@ public class CollisionController {
                 monsterController.wallCollision();
                 AudioController.getInstance().wood_collision(diver.getForce());
             }
-        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
+        } else if (b2.getUserData() instanceof DiverModel && f2.getUserData().equals("DiverBox") && b1.getUserData() instanceof Wall) {
             Wall wall = (Wall) b1.getUserData();
             if (wall.isWall()) {
                 diver.setTouchedWall(wall);
@@ -378,11 +378,11 @@ public class CollisionController {
         Object fd1 = f1.getUserData();
         Object fd2 = f2.getUserData();
 
-        if (b1.getUserData() instanceof DiverModel && b2.getUserData() instanceof Wall
+        if (b1.getUserData() instanceof DiverModel && f1.getUserData().equals("DiverBox") && b2.getUserData() instanceof Wall
         ) {
             diver.setTouchedWall(null);
             ((DiverModel) b1.getUserData()).setTouchingObstacle(false);
-        } else if (b2.getUserData() instanceof DiverModel && b1.getUserData() instanceof Wall) {
+        } else if (b2.getUserData() instanceof DiverModel && f2.getUserData().equals("DiverBox") && b1.getUserData() instanceof Wall) {
             diver.setTouchedWall(null);
             ((DiverModel) b2.getUserData()).setTouchingObstacle(false);
         }
@@ -464,8 +464,7 @@ public class CollisionController {
 //                return (hazard.getOxygenDrain() * 7.5f);
 //            }
             //AudioController.getInstance().idle_roar();
-        }
-        else {
+        } else {
             AudioController.getInstance().metal_collision(diver.getForce());
         }
         diver.setChangeLightFilter(false);
