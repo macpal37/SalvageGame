@@ -733,7 +733,7 @@ public class GameController extends ScreenController implements ContactListener 
                     tm.setTrap(t);
                     addQueuedObject(t);
                 } else if (tm.getContents() == TreasureModel.TreasureType.Key) {
-
+                    level.getDiver().setChestOpen(true);
                 }
             }
 
