@@ -1083,16 +1083,6 @@ public class GameController extends ScreenController implements ContactListener 
         switch (game_state) {
             case PLAYING:
 
-                tempProjectedHud.x = (float) canvas.getWidth() / 2;
-                tempProjectedHud.y = 0f;
-                tempProjectedHud = camera.getCamera().unproject(tempProjectedHud);
-
-                //draw hud background
-
-                canvas.draw(hud, Color.WHITE, hud.getRegionWidth() / 2, hud.getRegionHeight(),
-                        tempProjectedHud.x, tempProjectedHud.y,
-                        0.0f, 1, 0.5f);
-
                 //draw remaining oxygen
                 oxygen_hud.x = (float) canvas.getWidth() / 4 - canvas.getWidth()/40;
                 oxygen_hud.y = (float) canvas.getHeight() / 25;

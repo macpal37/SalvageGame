@@ -69,6 +69,12 @@ public class MenuController extends ScreenController implements ControllerListen
         camera.render();
     }
 
+    public void setCameraPositionNormal() {
+        camera.setCameraPosition(640, 360);
+        camera.render();
+    }
+
+
     public void gatherAssets(AssetDirectory directory) {
         background = directory.getEntry("background:menu", Texture.class);
         title = directory.getEntry("title", Texture.class);

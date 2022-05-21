@@ -122,21 +122,23 @@
     "10": "ui/levels/ship10.png",
     "11": "ui/levels/ship11.png",
     "12": "ui/levels/ship4.png",
+    "13": "ui/levels/ship6.png",
     "name1" : "ui/levels/Asher.png",
     "name2" : "ui/levels/Emmi.png",
     "name3" : "ui/levels/Iris.png",
     "name4" : "ui/levels/Kyra.png",
     "name5" : "ui/levels/Marco.png",
     "name6" : "ui/levels/Matt.png",
-    "name7" : "ui/levels/Michelle.png",
-    "name8" : "ui/levels/Nemo.png",
+    "name7" : "ui/levels/Nemo.png",
+    "name8" : "ui/levels/Michelle.png",
     "name9" : "ui/levels/Quimey.png",
-    "name10" : "ui/levels/Matt.png",
-    "name11" : "ui/levels/Matt.png",
-    "name12" : "ui/levels/Matt.png"
+    "name10" : "ui/levels/Phoebe.png",
+    "name11" : "ui/levels/Schmidt.png",
+    "name12" : "ui/levels/Holland.png",
+    "name13" : "ui/levels/Caroline.png"
   },
   "jsons"  : {
-    "models:constants":  "models/constants.json",
+    "models:constants":  "models/constants.json"
   },
 
   "fonts": {

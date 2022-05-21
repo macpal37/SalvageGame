@@ -186,6 +186,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		else if (screen == menu_controller) {
 			// upon leaving the menu_controller we dispose
 			menu_controller.dispose();
+			menu_controller.setCameraPositionNormal();
 			//menu >> level select
 			if (exitCode == 0) {
 				// add the dispose to the if screen is x_controller and exit screen is called
@@ -233,8 +234,8 @@ public class GDXRoot extends Game implements ScreenListener {
 		//GAME
 		else if (screen == controller) {
 			//pause >> menu
+			controller.setDefaultPosition();
 			if (exitCode == 2) {
-				controller.setDefaultPosition();
 				switch_screen(menu_controller, directory, canvas);
 			}
 
