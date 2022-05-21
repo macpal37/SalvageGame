@@ -228,13 +228,14 @@ public class MonsterController {
                         //monster.setVisionRadius(50);
                         monster.setAggravation((8 * monster.getAggravation()) / 10.0f);
                         last_aggression = 0;
-                    } if (attack_tick > monster.getAggroStrikes()) {
+                    } else {
+                        monster.reduceAggressiveLength();
+                    }
+                    if (attack_tick > monster.getAggroStrikes()) {
                         //                    if (aggravation > (monster.getAggroLevel() * 20.0f)) {
                         //                        state = FSMState.ATTACK;
                         //                    }
                         state = FSMState.ATTACK;
-                    } else {
-                        monster.reduceAggressiveLength();
                     }
                 //}
                 //attack_tick++;
