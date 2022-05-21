@@ -732,6 +732,9 @@ public class LevelBuilder {
                                         monster.setAggroStrikes(prop.getInt("value"));
                                     else if (prop.getString("name").equals("vision_radius"))
                                         monster.setVisionRadius(prop.getInt("value"));
+                                    else if (prop.getString("name").equals("random_attack_chance"))
+                                        monster.setRandomAttackChance(prop.getFloat("value"));
+
 
                                 }
                             gameObjects.add(monster);
