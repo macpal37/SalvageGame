@@ -87,7 +87,7 @@
                         {
                          "name":"starting_oxygen",
                          "type":"int",
-                         "value":10
+                         "value":25
                         }],
                  "rotation":0,
                  "type":"",
@@ -129,7 +129,7 @@
                         {
                          "name":"oxygen_rewarded",
                          "type":"float",
-                         "value":3
+                         "value":10
                         }],
                  "rotation":0,
                  "type":"",

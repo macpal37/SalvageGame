@@ -246,9 +246,9 @@ public class AudioController {
     public void set_sound_effect_volume(float volume) {
         sound_effects_volume = volume;
         alarm.setVolume(sound_effects_volume * 0.05f);
-        attack_roar.setVolume(sound_effects_volume * 0.75f);
+        attack_roar.setVolume(sound_effects_volume * 0.95f);
         idle_roar.setVolume(sound_effects_volume * 0.1f);
-        loud_roar.setVolume(sound_effects_volume * 0.5f);
+        loud_roar.setVolume(sound_effects_volume * 0.85f);
         bubbles.setVolume(sound_effects_volume * 0.1f);
         white_noise.setVolume(sound_effects_volume * 0.07f);
         loading_screen.setVolume(sound_effects_volume * 0.4f);

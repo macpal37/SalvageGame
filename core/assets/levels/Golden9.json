@@ -96,6 +96,12 @@
                  "height":100,
                  "id":509,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"oxygen_rewarded",
+                         "type":"float",
+                         "value":50
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -124,13 +130,13 @@
                         {
                          "name":"starting_oxygen",
                          "type":"int",
-                         "value":450
+                         "value":200
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":1329.86877006841,
+                 "x":1311.68695188659,
                  "y":921.701800921402
                 }, 
                 {

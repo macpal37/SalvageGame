@@ -142,14 +142,14 @@
                         {
                          "name":"starting_oxygen",
                          "type":"int",
-                         "value":300
+                         "value":200
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":388.504155124654,
-                 "y":216.915263868172
+                 "x":238.504155124654,
+                 "y":298.915263868172
                 }, 
                 {
                  "gid":14,

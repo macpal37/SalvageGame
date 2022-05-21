@@ -462,6 +462,7 @@ public class DiverModel extends GameObject {
     }
 
     public void setDeadBody(DeadBodyModel b) {
+        b.setOxygenRewarded(maxOxygenLevel * .25f);
         dead_body = b;
     }
 
@@ -1289,7 +1290,8 @@ public class DiverModel extends GameObject {
     @Override
     public void draw(GameCanvas canvas) {
         if (pickupFrame == 5 && dead_body != null) {
-            oxygenLevel += dead_body.getOxygenRewarded();
+            oxygenLevel = Math.min(dead_body.getOxygenRewarded() + oxygenLevel, maxOxygenLevel);
+
             dead_body.setCarried(true);
             dead_body.setActive(false);
         }
