@@ -90,31 +90,29 @@ public class AudioController {
     }
 
     public void initialize() {
-//        music.setVolume(0.4f * music_volume);
-//        set_sound_effect_volume(sound_effects_volume);
         white_noise.play();
     }
 
     public void start_level(int level) {
-        //music.setVolume(music_volume * 0.5f);
         setMusic(music_volume);
         music.play();
         bubbles.play();
         heartbeat.play();
-        heartbeat.setVolume(0.0f);
-        white_noise.setVolume(0.0f);
         last_playing_tick = 0;
         ticks = 0;
-        set_sound_effect_volume(sound_effects_volume);
 
         //levels
-        String path = "static";
-        if (level ==1){
-            path = "1";
+        int path = 0;
+        if (level < 4){
+            path = level + 10;
+        } else if (level >= 4){
+            path = (int)(Math.random() * 5);
         }
-        SoundBuffer level_transmission_wav = WaveLoader.load(Gdx.files.internal("audio/levels/" + path +".wav"));
+        SoundBuffer level_transmission_wav = WaveLoader.load(Gdx.files.internal("audio/levels/"  + path + ".wav"));
         level_transmission = audio.obtainSource(level_transmission_wav);
         set_sound_effect_volume(sound_effects_volume);
+        heartbeat.setVolume(0.0f);
+        white_noise.setVolume(0.0f);
         level_transmission.play();
         level_transmission.setLooping(false);
     }
@@ -163,8 +161,9 @@ public class AudioController {
     }
 
     public void idle_roar() {
-        if (idle_ticks > 5){
+        if (idle_ticks > 3){
             idle_roar.play();
+            idle_ticks = 0;
         }
         else {
             idle_ticks++;
@@ -252,11 +251,11 @@ public class AudioController {
         attack_roar.setVolume(sound_effects_volume * 0.75f);
         idle_roar.setVolume(sound_effects_volume * 0.1f);
         loud_roar.setVolume(sound_effects_volume * 0.5f);
-        bubbles.setVolume(sound_effects_volume * 0.2f);
+        bubbles.setVolume(sound_effects_volume * 0.1f);
         white_noise.setVolume(sound_effects_volume * 0.07f);
         loading_screen.setVolume(sound_effects_volume * 0.4f);
         if (level_transmission != null){
-            level_transmission.setVolume(sound_effects_volume * 0.1f);
+            level_transmission.setVolume(sound_effects_volume * 0.07f);
         }
     }
 

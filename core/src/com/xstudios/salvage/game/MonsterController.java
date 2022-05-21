@@ -313,9 +313,9 @@ public class MonsterController {
 
             case AGGRIVATED:
 //                if (tick % 5 == 0) {
-                curr_pos = diver.getPosition().cpy();
-                monster.moveMonster(curr_pos);
-                if (tick % 10 == 0) {
+                //curr_pos = diver.getPosition().cpy();
+                monster.moveMonster(diver.getPosition());
+                if (tick % 2 == 0) {
                     float best_distance = 10000.0f;
                     float temp_distance = 0.0f;
                     Wall final_loc = null;
