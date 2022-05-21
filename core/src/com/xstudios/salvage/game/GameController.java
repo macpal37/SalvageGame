@@ -217,7 +217,8 @@ public class GameController extends ScreenController implements ContactListener 
     private Color monster_color;
     private Color kill_monster_color;
     private float stun_light_radius = 5f;
-    private float normal_light_radius = 18f;
+    private float normal_light_radius = 13f;
+    private float wall_shine_radius = 8f;
 
     private RayHandler rayHandler;
 
@@ -318,8 +319,8 @@ public class GameController extends ScreenController implements ContactListener 
         low_oxygen_color = new Color(0f, .2f, .7f, .3f);
         monster_color = new Color(1f, 0f, 0f, .4f);
 
-        light = new PointLight(rayHandler, 100, Color.BLACK, normal_light_radius - 5f, 0, 0);
-        wallShine = new PointLight(rayHandler, 100, Color.BLUE, normal_light_radius - 10f, 0, 0);
+        light = new PointLight(rayHandler, 100, Color.BLACK, normal_light_radius, 0, 0);
+        wallShine = new PointLight(rayHandler, 100, Color.BLUE, wall_shine_radius, 0, 0);
         wallShine.setSoft(true);
 
         int r = 225, g = 103, b = 30;
@@ -594,16 +595,48 @@ public class GameController extends ScreenController implements ContactListener 
         }
     }
 
+
+    private void updateWinningState() {
+
+        changeLightColor(new Color(0, 0, 0, 0));
+        rayHandler.setAmbientLight(.0001f);
+
+        camera.setCameraPosition(
+                (level.getDiver().getX()) * level.getDiver().getDrawScale().x, (level.getDiver().getY()) * level.getDiver().getDrawScale().y);
+
+        light.setPosition(
+                camera.getCameraPosition2D().x / (world_scale.x)
+                ,
+                camera.getCameraPosition2D().y / (world_scale.y));
+
+        wallShine.setPosition(
+                camera.getCameraPosition2D().x / (world_scale.x)
+                ,
+                camera.getCameraPosition2D().y / (world_scale.y));
+
+        camera.render();
+    }
+
     private void updateDyingState() {
 
         changeLightColor(new Color(0, 0, 0, 0));
         rayHandler.setAmbientLight(.0001f);
         AudioController.getInstance().dying();
 
+        camera.setCameraPosition(
+                (level.getDiver().getX()) * level.getDiver().getDrawScale().x, (level.getDiver().getY()) * level.getDiver().getDrawScale().y);
+
         light.setPosition(
                 camera.getCameraPosition2D().x / (world_scale.x)
                 ,
                 camera.getCameraPosition2D().y / (world_scale.y));
+
+        wallShine.setPosition(
+                camera.getCameraPosition2D().x / (world_scale.x)
+                ,
+                camera.getCameraPosition2D().y / (world_scale.y));
+
+        camera.render();
     }
 
     private void updatePlayingState() {
@@ -892,6 +925,7 @@ public class GameController extends ScreenController implements ContactListener 
             case WIN_ANIMATION:
                 game_over_animation_time--;
                 // do other things here?
+                updateWinningState();
                 break;
             case PLAYING:
                 updatePlayingState();
@@ -959,12 +993,17 @@ public class GameController extends ScreenController implements ContactListener 
         if (level.getDiver().getStunned()) {
             if (light.getDistance() > stun_light_radius) {
                 light.setDistance(light.getDistance() - 1);
-                wallShine.setDistance(wallShine.getDistance() - 0.25f);
+//                wallShine.setDistance(wallShine.getDistance() - 0.25f);
+            } else {
+                light.setDistance(stun_light_radius);
             }
         } else {
             if (light.getDistance() < normal_light_radius) {
                 light.setDistance(light.getDistance() + 1);
-                wallShine.setDistance(wallShine.getDistance() + 0.25f);
+//                wallShine.setDistance(wallShine.getDistance() + 0.25f);
+            } else {
+                light.setDistance(normal_light_radius);
+//                wallShine.setDistance(normal_light_radius - 10);
             }
         }
 
