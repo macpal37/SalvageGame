@@ -88,7 +88,7 @@ public class MonsterController {
     private int last_aggression = 0;
     private int MAX_AGGRESSIVE_TIME;
     private int AGGRESSIVE_LENGTH = 15;
-    private int LAST_AGGRESSIVE_LENGTH = 400;
+    private int LAST_AGGRESSIVE_LENGTH = 500;
     private boolean transition_to_aggravated = false;
 
     private PooledList<Vector2> targetLocations;
@@ -195,19 +195,19 @@ public class MonsterController {
                 curr_idle_length++;
                 if (aggravation > monster.getAggroLevel() && last_aggression > LAST_AGGRESSIVE_LENGTH) {
                     AudioController.getInstance().attack_roar();
-                    state = FSMState.AGGRIVATED;
                     tick = 0;
                     pounce_time = 0;
                     monster.setAggressiveLength(AGGRESSIVE_LENGTH);
                     curr_idle_length = 0;
+                    state = FSMState.AGGRIVATED;
                     //monster.setVisionRadius(30);
                 }
-                else if (transition_to_aggravated || ((tick % 25 == 0) && ((int)(Math.random()*1000) <= (int)(RANDOM_ATTACK_CHANGE)))) {
+                else if ((transition_to_aggravated || ((tick % 25 == 0) && ((int)(Math.random()*1000) <= (int)(RANDOM_ATTACK_CHANGE)))) &&  last_aggression > LAST_AGGRESSIVE_LENGTH) {
                     AudioController.getInstance().attack_roar();
-                    state = FSMState.AGGRIVATED;
                     tick = 0;
                     monster.setAggravation(monster.getAggroLevel() + (monster.getAggravationRate() * 3));
                     transition_to_aggravated = false;
+                    state = FSMState.AGGRIVATED;
                     //curr_idle_length = 0;
                 }
                 last_aggression++;
@@ -314,8 +314,8 @@ public class MonsterController {
             case AGGRIVATED:
 //                if (tick % 5 == 0) {
                 curr_pos = diver.getPosition().cpy();
-                monster.moveMonster(curr_pos);
-                if (tick % 10 == 0) {
+                monster.moveMonster(new Vector2(diver.getX(), diver.getY()));
+                if (tick % 2 == 0) {
                     float best_distance = 10000.0f;
                     float temp_distance = 0.0f;
                     Wall final_loc = null;
