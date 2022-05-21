@@ -549,6 +549,8 @@ public class GameController extends ScreenController implements ContactListener 
         }
 
         populateLevel();
+        light.setDistance(normal_light_radius);
+        wallShine.setDistance(wall_shine_radius);
     }
 
     /**
@@ -603,7 +605,6 @@ public class GameController extends ScreenController implements ContactListener 
     private void updateWinningState() {
 
         changeLightColor(new Color(0, 0, 0, 0));
-        rayHandler.setAmbientLight(.0001f);
 
         camera.setCameraPosition(
                 (level.getDiver().getX()) * level.getDiver().getDrawScale().x, (level.getDiver().getY()) * level.getDiver().getDrawScale().y);
@@ -624,7 +625,6 @@ public class GameController extends ScreenController implements ContactListener 
     private void updateDyingState() {
 
         changeLightColor(new Color(0, 0, 0, 0));
-        rayHandler.setAmbientLight(.0001f);
         AudioController.getInstance().dying();
 
         camera.setCameraPosition(
