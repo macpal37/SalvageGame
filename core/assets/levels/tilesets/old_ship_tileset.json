@@ -1612,9 +1612,14 @@
          "id":47,
          "properties":[
                 {
+                 "name":"id",
+                 "type":"int",
+                 "value":4
+                }, 
+                {
                  "name":"model_type",
                  "type":"string",
-                 "value":"Empty"
+                 "value":"Decor"
                 }]
         }, 
         {
