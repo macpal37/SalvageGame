@@ -870,13 +870,13 @@ public class GameController extends ScreenController implements ContactListener 
 
         if (monsterController.isMonsterActive()) {
             monsterController.update(hostileOxygenDrain, level.getDiver());
-            Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
+            Queue<Wall> agg_tentacles = monsterController.getMonster().getAggTentacles();
             Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
             Queue<Wall> attack_tentacles = monsterController.getMonster().getKillTentacles();
 
 
-            while (tentacles.size() > 0) {
-                Wall add_wall = tentacles.poll();
+            while (agg_tentacles.size() > 0) {
+                Wall add_wall = agg_tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     Tentacle t;
                     if (tick % 4 == 0) {
