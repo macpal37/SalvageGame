@@ -182,7 +182,7 @@ public class GameController extends ScreenController implements ContactListener 
     // Beta Release Setup
 
 
-    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8", "Golden9", "Golden10", "Golden11", "Golden12"};
+    private String[] levels = {"Golden6", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8", "Golden9", "Golden10", "Golden11", "Golden12"};
 
     private int curr_level;
 
@@ -356,6 +356,7 @@ public class GameController extends ScreenController implements ContactListener 
         height = Gdx.graphics.getHeight();
 
     }
+
     public void setCameraPositionNormal() {
         camera.setCameraPosition(640, 360);
         camera.render();
@@ -544,7 +545,7 @@ public class GameController extends ScreenController implements ContactListener 
         addQueue.clear();
         AudioController.getInstance().reset();
 
-        if(monsterController != null) {
+        if (monsterController != null) {
             monsterController.reset();
         }
 
@@ -749,10 +750,12 @@ public class GameController extends ScreenController implements ContactListener 
             if ((Math.abs(input.getHorizontal()) > 0 || Math.abs(input.getVertical()) > 0) &&
                     level.getDiver().getLinearVelocity().len() > 0) {
                 level.getDiver().changeOxygenLevel(activeOxygenRate);
-                // TODO: faster oxygen drain while carrying the body
+
             } else {
                 level.getDiver().changeOxygenLevel(passiveOxygenRate);
             }
+            System.out.println("Active: " + activeOxygenRate);
+            System.out.println("Passive: " + passiveOxygenRate);
         }
 
 
@@ -1155,7 +1158,7 @@ public class GameController extends ScreenController implements ContactListener 
             case PLAYING:
 
                 //draw remaining oxygen
-                oxygen_hud.x = (float) canvas.getWidth() / 4 - canvas.getWidth()/40;
+                oxygen_hud.x = (float) canvas.getWidth() / 4 - canvas.getWidth() / 40;
                 oxygen_hud.y = (float) canvas.getHeight() / 25;
                 oxygen_hud = camera.getCamera().unproject(oxygen_hud);
 
@@ -1187,8 +1190,8 @@ public class GameController extends ScreenController implements ContactListener 
                     );
                 }
 
-                items.x = (float) canvas.getWidth()/5;
-                items.y = (float) canvas.getHeight()/25;
+                items.x = (float) canvas.getWidth() / 5;
+                items.y = (float) canvas.getHeight() / 25;
                 items = camera.getCamera().unproject(items);
 
                 oxygen_hud.x = (float) canvas.getWidth() / 2;
@@ -1200,8 +1203,8 @@ public class GameController extends ScreenController implements ContactListener 
                         oxygen_hud.y,
                         0.0f, 0.5f * worldScale.x, 0.5f * worldScale.y);
 
-                items.x = (float) canvas.getWidth()/5 - flareHud.getRegionWidth()/2;
-                items.y = (float) canvas.getHeight()/25;
+                items.x = (float) canvas.getWidth() / 5 - flareHud.getRegionWidth() / 2;
+                items.y = (float) canvas.getHeight() / 25;
                 items = camera.getCamera().unproject(items);
 
                 //draw inventory indicator
@@ -1213,8 +1216,8 @@ public class GameController extends ScreenController implements ContactListener 
 
                 }
 
-                items.x = (float) canvas.getWidth()/5;
-                items.y = (float) canvas.getHeight()/25;
+                items.x = (float) canvas.getWidth() / 5;
+                items.y = (float) canvas.getHeight() / 25;
                 items = camera.getCamera().unproject(items);
 
                 for (int i = 0; i < level.getDiver().getRemainingFlares(); i++) {
@@ -1224,8 +1227,8 @@ public class GameController extends ScreenController implements ContactListener 
                             0.0f, 0.2f * worldScale.x, 0.2f * worldScale.y);
                 }
 
-                items.x = (float) canvas.getWidth() - canvas.getWidth()/5;
-                items.y = (float) canvas.getHeight()/25;
+                items.x = (float) canvas.getWidth() - canvas.getWidth() / 5;
+                items.y = (float) canvas.getHeight() / 25;
                 items = camera.getCamera().unproject(items);
 
                 //draw body indicator
