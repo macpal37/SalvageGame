@@ -45,7 +45,7 @@ public class AudioController {
         music = new StreamedSoundSource(Gdx.files.internal("audio/background.ogg"));
         bubbles = new StreamedSoundSource(Gdx.files.internal("audio/bubbles.ogg"));
         loading_screen = new StreamedSoundSource(Gdx.files.internal("audio/loading_screen.ogg"));
-        white_noise = new StreamedSoundSource (Gdx.files.internal ("audio/white_noise.ogg"));
+        white_noise = new StreamedSoundSource(Gdx.files.internal("audio/white_noise.ogg"));
         SoundBuffer attack_roar_wav = WaveLoader.load(Gdx.files.internal("audio/attack_roar.wav"));
         SoundBuffer loud_roar_wav = WaveLoader.load(Gdx.files.internal("audio/loud_roar.wav"));
         SoundBuffer idle_roar_wav = WaveLoader.load(Gdx.files.internal("audio/higher_growl.wav"));
@@ -77,7 +77,7 @@ public class AudioController {
         volume_tick = 0.0f;
     }
 
-    public void setUp(float m, float se){
+    public void setUp(float m, float se) {
         music_volume = m;
         sound_effects_volume = se;
     }
@@ -103,12 +103,12 @@ public class AudioController {
 
         //levels
         int path = 0;
-        if (level < 4){
-            path = level + 10;
-        } else if (level >= 4){
-            path = (int)(Math.random() * 5);
+        if (level < 4) {
+            path = level;
+        } else if (level >= 4) {
+            path = (int) (Math.random() * 5);
         }
-        SoundBuffer level_transmission_wav = WaveLoader.load(Gdx.files.internal("audio/levels/"  + path + ".wav"));
+        SoundBuffer level_transmission_wav = WaveLoader.load(Gdx.files.internal("audio/levels/" + path + ".wav"));
         level_transmission = audio.obtainSource(level_transmission_wav);
         set_sound_effect_volume(sound_effects_volume);
         heartbeat.setVolume(0.0f);
@@ -142,14 +142,14 @@ public class AudioController {
 
 
     public void wood_collision(float force) {
-        if (!wood_collision.isPlaying()){
+        if (!wood_collision.isPlaying()) {
             wood_collision.setVolume(sound_effects_volume * 0.1f);
             wood_collision.play();
         }
     }
 
     public void metal_collision(float force) {
-        if (!metal_collision.isPlaying()){
+        if (!metal_collision.isPlaying()) {
             metal_collision.setVolume(sound_effects_volume * 0.1f);
             metal_collision.play();
         }
@@ -161,11 +161,10 @@ public class AudioController {
     }
 
     public void idle_roar() {
-        if (idle_ticks > 3){
+        if (idle_ticks > 3) {
             idle_roar.play();
             idle_ticks = 0;
-        }
-        else {
+        } else {
             idle_ticks++;
         }
     }
@@ -179,7 +178,7 @@ public class AudioController {
         alarm.stop();
         bubbles.stop();
         music.stop();
-        if (level_transmission != null){
+        if (level_transmission != null) {
             level_transmission.stop();
         }
         white_noise.setVolume(sound_effects_volume * 0.05f);
@@ -223,8 +222,7 @@ public class AudioController {
             attack_roar.stop();
             idle_roar.stop();
             loud_roar.play();
-        }
-        else {
+        } else {
             music.play();
             heartbeat.play();
             attack_roar.play();
@@ -245,7 +243,7 @@ public class AudioController {
         return loud_roar.isPlaying();
     }
 
-    public void set_sound_effect_volume(float volume){
+    public void set_sound_effect_volume(float volume) {
         sound_effects_volume = volume;
         alarm.setVolume(sound_effects_volume * 0.05f);
         attack_roar.setVolume(sound_effects_volume * 0.75f);
@@ -254,7 +252,7 @@ public class AudioController {
         bubbles.setVolume(sound_effects_volume * 0.1f);
         white_noise.setVolume(sound_effects_volume * 0.07f);
         loading_screen.setVolume(sound_effects_volume * 0.4f);
-        if (level_transmission != null){
+        if (level_transmission != null) {
             level_transmission.setVolume(sound_effects_volume * 0.07f);
         }
     }

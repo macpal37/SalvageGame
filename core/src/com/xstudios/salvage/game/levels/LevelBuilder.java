@@ -392,7 +392,6 @@ public class LevelBuilder {
             t.setFriction(0.4f);
             t.setRestitution(0.1f);
             t.setDrawScale(drawScale);
-            System.out.println("Tentacele Created!!");
             t.setStartGrowing(true);
             t.setMaxLifeSpan(lifespan);
             t.setName("tentacle");
