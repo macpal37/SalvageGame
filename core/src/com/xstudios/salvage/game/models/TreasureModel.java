@@ -292,7 +292,7 @@ public class TreasureModel extends ObstacleModel {
 
                             if (sprite.getFrame() == 35) {
 
-                                AudioController.getInstance().attack_roar();
+                                AudioController.getInstance().treasure_chest();
                             }
 
                         }
