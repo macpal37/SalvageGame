@@ -207,6 +207,12 @@ public class AudioController {
         return loading_screen.isPlaying();
     }
 
+    public void treasure_chest() {
+        if (!idle_roar.isPlaying()) {
+            idle_roar.play();
+        }
+    }
+
 
     public void attack_roar() {
         if (!attack_roar.isPlaying()) {
