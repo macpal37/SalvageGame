@@ -72,6 +72,7 @@ public class MonsterController {
 
     private float MAX_IDLE_TENTACLES = 10;
     private float MAX_ATTACK_TENTACLES = 5;
+    private float RANDOM_ATTACK_CHANGE = 0.001f;
 
     private float MAX_IDLE_LENGTH = 700;
     private float curr_idle_length = 0;
@@ -132,6 +133,7 @@ public class MonsterController {
 
         //monster.setVisionRadius(40);
         MAX_AGGRESSIVE_TIME = monster.getAggressiveLength() * monster.getAggroStrikes();
+        RANDOM_ATTACK_CHANGE = monster.getRandomAttackChance();
     }
 
     public void reset(){
@@ -201,13 +203,13 @@ public class MonsterController {
                     curr_idle_length = 0;
                     //monster.setVisionRadius(30);
                 }
-                if (transition_to_aggravated || curr_idle_length >= MAX_IDLE_LENGTH) {
+                else if (transition_to_aggravated || Math.random() <= RANDOM_ATTACK_CHANGE) {
                     AudioController.getInstance().attack_roar();
                     state = FSMState.AGGRIVATED;
                     tick = 0;
-                    monster.setAggravation(monster.getAggroLevel() + monster.getAggravationRate() * 3);
+                    monster.setAggravation(monster.getAggroLevel() + (monster.getAggravationRate() * 3));
                     transition_to_aggravated = false;
-                    curr_idle_length = 0;
+                    //curr_idle_length = 0;
                 }
                 last_aggression++;
                 break;
@@ -315,7 +317,7 @@ public class MonsterController {
 //                if (tick % 5 == 0) {
                 curr_pos = diver.getPosition().cpy();
                 monster.moveMonster(curr_pos);
-                if (tick % 3 == 0) {
+                if (tick % 10 == 0) {
                     float best_distance = 10000.0f;
                     float temp_distance = 0.0f;
                     Wall final_loc = null;

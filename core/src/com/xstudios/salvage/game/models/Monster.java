@@ -44,7 +44,7 @@ public class Monster extends GameObject {
     /* Rate at which the Monster gets aggravated*/
     private float aggravationRate = 1.0f;
     private float aggroLevel = 6.0f;
-
+    private float randomAttackChance;
 
     public float getVisionRadius() {
         return visionRadius;
@@ -208,6 +208,12 @@ public class Monster extends GameObject {
     public float getAggravation() {
         return aggravation;
     }
+
+    public void setRandomAttackChance(float temp_randomAttackChance) {
+        randomAttackChance = temp_randomAttackChance;
+    }
+
+    public float getRandomAttackChance() { return randomAttackChance; }
 
     public void setAggressiveLength(int i) {
         invincibility_time = i;
