@@ -73,6 +73,9 @@ public class MonsterController {
     private float MAX_IDLE_TENTACLES = 10;
     private float MAX_ATTACK_TENTACLES = 5;
 
+    private float MAX_IDLE_LENGTH = 700;
+    private float curr_idle_length = 0;
+
 
     private float MAX_TARGET_DIST = 10;
     private float RAND_DIST_RANGE = 10;
@@ -157,7 +160,7 @@ public class MonsterController {
     }
 
     public boolean isAggravated() {
-        return state != FSMState.IDLE || monster.getAggravation() > 3 * monster.getAggroLevel() / 4;
+        return state != FSMState.IDLE || monster.getAggravation() >= 14 * monster.getAggroLevel() / 15;
     }
 
     public void wallCollision() {
@@ -188,36 +191,26 @@ public class MonsterController {
         switch (state) {
 
             case IDLE:
+                curr_idle_length++;
                 if (aggravation > monster.getAggroLevel() && last_aggression > LAST_AGGRESSIVE_LENGTH) {
                     AudioController.getInstance().attack_roar();
                     state = FSMState.AGGRIVATED;
                     tick = 0;
                     pounce_time = 0;
                     monster.setAggressiveLength(AGGRESSIVE_LENGTH);
+                    curr_idle_length = 0;
                     //monster.setVisionRadius(30);
                 }
-                if (transition_to_aggravated || Math.random() <= .0005) {
+                if (transition_to_aggravated || curr_idle_length >= MAX_IDLE_LENGTH) {
                     AudioController.getInstance().attack_roar();
                     state = FSMState.AGGRIVATED;
                     tick = 0;
                     monster.setAggravation(monster.getAggroLevel() + monster.getAggravationRate() * 3);
-                    System.out.println(monster.getAggravationRate());
                     transition_to_aggravated = false;
+                    curr_idle_length = 0;
                 }
                 last_aggression++;
                 break;
-
-//            case GONNA_POUNCE:
-//                if (pounce_time > MAX_POUNCE_TIME) {
-//                    state = FSMState.AGGRIVATED;
-//                    //total_aggressive_time = 0;
-//                    monster.setAggressiveLength(AGGRESSIVE_LENGTH);
-//                    tick = 0;
-////                    monster.setAggressiveLength((int) (MAX_INVINCIBILITY * aggravation / aggrivation_threshold));
-//                } else {
-//                    pounce_time++;
-//                }
-//                break;
 
             case AGGRIVATED:
                 System.out.println("Aggravation length " + monster.getAggressiveLength());
@@ -292,22 +285,6 @@ public class MonsterController {
 
                 if (tick % 50 == 0) {
                     if (tick % 100 == 0) {
-//                    if (curr_pos.dst(target_pos) < MAX_TARGET_DIST) {
-//                        int ctr = 0;
-//                        while (curr_pos.dst(target_pos) < 10 && ctr < 10) {
-//                            Random rand = new Random();
-//                            int x_change = rand.nextInt(2) * 2 - 1;
-//                            int y_change = rand.nextInt(2) * 2 - 1;
-//                            float xpos = rand.nextFloat() * RAND_DIST_RANGE * x_change;
-//                            float ypos = rand.nextFloat() * RAND_DIST_RANGE * y_change;
-//                            target_pos = diver.getPosition().cpy().add(xpos, ypos);
-//                            ctr++;
-//                        }
-//                        curr_pos = (target_pos.cpy().sub(curr_pos).nor()).add(curr_pos);
-//                        System.out.println("////////////////////////////////////////////////////");
-//                    } else {
-//                        curr_pos = (target_pos.cpy().sub(curr_pos).nor()).add(curr_pos);
-//                    }
 
                         Random rand = new Random();
                         int x_change = rand.nextInt(2) * 2 - 1;
