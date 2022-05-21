@@ -357,7 +357,7 @@
                         {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":30
+                         "value":75
                         }],
                  "rotation":0,
                  "type":"",
@@ -524,7 +524,7 @@
                         {
                          "name":"starting_oxygen",
                          "type":"int",
-                         "value":175
+                         "value":275
                         }],
                  "rotation":0,
                  "type":"",

@@ -161,7 +161,7 @@ public class AudioController {
     }
 
     public void idle_roar() {
-        if (!attack_roar.isPlaying() && !idle_roar.isPlaying()){
+        if (idle_roar.getPlaybackPosition() > idle_roar.getDuration() || idle_roar.getPlaybackPosition() == 0.0f ){
             idle_roar.play();
         }
     }

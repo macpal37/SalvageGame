@@ -315,7 +315,7 @@
                         {
                          "name":"starting_oxygen",
                          "type":"int",
-                         "value":145
+                         "value":210
                         }],
                  "rotation":0,
                  "type":"",
@@ -470,8 +470,8 @@
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":300.877192982456,
-                 "y":1149.97215260373
+                 "x":247.967140072403,
+                 "y":1166.6805903648
                 }],
          "opacity":1,
          "type":"objectgroup",

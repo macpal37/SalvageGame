@@ -202,7 +202,7 @@ public class MonsterController {
                     curr_idle_length = 0;
                     //monster.setVisionRadius(30);
                 }
-                else if (transition_to_aggravated || Math.random() <= (double) RANDOM_ATTACK_CHANGE) {
+                else if (transition_to_aggravated || ((tick % 25 == 0) && ((int)(Math.random()*1000) <= (int)(RANDOM_ATTACK_CHANGE)))) {
                     AudioController.getInstance().attack_roar();
                     state = FSMState.AGGRIVATED;
                     tick = 0;
