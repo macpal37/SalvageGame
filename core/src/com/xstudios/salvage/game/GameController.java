@@ -883,7 +883,7 @@ public class GameController extends ScreenController implements ContactListener 
                         t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.6f, add_wall, Tentacle.TentacleType.NewAttack, 120);
                         t.setGrowRate(10);
                         addQueuedObject(t);
-                    } else if (tick % 2 == 0) {
+                    } else /*if (tick % 2 == 0) */{
                         t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.45f, add_wall, Tentacle.TentacleType.NewAttack, 50);
                         t.setGrowRate(4);
                         addQueuedObject(t);
