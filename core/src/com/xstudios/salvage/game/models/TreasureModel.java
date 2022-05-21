@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class TreasureModel extends ObstacleModel {
 
     public boolean isMayContainFlare() {
-        return mayContainFlare;
+        return false;
     }
 
     boolean mayContainFlare;
