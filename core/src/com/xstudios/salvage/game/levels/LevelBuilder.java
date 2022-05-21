@@ -757,8 +757,8 @@ public class LevelBuilder {
                                 for (JsonValue prop : obj.get("properties")) {
                                     if (prop.getString("name").equals("door_id"))
                                         treasureModel.setID(prop.getInt("value"));
-                                    if (prop.getString("name").equals("may_contain_flare"))
-                                        treasureModel.mayContainFlare(prop.getBoolean("value"));
+
+                                    treasureModel.mayContainFlare(false);
                                 }
                             else {
                                 treasureModel.setID(0);

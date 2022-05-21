@@ -870,25 +870,23 @@ public class GameController extends ScreenController implements ContactListener 
 
         if (monsterController.isMonsterActive()) {
             monsterController.update(hostileOxygenDrain, level.getDiver());
-            Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
+            Queue<Wall> agg_tentacles = monsterController.getMonster().getAggTentacles();
             Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
             Queue<Wall> attack_tentacles = monsterController.getMonster().getKillTentacles();
 
-            System.out.println("tentacles size " + tentacles.size());
-            while (tentacles.size() > 0) {
-                Wall add_wall = tentacles.poll();
+            while (agg_tentacles.size() > 0) {
+                Wall add_wall = agg_tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
                     Tentacle t;
                     if (tick % 4 == 0) {
                         t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.6f, add_wall, Tentacle.TentacleType.NewAttack, 120);
                         t.setGrowRate(10);
                         addQueuedObject(t);
-                    } else /*if (tick % 2 == 0) */{
+                    } else /*if (tick % 2 == 0) */ {
                         t = levelBuilder.createTentacle(level.getMonster().getAggravation(), 0.45f, add_wall, Tentacle.TentacleType.NewAttack, 50);
                         t.setGrowRate(4);
                         addQueuedObject(t);
                     }
-                    tentacles.remove(add_wall);
                 }
             }
 
@@ -1148,7 +1146,7 @@ public class GameController extends ScreenController implements ContactListener 
 
         canvas.end();
 //        if (!debug) {
-            rayHandler.updateAndRender();
+        rayHandler.updateAndRender();
 //        }
         canvas.begin();
         level.getDiver().draw(canvas);
