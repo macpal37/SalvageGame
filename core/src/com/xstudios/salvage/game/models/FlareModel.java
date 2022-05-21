@@ -230,11 +230,11 @@ public class FlareModel extends DiverObjectModel {
                             frame = 0;
                         flareSprite.setFrame(frame);
                     }
-//                        System.out.println("flickering");
                 }
 
             }
-            canvas.draw(flareSprite, Color.WHITE, origin.x + 50, origin.y + 50, getX() * drawScale.x, getY() * drawScale.y, getAngle() - (float) Math.PI / 2, .36f, .36f);
+            if (!isCarried())
+                canvas.draw(flareSprite, Color.WHITE, origin.x + 50, origin.y + 50, getX() * drawScale.x, getY() * drawScale.y, getAngle() - (float) Math.PI / 2, .36f, .36f);
             light.setPosition(getX() / worldDrawScale.x, getY() / worldDrawScale.y);
 //            light.setPosition(getX() + 25 / 32f, getY() - 10 / 32f);
             light.setActive(true);

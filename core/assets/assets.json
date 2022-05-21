@@ -60,7 +60,7 @@
     "background:settings":"background/settings_background.png",
 
     "models:diver": "models/diver.png",
-    "models:diver_swimming": "models/diver_swimming2.png",
+    "models:diver_swimming": "models/diver_swimming.png",
 
     "models:diver_swimming_w_body": "models/diver_swimming_w_body.png",
     "models:dust": "models/dust.png",
