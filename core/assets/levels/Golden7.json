@@ -54,7 +54,7 @@
                         {
                          "name":"may_contain_flare",
                          "type":"bool",
-                         "value":true
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -84,7 +84,7 @@
                         {
                          "name":"may_contain_flare",
                          "type":"bool",
-                         "value":true
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",

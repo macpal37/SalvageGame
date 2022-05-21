@@ -824,9 +824,9 @@ public class LevelBuilder {
                 // otherwise, put a monster in it
                 if (chest.isMayContainFlare()) {
                     int roll = (int) (Math.random() * 0);
-                    if (roll == 1) {
-                        chest.setTreasureType(TreasureType.Flare, treasureKeyAnimation.copy());
-                    } else
+
+
+
                         chest.setTreasureType(TreasureType.Monster, treasureMonsterAnimation.copy());
                 } else {
                     chest.setTreasureType(TreasureType.Monster, treasureMonsterAnimation.copy());
