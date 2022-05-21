@@ -28,7 +28,7 @@
                         {
                          "name":"starting_oxygen",
                          "type":"int",
-                         "value":140
+                         "value":125
                         }],
                  "rotation":0,
                  "type":"",
@@ -297,8 +297,62 @@
                  "type":"",
                  "visible":true,
                  "width":100,
-                 "x":130.197368421053,
-                 "y":831.671052631579
+                 "x":141.945488721805,
+                 "y":835.195488721805
+                }, 
+                {
+                 "gid":47,
+                 "height":100,
+                 "id":36,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"text",
+                         "type":"string",
+                         "value":"Your friends \n are dead"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":555.028195488722,
+                 "y":797.18045112782
+                }, 
+                {
+                 "gid":47,
+                 "height":100,
+                 "id":37,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"text",
+                         "type":"string",
+                         "value":"But they deserve \n better than this."
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":799.389097744361,
+                 "y":553.994360902256
+                }, 
+                {
+                 "gid":47,
+                 "height":100,
+                 "id":38,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"text",
+                         "type":"string",
+                         "value":"Bring them home"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":100,
+                 "x":452.819548872181,
+                 "y":279.088345864662
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -307,7 +361,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":36,
+ "nextobjectid":39,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.2",
