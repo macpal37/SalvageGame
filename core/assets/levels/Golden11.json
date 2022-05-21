@@ -1053,7 +1053,7 @@
                         {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":5.4
+                         "value":3
                         }, 
                         {
                          "name":"kill_strikes",

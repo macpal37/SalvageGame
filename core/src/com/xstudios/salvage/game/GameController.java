@@ -311,8 +311,8 @@ public class GameController extends ScreenController implements ContactListener 
         debug = false;
         active = false;
         // TODO: oxygen rate should be a parameter loaded from a json
-        passiveOxygenRate = -.1f / 4;
-        activeOxygenRate = -.2f / 4;
+        passiveOxygenRate = -.1f / 6;
+        activeOxygenRate = -.2f / 6;
 
         forceCache = new Vector2(0, 0);
         rayHandler = new RayHandler(world);
@@ -874,7 +874,7 @@ public class GameController extends ScreenController implements ContactListener 
             Queue<Wall> idle_tentacles = monsterController.getMonster().getIdleTentacles();
             Queue<Wall> attack_tentacles = monsterController.getMonster().getKillTentacles();
 
-
+            System.out.println("tentacles size " + tentacles.size());
             while (tentacles.size() > 0) {
                 Wall add_wall = tentacles.poll();
                 if (add_wall != null && add_wall.canSpawnTentacle()) {
@@ -888,7 +888,7 @@ public class GameController extends ScreenController implements ContactListener 
                         t.setGrowRate(4);
                         addQueuedObject(t);
                     }
-//                    tentacles.remove(add_wall);
+                    tentacles.remove(add_wall);
                 }
             }
 
