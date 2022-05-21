@@ -88,7 +88,7 @@ public class MonsterController {
     private int last_aggression = 0;
     private int MAX_AGGRESSIVE_TIME;
     private int AGGRESSIVE_LENGTH = 15;
-    private int LAST_AGGRESSIVE_LENGTH = 500;
+    private int LAST_AGGRESSIVE_LENGTH = 200;
     private boolean transition_to_aggravated = false;
 
     private PooledList<Vector2> targetLocations;
@@ -188,6 +188,9 @@ public class MonsterController {
         float aggravation = monster.getAggravation();
 
 //        System.out.println("aggravation: " + monster.getAggravation() + " threshold " + monster.getAggroLevel());
+//        System.out.println("aggressive time " + total_aggressive_time + " max "+ MAX_AGGRESSIVE_TIME);
+        boolean to_attack = ((tick % 15 == 0) && ((int)(Math.random()*1000) <= (int)(RANDOM_ATTACK_CHANGE)));
+//        System.out.println("wut " + (state == FSMState.IDLE && to_attack));
         // Next state depends on current state.
         switch (state) {
 
@@ -202,7 +205,7 @@ public class MonsterController {
                     state = FSMState.AGGRIVATED;
                     //monster.setVisionRadius(30);
                 }
-                else if ((transition_to_aggravated || ((tick % 25 == 0) && ((int)(Math.random()*1000) <= (int)(RANDOM_ATTACK_CHANGE)))) &&  last_aggression > LAST_AGGRESSIVE_LENGTH) {
+                else if ((transition_to_aggravated || to_attack) &&  last_aggression > LAST_AGGRESSIVE_LENGTH) {
                     AudioController.getInstance().attack_roar();
                     tick = 0;
                     monster.setAggravation(monster.getAggroLevel() + (monster.getAggravationRate() * 3));
@@ -214,7 +217,6 @@ public class MonsterController {
                 break;
 
             case AGGRIVATED:
-                System.out.println("Aggravation length " + monster.getAggressiveLength());
                 if (aggravation <= monster.getAggroLevel() || monster.getAggressiveLength() <= 0) {
 //                    monster.reduceInvincibilityTime();
                     state = FSMState.IDLE;
@@ -313,9 +315,8 @@ public class MonsterController {
 
             case AGGRIVATED:
 //                if (tick % 5 == 0) {
-                curr_pos = diver.getPosition().cpy();
-                monster.moveMonster(new Vector2(diver.getX(), diver.getY()));
-                if (tick % 2 == 0) {
+                monster.moveMonster(new Vector2(goal_x, goal_y));
+                if (tick % 10 == 0) {
                     float best_distance = 10000.0f;
                     float temp_distance = 0.0f;
                     Wall final_loc = null;

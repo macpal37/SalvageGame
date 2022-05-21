@@ -217,7 +217,7 @@ public class GameController extends ScreenController implements ContactListener 
     private Color low_oxygen_color;
     private Color monster_color;
     private Color kill_monster_color;
-    private float stun_light_radius = 5f;
+    private float stun_light_radius = 7f;
     private float normal_light_radius = 13f;
     private float wall_shine_radius = 8f;
 
@@ -550,6 +550,8 @@ public class GameController extends ScreenController implements ContactListener 
         }
 
         populateLevel();
+        light.setDistance(normal_light_radius);
+        wallShine.setDistance(wall_shine_radius);
     }
 
     /**
@@ -604,7 +606,6 @@ public class GameController extends ScreenController implements ContactListener 
     private void updateWinningState() {
 
         changeLightColor(new Color(0, 0, 0, 0));
-        rayHandler.setAmbientLight(.0001f);
 
         camera.setCameraPosition(
                 (level.getDiver().getX()) * level.getDiver().getDrawScale().x, (level.getDiver().getY()) * level.getDiver().getDrawScale().y);
@@ -625,7 +626,6 @@ public class GameController extends ScreenController implements ContactListener 
     private void updateDyingState() {
 
         changeLightColor(new Color(0, 0, 0, 0));
-        rayHandler.setAmbientLight(.0001f);
         AudioController.getInstance().dying();
 
         camera.setCameraPosition(
