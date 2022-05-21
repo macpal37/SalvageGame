@@ -131,6 +131,19 @@ public class MonsterController {
         MAX_AGGRESSIVE_TIME = monster.getAggressiveLength() * monster.getAggroStrikes();
     }
 
+    public void reset(){
+        tick = 0;
+        state = FSMState.IDLE;
+        if(monster != null) {
+            monster.setAggravation(0);
+            monster.setAggressiveLength(AGGRESSIVE_LENGTH);
+            MAX_AGGRESSIVE_TIME = monster.getAggressiveLength() * monster.getAggroStrikes();
+        }
+        hasRoared = false;
+        isRoaring = false;
+        roar_pause = 0;
+    }
+
     public void setAudio(AudioController a) {
         audio = a;
     }
@@ -170,7 +183,7 @@ public class MonsterController {
         // Add initialization code as necessary
         float aggravation = monster.getAggravation();
 
-        System.out.println("aggravation: " + monster.getAggravation() + " threshold " + monster.getAggroLevel());
+//        System.out.println("aggravation: " + monster.getAggravation() + " threshold " + monster.getAggroLevel());
         // Next state depends on current state.
         switch (state) {
 
