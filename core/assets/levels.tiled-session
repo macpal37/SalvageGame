@@ -9,24 +9,24 @@
             "scale": 0.8512,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 549.8120300751881,
-                "y": 549.8120300751881
+                "x": 547.4624060150376,
+                "y": 547.4624060150377
             }
         },
         "levels/Golden1.json": {
             "scale": 0.33,
-            "selectedLayer": 2,
+            "selectedLayer": 3,
             "viewCenter": {
                 "x": 1248.4848484848483,
-                "y": 754.5454545454547
+                "y": 751.5151515151517
             }
         },
         "levels/Golden10.json": {
             "scale": 0.23648214285714284,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1784.4899192025975,
-                "y": 833.0438722343881
+                "x": 1759.1180246167785,
+                "y": 811.9006267462057
             }
         },
         "levels/Golden11.json": {
@@ -42,7 +42,7 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 1239.3939393939393,
-                "y": 848.4848484848486
+                "y": 851.5151515151517
             }
         },
         "levels/Golden13.json": {
@@ -55,7 +55,7 @@
         },
         "levels/Golden2.json": {
             "scale": 0.25,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
                 "x": 1300,
                 "y": 748
@@ -65,16 +65,16 @@
             "scale": 0.3591,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 1228.0701754385966,
-                "y": 356.446672236146
+                "x": 1216.9312169312173,
+                "y": 345.30771372876643
             }
         },
         "levels/Golden4.json": {
             "scale": 0.3591,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
                 "x": 1102.7568922305766,
-                "y": 751.8796992481205
+                "y": 743.5254803675857
             }
         },
         "levels/Golden5.json": {
@@ -82,15 +82,15 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 1136.3636363636363,
-                "y": 806.0606060606062
+                "y": 809.0909090909092
             }
         },
         "levels/Golden6.json": {
-            "scale": 0.5,
+            "scale": 0.75,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 870,
-                "y": 1008
+                "x": 1001.3333333333333,
+                "y": 394.66666666666663
             }
         },
         "levels/Golden7.json": {
@@ -98,23 +98,23 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 1395.15455304929,
-                "y": 751.8796992481205
+                "y": 754.6644388749653
             }
         },
         "levels/Golden8.json": {
             "scale": 0.3591,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1194.6532999164579,
-                "y": 1052.6315789473686
+                "x": 1189.0838206627684,
+                "y": 1047.0620996936789
             }
         },
         "levels/Golden9.json": {
             "scale": 0.29924999999999996,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1400.1670843776108,
-                "y": 852.1303258145365
+                "x": 1380.1169590643278,
+                "y": 832.0802005012531
             }
         },
         "levels/GoldenAnother.json": {
@@ -138,7 +138,7 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 1400,
-                "y": 851.5151515151517
+                "y": 851.5151515151515
             }
         },
         "levels/GoldenSomething.json": {
@@ -329,6 +329,7 @@
     "project": "levels.tiled-project",
     "property.type": "float",
     "recentFiles": [
+        "levels/Golden10.json",
         "levels/Golden2.json",
         "levels/Golden4.json",
         "levels/Golden5.json",
@@ -339,7 +340,6 @@
         "levels/Golden0.json",
         "levels/beta_0.json",
         "levels/beta_1.json",
-        "levels/beta_2.json",
-        "levels/beta_3.json"
+        "levels/beta_2.json"
     ]
 }

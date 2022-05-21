@@ -352,12 +352,17 @@
                         {
                          "name":"aggro_rate",
                          "type":"float",
-                         "value":0.1
+                         "value":0.01
                         }, 
                         {
                          "name":"aggro_threshold",
                          "type":"float",
-                         "value":75
+                         "value":7.6
+                        }, 
+                        {
+                         "name":"random_attack_chance",
+                         "type":"float",
+                         "value":60
                         }],
                  "rotation":0,
                  "type":"",
