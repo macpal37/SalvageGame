@@ -13,9 +13,9 @@ import com.xstudios.salvage.assets.AssetDirectory;
 
 
 public class Player {
-    private int sound_effects;
-    private int music;
     private int level;
+    private int music;
+    private int sound_effects;
 
     public Player(AssetDirectory directory){
         System.out.println("inside the player directory");
@@ -85,7 +85,7 @@ public class Player {
             FileHandle file = Gdx.files.local("player.json");
             Json json = new Json();
             System.out.println(json.toJson(this, Player.class));
-            file.writeString(json.toJson(this, Player.class),true);
+            file.writeString(json.toJson(this, Player.class),false);
         }
 
     }
