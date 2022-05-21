@@ -88,7 +88,7 @@ public class MonsterController {
     private int last_aggression = 0;
     private int MAX_AGGRESSIVE_TIME;
     private int AGGRESSIVE_LENGTH = 15;
-    private int LAST_AGGRESSIVE_LENGTH = 200;
+    private int LAST_AGGRESSIVE_LENGTH = 700;
     private boolean transition_to_aggravated = false;
 
     private PooledList<Vector2> targetLocations;
@@ -190,7 +190,7 @@ public class MonsterController {
 //        System.out.println("aggravation: " + monster.getAggravation() + " threshold " + monster.getAggroLevel());
 //        System.out.println("aggressive time " + total_aggressive_time + " max "+ MAX_AGGRESSIVE_TIME);
         boolean to_attack = ((tick % 15 == 0) && ((int)(Math.random()*1000) <= (int)(RANDOM_ATTACK_CHANGE)));
-//        System.out.println("wut " + (state == FSMState.IDLE && to_attack));
+//        System.out.println("wut " + state);
         // Next state depends on current state.
         switch (state) {
 

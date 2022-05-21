@@ -754,8 +754,8 @@ public class GameController extends ScreenController implements ContactListener 
             } else {
                 level.getDiver().changeOxygenLevel(passiveOxygenRate);
             }
-            System.out.println("Active: " + activeOxygenRate);
-            System.out.println("Passive: " + passiveOxygenRate);
+//            System.out.println("Active: " + activeOxygenRate);
+//            System.out.println("Passive: " + passiveOxygenRate);
         }
 
 
