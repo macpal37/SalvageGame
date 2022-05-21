@@ -346,8 +346,8 @@ public class CollisionController {
                 diver.setTouchedWall(wall);
                 diver.setTouchingObstacle(true);
             }
-            if (wall.isCanAlertMonster()) {
-                //AudioController.getInstance().wall_collision(diver.getForce());
+            // only collide with the actual wall if the actual body does, not the sensor
+            if (!f1.isSensor() && wall.isCanAlertMonster()) {
                 monsterController.wallCollision();
                 AudioController.getInstance().wood_collision(diver.getForce());
             }
@@ -357,8 +357,7 @@ public class CollisionController {
                 diver.setTouchedWall(wall);
                 diver.setTouchingObstacle(true);
             }
-            if (wall.isCanAlertMonster()) {
-                //AudioController.getInstance().wall_collision(diver.getForce());
+            if (!f2.isSensor() && wall.isCanAlertMonster()) {
                 monsterController.wallCollision();
                 AudioController.getInstance().wood_collision(diver.getForce());
             }

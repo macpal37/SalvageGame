@@ -562,7 +562,6 @@ public class GameController extends ScreenController implements ContactListener 
 //            System.out.println();
         }
 
-
         monsterController = new MonsterController(level.getMonster(), getWorldBounds());
         monsterController.setAudio(AudioController.getInstance());
 
@@ -588,7 +587,6 @@ public class GameController extends ScreenController implements ContactListener 
         } else if (level.getDiver().getOxygenLevel() <= 0) {
             game_state = state.DYING;
         } else if (reach_target) {
-
             game_state = state.WIN_ANIMATION;
         } else if (pause) {
             game_state = state.PAUSE;
@@ -609,7 +607,6 @@ public class GameController extends ScreenController implements ContactListener 
         InputController input = InputController.getInstance();
 
         if (input.isPause()) {
-
             if (pause)
                 resume();
             else
@@ -619,11 +616,11 @@ public class GameController extends ScreenController implements ContactListener 
         level.getDiver().setHorizontalMovement(input.getHorizontal() * level.getDiver().getForce());
         level.getDiver().setVerticalMovement(input.getVertical() * level.getDiver().getForce());
 
-        System.out.println("Touching Obstacle: " + level.getDiver().isTouchingObstacle());
-        System.out.println("Latching: " + level.getDiver().isLatching());
-        System.out.println("KickOff: " + input.didKickOff());
-        System.out.println("Boosting: " + level.getDiver().isBoosting());
-        System.out.println("Diver Velocity: " + level.getDiver().getLinearVelocity().len());
+//        System.out.println("Touching Obstacle: " + level.getDiver().isTouchingObstacle());
+//        System.out.println("Latching: " + level.getDiver().isLatching());
+//        System.out.println("KickOff: " + input.didKickOff());
+//        System.out.println("Boosting: " + level.getDiver().isBoosting());
+//        System.out.println("Diver Velocity: " + level.getDiver().getLinearVelocity().len());
 //        System.out.println("Diver Mass: " + level.getDiver().getMass());
 
         // stop boosting when player has slowed down enough
@@ -852,7 +849,6 @@ public class GameController extends ScreenController implements ContactListener 
                 if (add_wall != null) {
 
                     Tentacle t = levelBuilder.createTentacle(level.getMonster().getAggravation(), .4f, add_wall, Tentacle.TentacleType.Idle, 100);
-
                     t.setGrowRate(10);
                     t.setType(0);
                     addQueuedObject(t);
