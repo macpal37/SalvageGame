@@ -81,10 +81,12 @@ public class DecorModel extends GameObject {
 
     @Override
     public void draw(GameCanvas canvas) {
+
         if (tick % 10 == 0) {
             int frame = spriteSheet.getFrame();
+
             frame++;
-            if (frame >= spriteSheet.getSize())
+            if (frame >= spriteSheet.getSize() && tick % ((int) animSleep) == 0)
                 frame = 0;
             spriteSheet.setFrame(frame);
         }
@@ -101,6 +103,12 @@ public class DecorModel extends GameObject {
     @Override
     public void drawDebug(GameCanvas canvas) {
         canvas.drawPhysics(circ, Color.RED, getX(), getY(), drawScale.x, drawScale.y);
+    }
+
+    float animSleep = 1;
+
+    public void setAnimSleep(float v) {
+        animSleep = v;
     }
 }
 

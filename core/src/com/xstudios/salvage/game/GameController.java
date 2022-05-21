@@ -719,15 +719,18 @@ public class GameController extends ScreenController implements ContactListener 
         // set forces from ocean currents
         level.getDiver().setDriftMovement(physicsController.getCurrentVector(level.getDiver().getPosition()).x,
                 physicsController.getCurrentVector(level.getDiver().getPosition()).y);
+
+        for (ObstacleModel obst : level.obstacleModels) {
+            obst.setDriftMovement(physicsController.getCurrentVector(level.getDiver().getPosition()).x,
+                    physicsController.getCurrentVector(level.getDiver().getPosition()).y);
+        }
+
         // apply forces for movement
         if (!level.getDiver().getStunned()) {
             level.getDiver().applyForce();
-//            System.out.println("APPLY FORCE????????????");
+
         }
 
-        // do the ping
-//        level.getDiver().setPing(input.didOpenChest());
-//        level.getDiver().setPingDirection(level.getDeadBody().getPosition());
 
         // flare management
         if (input.dropFlare()) {
@@ -862,10 +865,8 @@ public class GameController extends ScreenController implements ContactListener 
                 door.setActive(!door.getUnlock());
             }
         }
-//        System.out.println("ScALE: " + world_scale.toString());
         rayHandler.setCombinedMatrix(camera.getCamera().combined.cpy().scl(world_scale.x, world_scale.y, 1f));
 
-//        System.out.println("isMonsterActive");
         if (monsterController.isMonsterActive()) {
             monsterController.update(hostileOxygenDrain, level.getDiver());
             Queue<Wall> tentacles = monsterController.getMonster().getTentacles();
@@ -920,7 +921,6 @@ public class GameController extends ScreenController implements ContactListener 
 //            level.getDiver().setTouchedWall(null);
 //        }
 
-//        System.out.println("STATE "+ game_state);
         switch (game_state) {
             case DYING:
                 game_over_animation_time--;
@@ -941,13 +941,7 @@ public class GameController extends ScreenController implements ContactListener 
                 // oxygen still drains when paused
                 level.getDiver().changeOxygenLevel(passiveOxygenRate);
                 break;
-            // could be useful later but currently just has updates for PLAYING state
-//            case WIN_GAME:
-//
-//            break;
-//            case LOSE_GAME:
-//
-//            break;
+
         }
 
 
@@ -958,16 +952,10 @@ public class GameController extends ScreenController implements ContactListener 
 
         //deal with hazard stun
 
-//        if (level.getDiver().isInvincible()) {
-//            level.getDiver().setHazardInvincibilityFilter();
-////            light.setContactFilter(no_hazard_collision_category, no_hazard_collision_group, no_hazard_collision_mask);
-//        } else {
         level.getDiver().setHazardCollisionFilter();
-//            light.setContactFilter(hazard_collision_category, hazard_collision_group, hazard_collision_mask);
-//        }
+
 
         if (level.getDiver().getStunCooldown() > 0) {
-//            System.out.println("PAIN: " + hostileOxygenDrain);
             level.getDiver().changeOxygenLevel(hostileOxygenDrain);
             level.getDiver().setStunCooldown(level.getDiver().getStunCooldown() - 1);
         } else {
@@ -979,12 +967,12 @@ public class GameController extends ScreenController implements ContactListener 
     }
 
     public void updateDiverLighting() {
-       if (monsterController.isMonsterActive() && monsterController.isKillState()) {
-                if (tick % 2  == 0){
-                    changeLightColor(monster_color);
-                } else {
-                    changeLightColor(low_oxygen_color);
-                }
+        if (monsterController.isMonsterActive() && monsterController.isKillState()) {
+            if (tick % 2 == 0) {
+                changeLightColor(monster_color);
+            } else {
+                changeLightColor(low_oxygen_color);
+            }
 
         } else if (monsterController.isMonsterActive() && monsterController.isAggravated()) {
             changeLightColor(monster_color);

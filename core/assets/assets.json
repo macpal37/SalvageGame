@@ -74,8 +74,8 @@
     "models:dust": "models/dust.png",
     "models:plant": "models/plant.png",
     "models:plant2": "models/plant2.png",
-  "models:exit_door": "models/exit_door_animation.png",
-
+    "models:exit_door": "models/exit_door_animation2.png",
+    "models:fish_animation": "models/fish_animation.png",
     "models:barrel": "models/barrel.png",
     "models:crate": "models/crate.png",
     "models:flare_animation": "models/flare_animation.png",
