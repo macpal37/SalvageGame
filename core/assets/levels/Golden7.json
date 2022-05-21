@@ -114,7 +114,7 @@
                         {
                          "name":"aggro_rate",
                          "type":"float",
-                         "value":0.01
+                         "value":0.02
                         }, 
                         {
                          "name":"aggro_threshold",
