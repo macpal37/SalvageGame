@@ -770,9 +770,11 @@ public class GameController extends ScreenController implements ContactListener 
                     float angle = (float) Math.atan2(v.x - u.x, v.y - u.y) + (float) Math.PI / 16f * 17;
 
                     Tentacle t = levelBuilder.createTentacle(0, 0.5f, tm, Tentacle.TentacleType.NewAttack, 30, -angle);
-                    tm.setTrap(t);
+                    if(t != null) {
+                        tm.setTrap(t);
+                        addQueuedObject(t);
+                    }
 
-                    addQueuedObject(t);
                 } else if (tm.getContents() == TreasureModel.TreasureType.Key) {
                     level.getDiver().setChestOpen(true);
                 }
