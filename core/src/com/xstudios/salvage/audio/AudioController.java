@@ -103,7 +103,9 @@ public class AudioController {
 
         //levels
         int path = 0;
-        if (level < 4) {
+
+        if (level < 4 && level > 0) {
+
             path = level + 10;
         } else if (level >= 4) {
             path = (int) (Math.random() * 5);
@@ -205,6 +207,12 @@ public class AudioController {
 
     public Boolean is_loading() {
         return loading_screen.isPlaying();
+    }
+
+    public void treasure_chest() {
+        if (!idle_roar.isPlaying()) {
+            idle_roar.play();
+        }
     }
 
 
