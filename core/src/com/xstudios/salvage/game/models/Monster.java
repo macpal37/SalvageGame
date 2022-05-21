@@ -29,7 +29,7 @@ public class Monster extends GameObject {
         this.aggroStrikes = aggroStrike;
     }
 
-    private int aggroStrikes = 4;
+    private int aggroStrikes = 25;
 
     /* The Monster's vision represented as a circle*/
     private float visionRadius = 7;

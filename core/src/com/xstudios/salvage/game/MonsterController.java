@@ -228,7 +228,7 @@ public class MonsterController {
                         //monster.setVisionRadius(50);
                         monster.setAggravation((8 * monster.getAggravation()) / 10.0f);
                         last_aggression = 0;
-                    } else if (attack_tick > monster.getAggroStrikes()) {
+                    } if (attack_tick > monster.getAggroStrikes()) {
                         //                    if (aggravation > (monster.getAggroLevel() * 20.0f)) {
                         //                        state = FSMState.ATTACK;
                         //                    }
