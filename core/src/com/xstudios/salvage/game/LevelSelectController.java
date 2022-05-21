@@ -128,8 +128,10 @@ public class LevelSelectController extends ScreenController implements Controlle
 
             if(level != 0){
                 if(level > locked) {
+                    int ox1 = t1.getWidth()/2;
+                    int oy1 = t1.getHeight()/2;
                     c = Color.GRAY;
-                    canvas.draw(t, c, ox, oy, x, height - y, s *  scale, s * scale);
+                    canvas.draw(t1, c, ox1, oy1, x, height - y, angle, s * scale, s * scale);
                     return false;
                 }
             }

@@ -133,7 +133,6 @@ public class RulesController extends ScreenController implements ControllerListe
                     canvas.getHeight()/2 - canvas.getHeight()/20, false);
             left = help_draw(active_left, canvas.getWidth()/18,
                     canvas.getHeight()/2 - canvas.getHeight()/20, true);
-            System.out.println("we are in the image2");
             right = !left;
         }
         press_menu = help_draw(menu, width/12, height - height/14, true);
@@ -226,12 +225,10 @@ public class RulesController extends ScreenController implements ControllerListe
         else if(right){
             press_right = true;
             press_left = false;
-            System.out.println("we are in the right of touchup");
         }
         else if(left) {
             press_left = true;
             press_right = false;
-            System.out.println("we are in the left of touchup");
         }
 
         return true;

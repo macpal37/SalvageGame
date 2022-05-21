@@ -1150,10 +1150,10 @@ public class GameController extends ScreenController implements ContactListener 
                     canvas.draw(flareHud, Color.WHITE, (float) flareHud.getRegionWidth(), (float) flareHud.getRegionHeight() / 2,
                             (float) items.x,
                             items.y,
-                            0.0f, 0.35f * worldScale.x, 0.35f * worldScale.y);
+                            0.0f, 0.2f * worldScale.x, 0.2f * worldScale.y);
                 }
 
-                items.x = (float) canvas.getWidth() - canvas.getWidth()/5 + flareHud.getRegionWidth()/2;
+                items.x = (float) canvas.getWidth() - canvas.getWidth()/5;
                 items.y = (float) canvas.getHeight()/25;
                 items = camera.getCamera().unproject(items);
 
