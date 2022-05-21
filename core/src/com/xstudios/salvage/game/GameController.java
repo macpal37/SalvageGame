@@ -887,6 +887,7 @@ public class GameController extends ScreenController implements ContactListener 
                         t.setGrowRate(4);
                         addQueuedObject(t);
                     }
+                    tentacles.remove(add_wall);
                 }
             }
 
