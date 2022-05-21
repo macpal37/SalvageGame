@@ -182,7 +182,7 @@ public class GameController extends ScreenController implements ContactListener 
     // Beta Release Setup
 
 
-    private String[] levels = {"Golden6", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8", "Golden9", "Golden10", "Golden11", "Golden12"};
+    private String[] levels = {"Golden0", "Golden1", "Golden2", "Golden3", "Golden4", "Golden5", "Golden6", "Golden7", "Golden8", "Golden9", "Golden10", "Golden11", "Golden12"};
 
     private int curr_level;
 
@@ -311,8 +311,8 @@ public class GameController extends ScreenController implements ContactListener 
         debug = false;
         active = false;
         // TODO: oxygen rate should be a parameter loaded from a json
-        passiveOxygenRate = -.01f;
-        activeOxygenRate = -.02f;
+        passiveOxygenRate = -.1f / 4;
+        activeOxygenRate = -.2f / 4;
 
         forceCache = new Vector2(0, 0);
         rayHandler = new RayHandler(world);
