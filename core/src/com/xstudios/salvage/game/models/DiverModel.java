@@ -286,7 +286,7 @@ public class DiverModel extends GameObject {
     }
 
     public void setMaxOxygen(float max) {
-        System.out.println("Maxed Out!");
+//        System.out.println("Maxed Out!");
         maxOxygenLevel = max;
         oxygenLevel = max;
     }
@@ -822,50 +822,53 @@ public class DiverModel extends GameObject {
 
     float targetAngle = 0;
 
+    /**
+     * gets the difference between current angle and target angle.
+     * @param current
+     * @param target
+     * @return 0 to 180 if in the right semicircle from current angle.
+     * 0 to -180 if in the left semicircle from current angle
+     */
+    public float getAngleDiff(float current, float target) {
+        return (current - target + 180 + 360) % 360 - 180;
+    }
+
     public void applyForce() {
         if (isLatching()) {
             if (touchedWall != null)
+                // tentaclerotation is the direction of a wall as specified in the level editor
                 targetAngle = touchedWall.getTentacleRotation() + 270;
-            else
-                targetAngle = 0;
+            // Do not uncomment this! When latching, if you rotate to no longer be touching the wall, your target angle will be set to be to the right, which is not what we want
+//            else
+//                targetAngle = 0;
         } else {
-
-            targetAngle = (isSwimming() || isBoosting()) ? targetAngleX + ((targetAngleX == 0) ? targetAngleY : -targetAngleY) : getDynamicAngle();
-
-        }
-
-        targetAngle += (targetAngle < 0) ? 360f : 0f;
-        float dist = targetAngle - getDynamicAngle();
-        float angle = 0.4f * 3;
-        int buffer = 5;
-        int flip = 180;
-        if (Math.abs(dist) >= 180 - buffer * 5) {
-            dist += (dist > 0) ? -flip : flip;
-            faceRight = !faceRight;
-            if (Math.abs(dist) >= 90) {
-                dist += (dist > 0) ? -flip : flip;
-                faceRight = !faceRight;
-            } else {
-                turnFrames = 4;
+            // set the target angle to be the direction of movement
+            if (movement.len() != 0) {
+                targetAngle = movement.angleDeg();
             }
         }
-//        float coAngle = 180 * angle / (float) Math.PI;
 
-        float newAngle = angle * ((isLatching()) ? ((isBoosting()) ? 2 : 2) : 1);
-        float coAngle = angle;
+        float angleDiff = getAngleDiff(getDynamicAngle(), targetAngle);
 
+//        System.out.println("Target Angle: " + targetAngle);
+//        System.out.println("Diver Dynamic Angle: " + getDynamicAngle());
+//        System.out.println("Diff: " + angleDiff);
 
-        if (dist > coAngle / 2) {
-            body.setAngularVelocity(newAngle);
-        } else if (dist < -coAngle / 2) {
-            body.setAngularVelocity(-newAngle);
+        // if between 0 and 135 degrees, rotate right
+        // if between 0 and -135 degrees, rotate left
+        // otherwise, flip
+        if (angleDiff <= 135 && angleDiff >= 0) {
+            body.setAngularVelocity(-Math.abs(angleDiff) / 30);
+        } else if (angleDiff >= -135 && angleDiff < 0) {
+            body.setAngularVelocity(Math.abs(angleDiff) / 30);
         } else {
-            body.setAngularVelocity(0.0f);
+            faceRight = !faceRight;
+            turnFrames = 4;
         }
+
         float tinyBuffer = 5f;
-
-//        if (getDynamicAngle() != 269 || getDynamicAngle() != 271 || getDynamicAngle() != 89 || getDynamicAngle() != 91) {
-
+        // bodyflip is for mirroring across the horizontal axis of the sprite
+        // faceRight is for mirroring over the vertical axis of the sprite
         if (getDynamicAngle() <= 90 - tinyBuffer || getDynamicAngle() > 270 + tinyBuffer) {
             bodyFlip = !faceRight;
         }
@@ -873,17 +876,14 @@ public class DiverModel extends GameObject {
             bodyFlip = faceRight;
         }
 
-
         if (!isActive()) {
             return;
         }
-
 
         float desired_xvel = 0;
         float desired_yvel = 0;
         float max_impulse = 15f;
         float max_impulse_drift = 2f;
-
 
 //        tick++;
         // possible states: swimming, idling/drifting, latching, boosting
@@ -904,7 +904,6 @@ public class DiverModel extends GameObject {
             }
 
             // compute desired velocity, capping it if it exceeds the maximum speed
-            // TODO: Do we only want to be able to swim in 4 directions?
             desired_xvel = getVX() + Math.signum(getHorizontalMovement()) * max_impulse;
             desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
             desired_yvel = getVY() + Math.signum(getVerticalMovement()) * max_impulse;
@@ -916,44 +915,11 @@ public class DiverModel extends GameObject {
             float x_impulse = body.getMass() * xvel_change;
             float y_impulse = body.getMass() * yvel_change;
 
-
-            if (movement.y > 0) {
-                targetAngleY = 85;
-            } else if (movement.y < 0) {
-                targetAngleY = -85;
-            }
-            if (movement.x != 0) {
-                targetAngleY /= 2;
-            }
-            if (movement.x > 0) {
-                targetAngleX = 0;
-            } else if (movement.x < 0) {
-                targetAngleX = 180;
-            }
-
-
             body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x,
                     body.getWorldCenter().y, true);
         } else if (isIdling()) { // player is not using the arrow keys
             setMaxSpeed(drift_maxspeed);
             setLinearDamping(swimDamping);
-
-//            targetAngleY = (int) getDynamicAngle() - targetAngleX;
-
-            /**====================================================*/
-            /**============= Turning Angle Code=============*/
-            /**====================================================*/
-
-//            if (pickupFrame >= 5) {
-//                if (tick % 10 == 0) {
-//                    int frame = diverSprites.get(diverState).getFrame();
-//
-//                    diverSprites.get(diverState).setFrame(frame);
-//                }
-//            }
-            /**====================================================*/
-            /**============= Turning Angle Cod: ENDe=============*/
-            /**====================================================*/
 
             desired_xvel = getVX() + Math.signum(getHorizontalDriftMovement()) * max_impulse_drift;
             desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
@@ -973,20 +939,29 @@ public class DiverModel extends GameObject {
         } else if (isBoosting()) { // player has kicked off a wall and may or may not be steering
             setMaxSpeed(boostedMaxSpeed);
             setLinearDamping(boostDamping);
-            if (movement.y > 0) {
-                targetAngleY = 85;
-            } else if (movement.y < 0) {
-                targetAngleY = -85;
+
+            // TODO: may need some tweaking for steering
+
+            // if the movement angle is within 30 deg of the velocity angle
+            // do not apply any force.
+            // otherwise, apply a little bit of force in that direction
+            float angle = getAngleDiff(movement.angleDeg(), getLinearVelocity().angleDeg());
+            if ((angle > 15 && angle < 180) || (angle < -15 && angle > -179)) {
+                // compute and apply force
+                desired_xvel = getVX() + Math.signum(getHorizontalDriftMovement()) * max_impulse_drift;
+                desired_xvel = Math.max(Math.min(desired_xvel, getMaxSpeed()), -getMaxSpeed());
+                desired_yvel = getVY() + Math.signum(getVerticalDriftMovement()) * max_impulse_drift;
+                desired_yvel = Math.max(Math.min(desired_yvel, getMaxSpeed()), -getMaxSpeed());
+
+                float xvel_change = desired_xvel - getVX();
+                float yvel_change = desired_yvel - getVY();
+
+                float x_impulse = body.getMass() * xvel_change;
+                float y_impulse = body.getMass() * yvel_change;
+
+                body.applyForce(x_impulse, y_impulse, body.getWorldCenter().x,
+                        body.getWorldCenter().y, true);
             }
-            if (movement.x != 0) {
-                targetAngleY /= 2;
-            }
-            if (movement.x > 0) {
-                targetAngleX = 0;
-            } else if (movement.x < 0) {
-                targetAngleX = 180;
-            }
-            // TODO: Currently doesn't take movement input. Will need steering in specific dirs only?
 
             if (Math.abs(getVX()) >= getMaxSpeed()) {
                 setVX(Math.signum(getVX()) * getMaxSpeed());
@@ -1233,25 +1208,18 @@ public class DiverModel extends GameObject {
     }
 
     public void boost() {
-        // set impulse in direction of key input
-        forceCache.set(facingDir.nor().x * boost_impulse, facingDir.nor().y * boost_impulse);
+        // set impulse in direction of the target angle
+        // compute the x and y components given that point lies along unit circle
+        // eg. cos(theta) = a / h -> cos(theta) * h = a where h = 1
+        double angle_rad = Math.toRadians(targetAngle);
+        float dir_x = (float) Math.cos(angle_rad);
+        float dir_y = (float) Math.sin(angle_rad);
+        forceCache.set(dir_x * boost_impulse, dir_y * boost_impulse);
+//        forceCache.set(facingDir.nor().x * boost_impulse, facingDir.nor().y * boost_impulse);
         body.setLinearVelocity(Vector2.Zero); // make sure to zero out prev velocity just in case
         body.applyLinearImpulse(forceCache, body.getWorldCenter(), true);
-        System.out.println("Diver Vel after boost: " + getLinearVelocity().len());
+//        System.out.println("Diver Vel after boost: " + getLinearVelocity().len());
     }
-
-//    public void dropItem() {
-//        if (item_list != null) {
-//            item_list.setGravityScale(0f);
-//            item_list.setX(getX());
-//            item_list.setY(getY());
-//            item_list.setVerticalMovement(0);
-//            item_list.setVX(0);
-//            item_list.setVY(0);
-//            item_list.setCarried(false);
-//            item_list = null;
-//        }
-//    }
 
     public void dropBody() {
         carrying_body = false;

@@ -39,18 +39,18 @@
         },
         "levels/Golden2.json": {
             "scale": 0.25,
-            "selectedLayer": 1,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 1298,
-                "y": 748
+                "x": 1302,
+                "y": 752
             }
         },
         "levels/Golden3.json": {
             "scale": 0.3591,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 973.2664995822892,
-                "y": 359.23141186299085
+                "x": 1349.2063492063494,
+                "y": 751.8796992481205
             }
         },
         "levels/Golden4.json": {
@@ -58,15 +58,15 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 1098.5797827903093,
-                "y": 751.8796992481203
+                "y": 751.8796992481205
             }
         },
         "levels/Golden5.json": {
             "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1250,
-                "y": 800
+                "x": 1250.0000000000002,
+                "y": 800.0000000000001
             }
         },
         "levels/Golden6.json": {
@@ -82,7 +82,7 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 1399.3316624895574,
-                "y": 751.8796992481203
+                "y": 751.8796992481205
             }
         },
         "levels/Golden8.json": {
@@ -90,7 +90,7 @@
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 1399.3316624895574,
-                "y": 849.3455861876915
+                "y": 852.1303258145365
             }
         },
         "levels/GoldenAnother.json": {
@@ -303,17 +303,17 @@
     ],
     "project": "levels.tiled-project",
     "recentFiles": [
-        "levels/Golden2.json",
+        "levels/Golden0.json",
+        "levels/Golden3.json",
         "levels/Golden4.json",
-        "levels/Golden5.json",
-        "levels/Golden6.json",
         "levels/Golden7.json",
         "levels/Golden8.json",
+        "levels/Golden2.json",
+        "levels/Golden5.json",
+        "levels/Golden6.json",
         "levels/Golden1.json",
-        "levels/Golden0.json",
         "levels/beta_0.json",
         "levels/beta_1.json",
-        "levels/beta_2.json",
-        "levels/beta_3.json"
+        "levels/beta_2.json"
     ]
 }

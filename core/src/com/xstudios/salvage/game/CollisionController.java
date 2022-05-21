@@ -346,8 +346,8 @@ public class CollisionController {
                 diver.setTouchedWall(wall);
                 diver.setTouchingObstacle(true);
             }
-            if (wall.isCanAlertMonster()) {
-                //AudioController.getInstance().wall_collision(diver.getForce());
+            // only collide with the actual wall if the actual body does, not the sensor
+            if (!f1.isSensor() && wall.isCanAlertMonster()) {
                 monsterController.wallCollision();
                 AudioController.getInstance().wood_collision(diver.getForce());
             }
@@ -357,8 +357,7 @@ public class CollisionController {
                 diver.setTouchedWall(wall);
                 diver.setTouchingObstacle(true);
             }
-            if (wall.isCanAlertMonster()) {
-                //AudioController.getInstance().wall_collision(diver.getForce());
+            if (!f2.isSensor() && wall.isCanAlertMonster()) {
                 monsterController.wallCollision();
                 AudioController.getInstance().wood_collision(diver.getForce());
             }
@@ -560,11 +559,16 @@ public class CollisionController {
         if (b1.getUserData() instanceof FlareModel) {
             if (b2.getUserData() instanceof FlareModel) {
                 FlareModel f = (FlareModel) b1.getUserData();
+                if (b1 != b2) {
+                    f.turnOffLight(.4f, .8f);
+                    FlareModel f2 = (FlareModel) b2.getUserData();
+
 
                 f.turnOffLight(.2f, .8f);
                 FlareModel f2 = (FlareModel) b2.getUserData();
 
                 f2.turnOffLight(.2f, .8f);
+
 //                System.out.println("FLARE Flare");
 
             }
@@ -583,13 +587,15 @@ public class CollisionController {
 
         if (b1.getUserData() instanceof FlareModel) {
             if (b2.getUserData() instanceof FlareModel) {
-                FlareModel f = (FlareModel) b1.getUserData();
-                f.turnOnLight();
+                if (b1 != b2) {
+                    FlareModel f = (FlareModel) b1.getUserData();
+                    f.turnOnLight();
 
-                FlareModel f2 = (FlareModel) b2.getUserData();
+                    FlareModel f2 = (FlareModel) b2.getUserData();
 
-                f2.turnOnLight();
+                    f2.turnOnLight();
 //                System.out.println("end flare flare");
+                }
             }
         }
     }
