@@ -457,7 +457,7 @@ public class CollisionController {
         if (isTentacle) {
             // TODO: @quimey you can add diver tentacle collision sounds in here
             Tentacle tentacle = (Tentacle) fixture.getUserData();
-            if (tentacle.getType() == Tentacle.TentacleType.Idle){
+            if (tentacle.getType() == Tentacle.TentacleType.Idle) {
                 tentacle.setStartGrowing(false);
                 monster.transitionToAggravated(true);
             }
@@ -564,10 +564,8 @@ public class CollisionController {
                     FlareModel f2 = (FlareModel) b2.getUserData();
 
 
-                f.turnOffLight(.2f, .8f);
-                FlareModel f2 = (FlareModel) b2.getUserData();
-
-                f2.turnOffLight(.2f, .8f);
+                    f2.turnOffLight(.4f, .8f);
+                }
 
 //                System.out.println("FLARE Flare");
 

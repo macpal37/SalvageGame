@@ -824,6 +824,7 @@ public class DiverModel extends GameObject {
 
     /**
      * gets the difference between current angle and target angle.
+     *
      * @param current
      * @param target
      * @return 0 to 180 if in the right semicircle from current angle.
@@ -993,20 +994,20 @@ public class DiverModel extends GameObject {
      */
     public void setItem() {
 
-            for (ItemModel i : potential_items) {
-                if (!item_list.contains(i)) {
-                    item_list.add(i);
-                    i.setX(getX());
-                    i.setY(getY());
-                    i.setCarried(true);
-                    i.setKeyActive(true);
-                    if(i.getItemType() == ItemModel.ItemType.KEY){
-                        num_keys++;
-                    }
-                    break;
+        for (ItemModel i : potential_items) {
+            if (!item_list.contains(i)) {
+                item_list.add(i);
+                i.setX(getX());
+                i.setY(getY());
+                i.setCarried(true);
+                i.setKeyActive(true);
+                if (i.getItemType() == ItemModel.ItemType.KEY) {
+                    num_keys++;
                 }
-
+                break;
             }
+
+        }
     }
 
     /**
@@ -1146,7 +1147,7 @@ public class DiverModel extends GameObject {
 
     public void setTick(int tick) {
         super.setTick(tick);
-        for (FlareModel f: flares) {
+        for (FlareModel f : flares) {
             f.setTick(tick);
         }
     }
@@ -1335,8 +1336,8 @@ public class DiverModel extends GameObject {
                 }
 
             }
-            canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x - 50, origin.y + 50,
-                    getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.25f * worldDrawScale.x, flip * 0.25f * worldDrawScale.y);
+            canvas.draw(diverSprites.get(diverState), Color.WHITE, origin.x - 25, origin.y + 50,
+                    getX() * drawScale.x, getY() * drawScale.y, angle, effect * 0.1875f * worldDrawScale.x, flip * 0.1875f * worldDrawScale.y);
         }
         if (ping || ping_cooldown > 0) {
 //            canvas.draw(pingTexture, Color.WHITE, origin.x + pingDirection.x,
